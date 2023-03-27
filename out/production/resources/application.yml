@@ -1,9 +1,12 @@
 spring:
+  config:
+    import: local.yml
+
   datasource:
     url: jdbc:mariadb://localhost:3306/OpenBook
     driver-class-name: org.mariadb.jdbc.Driver
-    username: openbook
-    password: openbook123*
+
+
 
   jpa:
     hibernate:

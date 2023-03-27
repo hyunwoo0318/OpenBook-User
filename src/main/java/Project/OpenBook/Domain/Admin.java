@@ -3,6 +3,7 @@ package Project.OpenBook.Domain;
 import Project.OpenBook.Constants.Role;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -20,15 +21,18 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
-public class Admin implements UserDetails {
+@EntityListeners(AuditingEntityListener.class)
+public class Admin extends BaseEntity implements UserDetails{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
 
+    @Column(nullable = false)
     private String loginId;
 
+    @Column(nullable = false)
     private String password;
 
     private String role;
