@@ -2,6 +2,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Admin;
 import Project.OpenBook.Dto.AdminDto;
+import Project.OpenBook.Dto.ErrorDto;
 import Project.OpenBook.Service.AdminService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,6 +27,8 @@ public class AdminController {
     private final AdminService adminService;
 
 
+    //TODO : ErrorDto로 받아서 넘기고 Validated어노테이션 사용해서 조건 확인하기
+
     @ApiOperation(value="회원가입", notes="아이디와 비밀번호를 입력받아 회원가입 진행")
     @ApiResponses(value={
             @ApiResponse(responseCode = "201", description = "관리자 회원가입 성공"),
@@ -35,6 +38,7 @@ public class AdminController {
     public ResponseEntity adminRegister(@RequestBody AdminDto adminDto) {
         Admin admin = adminService.registerAdmin(adminDto.getLoginId(), adminDto.getPassword());
         if (admin == null) {
+
             return new ResponseEntity("이미 가입된 아이디입니다. 다른 아이디로 가입을 진행해주세요.", HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.CREATED);
