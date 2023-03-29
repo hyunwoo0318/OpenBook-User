@@ -12,5 +12,5 @@ public interface ChapterRepository extends JpaRepository<Chapter, Long> {
 
     public List<Chapter> findAll();
 
-    public Optional<Chapter> findChapterByNum(int num);
+    public Optional<Chapter> findOneByNum(int num);
 }

@@ -30,7 +30,12 @@ public class Chapter extends BaseEntity {
     private String title;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
-    private List<Theme> themeList = new ArrayList<>();
+    private List<Topic> topicList = new ArrayList<>();
 
+    public Chapter updateChapter(String title, int num) {
+        this.title = title;
+        this.num = num;
+        return this;
+    }
 
 }

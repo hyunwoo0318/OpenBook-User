@@ -23,16 +23,16 @@ public class QCategory extends EntityPathBase<Category> {
     public final QBaseEntity _super = new QBaseEntity(this);
 
     //inherited
-    public final DateTimePath<java.time.LocalDateTime> createdTime = _super.createdTime;
+    public final StringPath createdTime = _super.createdTime;
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     //inherited
-    public final DateTimePath<java.time.LocalDateTime> modifiedTime = _super.modifiedTime;
+    public final StringPath modifiedTime = _super.modifiedTime;
 
     public final StringPath name = createString("name");
 
-    public final ListPath<Theme, QTheme> themeList = this.<Theme, QTheme>createList("themeList", Theme.class, QTheme.class, PathInits.DIRECT2);
+    public final ListPath<Topic, QTopic> topicList = this.<Topic, QTopic>createList("topicList", Topic.class, QTopic.class, PathInits.DIRECT2);
 
     public QCategory(String variable) {
         super(Category.class, forVariable(variable));

@@ -20,12 +20,12 @@ public abstract class BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        this.createdTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        this.createdTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss"));
         this.modifiedTime = this.createdTime;
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.modifiedTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        this.modifiedTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss"));
     }
 }

@@ -4,22 +4,109 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb59b8ed-46cf-4aaf-a193-cbae2bed74cb" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChapterController.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ChapterDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ErrorDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/ChapterService.java" afterDir="false" />
+    <list default="true" id="eb59b8ed-46cf-4aaf-a193-cbae2bed74cb" name="Changes" comment="Chapter관련 기능 구현중">
+      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/TopicController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ChapterListDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/TopicDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/TopicService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/application-test.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Controller/ChapterControllerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/bootJarMainClassName" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Config/QueryDslConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Config/SecurityConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Config/SwaggerConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Config/WebConfig.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Constants/Role.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Controller/AdminController.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/Admin$AdminBuilder.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/Admin.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/BaseEntity.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/Category.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/Chapter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/QAdmin.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/QBaseEntity.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/QCategory.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/QChapter.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/QTheme.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Domain/Theme.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Dto/AdminDto.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/OpenBookApplication.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Repository/AdminRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Repository/CategoryRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Repository/ChapterRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Repository/ThemeRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Service/AdminService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/main/Project/OpenBook/Service/CustomerLoginService.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/classes/java/test/Project/OpenBook/Service/AdminServiceTest.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/generated/querydsl/Project/OpenBook/Domain/QAdmin.java" beforeDir="false" afterPath="$PROJECT_DIR$/build/generated/querydsl/Project/OpenBook/Domain/QAdmin.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/generated/querydsl/Project/OpenBook/Domain/QBaseEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/build/generated/querydsl/Project/OpenBook/Domain/QBaseEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/generated/querydsl/Project/OpenBook/Domain/QCategory.java" beforeDir="false" afterPath="$PROJECT_DIR$/build/generated/querydsl/Project/OpenBook/Domain/QCategory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/generated/querydsl/Project/OpenBook/Domain/QChapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/build/generated/querydsl/Project/OpenBook/Domain/QChapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/generated/querydsl/Project/OpenBook/Domain/QTheme.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/libs/OpenBook-0.0.1-SNAPSHOT-plain.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/libs/OpenBook-0.0.1-SNAPSHOT.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/classes/Project.OpenBook.Service.AdminServiceTest.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/css/base-style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/css/style.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/js/report.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/reports/tests/test/packages/Project.OpenBook.Service.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/resources/main/application.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/resources/main/local.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/TEST-Project.OpenBook.Service.AdminServiceTest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/output.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/output.bin.idx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/test-results/test/binary/results.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/bootJar/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileJava/previous-compilation-data.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/compileTestJava/previous-compilation-data.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/tmp/jar/MANIFEST.MF" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/SecurityConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/WebConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/WebConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Controller/AdminController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Controller/AdminController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/BaseEntity.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/BaseEntity.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/Category.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/Category.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/Chapter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/Chapter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/QAdmin.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/QAdmin.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/QBaseEntity.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/QBaseEntity.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/QCategory.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/QCategory.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/QChapter.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/QChapter.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/QTheme.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Domain/Theme.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Dto/AdminDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Dto/AdminDto.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/OpenBookApplication.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/OpenBookApplication.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Repository/ChapterRepository.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Repository/ChapterRepository.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Repository/ThemeRepository.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/WebConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/WebConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChapterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChapterController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/BaseEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/BaseEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/Category.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/Category.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/Chapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/Chapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/OpenBookApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/OpenBookApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/Theme.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/Topic.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/AdminDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/AdminDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ChapterDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ChapterDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ErrorDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ErrorDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Repository/CategoryRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Repository/CategoryRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Repository/ChapterRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Repository/ChapterRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Repository/ThemeRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Repository/TopicRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/ChapterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/ChapterService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/application.yml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,11 +154,6 @@
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
                 <item name="querydsl" type="c8890929:TasksNode$1" />
               </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="OpenBook" type="f1a62948:ProjectNode" />
-                <item name="Run Configurations" type="7b0102dc:RunConfigurationsNode" />
-              </path>
             </expand>
             <select />
           </tree_state>
@@ -82,8 +164,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="JUnit5 Test Class" />
         <option value="Interface" />
+        <option value="JUnit5 Test Class" />
         <option value="Class" />
       </list>
     </option>
@@ -133,13 +215,16 @@
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/main/resources" />
+    </key>
     <key name="CreateTestDialog.RecentsKey">
-      <recent name="Project.OpenBook.Service" />
       <recent name="Project.OpenBook.Controller" />
+      <recent name="Project.OpenBook.Service" />
     </key>
   </component>
-  <component name="RunManager" selected="Spring Boot.OpenBookApplication">
-    <configuration name="OpenBook [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+  <component name="RunManager" selected="Gradle.OpenBook [compileQuerydsl]">
+    <configuration name="OpenBook [cleanQuerydslSourcesDir]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -150,7 +235,7 @@
         </option>
         <option name="taskNames">
           <list>
-            <option value="build" />
+            <option value="cleanQuerydslSourcesDir" />
           </list>
         </option>
         <option name="vmOptions" />
@@ -181,48 +266,6 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
-    <configuration name="OpenBook [compileJava]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="compileJava" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
-    <configuration name="OpenBook [compileQuerydslJava]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
-      <ExternalSystemSettings>
-        <option name="executionName" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
-        <option name="taskDescriptions">
-          <list />
-        </option>
-        <option name="taskNames">
-          <list>
-            <option value="compileQuerydslJava" />
-          </list>
-        </option>
-        <option name="vmOptions" />
-      </ExternalSystemSettings>
-      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
-      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
-      <DebugAllEnabled>false</DebugAllEnabled>
-      <method v="2" />
-    </configuration>
     <configuration name="OpenBook [compileQuerydsl]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -243,6 +286,43 @@
       <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
+    </configuration>
+    <configuration name="OpenBook [initQuerydslSourcesDir]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="initQuerydslSourcesDir" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="ChapterControllerTest.queryChapters" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="OpenBook.test" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Project.OpenBook.Controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Project.OpenBook.Controller" />
+      <option name="MAIN_CLASS_NAME" value="Project.OpenBook.Controller.ChapterControllerTest" />
+      <option name="METHOD_NAME" value="queryChapters" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
@@ -265,10 +345,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.OpenBook [compileQuerydsl]" />
-        <item itemvalue="Gradle.OpenBook [compileQuerydslJava]" />
-        <item itemvalue="Gradle.OpenBook [compileJava]" />
-        <item itemvalue="Gradle.OpenBook [build]" />
+        <item itemvalue="Gradle.OpenBook [initQuerydslSourcesDir]" />
+        <item itemvalue="Gradle.OpenBook [cleanQuerydslSourcesDir]" />
         <item itemvalue="Gradle.OpenBook [clean]" />
+        <item itemvalue="JUnit.ChapterControllerTest.queryChapters" />
       </list>
     </recent_temporary>
   </component>
@@ -296,8 +376,17 @@
       <workItem from="1679923634114" duration="238000" />
       <workItem from="1679923968502" duration="122000" />
       <workItem from="1680010079315" duration="3015000" />
-      <workItem from="1680013329266" duration="1732000" />
+      <workItem from="1680013329266" duration="1788000" />
+      <workItem from="1680061483663" duration="17513000" />
     </task>
+    <task id="LOCAL-00001" summary="Chapter관련 기능 구현중">
+      <created>1680016483438</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1680016483438</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -314,6 +403,10 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Chapter관련 기능 구현중" />
+    <option name="LAST_COMMIT_MESSAGE" value="Chapter관련 기능 구현중" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -326,6 +419,16 @@
           <url>file://$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/AdminService.java</url>
           <line>79</line>
           <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/test/java/Project/OpenBook/Controller/ChapterControllerTest.java</url>
+          <line>113</line>
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChapterController.java</url>
+          <line>57</line>
+          <option name="timeStamp" value="20" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

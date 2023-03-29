@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,7 +25,7 @@ public class ChapterService {
     public Chapter addChapter(String title, int num) {
 
         //chapter num은 유니크한 칼럼이므로 겹치면 안됨.
-        Optional<Chapter> chapterOptional = chapterRepository.findChapterByNum(num);
+        Optional<Chapter> chapterOptional = chapterRepository.findOneByNum(num);
         if(chapterOptional.isPresent()){
             return null;
         }
@@ -37,5 +38,32 @@ public class ChapterService {
         chapterRepository.save(newChapter);
 
         return newChapter;
+    }
+
+    public List<Chapter> getAllChapter() {
+        return chapterRepository.findAll();
+    }
+
+    public Chapter updateChapter(int num, String inputTitle, int inputNum) {
+        Optional<Chapter> chapterOptional = chapterRepository.findOneByNum(num);
+        if (chapterOptional.isEmpty()) {
+            return null;
+        }
+
+        Chapter chapter = chapterOptional.get();
+
+        Chapter updateChapter = chapter.updateChapter(inputTitle, inputNum);
+        return updateChapter;
+    }
+
+    public Boolean deleteChapter(int num) {
+        Optional<Chapter> chapterOptional = chapterRepository.findOneByNum(num);
+        if (chapterOptional.isEmpty()) {
+            return false;
+        }
+
+        Chapter chapter = chapterOptional.get();
+        chapterRepository.delete(chapter);
+        return true;
     }
 }
