@@ -1,13 +1,15 @@
 package Project.OpenBook.Controller;
 
 
+import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Chapter;
+import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.ChapterDto;
 import Project.OpenBook.Dto.ChapterListDto;
 import Project.OpenBook.Dto.ErrorDto;
+import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.aspectj.lang.annotation.Before;
+import Project.OpenBook.Repository.TopicRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,8 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
-
-import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,13 +40,16 @@ class ChapterControllerTest {
     @Autowired
     ChapterRepository chapterRepository;
 
+    @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    TopicRepository topicRepository;
+
 
     @Autowired
     TestRestTemplate restTemplate;
 
-
-    @Autowired
-    ObjectMapper objectMapper;
 
     private final String prefix = "http://localhost:";
     private final String surfix = "/admin/chapters";
@@ -56,7 +59,9 @@ class ChapterControllerTest {
 
     @BeforeEach
     public void deleteAll() {
+        topicRepository.deleteAllInBatch();
         chapterRepository.deleteAllInBatch();
+        categoryRepository.deleteAllInBatch();
         URL = prefix + port + surfix;
         restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
@@ -64,7 +69,7 @@ class ChapterControllerTest {
 
     @DisplayName("단원 전체 조회 성공 - GET /admin/chapters")
     @Test
-    public void queryChapters() {
+    public void queryChaptersSuccess() {
         List<Chapter> chapterList = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
             Chapter c = new Chapter("title" + i, i);
@@ -76,7 +81,7 @@ class ChapterControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getTitleList()).isEqualTo(Arrays.asList("title1","title2","title3","title4","title5"));
-        assertThat(response.getBody().getNumList()).isEqualTo(Arrays.asList(1,2,3,4,5));
+        assertThat(response.getBody().getNumberList()).isEqualTo(Arrays.asList(1,2,3,4,5));
 
     }
 
@@ -88,7 +93,7 @@ class ChapterControllerTest {
 
         ResponseEntity<Void> response = restTemplate.postForEntity(URL, inputChapterDto,Void.class);
 
-        Optional<Chapter> chapterOptional = chapterRepository.findOneByNum(1);
+        Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(1);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(chapterOptional.isPresent()).isTrue();
         assertThat(chapterOptional.get().getTitle()).isEqualTo("title1");
@@ -102,7 +107,7 @@ class ChapterControllerTest {
 
         //제목을 입력하지 않은 경우
         ChapterDto wrongChapterDto1 = new ChapterDto();
-        wrongChapterDto1.setNum(2);
+        wrongChapterDto1.setNumber(2);
 
         ChapterDto wrongChapterDto2 = new ChapterDto();
         wrongChapterDto2.setTitle("title123");
@@ -122,7 +127,7 @@ class ChapterControllerTest {
         assertThat(errorDto1).isEqualTo(new ErrorDto("title", "단원제목을 입력해주세요."));
 
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(errorDto2).isEqualTo(new ErrorDto("num", "단원 번호를 입력해주세요."));
+        assertThat(errorDto2).isEqualTo(new ErrorDto("number", "단원 번호를 입력해주세요."));
 
         assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(errorDto3).isEqualTo(new ErrorDto("chapter", "이미 존재하는 단원 번호입니다. 다른 단원 번호를 입력해 주세요."));
@@ -138,9 +143,9 @@ class ChapterControllerTest {
 
         ResponseEntity<Void> response = restTemplate.exchange(URL + "/1", HttpMethod.PATCH, new HttpEntity<>(inputDto), Void.class);
 
-        Optional<Chapter> chapterOptional = chapterRepository.findOneByNum(2);
+        Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(2);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(chapterRepository.findOneByNum(1).isEmpty()).isTrue();
+        assertThat(chapterRepository.findOneByNumber(1).isEmpty()).isTrue();
         assertThat(chapterOptional.isPresent()).isTrue();
         assertThat(chapterOptional.get().getTitle()).isEqualTo("titleAfterUpdate");
     }
@@ -156,7 +161,7 @@ class ChapterControllerTest {
 
         //제목을 입력하지않음
         ChapterDto wrongDto2 = new ChapterDto();
-        wrongDto2.setNum(2);
+        wrongDto2.setNumber(2);
 
         ChapterDto dto3 = new ChapterDto("title123", 1);
 
@@ -170,12 +175,39 @@ class ChapterControllerTest {
         ErrorDto errorDto2 = response2.getBody().get(0);
 
         assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(errorDto1).isEqualTo(new ErrorDto("num", "단원 번호를 입력해주세요."));
+        assertThat(errorDto1).isEqualTo(new ErrorDto("number", "단원 번호를 입력해주세요."));
 
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(errorDto2).isEqualTo(new ErrorDto("title", "단원제목을 입력해주세요."));
 
         assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @DisplayName("단원 삭제 성공 - DELETE admin/chapters")
+    @Test
+    public void deleteChapterSuccess() {
+        Category category = new Category("유물");
+        Chapter chapter = new Chapter("ct1", 1);
+        chapterRepository.saveAndFlush(chapter);
+        categoryRepository.saveAndFlush(category);
+        Topic topic = new Topic("title1", 1234, 1235, 0, 0, "detail1", chapter, category, "");
+        topicRepository.saveAndFlush(topic);
+
+        ResponseEntity<Void> response = restTemplate.exchange(URL + "/1", HttpMethod.DELETE, null, Void.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(chapterRepository.findOneByNumber(1).isEmpty()).isTrue();
+        assertThat(topicRepository.findTopicByTitle("title1").get().getChapter()).isNull();
+    }
+
+    @DisplayName("단원 삭제 실패 - DELETE admin/chapters")
+    @Test
+    public void deleteChapterFail() {
+        chapterRepository.saveAndFlush(new Chapter("title1", 1));
+
+        ResponseEntity<Void> response = restTemplate.exchange(URL + "/2", HttpMethod.DELETE, null, Void.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(chapterRepository.findOneByNumber(1).isPresent()).isTrue();
     }
 
 }

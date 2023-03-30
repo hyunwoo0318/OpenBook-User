@@ -29,7 +29,7 @@ public class Admin extends BaseEntity implements UserDetails{
     private long id;
 
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String loginId;
 
     @Column(nullable = false)

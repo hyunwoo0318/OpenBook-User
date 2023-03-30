@@ -30,7 +30,7 @@ public class QChapter extends EntityPathBase<Chapter> {
     //inherited
     public final StringPath modifiedTime = _super.modifiedTime;
 
-    public final NumberPath<Integer> num = createNumber("num", Integer.class);
+    public final NumberPath<Integer> number = createNumber("number", Integer.class);
 
     public final StringPath title = createString("title");
 

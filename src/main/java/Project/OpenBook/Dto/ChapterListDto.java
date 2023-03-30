@@ -16,5 +16,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ChapterListDto {
     private List<String> titleList = new ArrayList<>();
-    private List<Integer> numList = new ArrayList<>();
+    private List<Integer> numberList = new ArrayList<>();
 }

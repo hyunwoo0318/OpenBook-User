@@ -17,24 +17,24 @@ public class Chapter extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private int num;
+    @Column(nullable = false, unique = true)
+    private int number;
 
     @Builder
-    public Chapter(String title, int num) {
+    public Chapter(String title, int number) {
         this.title = title;
-        this.num = num;
+        this.number = number;
     }
 
     @Column(nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "chapter")
     private List<Topic> topicList = new ArrayList<>();
 
     public Chapter updateChapter(String title, int num) {
         this.title = title;
-        this.num = num;
+        this.number = num;
         return this;
     }
 

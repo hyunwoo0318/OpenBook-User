@@ -18,5 +18,5 @@ public class ChapterDto {
     private String title;
 
     @Min(value = 1, message = "단원 번호를 입력해주세요.")
-    private int num;
+    private int number;
 }

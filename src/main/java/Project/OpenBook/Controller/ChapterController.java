@@ -12,13 +12,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 @RestController
@@ -42,7 +40,7 @@ public class ChapterController {
         List<Chapter> chapterList = chapterService.getAllChapter();
         for (Chapter chapter : chapterList) {
             titleList.add(chapter.getTitle());
-            numList.add(chapter.getNum());
+            numList.add(chapter.getNumber());
         }
         ChapterListDto chapterListDto = new ChapterListDto(titleList, numList);
         return new ResponseEntity(chapterListDto, HttpStatus.OK);
@@ -62,7 +60,7 @@ public class ChapterController {
 
         }else{
             //저장 시도
-            Chapter chapter = chapterService.addChapter(chapterDto.getTitle(), chapterDto.getNum());
+            Chapter chapter = chapterService.creaeteChapter(chapterDto.getTitle(), chapterDto.getNumber());
             //중복된 단원 번호 체크
             if (chapter == null) {
                 errorList.add(new ErrorDto("chapter", "이미 존재하는 단원 번호입니다. 다른 단원 번호를 입력해 주세요."));
@@ -93,7 +91,7 @@ public class ChapterController {
             return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
         }
 
-        Chapter chapter = chapterService.updateChapter(num, chapterDto.getTitle(), chapterDto.getNum());
+        Chapter chapter = chapterService.updateChapter(num, chapterDto.getTitle(), chapterDto.getNumber());
         if (chapter == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
