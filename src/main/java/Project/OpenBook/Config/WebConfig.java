@@ -14,12 +14,12 @@ public class WebConfig implements WebMvcConfigurer {
      * Cors관련 설정
      * @param registry
      */
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
-                .allowedMethods("OPTIONS", "GET", "POST", "DELETE", "PUT", "PATCH");
-    }
+//    @Override
+//    public void addCorsMappings(CorsRegistry registry) {
+//        registry.addMapping("/**")
+//                .allowedOrigins("http://localhost:3000")
+//                .allowedMethods("OPTIONS", "GET", "POST", "DELETE", "PUT", "PATCH");
+//    }
 
     /**
      * Swagger 리소스 세팅

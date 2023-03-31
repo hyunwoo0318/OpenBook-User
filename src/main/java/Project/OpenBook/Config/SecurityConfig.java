@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -16,7 +17,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.HttpMediaTypeException;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -50,13 +56,14 @@ public class SecurityConfig{
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
+        return http.csrf().disable().cors().and()
                 .formLogin().disable()
                 .authorizeRequests()
-                .antMatchers(permitAllList).permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/**").hasRole("USER")
-                .anyRequest().authenticated()
+                .antMatchers("/**").permitAll()
+//                .antMatchers(permitAllList).permitAll()
+//                .antMatchers("/admin/**").hasRole("ADMIN")
+//                .antMatchers("/**").hasRole("USER")
+//                .anyRequest().authenticated()
                 .and().httpBasic().and().build();
     }
 
@@ -64,13 +71,34 @@ public class SecurityConfig{
     public void initAdmin(){
         if(adminRepository.findByLoginId("admin1").isEmpty()) {
             BCryptPasswordEncoder passwordEncoder = passwordEncoder();
-            Admin admin = Admin.builder()
+            Admin admin1 = Admin.builder()
                     .loginId("admin1")
                     .password(passwordEncoder.encode("admin1"))
                     .role(Role.ADMIN)
                     .build();
-            adminRepository.save(admin);
+            Admin admin2 = Admin.builder()
+                    .loginId("admin2")
+                    .password(passwordEncoder.encode("admin2"))
+                    .role(Role.ADMIN)
+                    .build();
+            adminRepository.save(admin1);
+            adminRepository.save(admin2);
         }
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList(HttpMethod.GET.name(),HttpMethod.PATCH.name(),HttpMethod.OPTIONS.name(), HttpMethod.POST.name(),HttpMethod.DELETE.name()));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(true);
+
+        String name = HttpMethod.GET.name();
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
 }

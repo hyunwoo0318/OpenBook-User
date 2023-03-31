@@ -8,10 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableJpaAuditing
 public class OpenBookApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(OpenBookApplication.class, args);
-
 	}
-
 }

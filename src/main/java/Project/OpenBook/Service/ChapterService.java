@@ -19,12 +19,7 @@ public class ChapterService {
     private final ChapterRepository chapterRepository;
     private final TopicRepository topicRepository;
 
-    /**
-     * chapter 추가 메서드
-     * @param title
-     * @param num
-     * @return 성공적으로 완성된 Chapter -> 완성 실패시 null return
-     */
+
     public Chapter creaeteChapter(String title, int number) {
 
         //chapter num은 유니크한 칼럼이므로 겹치면 안됨.

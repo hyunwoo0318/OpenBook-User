@@ -8,8 +8,6 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
-import static Project.OpenBook.Service.TopicService.NO_RECORD;
-
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,6 +27,8 @@ public class Topic extends BaseEntity{
 
     @ColumnDefault(value="0")
     private int choiceNum;
+
+    @Lob
     private String detail;
 
     private String keywords;
