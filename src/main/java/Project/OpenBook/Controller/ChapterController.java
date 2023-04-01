@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/chapters")
+@CrossOrigin(allowedHeaders = "*", origins = "*")
 public class ChapterController {
 
     private final ChapterService chapterService;
@@ -43,7 +44,7 @@ public class ChapterController {
             numList.add(chapter.getNumber());
         }
         ChapterListDto chapterListDto = new ChapterListDto(titleList, numList);
-        return new ResponseEntity(chapterListDto, HttpStatus.OK);
+        return ResponseEntity.ok().body(chapterListDto);
     }
 
     @ApiOperation(value = "단원 추가", notes = "단원제목과 단원번호를 입력해서 새로운 단원 추가")
