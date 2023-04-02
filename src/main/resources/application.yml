@@ -15,8 +15,11 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
-#logging:
-#  level:
-#    org:
-#      springframework:
-#        security : DEBUG
+  mvc:
+    log-request-details: true
+logging:
+  level:
+    org.springframework.web: DEBUG
+
+Spring:
+  mvc:

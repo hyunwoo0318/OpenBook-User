@@ -9,12 +9,16 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,6 +27,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RequestMapping("/admin/chapters")
 @CrossOrigin(allowedHeaders = "*", origins = "*")
+@Slf4j
 public class ChapterController {
 
     private final ChapterService chapterService;
@@ -34,7 +39,6 @@ public class ChapterController {
     })
     @GetMapping
     public ResponseEntity getChapter(){
-
         List<String> titleList = new ArrayList<>();
         List<Integer> numList = new ArrayList<>();
 
@@ -43,8 +47,14 @@ public class ChapterController {
             titleList.add(chapter.getTitle());
             numList.add(chapter.getNumber());
         }
+
         ChapterListDto chapterListDto = new ChapterListDto(titleList, numList);
-        return ResponseEntity.ok().body(chapterListDto);
+        return new ResponseEntity(chapterListDto, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity queryChpaterTopics() {
+        //TODO : 구현
     }
 
     @ApiOperation(value = "단원 추가", notes = "단원제목과 단원번호를 입력해서 새로운 단원 추가")

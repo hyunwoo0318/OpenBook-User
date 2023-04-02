@@ -4,13 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="eb59b8ed-46cf-4aaf-a193-cbae2bed74cb" name="Changes" comment="chapter create, select, update 구현 &amp; 테스트 구현">
+    <list default="true" id="eb59b8ed-46cf-4aaf-a193-cbae2bed74cb" name="Changes" comment="cors config">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/WebConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/WebConfig.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/resources/application.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/WebConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/WebConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChapterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChapterController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/TopicController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/TopicController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/TopicDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/TopicDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/TopicService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/TopicService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -242,7 +245,8 @@
       <workItem from="1680172552339" duration="1161000" />
       <workItem from="1680238989576" duration="797000" />
       <workItem from="1680245768282" duration="3726000" />
-      <workItem from="1680330134902" duration="3002000" />
+      <workItem from="1680330134902" duration="7937000" />
+      <workItem from="1680408674898" duration="1210000" />
     </task>
     <task id="LOCAL-00001" summary="Chapter관련 기능 구현중">
       <created>1680016483438</created>
@@ -258,7 +262,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680087727418</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="cors config">
+      <created>1680334947576</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1680334947576</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -278,7 +289,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Chapter관련 기능 구현중" />
     <MESSAGE value="chapter create, select, update 구현 &amp; 테스트 구현" />
-    <option name="LAST_COMMIT_MESSAGE" value="chapter create, select, update 구현 &amp; 테스트 구현" />
+    <MESSAGE value="cors config" />
+    <option name="LAST_COMMIT_MESSAGE" value="cors config" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -300,8 +312,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/TopicService.java</url>
-          <line>65</line>
+          <line>82</line>
           <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/TopicController.java</url>
+          <line>49</line>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

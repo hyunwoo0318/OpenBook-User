@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +29,21 @@ public class TopicService {
     private final CategoryRepository categoryRepository;
 
     private final ChapterRepository chapterRepository;
+
+    public TopicDto queryTopic(String topicTitle) {
+        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
+        if (topicOptional.isEmpty()) {
+            return null;
+        }
+        Topic topic = topicOptional.get();
+        List<String> keywordList = new ArrayList<>();
+        if (topic.getKeywords() != null) {
+            keywordList = mergeKeywordList(topic.getKeywords());
+        }
+        TopicDto topicDto = new TopicDto(topic.getChapter().getNumber(), topic.getTitle(), topic.getCategory().getName(), topic.getStartDate(), topic.getEndDate()
+                , topic.getDetail(), keywordList);
+        return topicDto;
+    }
 
     public Topic createTopic(TopicDto topicDto, List<ErrorDto> errorDtoList) {
 
@@ -127,5 +144,10 @@ public class TopicService {
 
     public String parseKeywordList(List<String> keywordList) {
       return keywordList.stream().collect(Collectors.joining(","));
+    }
+
+    public List<String> mergeKeywordList(String keywords) {
+        String[] split = keywords.split(",");
+        return Arrays.asList(split);
     }
 }

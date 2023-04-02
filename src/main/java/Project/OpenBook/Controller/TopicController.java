@@ -3,6 +3,7 @@ package Project.OpenBook.Controller;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.ErrorDto;
 import Project.OpenBook.Dto.TopicDto;
+import Project.OpenBook.Repository.TopicRepository;
 import Project.OpenBook.Service.TopicService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
@@ -25,6 +27,16 @@ import java.util.stream.Collectors;
 public class TopicController {
 
     private final TopicService topicService;
+
+    private final TopicRepository topicRepository;
+    @GetMapping("/{topicTitle}")
+    public ResponseEntity queryTopics(@PathVariable("topicTitle") String topicTitle) {
+        TopicDto topicDto = topicService.queryTopic(topicTitle);
+        if (topicDto==null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(topicDto, HttpStatus.OK);
+    }
 
     @ApiOperation(value = "새로운 상세정보 입력")
     @ApiResponses(value = {
