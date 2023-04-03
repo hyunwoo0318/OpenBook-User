@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -12,14 +13,14 @@ import java.util.List;
 @NoArgsConstructor
 public class TopicDto {
 
-    @Min(value = 1, message = "단원 번호를 입력해주세요.")
-    private int chapterNum;
+    @Min(value = 0, message = "단원 번호를 입력해주세요.")
+    private int chapter;
 
     @NotBlank(message = "상세정보 제목을 입력해주세요.")
     private String title;
 
     @NotBlank(message = "카테고리를 입력해주세요")
-    private String categoryName;
+    private String category;
 
     private Integer startDate;
 
@@ -28,5 +29,6 @@ public class TopicDto {
     @NotBlank(message = "설명을 입력해주세요.")
     private String detail;
 
-    private List<String> keywordList;
+    private String keywordList;
+
 }

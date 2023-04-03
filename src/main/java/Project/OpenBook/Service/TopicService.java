@@ -36,24 +36,21 @@ public class TopicService {
             return null;
         }
         Topic topic = topicOptional.get();
-        List<String> keywordList = new ArrayList<>();
-        if (topic.getKeywords() != null) {
-            keywordList = mergeKeywordList(topic.getKeywords());
-        }
+
         TopicDto topicDto = new TopicDto(topic.getChapter().getNumber(), topic.getTitle(), topic.getCategory().getName(), topic.getStartDate(), topic.getEndDate()
-                , topic.getDetail(), keywordList);
+                , topic.getDetail(), topic.getKeywords());
         return topicDto;
     }
 
     public Topic createTopic(TopicDto topicDto, List<ErrorDto> errorDtoList) {
 
-        String categoryName = topicDto.getCategoryName();
+        String categoryName = topicDto.getCategory();
         Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
         if (categoryOptional.isEmpty()) {
             errorDtoList.add(new ErrorDto("category", "존재하지않는 카테고리입니다."));
         }
 
-        int chapterNum = topicDto.getChapterNum();
+        int chapterNum = topicDto.getChapter();
         Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(chapterNum);
         if (chapterOptional.isEmpty()) {
             errorDtoList.add(new ErrorDto("chapter", "존재하지않는 단원입니다."));
@@ -70,10 +67,7 @@ public class TopicService {
 
         //입력이 필수가 아닌 startDate, endDate, keywords처리
         //keywordList -> keywords
-        String keywords = "";
-        if(topicDto.getKeywordList() != null){
-           keywords  = parseKeywordList(topicDto.getKeywordList());
-        }
+
 
         int startDate = (topicDto.getStartDate() == null) ? NO_RECORD : topicDto.getStartDate();
         int endDate = (topicDto.getEndDate() == null) ? NO_RECORD : topicDto.getEndDate();
@@ -88,7 +82,7 @@ public class TopicService {
                 .detail(topicDto.getDetail())
                 .questionNum(0)
                 .choiceNum(0)
-                .keywords(keywords)
+                .keywords(topicDto.getKeywordList())
                 .build();
 
         topicRepository.save(topic);
@@ -101,13 +95,13 @@ public class TopicService {
             return null;
         }
 
-        String categoryName = topicDto.getCategoryName();
+        String categoryName = topicDto.getCategory();
         Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
         if (categoryOptional.isEmpty()) {
             errorDtoList.add(new ErrorDto("category", "존재하지않는 카테고리입니다."));
         }
 
-        int chapterNum = topicDto.getChapterNum();
+        int chapterNum = topicDto.getChapter();
         Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(chapterNum);
         if (chapterOptional.isEmpty()) {
             errorDtoList.add(new ErrorDto("chapter", "존재하지않는 단원입니다."));
@@ -117,17 +111,13 @@ public class TopicService {
         if(!errorDtoList.isEmpty())
             return null;
 
-        String keywords = "";
-        if(topicDto.getKeywordList() != null){
-            keywords  = parseKeywordList(topicDto.getKeywordList());
-        }
 
         int startDate = (topicDto.getStartDate() == null) ? NO_RECORD : topicDto.getStartDate();
         int endDate = (topicDto.getEndDate() == null) ? NO_RECORD : topicDto.getEndDate();
 
         Topic topic = topicOptional.get();
         topic.updateTopic(topicDto.getTitle(), startDate,endDate, topicDto.getDetail(),
-                chapterOptional.get(), categoryOptional.get(), keywords);
+                chapterOptional.get(), categoryOptional.get(), topicDto.getKeywordList());
         return topic;
     }
 

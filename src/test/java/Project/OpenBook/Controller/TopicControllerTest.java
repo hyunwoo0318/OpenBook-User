@@ -88,6 +88,7 @@ class TopicControllerTest {
         ResponseEntity<Void> response = restTemplate.postForEntity(URL, topicDto, Void.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+        Chapter chapter = chapterRepository.findOneByNumber(chapterNum).get();
         assertThat(topicRepository.findTopicByTitle("title123").isPresent()).isTrue();
     }
 

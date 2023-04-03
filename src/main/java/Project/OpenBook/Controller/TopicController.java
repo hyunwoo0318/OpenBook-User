@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,16 +28,6 @@ import java.util.stream.Collectors;
 public class TopicController {
 
     private final TopicService topicService;
-
-    private final TopicRepository topicRepository;
-    @GetMapping("/{topicTitle}")
-    public ResponseEntity queryTopics(@PathVariable("topicTitle") String topicTitle) {
-        TopicDto topicDto = topicService.queryTopic(topicTitle);
-        if (topicDto==null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity(topicDto, HttpStatus.OK);
-    }
 
     @ApiOperation(value = "새로운 상세정보 입력")
     @ApiResponses(value = {
@@ -67,10 +58,15 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 상세정보 수정 시도")
     })
     @PatchMapping("/{topicTitle}")
-    public ResponseEntity updateTopic(@PathVariable("topicTitle")String topicTitle,@Validated @RequestBody TopicDto topicDto, BindingResult bindingResult) {
+    public ResponseEntity updateTopic(@PathVariable("topicTitle")String topicTitle,@RequestBody TopicDto topicDto, BindingResult bindingResult) {
+        System.out.println(topicDto.toString());
         List<ErrorDto> errorDtoList = new ArrayList<>();
         if (bindingResult.hasErrors()) {
-             errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
+            List<ObjectError> allErrors = bindingResult.getAllErrors();
+            for (ObjectError allError : allErrors) {
+                System.out.println(allError.getObjectName() + " " + allError.getDefaultMessage());
+            }
+            errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
             return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
         }
 
@@ -80,6 +76,9 @@ public class TopicController {
         }
 
         if (!errorDtoList.isEmpty()) {
+            for (ErrorDto errorDto : errorDtoList) {
+                System.out.println(errorDto.getField() + " " + errorDto.getMessage() );
+            }
             return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
         }
 

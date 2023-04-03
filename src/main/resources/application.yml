@@ -3,8 +3,10 @@ spring:
     import: local.yml
 
   datasource:
-    url: jdbc:mariadb://localhost:3306/OpenBook
+    url: jdbc:mariadb://localhost:3306/sss
     driver-class-name: org.mariadb.jdbc.Driver
+    username: sa
+    password:
 
   jpa:
     hibernate:
