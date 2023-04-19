@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -24,12 +25,11 @@ public class TopicDto {
     @NotBlank(message = "카테고리를 입력해주세요")
     private String categoryName;
 
-    private Integer startDate;
+    private LocalDateTime startDate;
 
-    private Integer endDate;
+    private LocalDateTime endDate;
 
-    @NotBlank(message = "설명을 입력해주세요.")
+   /* @NotBlank(message = "설명을 입력해주세요.")*/
     private String detail;
 
-    private List<String> keywordList;
 }

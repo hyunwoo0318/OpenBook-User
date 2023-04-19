@@ -8,7 +8,10 @@ import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
-import static Project.OpenBook.Service.TopicService.NO_RECORD;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -21,17 +24,15 @@ public class Topic extends BaseEntity{
     @Column(unique = true)
     private String title;
     @ColumnDefault(value = "10000")
-    private Integer startDate;
+    private LocalDateTime startDate;
     @ColumnDefault(value = "10000")
-    private Integer endDate;
+    private LocalDateTime endDate;
     @ColumnDefault(value = "0")
     private int questionNum;
 
     @ColumnDefault(value="0")
     private int choiceNum;
     private String detail;
-
-    private String keywords;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chapter_id")
@@ -41,8 +42,11 @@ public class Topic extends BaseEntity{
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @OneToMany(mappedBy = "topic")
+    private List<Choice> choiceList = new ArrayList<>();
+
     @Builder
-    public Topic(String title, int startDate, int endDate, int questionNum, int choiceNum, String detail, Chapter chapter, Category category,String keywords) {
+    public Topic(String title, LocalDateTime startDate, LocalDateTime endDate, int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -51,17 +55,16 @@ public class Topic extends BaseEntity{
         this.detail = detail;
         this.chapter = chapter;
         this.category = category;
-        this.keywords = keywords;
+
     }
 
-    public Topic updateTopic(String title, int startDate,int endDate, String detail, Chapter chapter, Category category, String keywords) {
+    public Topic updateTopic(String title,LocalDateTime startDate,LocalDateTime endDate, String detail, Chapter chapter, Category category) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.detail = detail;
         this.chapter = chapter;
         this.category = category;
-        this.keywords = keywords;
         return this;
     }
 

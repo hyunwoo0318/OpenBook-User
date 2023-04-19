@@ -190,7 +190,7 @@ class ChapterControllerTest {
         Chapter chapter = new Chapter("ct1", 1);
         chapterRepository.saveAndFlush(chapter);
         categoryRepository.saveAndFlush(category);
-        Topic topic = new Topic("title1", 1234, 1235, 0, 0, "detail1", chapter, category, "");
+        Topic topic = new Topic("title1", null, null, 0, 0, "detail1", chapter, category);
         topicRepository.saveAndFlush(topic);
 
         ResponseEntity<Void> response = restTemplate.exchange(URL + "/1", HttpMethod.DELETE, null, Void.class);

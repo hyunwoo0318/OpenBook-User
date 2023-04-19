@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,8 +21,6 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 public class TopicService {
-
-    public final static int NO_RECORD = 10000;
 
     private final TopicRepository topicRepository;
     private final CategoryRepository categoryRepository;
@@ -53,25 +52,20 @@ public class TopicService {
 
         //입력이 필수가 아닌 startDate, endDate, keywords처리
         //keywordList -> keywords
-        String keywords = "";
+        /*String keywords = "";
         if(topicDto.getKeywordList() != null){
            keywords  = parseKeywordList(topicDto.getKeywordList());
-        }
-
-        int startDate = (topicDto.getStartDate() == null) ? NO_RECORD : topicDto.getStartDate();
-        int endDate = (topicDto.getEndDate() == null) ? NO_RECORD : topicDto.getEndDate();
-
+        }*/
 
         Topic topic = Topic.builder()
                 .chapter(chapterOptional.get())
                 .category(categoryOptional.get())
                 .title(topicDto.getTitle())
-                .startDate(startDate)
-                .endDate(endDate)
+                .startDate(topicDto.getStartDate())
+                .endDate(topicDto.getEndDate())
                 .detail(topicDto.getDetail())
                 .questionNum(0)
                 .choiceNum(0)
-                .keywords(keywords)
                 .build();
 
         topicRepository.save(topic);
@@ -100,17 +94,14 @@ public class TopicService {
         if(!errorDtoList.isEmpty())
             return null;
 
-        String keywords = "";
+       /* String keywords = "";
         if(topicDto.getKeywordList() != null){
             keywords  = parseKeywordList(topicDto.getKeywordList());
-        }
-
-        int startDate = (topicDto.getStartDate() == null) ? NO_RECORD : topicDto.getStartDate();
-        int endDate = (topicDto.getEndDate() == null) ? NO_RECORD : topicDto.getEndDate();
+        }*/
 
         Topic topic = topicOptional.get();
-        topic.updateTopic(topicDto.getTitle(), startDate,endDate, topicDto.getDetail(),
-                chapterOptional.get(), categoryOptional.get(), keywords);
+        topic.updateTopic(topicDto.getTitle(), topicDto.getStartDate(),topicDto.getEndDate(), topicDto.getDetail(),
+                chapterOptional.get(), categoryOptional.get());
         return topic;
     }
 

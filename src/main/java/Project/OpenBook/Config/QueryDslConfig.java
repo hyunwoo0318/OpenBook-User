@@ -12,7 +12,6 @@ import javax.persistence.EntityManager;
 public class QueryDslConfig {
 
     private final EntityManager em;
-
     @Bean
     public JPAQueryFactory jpaQueryFactory(){
         return new JPAQueryFactory(em);

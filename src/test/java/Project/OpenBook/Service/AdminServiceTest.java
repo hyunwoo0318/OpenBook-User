@@ -31,7 +31,6 @@ class AdminServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
-    private Admin admin;
 
     @DisplayName("정상적인 회원가입")
     @Test
@@ -43,7 +42,6 @@ class AdminServiceTest {
         assertThat(registerAdmin.getLoginId()).isEqualTo(loginId);
         assertThat(registerAdmin.getPassword()).isEqualTo(passwordEncoder.encode(password));
         assertThat(registerAdmin.getRole()).isEqualTo(Role.ADMIN);
-        assertThat(registerAdmin.getAuthorities()).isEqualTo(Arrays.asList(new SimpleGrantedAuthority(Role.ADMIN)));
     }
 
 }

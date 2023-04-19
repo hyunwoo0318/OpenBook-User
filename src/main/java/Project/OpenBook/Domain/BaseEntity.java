@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain;
 
 import lombok.Getter;
+import net.bytebuddy.asm.Advice;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,9 +14,10 @@ import java.time.format.DateTimeFormatter;
 @MappedSuperclass
 @Getter
 public abstract class BaseEntity {
-    @Column(updatable = false)
+
+    @CreatedDate
     private String createdTime;
-    @Column
+    @LastModifiedDate
     private String modifiedTime;
 
     @PrePersist

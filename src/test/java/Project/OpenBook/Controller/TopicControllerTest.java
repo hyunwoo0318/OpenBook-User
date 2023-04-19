@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,11 +70,10 @@ class TopicControllerTest {
         Topic topic = Topic.builder()
                 .title("title1")
                 .detail("detail1")
-                .keywords("k1,k2")
                 .chapter(chapter)
                 .category(category)
-                .startDate(1234)
-                .endDate(1235)
+                .startDate(LocalDateTime.now())
+                .endDate(LocalDateTime.now())
                 .build();
 
         topicRepository.saveAndFlush(topic);
@@ -83,7 +83,7 @@ class TopicControllerTest {
     @DisplayName("새로운 상세정보 추가 - POST /admin/topics")
     @Test
     public void createTopicSuccess() {
-        TopicDto topicDto = new TopicDto(chapterNum, "title123", categoryName, null, null, "detail1", new ArrayList<>());
+        TopicDto topicDto = new TopicDto(chapterNum, "title123", categoryName, null, null, "detail1");
 
         ResponseEntity<Void> response = restTemplate.postForEntity(URL, topicDto, Void.class);
 
@@ -95,19 +95,19 @@ class TopicControllerTest {
     @Test
     public void creaeteTopicFailWrongDTO(){
 
-        //필수 입력 조건인 chapterNum,title,categoryName,detail 생략
+        //필수 입력 조건인 chapterNum,title,categoryName 생략
         TopicDto topicDto = new TopicDto();
         ErrorDto err1 = new ErrorDto("chapterNum", "단원 번호를 입력해주세요.");
         ErrorDto err2 = new ErrorDto("title", "상세정보 제목을 입력해주세요.");
         ErrorDto err3 = new ErrorDto("categoryName", "카테고리를 입력해주세요");
-        ErrorDto err4 = new ErrorDto("detail", "설명을 입력해주세요.");
-        List<ErrorDto> errorDtoList = Arrays.asList(err1, err2, err3, err4);
+
+        List<ErrorDto> errorDtoList = Arrays.asList(err1, err2, err3);
 
         ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(topicDto), new ParameterizedTypeReference<List<ErrorDto>>() {
         });
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response.getBody().size()).isEqualTo(4);
+        assertThat(response.getBody().size()).isEqualTo(3);
         assertThat(response.getBody().containsAll(errorDtoList)).isTrue();
     }
 
@@ -115,13 +115,13 @@ class TopicControllerTest {
     @Test
     public void createTopicFailWrongInput() {
         //제목이 중복되는 경우
-        TopicDto wrongDto1 = new TopicDto(chapterNum, "title1", categoryName, null, null, "detail123", new ArrayList<>());
+        TopicDto wrongDto1 = new TopicDto(chapterNum, "title1", categoryName, null, null, "detail123");
 
         //존재하지 않는 단원번호를 입력한경우
-        TopicDto wrongDto2 = new TopicDto(2, "title123", categoryName, null, null, "detail123", new ArrayList<>());
+        TopicDto wrongDto2 = new TopicDto(2, "title123", categoryName, null, null, "detail123");
 
         //존재하지 않는 카테고리를 입력한경우
-        TopicDto wrongDto3 = new TopicDto(chapterNum, "title123", "사건", null, null, "detail123", new ArrayList<>());
+        TopicDto wrongDto3 = new TopicDto(chapterNum, "title123", "사건", null, null, "detail123");
 
         ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {
         });
@@ -143,15 +143,13 @@ class TopicControllerTest {
     @DisplayName("기존 상세정보 변경 성공 - PATCH admin/topics")
     @Test
     public void updateTopicSuccess() {
-        TopicDto dto = new TopicDto(chapterNum, "title2", categoryName, 1234, 1235, "detail123", new ArrayList<>());
+        TopicDto dto = new TopicDto(chapterNum, "title2", categoryName, null, null, "detail123");
 
         ResponseEntity<Void> response = restTemplate.exchange(URL + "/title1", HttpMethod.PATCH, new HttpEntity<>(dto), Void.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(topicRepository.findTopicByTitle("title1").isEmpty()).isTrue();
         assertThat(topicRepository.findTopicByTitle("title2").isPresent()).isTrue();
-        assertThat(topicRepository.findTopicByTitle("title2").get().getStartDate()).isEqualTo(1234);
-        assertThat(topicRepository.findTopicByTitle("title2").get().getEndDate()).isEqualTo(1235);
         assertThat(topicRepository.findTopicByTitle("title2").get().getDetail()).isEqualTo("detail123");
     }
 

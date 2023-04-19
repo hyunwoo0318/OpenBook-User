@@ -42,23 +42,23 @@ public class SecurityConfig{
             "/v3/api-docs/**",
             "/swagger-ui/**",
     };
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http.csrf().disable()
+                .formLogin().disable()
+                .authorizeRequests()
+                .antMatchers("/**").permitAll()
+                /*.antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/**").hasRole("USER")
+                .anyRequest().authenticated()*/
+                .and().httpBasic().and().build();
+    }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
-                .formLogin().disable()
-                .authorizeRequests()
-                .antMatchers(permitAllList).permitAll()
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/**").hasRole("USER")
-                .anyRequest().authenticated()
-                .and().httpBasic().and().build();
-    }
 
     @Bean
     public void initAdmin(){

@@ -1,4 +1,4 @@
 Spring:
   datasource:
-    username: openbook
-    password: openbook123*
+    username: sa
+    password:
