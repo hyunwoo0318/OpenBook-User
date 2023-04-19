@@ -12,7 +12,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+
 import java.time.LocalDateTime;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,15 +32,27 @@ public class TopicService {
 
     private final ChapterRepository chapterRepository;
 
+    public TopicDto queryTopic(String topicTitle) {
+        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
+        if (topicOptional.isEmpty()) {
+            return null;
+        }
+        Topic topic = topicOptional.get();
+
+        TopicDto topicDto = new TopicDto(topic.getChapter().getNumber(), topic.getTitle(), topic.getCategory().getName(), topic.getStartDate(), topic.getEndDate()
+                , topic.getDetail(), topic.getKeywords());
+        return topicDto;
+    }
+
     public Topic createTopic(TopicDto topicDto, List<ErrorDto> errorDtoList) {
 
-        String categoryName = topicDto.getCategoryName();
+        String categoryName = topicDto.getCategory();
         Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
         if (categoryOptional.isEmpty()) {
             errorDtoList.add(new ErrorDto("category", "존재하지않는 카테고리입니다."));
         }
 
-        int chapterNum = topicDto.getChapterNum();
+        int chapterNum = topicDto.getChapter();
         Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(chapterNum);
         if (chapterOptional.isEmpty()) {
             errorDtoList.add(new ErrorDto("chapter", "존재하지않는 단원입니다."));
@@ -52,10 +69,12 @@ public class TopicService {
 
         //입력이 필수가 아닌 startDate, endDate, keywords처리
         //keywordList -> keywords
+
         /*String keywords = "";
         if(topicDto.getKeywordList() != null){
            keywords  = parseKeywordList(topicDto.getKeywordList());
         }*/
+
 
         Topic topic = Topic.builder()
                 .chapter(chapterOptional.get())
@@ -78,13 +97,13 @@ public class TopicService {
             return null;
         }
 
-        String categoryName = topicDto.getCategoryName();
+        String categoryName = topicDto.getCategory();
         Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
         if (categoryOptional.isEmpty()) {
             errorDtoList.add(new ErrorDto("category", "존재하지않는 카테고리입니다."));
         }
 
-        int chapterNum = topicDto.getChapterNum();
+        int chapterNum = topicDto.getChapter();
         Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(chapterNum);
         if (chapterOptional.isEmpty()) {
             errorDtoList.add(new ErrorDto("chapter", "존재하지않는 단원입니다."));
@@ -94,6 +113,7 @@ public class TopicService {
         if(!errorDtoList.isEmpty())
             return null;
 
+
        /* String keywords = "";
         if(topicDto.getKeywordList() != null){
             keywords  = parseKeywordList(topicDto.getKeywordList());
@@ -102,6 +122,7 @@ public class TopicService {
         Topic topic = topicOptional.get();
         topic.updateTopic(topicDto.getTitle(), topicDto.getStartDate(),topicDto.getEndDate(), topicDto.getDetail(),
                 chapterOptional.get(), categoryOptional.get());
+
         return topic;
     }
 
@@ -118,5 +139,10 @@ public class TopicService {
 
     public String parseKeywordList(List<String> keywordList) {
       return keywordList.stream().collect(Collectors.joining(","));
+    }
+
+    public List<String> mergeKeywordList(String keywords) {
+        String[] split = keywords.split(",");
+        return Arrays.asList(split);
     }
 }

@@ -4,6 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
+<<<<<<< HEAD
     <list default="true" id="eb59b8ed-46cf-4aaf-a193-cbae2bed74cb" name="Changes" comment="chapter create, select, update 구현 &amp; 테스트 구현">
       <change afterPath="$PROJECT_DIR$/.idea/jpa-buddy.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChoiceController.java" afterDir="false" />
@@ -16,6 +17,13 @@
       <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Repository/choice/ChoiceRepositoryCustom.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Repository/choice/ChoiceRepositoryCustomImpl.java" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/ChoiceService.java" afterDir="false" />
+=======
+    <list default="true" id="eb59b8ed-46cf-4aaf-a193-cbae2bed74cb" name="Changes" comment="cors config">
+      <change afterPath="$PROJECT_DIR$/lombok.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/TempController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/TopicTitleListDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Controller/AdminControllerTest.java" afterDir="false" />
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
       <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/checksums/checksums.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/checksums/md5-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/7.6.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/7.6.1/checksums/sha1-checksums.bin" afterDir="false" />
@@ -27,6 +35,7 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
@@ -48,6 +57,22 @@
       <change beforePath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Controller/ChapterControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Controller/ChapterControllerTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Controller/TopicControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Controller/TopicControllerTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Service/AdminServiceTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Service/AdminServiceTest.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Controller/AdminController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Controller/AdminController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Dto/AdminDto.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Dto/AdminDto.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/AdminController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/AdminController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChapterController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChapterController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/TopicController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/TopicController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/AdminDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/AdminDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ChapterDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ChapterDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/TopicDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/TopicDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/ChapterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/ChapterService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/TopicService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/TopicService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Controller/TopicControllerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/Project/OpenBook/Controller/TopicControllerTest.java" afterDir="false" />
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,19 +106,7 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="OpenBook" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="build" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="OpenBook" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="other" type="c8890929:TasksNode$1" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="OpenBook" type="f1a62948:ProjectNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="querydsl" type="c8890929:TasksNode$1" />
+                <item name="verification" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -107,6 +120,10 @@
       <list>
         <option value="JUnit5 Test Class" />
         <option value="Interface" />
+<<<<<<< HEAD
+=======
+        <option value="JUnit5 Test Class" />
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
         <option value="Class" />
       </list>
     </option>
@@ -184,8 +201,13 @@
       <recent name="Project.OpenBook.Service" />
     </key>
   </component>
+<<<<<<< HEAD
   <component name="RunManager" selected="Gradle.OpenBook [compileQuerydsl]">
     <configuration name="OpenBook [compileQuerydsl]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+=======
+  <component name="RunManager" selected="Spring Boot.OpenBookApplication">
+    <configuration name="OpenBook [jacocoTestCoverageVerification]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
       <ExternalSystemSettings>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
@@ -196,7 +218,11 @@
         </option>
         <option name="taskNames">
           <list>
+<<<<<<< HEAD
             <option value="compileQuerydsl" />
+=======
+            <option value="jacocoTestCoverageVerification" />
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
           </list>
         </option>
         <option name="vmOptions" />
@@ -206,22 +232,64 @@
       <DebugAllEnabled>false</DebugAllEnabled>
       <method v="2" />
     </configuration>
+<<<<<<< HEAD
     <configuration name="All in OpenBook.test (1)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+=======
+    <configuration name="OpenBook [test]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="test" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="AdminControllerTest.adminLoginFail" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
       <module name="OpenBook.test" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="TEST_OBJECT" value="package" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Project.OpenBook.Controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Project.OpenBook.Controller" />
+      <option name="MAIN_CLASS_NAME" value="Project.OpenBook.Controller.AdminControllerTest" />
+      <option name="METHOD_NAME" value="adminLoginFail" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="All in OpenBook.test (2)" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="AdminControllerTest.adminLoginSuccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="OpenBook.test" />
-      <option name="PACKAGE_NAME" value="" />
-      <option name="TEST_OBJECT" value="package" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="Project.OpenBook.Controller.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="Project.OpenBook.Controller" />
+      <option name="MAIN_CLASS_NAME" value="Project.OpenBook.Controller.AdminControllerTest" />
+      <option name="METHOD_NAME" value="adminLoginSuccess" />
+      <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+<<<<<<< HEAD
     <configuration name="All in OpenBook.test" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="OpenBook.test" />
       <option name="PACKAGE_NAME" value="" />
@@ -231,6 +299,9 @@
       </method>
     </configuration>
     <configuration name="DeleteTest.deleteAllInBatch" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+=======
+    <configuration name="TopicControllerTest.createTopicSuccess" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
       <module name="OpenBook.test" />
       <extension name="coverage">
         <pattern>
@@ -238,9 +309,15 @@
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+<<<<<<< HEAD
       <option name="PACKAGE_NAME" value="Project.OpenBook.Service" />
       <option name="MAIN_CLASS_NAME" value="Project.OpenBook.Service.DeleteTest" />
       <option name="METHOD_NAME" value="deleteAllInBatch" />
+=======
+      <option name="PACKAGE_NAME" value="Project.OpenBook.Controller" />
+      <option name="MAIN_CLASS_NAME" value="Project.OpenBook.Controller.TopicControllerTest" />
+      <option name="METHOD_NAME" value="createTopicSuccess" />
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
       <option name="TEST_OBJECT" value="method" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -255,11 +332,19 @@
     </configuration>
     <recent_temporary>
       <list>
+<<<<<<< HEAD
         <item itemvalue="Gradle.OpenBook [compileQuerydsl]" />
         <item itemvalue="JUnit.All in OpenBook.test (2)" />
         <item itemvalue="JUnit.All in OpenBook.test (1)" />
         <item itemvalue="JUnit.All in OpenBook.test" />
         <item itemvalue="JUnit.DeleteTest.deleteAllInBatch" />
+=======
+        <item itemvalue="JUnit.TopicControllerTest.createTopicSuccess" />
+        <item itemvalue="Gradle.OpenBook [jacocoTestCoverageVerification]" />
+        <item itemvalue="Gradle.OpenBook [test]" />
+        <item itemvalue="JUnit.AdminControllerTest.adminLoginFail" />
+        <item itemvalue="JUnit.AdminControllerTest.adminLoginSuccess" />
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
       </list>
     </recent_temporary>
   </component>
@@ -291,12 +376,23 @@
       <workItem from="1680061483663" duration="18742000" />
       <workItem from="1680095797867" duration="338000" />
       <workItem from="1680146187197" duration="18872000" />
+<<<<<<< HEAD
       <workItem from="1680172552339" duration="765000" />
       <workItem from="1680181809450" duration="1552000" />
       <workItem from="1680449664543" duration="3126000" />
       <workItem from="1681178014156" duration="2622000" />
       <workItem from="1681744305808" duration="632000" />
       <workItem from="1681904233345" duration="7666000" />
+=======
+      <workItem from="1680172552339" duration="1161000" />
+      <workItem from="1680238989576" duration="797000" />
+      <workItem from="1680245768282" duration="3726000" />
+      <workItem from="1680330134902" duration="7937000" />
+      <workItem from="1680408674898" duration="1210000" />
+      <workItem from="1680445007234" duration="4115000" />
+      <workItem from="1680505287161" duration="6842000" />
+      <workItem from="1680523890275" duration="145000" />
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
     </task>
     <task id="LOCAL-00001" summary="Chapter관련 기능 구현중">
       <created>1680016483438</created>
@@ -312,7 +408,14 @@
       <option name="project" value="LOCAL" />
       <updated>1680087727418</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="cors config">
+      <created>1680334947576</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1680334947576</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -332,7 +435,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Chapter관련 기능 구현중" />
     <MESSAGE value="chapter create, select, update 구현 &amp; 테스트 구현" />
-    <option name="LAST_COMMIT_MESSAGE" value="chapter create, select, update 구현 &amp; 테스트 구현" />
+    <MESSAGE value="cors config" />
+    <option name="LAST_COMMIT_MESSAGE" value="cors config" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -353,8 +457,13 @@
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
+<<<<<<< HEAD
           <url>file://$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/TopicService.java</url>
           <line>60</line>
+=======
+          <url>file://$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/TopicController.java</url>
+          <line>62</line>
+>>>>>>> 397e46b1e2bcb3d42bb04015834eb3bd0403e079
           <option name="timeStamp" value="23" />
         </line-breakpoint>
       </breakpoints>

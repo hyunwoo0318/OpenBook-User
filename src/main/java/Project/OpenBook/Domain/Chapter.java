@@ -32,9 +32,9 @@ public class Chapter extends BaseEntity {
     @OneToMany(mappedBy = "chapter")
     private List<Topic> topicList = new ArrayList<>();
 
-    public Chapter updateChapter(String title, int num) {
+    public Chapter updateChapter(String title, int number) {
         this.title = title;
-        this.number = num;
+        this.number = number;
         return this;
     }
 
