@@ -15,5 +15,5 @@ import java.util.List;
 public class ChoiceUpdateDto {
 
     @NotEmpty(message = "하나 이상의 선지를 입력해주세요.")
-    private List<ChoiceContentIdDto> choiceContentIdDtoList;
+    private List<ChoiceContentIdDto> choiceList;
 }

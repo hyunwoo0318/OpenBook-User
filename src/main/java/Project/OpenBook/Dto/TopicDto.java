@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class TopicDto {
 
-    @Min(value = 0, message = "단원 번호를 입력해주세요.")
+    @Min(value = 1, message = "단원 번호를 입력해주세요.")
     private int chapter;
 
     @NotBlank(message = "상세정보 제목을 입력해주세요.")

@@ -11,9 +11,9 @@ import Project.OpenBook.Repository.choice.ChoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,21 +52,23 @@ public class ChoiceService {
         return true;
     }
 
+    @Transactional
     public Boolean updateChoices(ChoiceUpdateDto choiceUpdateDto) {
-        List<ChoiceContentIdDto> choiceContentIdDtoList = choiceUpdateDto.getChoiceContentIdDtoList();
+        List<ChoiceContentIdDto> choiceContentIdDtoList = choiceUpdateDto.getChoiceList();
         Map<Long, String> choiceMap = new ConcurrentHashMap<>();
 
         //수정할 choiceList를 꺼내옴
         List<Long> choiceIdList = choiceContentIdDtoList.stream().map(c -> c.getId()).collect(Collectors.toList());
-        if(choiceIdList.size() != choiceContentIdDtoList.size()){
-            return false;
-        }
 
         //각 id, content를 매핑해놔서 수정할때 이용
         choiceContentIdDtoList.stream().forEach(c -> choiceMap.put(c.getId(), c.getContent()));
 
         //수정할 choiceList
         List<Choice> choiceList = choiceRepository.queryChoicesById(choiceIdList);
+        //존재하지 않는 선지를 입력할 경우 false를 return
+        if (choiceList.size() != choiceIdList.size()) {
+            return false;
+        }
         for (Choice choice : choiceList) {
             choice.updateContent(choiceMap.get(choice.getId()));
         }

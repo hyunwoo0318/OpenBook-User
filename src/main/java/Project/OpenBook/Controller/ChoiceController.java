@@ -30,7 +30,7 @@ public class ChoiceController {
             @ApiResponse(responseCode = "200", description = "성공적인 조회")
     })
     @GetMapping("/admin/topics/{topicTitle}/choices/")
-    public ResponseEntity getChoicesInTopics(@RequestParam("topicTitle") String topicTitle){
+    public ResponseEntity getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
         List<ChoiceDto> choiceList = choiceService.queryTopicsByTopic(topicTitle);
         return new ResponseEntity(choiceList,HttpStatus.OK);
     }
@@ -41,7 +41,7 @@ public class ChoiceController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 선지 조회 요청")
     })
     @GetMapping("/admin/choices/{choiceId}")
-    public ResponseEntity getChoice(@RequestParam("choiceId") Long choiceId) {
+    public ResponseEntity getChoice(@PathVariable("choiceId") Long choiceId) {
         ChoiceDto choiceDto = choiceService.queryChoice(choiceId);
         if (choiceDto == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
@@ -63,7 +63,7 @@ public class ChoiceController {
             errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
         }
         if (!res) {
-            errorDtoList.add(new ErrorDto("topic", "정확한 토픽제목을 입력해주세요"));
+            errorDtoList.add(new ErrorDto("topicTitle", "정확한 토픽제목을 입력해주세요"));
         }
         if(!errorDtoList.isEmpty()){
             return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);

@@ -40,7 +40,7 @@ public class TopicService {
         Topic topic = topicOptional.get();
 
         TopicDto topicDto = new TopicDto(topic.getChapter().getNumber(), topic.getTitle(), topic.getCategory().getName(), topic.getStartDate(), topic.getEndDate()
-                , topic.getDetail(), topic.getKeywords());
+                , topic.getDetail());
         return topicDto;
     }
 

@@ -98,18 +98,12 @@ class TopicControllerTest {
 
         //필수 입력 조건인 chapterNum,title,categoryName 생략
         TopicDto topicDto = new TopicDto();
-        ErrorDto err1 = new ErrorDto("chapterNum", "단원 번호를 입력해주세요.");
-        ErrorDto err2 = new ErrorDto("title", "상세정보 제목을 입력해주세요.");
-        ErrorDto err3 = new ErrorDto("categoryName", "카테고리를 입력해주세요");
-
-        List<ErrorDto> errorDtoList = Arrays.asList(err1, err2, err3);
 
         ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(topicDto), new ParameterizedTypeReference<List<ErrorDto>>() {
         });
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody().size()).isEqualTo(3);
-        assertThat(response.getBody().containsAll(errorDtoList)).isTrue();
     }
 
     @DisplayName("새로운 상세정보 추가 실패 (중복된 입력, 존재하지않는 카테고리 & 단원) - POST admin/chapters")

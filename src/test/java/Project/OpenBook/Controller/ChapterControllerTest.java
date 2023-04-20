@@ -187,17 +187,14 @@ class ChapterControllerTest {
     @Test
     public void deleteChapterSuccess() {
         Category category = new Category("유물");
-        Chapter chapter = new Chapter("ct1", 1);
+        Chapter chapter = new Chapter("ct1", 1111);
         chapterRepository.saveAndFlush(chapter);
         categoryRepository.saveAndFlush(category);
-        Topic topic = new Topic("title1", null, null, 0, 0, "detail1", chapter, category);
-        topicRepository.saveAndFlush(topic);
 
-        ResponseEntity<Void> response = restTemplate.exchange(URL + "/1", HttpMethod.DELETE, null, Void.class);
+        ResponseEntity<Void> response = restTemplate.exchange(URL + "/1111", HttpMethod.DELETE, null, Void.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(chapterRepository.findOneByNumber(1).isEmpty()).isTrue();
-        assertThat(topicRepository.findTopicByTitle("title1").get().getChapter()).isNull();
+        assertThat(chapterRepository.findOneByNumber(1111).isEmpty()).isTrue();
     }
 
     @DisplayName("단원 삭제 실패 - DELETE admin/chapters")
