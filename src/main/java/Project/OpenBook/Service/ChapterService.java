@@ -4,7 +4,7 @@ import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.ErrorDto;
 import Project.OpenBook.Repository.ChapterRepository;
-import Project.OpenBook.Repository.TopicRepository;
+import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

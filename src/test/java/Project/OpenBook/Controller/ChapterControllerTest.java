@@ -3,13 +3,12 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Chapter;
-import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.ChapterDto;
 import Project.OpenBook.Dto.ChapterListDto;
 import Project.OpenBook.Dto.ErrorDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
-import Project.OpenBook.Repository.TopicRepository;
+import Project.OpenBook.Repository.topic.TopicRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

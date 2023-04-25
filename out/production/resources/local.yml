@@ -1,4 +1,4 @@
-Spring:
+spring:
   datasource:
-    username: sa
-    password:
+    username: openbook
+    password: openbook123*

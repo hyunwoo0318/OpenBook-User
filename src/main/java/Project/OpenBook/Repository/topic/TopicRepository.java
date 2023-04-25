@@ -1,4 +1,4 @@
-package Project.OpenBook.Repository;
+package Project.OpenBook.Repository.topic;
 
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Chapter;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TopicRepository extends JpaRepository<Topic, Long> {
+public interface TopicRepository extends JpaRepository<Topic, Long>, TopicRepositoryCustom {
 
     public Optional<Topic> findTopicByTitle(String title);
 

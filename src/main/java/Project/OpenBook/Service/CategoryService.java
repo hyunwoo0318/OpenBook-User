@@ -4,7 +4,7 @@ import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.ErrorDto;
 import Project.OpenBook.Repository.CategoryRepository;
-import Project.OpenBook.Repository.TopicRepository;
+import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -69,4 +69,9 @@ public class CategoryService {
     }
 
 
+    public boolean findCategory(String categoryName) {
+        Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
+        if(categoryOptional.isEmpty()) return false;
+        return true;
+    }
 }

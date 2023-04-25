@@ -22,6 +22,9 @@ public class Category extends BaseEntity {
     @OneToMany(mappedBy = "category")
     private List<Topic> topicList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "category")
+    private List<Question> questionList = new ArrayList<>();
+
 
     public Category(String name) {
         this.name = name;

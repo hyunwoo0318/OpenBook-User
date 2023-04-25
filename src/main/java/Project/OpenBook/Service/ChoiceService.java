@@ -6,7 +6,7 @@ import Project.OpenBook.Dto.ChoiceContentIdDto;
 import Project.OpenBook.Dto.ChoiceDto;
 import Project.OpenBook.Dto.ChoiceAddDto;
 import Project.OpenBook.Dto.ChoiceUpdateDto;
-import Project.OpenBook.Repository.TopicRepository;
+import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -9,6 +9,7 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +25,9 @@ public class Topic extends BaseEntity{
     @Column(unique = true)
     private String title;
     @ColumnDefault(value = "10000")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
     @ColumnDefault(value = "10000")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
     @ColumnDefault(value = "0")
     private int questionNum;
 
@@ -48,7 +49,7 @@ public class Topic extends BaseEntity{
     private List<Choice> choiceList = new ArrayList<>();
 
     @Builder
-    public Topic(String title, LocalDateTime startDate, LocalDateTime endDate, int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
+    public Topic(String title, LocalDate startDate, LocalDate endDate, int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -60,7 +61,7 @@ public class Topic extends BaseEntity{
 
     }
 
-    public Topic updateTopic(String title,LocalDateTime startDate,LocalDateTime endDate, String detail, Chapter chapter, Category category) {
+    public Topic updateTopic(String title,LocalDate startDate,LocalDate endDate, String detail, Chapter chapter, Category category) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;

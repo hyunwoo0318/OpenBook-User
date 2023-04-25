@@ -9,23 +9,21 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Choice extends BaseEntity{
+public class Description extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    public Choice(String content, Topic topic) {
+    public Description(String content, Topic topic) {
         this.content = content;
         this.topic = topic;
     }
 
-    public void updateContent(String content) {
-        this.content = content;
-    }
 }

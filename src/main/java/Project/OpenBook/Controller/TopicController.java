@@ -3,7 +3,6 @@ package Project.OpenBook.Controller;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.ErrorDto;
 import Project.OpenBook.Dto.TopicDto;
-import Project.OpenBook.Repository.TopicRepository;
 import Project.OpenBook.Service.TopicService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -18,8 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor

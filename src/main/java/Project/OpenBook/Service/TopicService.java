@@ -7,15 +7,12 @@ import Project.OpenBook.Dto.ErrorDto;
 import Project.OpenBook.Dto.TopicDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
-import Project.OpenBook.Repository.TopicRepository;
+import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import java.time.LocalDateTime;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import java.util.List;

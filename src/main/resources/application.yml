@@ -1,12 +1,10 @@
 spring:
   config:
-    import: local.yml
+    import: local.yml, prompt-template.yml
 
   datasource:
     url: jdbc:mariadb://localhost:3306/OpenBook
     driver-class-name: org.mariadb.jdbc.Driver
-    username: sa
-    password:
 
   jpa:
     hibernate:

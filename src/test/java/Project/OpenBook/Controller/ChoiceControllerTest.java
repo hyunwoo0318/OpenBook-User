@@ -7,7 +7,7 @@ import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.*;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
-import Project.OpenBook.Repository.TopicRepository;
+import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

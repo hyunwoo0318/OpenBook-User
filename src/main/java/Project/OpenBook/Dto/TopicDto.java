@@ -5,6 +5,7 @@ import lombok.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -23,9 +24,9 @@ public class TopicDto {
     @NotBlank(message = "카테고리를 입력해주세요")
     private String category;
 
-    private LocalDateTime startDate;
+    private LocalDate startDate;
 
-    private LocalDateTime endDate;
+    private LocalDate endDate;
 
    /* @NotBlank(message = "설명을 입력해주세요.")*/
     private String detail;

@@ -32,6 +32,8 @@ public class QCategory extends EntityPathBase<Category> {
 
     public final StringPath name = createString("name");
 
+    public final ListPath<Question, QQuestion> questionList = this.<Question, QQuestion>createList("questionList", Question.class, QQuestion.class, PathInits.DIRECT2);
+
     public final ListPath<Topic, QTopic> topicList = this.<Topic, QTopic>createList("topicList", Topic.class, QTopic.class, PathInits.DIRECT2);
 
     public QCategory(String variable) {
