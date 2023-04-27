@@ -1,11 +1,10 @@
-package Project.OpenBook.Repository;
+package Project.OpenBook.Repository.Question;
 
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.ChoiceContentIdDto;
 import Project.OpenBook.Dto.DescriptionContentIdDto;
 import Project.OpenBook.Dto.QuestionDto;
 import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -14,8 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Domain.QChoice.choice;
-import static Project.OpenBook.Domain.QDescription.description;
-import static Project.OpenBook.Domain.QQuestion.question;
 import static Project.OpenBook.Domain.QQuestionChoice.questionChoice;
 import static Project.OpenBook.Domain.QQuestionDescription.questionDescription;
 

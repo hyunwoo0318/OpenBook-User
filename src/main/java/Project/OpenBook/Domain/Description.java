@@ -26,4 +26,9 @@ public class Description extends BaseEntity{
         this.topic = topic;
     }
 
+    public Description updateDescription(String content, Topic topic) {
+        this.content = content;
+        this.topic = topic;
+        return this;
+    }
 }

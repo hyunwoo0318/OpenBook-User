@@ -7,7 +7,7 @@ import Project.OpenBook.Dto.QuestionDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.QuestionChoiceRepository;
 import Project.OpenBook.Repository.QuestionDescriptionRepository;
-import Project.OpenBook.Repository.QuestionRepository;
+import Project.OpenBook.Repository.Question.QuestionRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
@@ -160,19 +160,41 @@ public class QuestionService {
         return question;
     }
 
-    public Question updateQuestion(QuestionDto questionDto) {
+    @Transactional
+    public Question updateQuestion(Long questionId, QuestionDto questionDto) {
+
+        Optional<Question> questionOptional = questionRepository.findById(questionId);
+        if (questionOptional.isEmpty()) {
+            return null;
+        }
+        Question question = questionOptional.get();
+
         Long type = questionDto.getType();
         String categoryName = questionDto.getCategoryName();
         Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
         if (categoryOptional.isEmpty() || type > 3) {
             return null;
         }
-        return null;
+        Category category = categoryOptional.get();
+
+        Question updatedQuestion = question.updateQuestion(questionDto.getPrompt(), questionDto.getAnswerChoiceId(), type, category);
+
+        return updatedQuestion;
     }
 
     @Transactional
     public QuestionDto queryQuestion(Long id) {
         return questionRepository.findQuestionById(id);
+    }
+
+    public boolean deleteQuestion(Long questionId) {
+
+        Optional<Question> questionOptional = questionRepository.findById(questionId);
+        if (questionOptional.isEmpty()) {
+            return false;
+        }
+        questionRepository.deleteById(questionId);
+        return true;
     }
 
     private class TempQ {

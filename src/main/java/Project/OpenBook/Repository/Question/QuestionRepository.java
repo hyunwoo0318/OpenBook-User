@@ -1,4 +1,4 @@
-package Project.OpenBook.Repository;
+package Project.OpenBook.Repository.Question;
 
 import Project.OpenBook.Domain.Question;
 import org.springframework.data.jpa.repository.JpaRepository;

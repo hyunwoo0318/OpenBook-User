@@ -1,4 +1,4 @@
-package Project.OpenBook.Repository;
+package Project.OpenBook.Repository.Question;
 
 import Project.OpenBook.Dto.QuestionDto;
 
