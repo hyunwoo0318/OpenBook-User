@@ -227,7 +227,7 @@ class ChoiceControllerTest {
         Set<String> contentSet = choiceList.stream().map(c -> c.getContent()).collect(Collectors.toSet());
 
         assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response1.getBody().get(0)).isEqualTo(new ErrorDto("choiceContentIdDtoList", "하나 이상의 선지를 입력해주세요."));
+        assertThat(response1.getBody().get(0)).isEqualTo(new ErrorDto("choiceList", "하나 이상의 선지를 입력해주세요."));
 
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
 

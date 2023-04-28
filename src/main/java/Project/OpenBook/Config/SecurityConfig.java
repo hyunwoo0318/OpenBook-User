@@ -107,16 +107,16 @@ public class SecurityConfig {
             adminRepository.save(admin1);
             adminRepository.save(admin2);
         }
-//
-//
-//        //카테고리 전체 저장
-//        Category c1 = new Category("유물");
-//        Category c2 = new Category("사건");
-//        Category c3 = new Category("국가");
-//        Category c4 = new Category("인물");
-//
-//        categoryRepository.saveAllAndFlush(Arrays.asList(c1, c2, c3, c4));
-//
+
+
+        //카테고리 전체 저장
+        Category c1 = new Category("유물");
+        Category c2 = new Category("사건");
+        Category c3 = new Category("국가");
+        Category c4 = new Category("인물");
+
+        categoryRepository.saveAllAndFlush(Arrays.asList(c1, c2, c3, c4));
+
 //        //단원 전체 저장
 //        Chapter ch1 = new Chapter("ch1", 1);
 //        Chapter ch2 = new Chapter("ch2", 2);
@@ -133,8 +133,7 @@ public class SecurityConfig {
 //            int t = 1;
 //            int year = rand.nextInt(1900) + 1;
 //            int month = rand.nextInt(12) + 1; // 1~12 사이의 월을 랜덤으로 생성
-//            int maxDay = LocalDate.of(year, month, 1).lengthOfMonth(); // 해당 월의 최대 일수를 구함
-//            int day = rand.nextInt(maxDay) + 1; // 1부터 최대 일수 사이의 일을 랜덤으로 생성
+//            int day = rand.nextInt(26) + 1; // 1부터 최대 일수 사이의 일을 랜덤으로 생성
 //
 //            LocalDate startDate = LocalDate.of(year, month, day);
 //            LocalDate endDate = LocalDate.of(year + 100, month, day);

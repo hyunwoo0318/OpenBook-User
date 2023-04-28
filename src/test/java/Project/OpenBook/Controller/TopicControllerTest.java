@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -68,8 +69,8 @@ class TopicControllerTest {
                 .detail("detail1")
                 .chapter(chapter)
                 .category(category)
-                .startDate(LocalDateTime.now())
-                .endDate(LocalDateTime.now())
+                .startDate(LocalDate.now())
+                .endDate(LocalDate.now())
                 .build();
 
         topicRepository.saveAndFlush(topic);
