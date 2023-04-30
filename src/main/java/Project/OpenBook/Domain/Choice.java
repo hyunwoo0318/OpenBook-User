@@ -28,4 +28,10 @@ public class Choice extends BaseEntity{
     public void updateContent(String content) {
         this.content = content;
     }
+
+    public Choice updateChoice(String content,Topic topic) {
+        this.content = content;
+        this.topic = topic;
+        return this;
+    }
 }

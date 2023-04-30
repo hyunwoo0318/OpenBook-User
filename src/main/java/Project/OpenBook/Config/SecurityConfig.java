@@ -48,14 +48,6 @@ import java.util.*;
 public class SecurityConfig {
 
     private final AdminRepository adminRepository;
-    private final TopicRepository topicRepository;
-    private final ChoiceRepository choiceRepository;
-    private final DescriptionRepository descriptionRepository;
-
-    private final CategoryRepository categoryRepository;
-
-    private final ChapterRepository chapterRepository;
-
 
     private final String[] permitAllList = {
             "/","/admin/login", "/users/login", "/admin/", "/users/",
@@ -107,72 +99,6 @@ public class SecurityConfig {
             adminRepository.save(admin1);
             adminRepository.save(admin2);
         }
-
-
-        //카테고리 전체 저장
-        Category c1 = new Category("유물");
-        Category c2 = new Category("사건");
-        Category c3 = new Category("국가");
-        Category c4 = new Category("인물");
-
-        categoryRepository.saveAllAndFlush(Arrays.asList(c1, c2, c3, c4));
-
-//        //단원 전체 저장
-//        Chapter ch1 = new Chapter("ch1", 1);
-//        Chapter ch2 = new Chapter("ch2", 2);
-//        Chapter ch3 = new Chapter("ch3", 3);
-//
-//        chapterRepository.saveAllAndFlush(Arrays.asList(ch1, ch2, ch3));
-//
-//        //topic 전체 생성
-//        Random rand = new Random();
-//        List<Topic> topicList = new ArrayList<>();
-//
-//        for (int i = 1; i <= 10000; i++) {
-//
-//            int t = 1;
-//            int year = rand.nextInt(1900) + 1;
-//            int month = rand.nextInt(12) + 1; // 1~12 사이의 월을 랜덤으로 생성
-//            int day = rand.nextInt(26) + 1; // 1부터 최대 일수 사이의 일을 랜덤으로 생성
-//
-//            LocalDate startDate = LocalDate.of(year, month, day);
-//            LocalDate endDate = LocalDate.of(year + 100, month, day);
-//
-//            Category c  = null;
-//            Chapter ch = null;
-//
-//
-//
-//            if(i <= 10){
-//                c = c1;
-//            }else if(i <= 20){
-//                c = c2;
-//            } else if (i <= 30) {
-//                c = c3;
-//            }else {
-//                c = c4;
-//            }
-//
-//            if(i % 3 == 0){
-//                ch = ch1;
-//            } else if (i % 3 == 1) {
-//                ch = ch2;
-//            }else{
-//                ch = ch3;
-//            }
-//            Topic topic = new Topic("topic" + i, startDate, endDate, 0, 0, "detail" + i, ch, c);
-//            topicList.add(topic);
-//            t++;
-//        }
-//        topicRepository.saveAllAndFlush(topicList);
-//
-//        //선지, 보기 생성
-//        for (Topic topic : topicList) {
-//            for (int i = 1; i <= 5; i++) {
-//                choiceRepository.save(new Choice("choice" + i + " in " + topic.getTitle(), topic));
-//                descriptionRepository.save(new Description("description" + i + " in " + topic.getTitle(), topic));
-//            }
-//        }
     }
 
     @Bean

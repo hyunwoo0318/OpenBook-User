@@ -53,35 +53,58 @@ public class ChoiceService {
     }
 
     @Transactional
-    public Boolean updateChoices(ChoiceUpdateDto choiceUpdateDto) {
-        List<ChoiceContentIdDto> choiceContentIdDtoList = choiceUpdateDto.getChoiceList();
-        Map<Long, String> choiceMap = new ConcurrentHashMap<>();
-
-        //수정할 choiceList를 꺼내옴
-        List<Long> choiceIdList = choiceContentIdDtoList.stream().map(c -> c.getId()).collect(Collectors.toList());
-
-        //각 id, content를 매핑해놔서 수정할때 이용
-        choiceContentIdDtoList.stream().forEach(c -> choiceMap.put(c.getId(), c.getContent()));
-
-        //수정할 choiceList
-        List<Choice> choiceList = choiceRepository.queryChoicesById(choiceIdList);
-        //존재하지 않는 선지를 입력할 경우 false를 return
-        if (choiceList.size() != choiceIdList.size()) {
-            return false;
+    public Choice updateChoice(ChoiceUpdateDto choiceUpdateDto, Long id) {
+        Optional<Choice> choiceOptional = choiceRepository.findById(id);
+        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(choiceUpdateDto.getTopic());
+        if (choiceOptional.isEmpty() || topicOptional.isEmpty()) {
+            return null;
         }
-        for (Choice choice : choiceList) {
-            choice.updateContent(choiceMap.get(choice.getId()));
-        }
-        return true;
+        Choice choice = choiceOptional.get();
+        Topic topic = topicOptional.get();
+        Choice updatedChoice = choice.updateChoice(choiceUpdateDto.getContent(), topic);
+        return updatedChoice;
     }
 
-    public Boolean deleteChoices(List<Long> choiceIdList) {
-        List<Choice> choiceList = choiceRepository.queryChoicesById(choiceIdList);
-        if(choiceList.size() != choiceIdList.size()){
+//    @Transactional
+//    public Boolean updateChoices(ChoiceUpdateDto choiceUpdateDto) {
+//        List<ChoiceContentIdDto> choiceContentIdDtoList = choiceUpdateDto.getChoiceList();
+//        Map<Long, String> choiceMap = new ConcurrentHashMap<>();
+//
+//        //수정할 choiceList를 꺼내옴
+//        List<Long> choiceIdList = choiceContentIdDtoList.stream().map(c -> c.getId()).collect(Collectors.toList());
+//
+//        //각 id, content를 매핑해놔서 수정할때 이용
+//        choiceContentIdDtoList.stream().forEach(c -> choiceMap.put(c.getId(), c.getContent()));
+//
+//        //수정할 choiceList
+//        List<Choice> choiceList = choiceRepository.queryChoicesById(choiceIdList);
+//        //존재하지 않는 선지를 입력할 경우 false를 return
+//        if (choiceList.size() != choiceIdList.size()) {
+//            return false;
+//        }
+//        for (Choice choice : choiceList) {
+//            choice.updateContent(choiceMap.get(choice.getId()));
+//        }
+//        return true;
+//    }
+
+//    public Boolean deleteChoices(List<Long> choiceIdList) {
+//        List<Choice> choiceList = choiceRepository.queryChoicesById(choiceIdList);
+//        if(choiceList.size() != choiceIdList.size()){
+//            return false;
+//        }
+//
+//        choiceRepository.deleteAllInBatch(choiceList);
+//        return true;
+//    }
+
+    @Transactional
+    public Boolean deleteChoice(Long choiceId) {
+        Optional<Choice> choiceOptional = choiceRepository.findById(choiceId);
+        if (choiceOptional.isEmpty()) {
             return false;
         }
-
-        choiceRepository.deleteAllInBatch(choiceList);
+        choiceRepository.deleteById(choiceId);
         return true;
     }
 }
