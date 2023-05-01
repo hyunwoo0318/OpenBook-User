@@ -4,12 +4,14 @@ import Project.OpenBook.Domain.Description;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.DescriptionCreateDto;
 import Project.OpenBook.Dto.DescriptionDto;
+import Project.OpenBook.Dto.DescriptionUpdateDto;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,6 +34,14 @@ public class DescriptionService {
         return descriptionDto;
     }
 
+
+    public List<Description> queryDescriptionsInTopic(String topicTitle) {
+        if(topicRepository.findTopicByTitle(topicTitle).isEmpty()){
+            return null;
+        }
+        return descriptionRepository.findDescriptionsByTopic(topicTitle);
+    }
+
     @Transactional
     public Description addDescription(DescriptionCreateDto descriptionCreateDto) {
         String topicTitle = descriptionCreateDto.getTopicTitle();
@@ -49,19 +59,16 @@ public class DescriptionService {
 
 
     @Transactional
-    public Description updateDescription(Long descriptionId, DescriptionCreateDto descriptionCreateDto) {
+    public Description updateDescription(Long descriptionId, DescriptionUpdateDto descriptionUpdateDto) {
 
         Optional<Description> descriptionOptional = descriptionRepository.findById(descriptionId);
-        String topicTitle = descriptionCreateDto.getTopicTitle();
-        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
-        if (topicOptional.isEmpty() || descriptionOptional.isEmpty()) {
+        if (descriptionOptional.isEmpty()) {
             return null;
         }
 
         Description description = descriptionOptional.get();
-        Topic topic = topicOptional.get();
 
-        Description updateDescription = description.updateDescription(descriptionCreateDto.getContent(), topic);
+        Description updateDescription = description.updateContent(descriptionUpdateDto.getContent());
         return updateDescription;
     }
 
@@ -74,4 +81,5 @@ public class DescriptionService {
         descriptionRepository.deleteById(descriptionId);
         return true;
     }
+
 }

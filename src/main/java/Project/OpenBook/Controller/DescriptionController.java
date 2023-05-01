@@ -4,6 +4,7 @@ import Project.OpenBook.Domain.Description;
 import Project.OpenBook.Domain.Question;
 import Project.OpenBook.Dto.DescriptionCreateDto;
 import Project.OpenBook.Dto.DescriptionDto;
+import Project.OpenBook.Dto.DescriptionUpdateDto;
 import Project.OpenBook.Dto.ErrorDto;
 import Project.OpenBook.Service.DescriptionService;
 import io.swagger.annotations.ApiOperation;
@@ -21,18 +22,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/admin/descriptions")
 @RequiredArgsConstructor
 public class DescriptionController {
 
     private final DescriptionService descriptionService;
 
-    @ApiOperation("보기 조회")
+    @ApiOperation("특정 보기 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적인 보기 조회"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 보기 조회 요청")
     })
-    @GetMapping("/{descriptionId}")
+    @GetMapping("/admin/descriptions/{descriptionId}")
     public ResponseEntity queryDescription(@PathVariable Long descriptionId) {
         DescriptionDto descriptionDto = descriptionService.queryDescription(descriptionId);
         if (descriptionDto == null) {
@@ -41,13 +41,29 @@ public class DescriptionController {
         return new ResponseEntity(descriptionDto, HttpStatus.OK);
     }
 
+    @ApiOperation("특정 토픽별 모든 보기 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적인 토픽별 보기 조회"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽별 보기 조회 요청")
+    })
+    @GetMapping("/topics/{topicTitle}/descriptions")
+    public ResponseEntity getDescriptionsInTopic(@PathVariable String topicTitle){
+        List<Description> descriptionList = descriptionService.queryDescriptionsInTopic(topicTitle);
+        if (descriptionList == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        List<DescriptionDto> descriptionDtoList = descriptionList.stream().map(d -> new DescriptionDto(d)).collect(Collectors.toList());
+        return new ResponseEntity(descriptionDtoList, HttpStatus.OK);
+    }
+
+
     @ApiOperation("보기 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode =  "201", description = "성공적인 보기 생성"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인한 보기 생성 실패"),
             @ApiResponse(responseCode =  "404", description = "존재하지 않는 topicTitle 입력")
     })
-    @PostMapping
+    @PostMapping("/admin/descriptions")
     public ResponseEntity addDescription(@Validated @RequestBody DescriptionCreateDto descriptionCreateDto, BindingResult bindingResult){
         List<ErrorDto> errorDtoList = new ArrayList<>();
         Description description = descriptionService.addDescription(descriptionCreateDto);
@@ -69,10 +85,10 @@ public class DescriptionController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인한 보기 수정 실패"),
             @ApiResponse(responseCode =  "404", description = "존재하지 않는 topicTitle이나 보기 id 입력으로 인한 수정 실패")
     })
-    @PatchMapping("/{descriptionId}")
-    public ResponseEntity addDescription(@PathVariable Long descriptionId,@Validated @RequestBody DescriptionCreateDto descriptionCreateDto, BindingResult bindingResult){
+    @PatchMapping("/admin/descriptions/{descriptionId}")
+    public ResponseEntity addDescription(@PathVariable Long descriptionId, @Validated @RequestBody DescriptionUpdateDto descriptionUpdateDto, BindingResult bindingResult){
         List<ErrorDto> errorDtoList = new ArrayList<>();
-        Description description = descriptionService.updateDescription(descriptionId, descriptionCreateDto);
+        Description description = descriptionService.updateDescription(descriptionId, descriptionUpdateDto);
         if (description == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
@@ -90,7 +106,7 @@ public class DescriptionController {
             @ApiResponse(responseCode = "201", description = "성공적인 보기 삭제"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 topicTitle이나 보기 id 입력으로 인한 삭제 실패")
     })
-    @DeleteMapping("/{descriptionId}")
+    @DeleteMapping("/admin/descriptions/{descriptionId}")
     public ResponseEntity deleteDescription(@PathVariable Long descriptionId) {
         boolean res = descriptionService.deleteDescription(descriptionId);
         if (!res) {

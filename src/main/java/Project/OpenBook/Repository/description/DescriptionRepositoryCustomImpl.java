@@ -8,6 +8,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import static Project.OpenBook.Domain.QDescription.description;
 
 @Repository
@@ -22,5 +24,12 @@ public class DescriptionRepositoryCustomImpl implements DescriptionRepositoryCus
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(1)
                 .fetchOne();
+    }
+
+    @Override
+    public List<Description> findDescriptionsByTopic(String topicTitle) {
+        return queryFactory.selectFrom(description)
+                .where(description.topic.title.eq(topicTitle))
+                .fetch();
     }
 }
