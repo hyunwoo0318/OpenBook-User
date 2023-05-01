@@ -60,6 +60,7 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
+application.yml
 local.yml
 
 ### Gradle ###

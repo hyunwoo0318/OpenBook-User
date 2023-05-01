@@ -25,8 +25,9 @@ public class Choice extends BaseEntity{
         this.topic = topic;
     }
 
-    public void updateContent(String content) {
+    public Choice updateContent(String content) {
         this.content = content;
+        return this;
     }
 
     public Choice updateChoice(String content,Topic topic) {

@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="83978279-1277-402e-960c-62db35564810" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/SecurityConfig.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/classes/Project/OpenBook/Config/SecurityConfig.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChoiceController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Controller/ChoiceController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/Choice.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Domain/Choice.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ChoiceUpdateDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Dto/ChoiceUpdateDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/ChoiceService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/Project/OpenBook/Service/ChoiceService.java" afterDir="false" />
@@ -201,6 +199,7 @@
       <workItem from="1682574370075" duration="1187000" />
       <workItem from="1682689140898" duration="3334000" />
       <workItem from="1682834924198" duration="1465000" />
+      <workItem from="1682926329165" duration="129000" />
     </task>
     <servers />
   </component>

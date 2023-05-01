@@ -55,13 +55,12 @@ public class ChoiceService {
     @Transactional
     public Choice updateChoice(ChoiceUpdateDto choiceUpdateDto, Long id) {
         Optional<Choice> choiceOptional = choiceRepository.findById(id);
-        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(choiceUpdateDto.getTopic());
-        if (choiceOptional.isEmpty() || topicOptional.isEmpty()) {
+       // Optional<Topic> topicOptional = topicRepository.findTopicByTitle(choiceUpdateDto.getTopic());
+        if (choiceOptional.isEmpty() ) {
             return null;
         }
         Choice choice = choiceOptional.get();
-        Topic topic = topicOptional.get();
-        Choice updatedChoice = choice.updateChoice(choiceUpdateDto.getContent(), topic);
+        Choice updatedChoice = choice.updateContent(choiceUpdateDto.getContent());
         return updatedChoice;
     }
 

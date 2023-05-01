@@ -15,8 +15,8 @@ import java.util.List;
 @NoArgsConstructor
 public class ChoiceUpdateDto {
 
-    @NotBlank(message = "토픽 제목을 입력해주세요.")
-    private String topic;
+//    @NotBlank(message = "토픽 제목을 입력해주세요.")
+//    private String topic;
 
     @NotBlank(message = "선지 내용을 입력해주세요.")
     private String content;
