@@ -11,8 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,18 +46,18 @@ public class DescriptionService {
     }
 
     @Transactional
-    public Description addDescription(DescriptionCreateDto descriptionCreateDto) {
+    public List<Description> addDescription(DescriptionCreateDto descriptionCreateDto) {
         String topicTitle = descriptionCreateDto.getTopicTitle();
-        String content = descriptionCreateDto.getContent();
+        String[] contentList = descriptionCreateDto.getContentList();
 
         Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
         if (topicOptional.isEmpty()) {
             return null;
         }
         Topic topic = topicOptional.get();
-        Description description = new Description(content, topic);
-        descriptionRepository.save(description);
-        return description;
+        List<Description> descriptionList = Arrays.stream(contentList).map(c -> new Description(c, topic)).collect(Collectors.toList());
+        descriptionRepository.saveAll(descriptionList);
+        return descriptionList;
     }
 
 

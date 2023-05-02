@@ -63,11 +63,11 @@ public class DescriptionController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인한 보기 생성 실패"),
             @ApiResponse(responseCode =  "404", description = "존재하지 않는 topicTitle 입력")
     })
-    @PostMapping("/admin/descriptions")
+    @PostMapping("/admin/descriptions/")
     public ResponseEntity addDescription(@Validated @RequestBody DescriptionCreateDto descriptionCreateDto, BindingResult bindingResult){
         List<ErrorDto> errorDtoList = new ArrayList<>();
-        Description description = descriptionService.addDescription(descriptionCreateDto);
-        if (description == null) {
+        List<Description> descriptionList = descriptionService.addDescription(descriptionCreateDto);
+        if (descriptionList == null) {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
@@ -76,7 +76,8 @@ public class DescriptionController {
             return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity(description.getId(), HttpStatus.CREATED);
+        List<Long> descriptionIdList = descriptionList.stream().map(d -> d.getId()).collect(Collectors.toList());
+        return new ResponseEntity(descriptionIdList, HttpStatus.CREATED);
     }
 
     @ApiOperation("보기 수정")

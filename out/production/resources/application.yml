@@ -16,9 +16,9 @@ spring:
         show_sql: true
         format_sql: true
         use_sql_comments: true
-        dialect: org.hibernate.dialect.MariaDBDialect
-  mvc:
-    log-request-details: true
 logging:
   level:
-    org.springframework.web: DEBUG
+    org:
+      springframework:
+        security : DEBUG
+

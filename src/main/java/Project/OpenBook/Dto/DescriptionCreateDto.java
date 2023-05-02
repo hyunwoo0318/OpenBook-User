@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -16,6 +17,6 @@ public class DescriptionCreateDto {
     @NotBlank(message = "토픽 제목을 입력해주세요.")
     private String topicTitle;
 
-    @NotBlank(message = "보기 내용을 입력해주세요.")
-    private String content;
+    @NotNull(message = "하나 이상의 보기 내용을 입력해주세요.")
+    private String[] contentList;
 }
