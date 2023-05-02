@@ -23,9 +23,6 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 class AdminServiceTest {
 
-    @Mock
-    private AdminRepository adminRepository;
-
     @InjectMocks
     private AdminService adminService;
 

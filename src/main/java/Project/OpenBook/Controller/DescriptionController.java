@@ -1,11 +1,10 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Description;
-import Project.OpenBook.Domain.Question;
-import Project.OpenBook.Dto.DescriptionCreateDto;
-import Project.OpenBook.Dto.DescriptionDto;
-import Project.OpenBook.Dto.DescriptionUpdateDto;
-import Project.OpenBook.Dto.ErrorDto;
+import Project.OpenBook.Dto.description.DescriptionCreateDto;
+import Project.OpenBook.Dto.description.DescriptionDto;
+import Project.OpenBook.Dto.description.DescriptionUpdateDto;
+import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Service.DescriptionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

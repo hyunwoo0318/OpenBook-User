@@ -1,17 +1,18 @@
-package Project.OpenBook.Dto;
+package Project.OpenBook.Dto.description;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DescriptionContentIdDto {
+public class DescriptionUpdateDto {
 
-    private Long id;
-
+    @NotBlank(message = "보기 내용을 입력해주세요.")
     private String content;
 }

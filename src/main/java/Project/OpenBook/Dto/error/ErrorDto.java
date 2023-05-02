@@ -1,4 +1,4 @@
-package Project.OpenBook.Dto;
+package Project.OpenBook.Dto.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

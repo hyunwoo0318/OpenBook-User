@@ -1,7 +1,7 @@
 package Project.OpenBook.Controller;
 
-import Project.OpenBook.Dto.AdminDto;
-import Project.OpenBook.Dto.ErrorDto;
+import Project.OpenBook.Dto.admin.AdminDto;
+import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Repository.AdminRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,12 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = { "spring.config.location=classpath:application-test.yml" })

@@ -64,9 +64,10 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     }
 
     @Override
-    public List<Choice> queryRandChoicesByTime(LocalDate startDate, LocalDate endDate, int num, int interval) {
+    public List<Choice> queryRandChoicesByTime(LocalDate startDate, LocalDate endDate, int num, int interval, String categoryName) {
         return queryFactory.selectFrom(choice)
                 .where(notInDate(startDate, endDate))
+                .where(choice.topic.category.name.eq(categoryName))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(num)
                 .fetch();

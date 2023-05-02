@@ -2,7 +2,7 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.ErrorDto;
+import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;

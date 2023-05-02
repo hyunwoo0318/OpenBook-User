@@ -3,8 +3,8 @@ package Project.OpenBook.Controller;
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.ErrorDto;
-import Project.OpenBook.Dto.TopicDto;
+import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Dto.topic.TopicDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
@@ -24,7 +24,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

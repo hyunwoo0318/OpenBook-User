@@ -1,8 +1,8 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Admin;
-import Project.OpenBook.Dto.AdminDto;
-import Project.OpenBook.Dto.ErrorDto;
+import Project.OpenBook.Dto.admin.AdminDto;
+import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Service.AdminService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

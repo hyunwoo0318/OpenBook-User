@@ -1,4 +1,4 @@
-package Project.OpenBook.Dto;
+package Project.OpenBook.Dto.category;
 
 
 import lombok.AllArgsConstructor;

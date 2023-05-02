@@ -1,4 +1,4 @@
-package Project.OpenBook.Dto;
+package Project.OpenBook.Dto.description;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,11 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class ChoiceContentIdDto {
-
-    private String content;
+@NoArgsConstructor
+public class DescriptionContentIdDto {
 
     private Long id;
+
+    private String content;
 }

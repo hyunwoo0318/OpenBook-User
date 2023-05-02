@@ -1,4 +1,4 @@
-package Project.OpenBook.Dto;
+package Project.OpenBook.Dto.choice;
 
 import Project.OpenBook.Domain.Choice;
 import lombok.AllArgsConstructor;

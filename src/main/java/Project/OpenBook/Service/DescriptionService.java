@@ -2,16 +2,15 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Domain.Description;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.DescriptionCreateDto;
-import Project.OpenBook.Dto.DescriptionDto;
-import Project.OpenBook.Dto.DescriptionUpdateDto;
+import Project.OpenBook.Dto.description.DescriptionCreateDto;
+import Project.OpenBook.Dto.description.DescriptionDto;
+import Project.OpenBook.Dto.description.DescriptionUpdateDto;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

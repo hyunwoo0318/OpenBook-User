@@ -1,9 +1,9 @@
 package Project.OpenBook.Repository.Question;
 
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.ChoiceContentIdDto;
-import Project.OpenBook.Dto.DescriptionContentIdDto;
-import Project.OpenBook.Dto.QuestionDto;
+import Project.OpenBook.Dto.choice.ChoiceContentIdDto;
+import Project.OpenBook.Dto.description.DescriptionContentIdDto;
+import Project.OpenBook.Dto.question.QuestionDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

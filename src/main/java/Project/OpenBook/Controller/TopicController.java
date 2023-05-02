@@ -1,8 +1,8 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.ErrorDto;
-import Project.OpenBook.Dto.TopicDto;
+import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Dto.topic.TopicDto;
 import Project.OpenBook.Service.TopicService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

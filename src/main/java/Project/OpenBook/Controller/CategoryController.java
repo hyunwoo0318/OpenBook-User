@@ -1,17 +1,15 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Category;
-import Project.OpenBook.Dto.CategoryDto;
-import Project.OpenBook.Dto.ErrorDto;
+import Project.OpenBook.Dto.category.CategoryDto;
+import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Service.CategoryService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import net.bytebuddy.NamingStrategy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;

@@ -1,10 +1,10 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Choice;
-import Project.OpenBook.Dto.ChoiceAddDto;
-import Project.OpenBook.Dto.ChoiceDto;
-import Project.OpenBook.Dto.ChoiceUpdateDto;
-import Project.OpenBook.Dto.ErrorDto;
+import Project.OpenBook.Dto.choice.ChoiceAddDto;
+import Project.OpenBook.Dto.choice.ChoiceDto;
+import Project.OpenBook.Dto.choice.ChoiceUpdateDto;
+import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Service.ChoiceService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

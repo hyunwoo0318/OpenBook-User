@@ -1,6 +1,9 @@
 package Project.OpenBook.Service;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
@@ -10,18 +13,8 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@TestPropertySource(properties = { "spring.config.location=classpath:application-test.yml" })
+@ExtendWith(MockitoExtension.class)
 class TopicServiceTest {
 
-    @Autowired
-    private TopicService topicService;
-
-    @Test
-    public void parseKeywordListTest() {
-        List<String> keywordList = Arrays.asList("t1", "t2", "t3", "t4");
-        String s = topicService.parseKeywordList(keywordList);
-        System.out.println(s);
-    }
 
 }

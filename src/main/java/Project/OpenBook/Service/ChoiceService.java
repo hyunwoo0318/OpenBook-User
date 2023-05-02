@@ -2,10 +2,9 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Domain.Choice;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.ChoiceContentIdDto;
-import Project.OpenBook.Dto.ChoiceDto;
-import Project.OpenBook.Dto.ChoiceAddDto;
-import Project.OpenBook.Dto.ChoiceUpdateDto;
+import Project.OpenBook.Dto.choice.ChoiceDto;
+import Project.OpenBook.Dto.choice.ChoiceAddDto;
+import Project.OpenBook.Dto.choice.ChoiceUpdateDto;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Service

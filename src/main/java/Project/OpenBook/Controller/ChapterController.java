@@ -2,10 +2,10 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.ChapterDto;
-import Project.OpenBook.Dto.ChapterListDto;
-import Project.OpenBook.Dto.ErrorDto;
-import Project.OpenBook.Dto.TopicTitleListDto;
+import Project.OpenBook.Dto.chapter.ChapterDto;
+import Project.OpenBook.Dto.chapter.ChapterListDto;
+import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Dto.topic.TopicTitleListDto;
 import Project.OpenBook.Service.ChapterService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

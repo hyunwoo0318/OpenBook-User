@@ -4,7 +4,11 @@ import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Choice;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.*;
+import Project.OpenBook.Dto.choice.ChoiceAddDto;
+import Project.OpenBook.Dto.choice.ChoiceContentIdDto;
+import Project.OpenBook.Dto.choice.ChoiceDto;
+import Project.OpenBook.Dto.choice.ChoiceUpdateDto;
+import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
@@ -60,48 +64,32 @@ class ChoiceControllerTest {
 
     Choice choice1, choice2, choice3, choice4, choice5;
 
+
+    private final String[]  categoryNameList ={"사건","유물", "인물"};
+    private Chapter chapter;
+    private List<Category> categoryList;
+
     @BeforeAll
     public void initTestForChoiceController() {
-        URL = prefix + port;
-        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
+    URL = prefix + port;
+    restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-        initEntity();
+    init();
     }
 
-    private void initEntity(){
-        Chapter chapter = new Chapter("1단원", 1);
-        Category category = new Category("사건");
-        chapterRepository.save(chapter);
-        categoryRepository.save(category);
+    @BeforeAll
+    public void init() {
+        topicRepository.deleteAllInBatch();
+        chapterRepository.deleteAllInBatch();
+        categoryRepository.deleteAllInBatch();
 
-        topic1 = new Topic("topic1", null, null, 0, 0, "detail1", chapter, category);
-        topic2 = new Topic("topic2", null, null, 0, 0, "detail2", chapter, category);
+        chapter = new Chapter("ct1", 1);
+        categoryList = Arrays.stream(this.categoryNameList).map(c -> new Category(c)).collect(Collectors.toList());
 
-        topicRepository.save(topic1);
-        topicRepository.save(topic2);
+        chapterRepository.saveAndFlush(chapter);
+        categoryRepository.saveAllAndFlush(categoryList);
     }
 
-    /**
-     * choice1,2,3 -> topic1
-     * choice4,5 -> topic2
-     */
-    @BeforeEach
-    public void resetChoice(){
-        choiceRepository.deleteAllInBatch();
-
-        choice1 = new Choice("choice1", topic1);
-        choice2 = new Choice("choice2", topic1);
-        choice3 = new Choice("choice3", topic1);
-
-        choice4 = new Choice("choice4", topic2);
-        choice5 = new Choice("choice5", topic2);
-
-        choiceRepository.save(choice1);
-        choiceRepository.save(choice2);
-        choiceRepository.save(choice3);
-        choiceRepository.save(choice4);
-        choiceRepository.save(choice5);
-    }
 
     @DisplayName("특정 topic의 모든 선지를 보여주기 성공 - GET /admin/topics/{topicTitle}/choices/")
     @Test
@@ -185,78 +173,142 @@ class ChoiceControllerTest {
         assertThat(choiceList.size()).isEqualTo(3); // 기존의 3개 (추가되지 않음)
     }
 
-    @DisplayName("여러개의 선지 변경 성공 - PATCH /admin/choices")
+    @DisplayName("선지 수정 성공 - PATCH admin/choices/{choiceId}")
     @Test
-    public void updateChoicesSuccess(){
-        ChoiceContentIdDto dto1 = new ChoiceContentIdDto("afterChoice1", choice1.getId());
-        ChoiceContentIdDto dto2 = new ChoiceContentIdDto("afterChoice2", choice2.getId());
-        ChoiceContentIdDto dto3 = new ChoiceContentIdDto("afterChoice3", choice3.getId());
+    public void updateChoiceSuccess() {
+        Long id = choice1.getId();
+        String content = "content1 with update";
+        ChoiceUpdateDto choiceUpdateDto = new ChoiceUpdateDto(content);
 
-        List<ChoiceContentIdDto> dtoList = Arrays.asList(dto1, dto2, dto3);
-        ChoiceUpdateDto choiceUpdateDto = new ChoiceUpdateDto(dtoList);
-
-        ResponseEntity<Void> response = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.PATCH, new HttpEntity<>(choiceUpdateDto), Void.class);
-
-        List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle(topic1.getTitle());
-        Set<String> contentSet = choiceList.stream().map(c -> c.getContent()).collect(Collectors.toSet());
-
+        ResponseEntity<Void> response = restTemplate.exchange(URL + "/admin/choices/" + id, HttpMethod.PATCH, new HttpEntity<>(choiceUpdateDto), Void.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        assertThat(contentSet.contains("choice1")).isFalse();
-        assertThat(contentSet.contains("choice2")).isFalse();
-        assertThat(contentSet.contains("choice3")).isFalse();
-
-        assertThat(contentSet.contains("afterChoice1")).isTrue();
-        assertThat(contentSet.contains("afterChoice2")).isTrue();
-        assertThat(contentSet.contains("afterChoice3")).isTrue();
+        Optional<Choice> choiceOptional = choiceRepository.findById(id);
+        assertThat(choiceOptional.isEmpty()).isFalse();
+        assertThat(choiceOptional.get().getContent()).isEqualTo(content);
     }
-
-    @DisplayName("여러개의 선지 변경 실패 - PATCH /admin/choices")
+    
+    @DisplayName("선지 수정 실패 - PATCH admin/choices/{choiceId}")
     @Test
-    public void updateChoicesFail(){
-        ChoiceContentIdDto dto = new ChoiceContentIdDto("afterChoice1", 333333L);
-        List<ChoiceContentIdDto> wrongDtoList = Arrays.asList(dto);
+    public void updateChoiceFail(){
+        Long id = choice1.getId();
 
-        ChoiceUpdateDto wrongDto1 = new ChoiceUpdateDto(new ArrayList<>());
-        ChoiceUpdateDto wrongDto2 = new ChoiceUpdateDto(wrongDtoList);
+        //request body는 유효하지만 존재하지 않는 choiceId를 넣는 경우
+        String content = "content1 with update";
+        ChoiceUpdateDto choiceUpdateDto = new ChoiceUpdateDto(content);
 
-        ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.PATCH, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {});
-        ResponseEntity<Void> response2 = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.PATCH, new HttpEntity<>(wrongDto2), Void.class);
-
-        List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle(topic1.getTitle());
-        Set<String> contentSet = choiceList.stream().map(c -> c.getContent()).collect(Collectors.toSet());
+        //보기 내용을 넣지 않는 경우
+        ChoiceUpdateDto wrongDto = new ChoiceUpdateDto("");
+        ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL + "/admin/choices/" + id, HttpMethod.PATCH, new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorDto>>() {});
+        ResponseEntity<Void> response2 = restTemplate.exchange(URL + "/admin/choices/2222323", HttpMethod.PATCH, new HttpEntity<>(choiceUpdateDto), Void.class);
 
         assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-        assertThat(response1.getBody().get(0)).isEqualTo(new ErrorDto("choiceList", "하나 이상의 선지를 입력해주세요."));
+        assertThat(response1.getBody().get(0)).isEqualTo(new ErrorDto("content", "선지 내용을 입력해주세요."));
+        Optional<Choice> choiceOptional = choiceRepository.findById(id);
+        assertThat(choiceOptional.isEmpty()).isFalse();
+        assertThat(choiceOptional.get().getContent()).isNotEqualTo(content);
 
         assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-
-        assertThat(contentSet.contains("afterChoice1")).isFalse();
     }
 
-    @DisplayName("여러개의 선지 삭제 - DELETE /admin/choices")
+    @DisplayName("선지 삭제 성공 - DELETE admin/choices/{choiceId}")
     @Test
-    public void deleteChoicesSuccess(){
-        List<Long> idList = Arrays.asList(choice4.getId(), choice5.getId());
+    public void deleteChoiceSuccess(){
+        Choice choice = new Choice("temp1", topic1);
+        choiceRepository.save(choice);
+        Long id = choice.getId();
 
-        ResponseEntity<Void> response = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.DELETE, new HttpEntity<>(idList), Void.class);
-
-        List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle(topic2.getTitle());
+        ResponseEntity<Void> response = restTemplate.exchange(URL + "/admin/choices/" + id, HttpMethod.DELETE, null, Void.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(choiceList.size()).isEqualTo(0);
+        Optional<Choice> choiceOptional = choiceRepository.findById(id);
+
+        assertThat(choiceOptional.isEmpty()).isTrue();
     }
 
-    @DisplayName("존재하지 않는 선지 삭제 요청 - DELETE /admin/choices")
+    @DisplayName("선지 삭제 실패 - DELETE admin/choices/{choiceId}")
     @Test
-    public void deleteChoicesFail(){
-        List<Long> idList = Arrays.asList(333333L, 44444444L);
-
-        ResponseEntity<Void> response = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.DELETE, new HttpEntity<>(idList), Void.class);
-
-        List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle(topic2.getTitle());
+    public void deleteChoiceFail(){
+        ResponseEntity<Void> response = restTemplate.exchange(URL + "/admin/choices/" + 22222, HttpMethod.DELETE, null, Void.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(choiceList.size()).isEqualTo(2);
+
     }
+
+
+
+//    @DisplayName("여러개의 선지 변경 성공 - PATCH /admin/choices")
+//    @Test
+//    public void updateChoicesSuccess(){
+//        ChoiceContentIdDto dto1 = new ChoiceContentIdDto("afterChoice1", choice1.getId());
+//        ChoiceContentIdDto dto2 = new ChoiceContentIdDto("afterChoice2", choice2.getId());
+//        ChoiceContentIdDto dto3 = new ChoiceContentIdDto("afterChoice3", choice3.getId());
+//
+//        List<ChoiceContentIdDto> dtoList = Arrays.asList(dto1, dto2, dto3);
+//        ChoiceUpdateDto choiceUpdateDto = new ChoiceUpdateDto(dtoList);
+//
+//        ResponseEntity<Void> response = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.PATCH, new HttpEntity<>(choiceUpdateDto), Void.class);
+//
+//        List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle(topic1.getTitle());
+//        Set<String> contentSet = choiceList.stream().map(c -> c.getContent()).collect(Collectors.toSet());
+//
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//
+//        assertThat(contentSet.contains("choice1")).isFalse();
+//        assertThat(contentSet.contains("choice2")).isFalse();
+//        assertThat(contentSet.contains("choice3")).isFalse();
+//
+//        assertThat(contentSet.contains("afterChoice1")).isTrue();
+//        assertThat(contentSet.contains("afterChoice2")).isTrue();
+//        assertThat(contentSet.contains("afterChoice3")).isTrue();
+//    }
+//
+//    @DisplayName("여러개의 선지 변경 실패 - PATCH /admin/choices")
+//    @Test
+//    public void updateChoicesFail(){
+//        ChoiceContentIdDto dto = new ChoiceContentIdDto("afterChoice1", 333333L);
+//        List<ChoiceContentIdDto> wrongDtoList = Arrays.asList(dto);
+//
+//        ChoiceUpdateDto wrongDto1 = new ChoiceUpdateDto(new ArrayList<>());
+//        ChoiceUpdateDto wrongDto2 = new ChoiceUpdateDto(wrongDtoList);
+//
+//        ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.PATCH, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {});
+//        ResponseEntity<Void> response2 = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.PATCH, new HttpEntity<>(wrongDto2), Void.class);
+//
+//        List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle(topic1.getTitle());
+//        Set<String> contentSet = choiceList.stream().map(c -> c.getContent()).collect(Collectors.toSet());
+//
+//        assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+//        assertThat(response1.getBody().get(0)).isEqualTo(new ErrorDto("choiceList", "하나 이상의 선지를 입력해주세요."));
+//
+//        assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+//
+//        assertThat(contentSet.contains("afterChoice1")).isFalse();
+//    }
+//
+//    @DisplayName("여러개의 선지 삭제 - DELETE /admin/choices")
+//    @Test
+//    public void deleteChoicesSuccess(){
+//        List<Long> idList = Arrays.asList(choice4.getId(), choice5.getId());
+//
+//        ResponseEntity<Void> response = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.DELETE, new HttpEntity<>(idList), Void.class);
+//
+//        List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle(topic2.getTitle());
+//
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        assertThat(choiceList.size()).isEqualTo(0);
+//    }
+//
+//    @DisplayName("존재하지 않는 선지 삭제 요청 - DELETE /admin/choices")
+//    @Test
+//    public void deleteChoicesFail(){
+//        List<Long> idList = Arrays.asList(333333L, 44444444L);
+//
+//        ResponseEntity<Void> response = restTemplate.exchange(URL + "/admin/choices/", HttpMethod.DELETE, new HttpEntity<>(idList), Void.class);
+//
+//        List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle(topic2.getTitle());
+//
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+//        assertThat(choiceList.size()).isEqualTo(2);
+//    }
 }

@@ -1,7 +1,8 @@
-package Project.OpenBook.Dto;
+package Project.OpenBook.Dto.question;
 
-import Project.OpenBook.Domain.Choice;
 import Project.OpenBook.Domain.Question;
+import Project.OpenBook.Dto.choice.ChoiceContentIdDto;
+import Project.OpenBook.Dto.description.DescriptionContentIdDto;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;

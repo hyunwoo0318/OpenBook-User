@@ -1,4 +1,4 @@
-package Project.OpenBook.Dto;
+package Project.OpenBook.Dto.description;
 
 import Project.OpenBook.Domain.Description;
 import lombok.AllArgsConstructor;

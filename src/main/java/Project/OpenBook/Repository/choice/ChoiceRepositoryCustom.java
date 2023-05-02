@@ -17,7 +17,7 @@ public interface ChoiceRepositoryCustom {
 
     public List<Choice> queryRandChoicesByCategory(String exceptTopicTitle, String categoryName, int num);
 
-    public List<Choice> queryRandChoicesByTime(LocalDate startDate, LocalDate endDate, int num, int interval);
+    public List<Choice> queryRandChoicesByTime(LocalDate startDate, LocalDate endDate, int num, int interval, String categoryName);
 
     public Choice queryRandChoiceByTime(LocalDate startDate, LocalDate endDate);
 }

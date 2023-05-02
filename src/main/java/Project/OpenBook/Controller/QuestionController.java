@@ -1,8 +1,8 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Question;
-import Project.OpenBook.Dto.ErrorDto;
-import Project.OpenBook.Dto.QuestionDto;
+import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Dto.question.QuestionDto;
 import Project.OpenBook.Service.CategoryService;
 import Project.OpenBook.Service.QuestionService;
 import io.swagger.annotations.ApiOperation;

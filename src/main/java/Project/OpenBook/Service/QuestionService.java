@@ -1,9 +1,9 @@
 package Project.OpenBook.Service;
 
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.ChoiceContentIdDto;
-import Project.OpenBook.Dto.DescriptionContentIdDto;
-import Project.OpenBook.Dto.QuestionDto;
+import Project.OpenBook.Dto.choice.ChoiceContentIdDto;
+import Project.OpenBook.Dto.description.DescriptionContentIdDto;
+import Project.OpenBook.Dto.question.QuestionDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.QuestionChoiceRepository;
 import Project.OpenBook.Repository.QuestionDescriptionRepository;
@@ -110,11 +110,11 @@ public class QuestionService {
 
         String prompt = setPrompt(categoryName);
 
-        Choice answerChoice = choiceRepository.queryRandChoiceByTime(startDate, endDate);
+        Choice answerChoice = choiceRepository.queryRandChoiceByTopic(title);
         Description description = descriptionRepository.findRandDescriptionByTopic(title);
 
         //정답 사건의 startDate, endDate가 겹치지 않는 4개의 사건 고르기
-        List<Choice> choiceList = choiceRepository.queryRandChoicesByTime(startDate, endDate, choiceNum-1, 0);
+        List<Choice> choiceList = choiceRepository.queryRandChoicesByTime(startDate, endDate, choiceNum-1, 0, categoryName);
         choiceList.add(answerChoice);
         return new TempQ(prompt, description, choiceList);
     }
