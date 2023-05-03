@@ -37,7 +37,7 @@ public class QuestionController {
         if(!categoryService.findCategory(categoryName)){
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-        QuestionDto questionDto = questionService.makeTempQuestion(type, categoryName,topicTitle);
+        QuestionDto questionDto = questionService.makeQuestionTimeAndDescription(type, categoryName,topicTitle);
         return new ResponseEntity(questionDto, HttpStatus.OK);
     }
 

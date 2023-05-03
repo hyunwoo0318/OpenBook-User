@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,7 +43,7 @@ public class QuestionService {
     private final int choiceNum = 5;
 
     @Transactional
-    public QuestionDto makeTempQuestion(Long type, String categoryName, String topicTitle) {
+    public QuestionDto makeQuestionTimeAndDescription(Long type, String categoryName, String topicTitle) {
 
         Topic answerTopic = null;
         //정답 토픽 선정
@@ -59,8 +60,8 @@ public class QuestionService {
         TempQ tempQ = null;
         if (type == 1) {
             tempQ = makeDescriptionQuestion(answerTopic);
-        } else if(type == 2){
-            tempQ = makeTimeQuestion(answerTopic);
+        } else if(type >= 2 && type <=4){
+            tempQ = makeTimeQuestion(answerTopic, type);
         }
 
         List<ChoiceContentIdDto> choiceList = tempQ.choiceList.stream().map(c -> new ChoiceContentIdDto(c.getContent(), c.getId())).collect(Collectors.toList());
@@ -76,7 +77,6 @@ public class QuestionService {
                 .choiceList(choiceList)
                 .build();
     }
-
 
 
     //특정 주제에 대한 설명으로 옳은것을 찾는 문제생성 메서드
@@ -101,24 +101,45 @@ public class QuestionService {
         return new TempQ(prompt, description, choiceList);
     }
 
-    private TempQ makeTimeQuestion(Topic answerTopic) {
+    private TempQ makeTimeQuestion(Topic answerTopic, Long type) {
 
         String title = answerTopic.getTitle();
         String categoryName = answerTopic.getCategory().getName();
         LocalDate startDate = answerTopic.getStartDate();
         LocalDate endDate = answerTopic.getEndDate();
 
-        String prompt = setPrompt(categoryName);
+        String prompt = setPrompt(categoryName, type);
 
-        Choice answerChoice = choiceRepository.queryRandChoiceByTopic(title);
         Description description = descriptionRepository.findRandDescriptionByTopic(title);
 
-        //정답 사건의 startDate, endDate가 겹치지 않는 4개의 사건 고르기
-        List<Choice> choiceList = choiceRepository.queryRandChoicesByTime(startDate, endDate, choiceNum-1, 0, categoryName);
-        choiceList.add(answerChoice);
+        List<Choice> choiceList = new ArrayList<>();
+        if (type == 2) {
+            //정답 사건의 startDate, endDate가 겹치지 않는 4개의 사건 고르기
+            choiceList = choiceRepository.queryChoicesType2(startDate, endDate, choiceNum, 0, categoryName);
+        } else if (type == 3) {
+            //보기에서 주어진 사건보다 나중에 발생한 사건 찾는 문제
+            choiceList = choiceRepository.queryChoicesType3(startDate, endDate,choiceNum, 0, categoryName);
+        } else if (type == 4) {
+            //보기에 주어진 사건보다 이전에 발생한 사건 찾는 문제
+            choiceList = choiceRepository.queryChoicesType4(startDate,endDate, choiceNum, 0, categoryName);
+        }
+
         return new TempQ(prompt, description, choiceList);
     }
 
+    public TempQ makeTimeFlowQuestion(Long type) {
+        String prompt = setPrompt("사건", type);
+
+        List<Choice> choiceList = choiceRepository.queryRandChoicesByCategory("사건", 7);
+        Random rand = new Random();
+        int answerNum = rand.nextInt(5)+1;
+        Choice answerChoice = choiceList.get(answerNum);
+        Description description = descriptionRepository.findRandDescriptionByTopic(answerChoice.getTopic().getTitle());
+        choiceList.set(answerNum, null);
+
+        return new TempQ(prompt, description, choiceList);
+
+    }
     @Transactional
     public Question addQuestion(QuestionDto questionDto){
 
@@ -209,10 +230,18 @@ public class QuestionService {
         }
     }
 
-    private String setPrompt(String categoryName) {
+    private String setPrompt(String categoryName, Long type) {
         String prompt = null;
         if(categoryName.equals("사건")){
-            prompt = env.getProperty("time.case", String.class);
+            if (type == 2) {
+                prompt = env.getProperty("time.case.between", String.class);
+            } else if (type == 3) {
+                prompt = env.getProperty("time.case.after", String.class);
+            } else if (type == 4) {
+                prompt = env.getProperty("time.case.after", String.class);
+            } else if (type == 5) {
+                prompt = env.getProperty("timeFlow.case", String.class);
+            }
         }
         //나중에 다른 일에 대한 문제 생성시 추가
         return prompt;

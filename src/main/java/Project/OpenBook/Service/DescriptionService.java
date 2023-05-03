@@ -36,6 +36,14 @@ public class DescriptionService {
         return descriptionDto;
     }
 
+    public DescriptionDto queryRandomDescription(Long descriptionId) {
+        Description description = descriptionRepository.queryRandDescriptionByDescription(descriptionId);
+        if (description == null) {
+            return null;
+        }
+        return new DescriptionDto(description);
+    }
+
 
     public List<Description> queryDescriptionsInTopic(String topicTitle) {
         if(topicRepository.findTopicByTitle(topicTitle).isEmpty()){
@@ -83,5 +91,4 @@ public class DescriptionService {
         descriptionRepository.deleteById(descriptionId);
         return true;
     }
-
 }

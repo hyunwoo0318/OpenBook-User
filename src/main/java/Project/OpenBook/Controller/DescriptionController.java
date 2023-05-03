@@ -6,12 +6,14 @@ import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.description.DescriptionUpdateDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Service.DescriptionService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +55,20 @@ public class DescriptionController {
         }
         List<DescriptionDto> descriptionDtoList = descriptionList.stream().map(d -> new DescriptionDto(d)).collect(Collectors.toList());
         return new ResponseEntity(descriptionDtoList, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "주어진 보기와 같은 토픽의 보기 조회", notes = "문제 생성/수정시 보기 새로고침을 위한 endPoint")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적인 보기 조회"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 보기 아이디 제공")
+    })
+    @GetMapping("/admin/descriptions/random/{descriptionId}")
+    public ResponseEntity getDescriptionInSameTopic(@PathVariable("descriptionId") Long descriptionId){
+        DescriptionDto descriptionDto = descriptionService.queryRandomDescription(descriptionId);
+        if (descriptionDto == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(descriptionDto, HttpStatus.OK);
     }
 
 

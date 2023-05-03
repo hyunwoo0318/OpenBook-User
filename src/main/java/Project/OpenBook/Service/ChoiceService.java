@@ -37,6 +37,13 @@ public class ChoiceService {
         return new ChoiceDto(choice);
     }
 
+    public ChoiceDto queryRandomChoice(Long choiceId) {
+        Choice choice = choiceRepository.queryRandChoiceByChoice(choiceId);
+        if (choice == null) {
+            return null;
+        }
+        return new ChoiceDto(choice);
+    }
     public Boolean addChoices(ChoiceAddDto choiceAddDto) {
 
         Optional<Topic> topicOptional = topicRepository.findTopicByTitle(choiceAddDto.getTopicTitle());
@@ -104,4 +111,5 @@ public class ChoiceService {
         choiceRepository.deleteById(choiceId);
         return true;
     }
+
 }

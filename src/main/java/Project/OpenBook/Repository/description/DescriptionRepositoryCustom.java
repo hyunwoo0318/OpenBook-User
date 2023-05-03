@@ -8,5 +8,7 @@ public interface DescriptionRepositoryCustom {
 
     public Description findRandDescriptionByTopic(String topicTitle);
 
+    public Description queryRandDescriptionByDescription(Long descriptionId);
+
     public List<Description> findDescriptionsByTopic(String topicTitle);
 }
