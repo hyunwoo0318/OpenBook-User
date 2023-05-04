@@ -7,7 +7,7 @@ import Project.OpenBook.Dto.question.QuestionDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.QuestionChoiceRepository;
 import Project.OpenBook.Repository.QuestionDescriptionRepository;
-import Project.OpenBook.Repository.Question.QuestionRepository;
+import Project.OpenBook.Repository.question.QuestionRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
@@ -62,11 +62,25 @@ public class QuestionService {
             tempQ = makeDescriptionQuestion(answerTopic);
         } else if(type >= 2 && type <=4){
             tempQ = makeTimeQuestion(answerTopic, type);
+        } else if(type == 5){
+            tempQ = makeTimeFlowQuestion(type);
         }
 
-        List<ChoiceContentIdDto> choiceList = tempQ.choiceList.stream().map(c -> new ChoiceContentIdDto(c.getContent(), c.getId())).collect(Collectors.toList());
-        Long answerId = choiceList.get(choiceNum-1).getId();
+        if (tempQ.choiceList.size() != 5) {
+            return null;
+        }
+        List<ChoiceContentIdDto> choiceList = new ArrayList<>();
+        Long answerId = null;
         DescriptionContentIdDto descriptionContentIdDto = new DescriptionContentIdDto(tempQ.description.getId(), tempQ.description.getContent());
+
+        if(type >= 1 && type <= 4){
+            choiceList = tempQ.choiceList.stream().map(c -> new ChoiceContentIdDto(c.getContent(), c.getId())).collect(Collectors.toList());
+            answerId = choiceList.get(choiceNum-1).getId();
+        } else if (type == 5) {
+            int index = tempQ.choiceList.indexOf(null);
+            answerId = Integer.toUnsignedLong(index);
+            choiceList.subList(index, index + 1).clear();
+        }
 
         return QuestionDto.builder()
                 .categoryName(categoryName)
@@ -138,8 +152,8 @@ public class QuestionService {
         choiceList.set(answerNum, null);
 
         return new TempQ(prompt, description, choiceList);
-
     }
+
     @Transactional
     public Question addQuestion(QuestionDto questionDto){
 
@@ -238,7 +252,7 @@ public class QuestionService {
             } else if (type == 3) {
                 prompt = env.getProperty("time.case.after", String.class);
             } else if (type == 4) {
-                prompt = env.getProperty("time.case.after", String.class);
+                prompt = env.getProperty("time.case.before", String.class);
             } else if (type == 5) {
                 prompt = env.getProperty("timeFlow.case", String.class);
             }

@@ -1,4 +1,4 @@
-package Project.OpenBook.Repository.Question;
+package Project.OpenBook.Repository.question;
 
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.choice.ChoiceContentIdDto;

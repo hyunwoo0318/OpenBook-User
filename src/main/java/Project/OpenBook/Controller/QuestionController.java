@@ -29,6 +29,7 @@ public class QuestionController {
     @ApiOperation("문제를 임의로 생성해 보여줌")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적인 문제 생성"),
+            @ApiResponse(responseCode = "400", description = "문제 생성 실패"),
             @ApiResponse(responseCode = "404", description = "존재하지 카테고리나 문제 타입 입력")
     })
     @GetMapping("/admin/temp-question")
@@ -38,6 +39,9 @@ public class QuestionController {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
         QuestionDto questionDto = questionService.makeQuestionTimeAndDescription(type, categoryName,topicTitle);
+        if (questionDto == null) {
+            return new ResponseEntity(new ErrorDto("question", "문제를 생성할수 없습니다."), HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity(questionDto, HttpStatus.OK);
     }
 
