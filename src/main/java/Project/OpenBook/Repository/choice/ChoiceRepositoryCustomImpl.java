@@ -1,7 +1,6 @@
 package Project.OpenBook.Repository.choice;
 
-import Project.OpenBook.Domain.Choice;
-import Project.OpenBook.Domain.QChoice;
+import Project.OpenBook.Domain.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -11,7 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 
+import static Project.OpenBook.Domain.QCategory.category;
 import static Project.OpenBook.Domain.QChoice.choice;
+import static Project.OpenBook.Domain.QTopic.topic;
 
 @Repository
 @RequiredArgsConstructor
@@ -30,8 +31,8 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     @Override
     public Choice queryRandChoiceByChoice(Long choiceId) {
         QChoice choice1 = new QChoice("choice1");
-        return queryFactory.selectFrom(choice)
-                .innerJoin(choice1)
+        return queryFactory.select(choice)
+                .from(choice, choice1)
                 .where(choice1.id.eq(choiceId))
                 .where(choice1.topic.eq(choice.topic))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
@@ -136,10 +137,21 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(1)
                 .fetch().get(0);
+        choiceList.add(answerChoice);
         return choiceList;
     }
 
+    @Override
+    public Category queryCategoryByChoice(Long choiceId) {
+        return queryFactory.select(category)
+                .from(category, choice, topic)
+                .where(choice.topic.id.eq(topic.id))
+                .where(topic.category.id.eq(category.id))
+                .where(choice.id.eq(choiceId))
+                .fetchOne();
+    }
+
     private BooleanExpression notInDateBetween(LocalDate ansStartDate, LocalDate ansEndDate) {
-        return choice.topic.startDate.lt(ansStartDate).or(choice.topic.endDate.gt(ansEndDate));
+        return choice.topic.endDate.lt(ansStartDate).or(choice.topic.startDate.gt(ansEndDate));
     }
 }

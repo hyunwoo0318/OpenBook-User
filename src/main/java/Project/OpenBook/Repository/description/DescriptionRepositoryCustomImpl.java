@@ -32,8 +32,8 @@ public class DescriptionRepositoryCustomImpl implements DescriptionRepositoryCus
     @Override
     public Description queryRandDescriptionByDescription(Long descriptionId) {
         QDescription des1 = new QDescription("description1");
-        return queryFactory.selectFrom(description)
-                .innerJoin(des1)
+        return queryFactory.select(description)
+                .from(description, des1)
                 .where(des1.id.eq(descriptionId))
                 .where(des1.topic.eq(description.topic))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())

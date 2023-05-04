@@ -15,6 +15,7 @@ public class Description extends BaseEntity{
     private Long id;
 
     @Column(nullable = false)
+    @Lob
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

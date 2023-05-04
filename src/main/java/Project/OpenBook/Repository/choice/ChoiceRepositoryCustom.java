@@ -1,5 +1,6 @@
 package Project.OpenBook.Repository.choice;
 
+import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Choice;
 
 import javax.transaction.Transactional;
@@ -29,6 +30,7 @@ public interface ChoiceRepositoryCustom {
     @Transactional
     public List<Choice> queryChoicesType4(LocalDate startDate,LocalDate endDate, int num, int interval, String categoryName);
 
+    public Category queryCategoryByChoice(Long choiceId);
 
     public Choice queryRandChoiceByTime(LocalDate startDate, LocalDate endDate);
 }

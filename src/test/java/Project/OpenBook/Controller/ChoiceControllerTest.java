@@ -38,7 +38,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 class ChoiceControllerTest {
 
     @LocalServerPort
-    int port;
+    protected int port;
 
     @Autowired
     TestRestTemplate restTemplate;
@@ -56,7 +56,6 @@ class ChoiceControllerTest {
     ChoiceRepository choiceRepository;
 
     private final String prefix = "http://localhost:";
-    //private final String surfix = "/admin/login";
 
     String URL;
 
@@ -74,20 +73,43 @@ class ChoiceControllerTest {
     URL = prefix + port;
     restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
-    init();
+        initEntity();
     }
 
-    @BeforeAll
-    public void init() {
-        topicRepository.deleteAllInBatch();
-        chapterRepository.deleteAllInBatch();
-        categoryRepository.deleteAllInBatch();
 
-        chapter = new Chapter("ct1", 1);
-        categoryList = Arrays.stream(this.categoryNameList).map(c -> new Category(c)).collect(Collectors.toList());
+    private void initEntity(){
+        Chapter chapter = new Chapter("1단원", 1);
+        Category category = new Category("사건");
+        chapterRepository.save(chapter);
+        categoryRepository.save(category);
 
-        chapterRepository.saveAndFlush(chapter);
-        categoryRepository.saveAllAndFlush(categoryList);
+        topic1 = new Topic("topic1", null, null, 0, 0, "detail1", chapter, category);
+        topic2 = new Topic("topic2", null, null, 0, 0, "detail2", chapter, category);
+
+        topicRepository.save(topic1);
+        topicRepository.save(topic2);
+    }
+
+    /**
+     * choice1,2,3 -> topic1
+     * choice4,5 -> topic2
+     */
+    @BeforeEach
+    public void resetChoice(){
+        choiceRepository.deleteAllInBatch();
+
+        choice1 = new Choice("choice1", topic1);
+        choice2 = new Choice("choice2", topic1);
+        choice3 = new Choice("choice3", topic1);
+
+        choice4 = new Choice("choice4", topic2);
+        choice5 = new Choice("choice5", topic2);
+
+        choiceRepository.save(choice1);
+        choiceRepository.save(choice2);
+        choiceRepository.save(choice3);
+        choiceRepository.save(choice4);
+        choiceRepository.save(choice5);
     }
 
 
