@@ -5,6 +5,7 @@ import Project.OpenBook.Domain.*;
 import Project.OpenBook.Repository.AdminRepository;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
+import Project.OpenBook.Repository.CustomerRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
@@ -48,6 +49,7 @@ import java.util.*;
 public class SecurityConfig {
 
     private final AdminRepository adminRepository;
+    private final CustomerRepository customerRepository;
     private final ChoiceRepository choiceRepository;
     private final TopicRepository topicRepository;
 
@@ -106,6 +108,30 @@ public class SecurityConfig {
                     .build();
             adminRepository.save(admin1);
             adminRepository.save(admin2);
+        }
+
+        if(customerRepository.findByNickName("user1").isEmpty()){
+            Customer user1 = Customer.builder()
+                    .nickName("user1")
+                    .age(20)
+                    .currentGrade(5)
+                    .role(Role.USER)
+                    .build();
+            Customer user2 = Customer.builder()
+                    .nickName("user2")
+                    .age(30)
+                    .currentGrade(2)
+                    .role(Role.USER)
+                    .build();
+            Customer user3 = Customer.builder()
+                    .nickName("user3")
+                    .age(20)
+                    .currentGrade(7)
+                    .role(Role.USER)
+                    .build();
+            customerRepository.save(user1);
+            customerRepository.save(user2);
+            customerRepository.save(user3);
         }
 
 //        //카테고리 전체 저장
