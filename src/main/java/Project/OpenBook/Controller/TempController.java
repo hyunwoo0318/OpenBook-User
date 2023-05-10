@@ -23,25 +23,5 @@ public class TempController {
     private final ChapterService chapterService;
     private final TopicService topicService;
 
-    @ApiOperation(value = "각 토픽에 대한 상세정보 조회")
-    @GetMapping("/topics/{topicTitle}")
-    public ResponseEntity queryTopics( @PathVariable("topicTitle") String topicTitle) {
-        TopicDto topicDto = topicService.queryTopic(topicTitle);
-        if (topicDto==null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity(topicDto, HttpStatus.OK);
-    }
 
-
-    @GetMapping("/chapters/{number}/topics")
-    public ResponseEntity queryChpaterTopics(@PathVariable("number") int number) {
-        List<Topic> topicList = chapterService.getTopicsInChapter(number);
-        if (topicList == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-        List<String> topicTitleList = topicList.stream().map(t -> t.getTitle()).collect(Collectors.toList());
-        TopicTitleListDto dto = new TopicTitleListDto(topicTitleList);
-        return new ResponseEntity(dto, HttpStatus.OK);
-    }
 }

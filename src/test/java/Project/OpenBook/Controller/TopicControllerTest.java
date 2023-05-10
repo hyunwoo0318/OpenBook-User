@@ -25,6 +25,7 @@ import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -79,13 +80,19 @@ class TopicControllerTest {
     @DisplayName("새로운 상세정보 추가 - POST /admin/topics")
     @Test
     public void createTopicSuccess() {
-        TopicDto topicDto = new TopicDto(chapterNum, "title123", categoryName, null, null, "detail1");
+        LocalDate startDate = LocalDate.of(-100, 1, 13);
+        LocalDate endDate = LocalDate.of(-90, 1, 13);
+        TopicDto topicDto = new TopicDto(chapterNum, "title123", categoryName, startDate, endDate, "detail1");
 
         ResponseEntity<Void> response = restTemplate.postForEntity(URL, topicDto, Void.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Chapter chapter = chapterRepository.findOneByNumber(chapterNum).get();
-        assertThat(topicRepository.findTopicByTitle("title123").isPresent()).isTrue();
+        Optional<Topic> topicOptional = topicRepository.findTopicByTitle("title123");
+        assertThat(topicOptional.isPresent()).isTrue();
+        Topic topic = topicOptional.get();
+        assertThat(topic.getEndDate().getYear()).isEqualTo(-90);
+        assertThat(topic.getStartDate().getYear()).isEqualTo(-100);
     }
 
     @DisplayName("새로운 상세정보 추가 실패(DTO validation) - POST /admin/topics")
