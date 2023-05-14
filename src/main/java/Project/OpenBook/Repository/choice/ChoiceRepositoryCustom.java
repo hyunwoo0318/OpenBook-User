@@ -22,13 +22,13 @@ public interface ChoiceRepositoryCustom {
     public List<Choice> queryRandChoicesByCategory(String categoryName, int num);
 
     @Transactional
-    public List<Choice> queryChoicesType2(Integer startDate, Integer endDate, int num, int interval, String categoryName);
+    public List<Choice> queryChoicesType2(String topicTitle, Integer startDate, Integer endDate, int num, int interval, String categoryName);
 
     @Transactional
-    public List<Choice> queryChoicesType3(Integer startDate,Integer endDate, int num, int interval, String categoryName);
+    public List<Choice> queryChoicesType3(String topicTitle, Integer startDate,Integer endDate, int num, int interval, String categoryName);
 
     @Transactional
-    public List<Choice> queryChoicesType4(Integer startDate,Integer endDate, int num, int interval, String categoryName);
+    public List<Choice> queryChoicesType4(String topicTitle, Integer startDate,Integer endDate, int num, int interval, String categoryName);
 
     public Category queryCategoryByChoice(Long choiceId);
 

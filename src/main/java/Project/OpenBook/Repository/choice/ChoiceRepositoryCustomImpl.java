@@ -96,7 +96,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     }
 
     @Override
-    public List<Choice> queryChoicesType2(Integer startDate, Integer endDate, int num, int interval, String categoryName) {
+    public List<Choice> queryChoicesType2(String topicTitle, Integer startDate, Integer endDate, int num, int interval, String categoryName) {
         List<Choice> choiceList = queryFactory.selectFrom(choice)
                 .where(notInDateBetween(startDate, endDate))
                 .where(choice.topic.category.name.eq(categoryName))
@@ -104,6 +104,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
                 .limit(num-1)
                 .fetch();
         Choice answerChoice = queryFactory.selectFrom(choice)
+                .where(choice.topic.title.ne(topicTitle))
                 .where(choice.topic.category.name.eq(categoryName))
                 .where(choice.topic.startDate.goe(startDate))
                 .where(choice.topic.endDate.loe(endDate))
@@ -114,7 +115,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
         return choiceList;
     }
     @Override
-    public List<Choice> queryChoicesType3(Integer startDate,Integer endDate, int num, int interval, String categoryName) {
+    public List<Choice> queryChoicesType3(String topicTitle, Integer startDate,Integer endDate, int num, int interval, String categoryName) {
         List<Choice> choiceList = queryFactory.selectFrom(choice)
                 .where(choice.topic.endDate.lt(startDate))
                 .where(choice.topic.category.name.eq(categoryName))
@@ -122,6 +123,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
                 .limit(num-1)
                 .fetch();
         Choice answerChoice = queryFactory.selectFrom(choice)
+                .where(choice.topic.title.ne(topicTitle))
                 .where(choice.topic.category.name.eq(categoryName))
                 .where(choice.topic.startDate.goe(endDate))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
@@ -132,7 +134,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     }
 
     @Override
-    public List<Choice> queryChoicesType4(Integer startDate,Integer endDate, int num, int interval, String categoryName) {
+    public List<Choice> queryChoicesType4(String topicTitle, Integer startDate,Integer endDate, int num, int interval, String categoryName) {
         List<Choice> choiceList = queryFactory.selectFrom(choice)
                 .where(choice.topic.startDate.gt(endDate))
                 .where(choice.topic.category.name.eq(categoryName))
@@ -140,6 +142,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
                 .limit(num-1)
                 .fetch();
         Choice answerChoice = queryFactory.selectFrom(choice)
+                .where(choice.topic.title.ne(topicTitle))
                 .where(choice.topic.category.name.eq(categoryName))
                 .where(choice.topic.endDate.loe(startDate))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())

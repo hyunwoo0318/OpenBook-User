@@ -129,13 +129,13 @@ public class QuestionService {
         List<Choice> choiceList = new ArrayList<>();
         if (type == 2) {
             //정답 사건의 startDate, endDate가 겹치지 않는 4개의 사건 고르기
-            choiceList = choiceRepository.queryChoicesType2(startDate, endDate, choiceNum, 0, categoryName);
+            choiceList = choiceRepository.queryChoicesType2(title, startDate, endDate, choiceNum, 0, categoryName);
         } else if (type == 3) {
             //보기에서 주어진 사건보다 나중에 발생한 사건 찾는 문제
-            choiceList = choiceRepository.queryChoicesType3(startDate, endDate,choiceNum, 0, categoryName);
+            choiceList = choiceRepository.queryChoicesType3(title, startDate, endDate,choiceNum, 0, categoryName);
         } else if (type == 4) {
             //보기에 주어진 사건보다 이전에 발생한 사건 찾는 문제
-            choiceList = choiceRepository.queryChoicesType4(startDate,endDate, choiceNum, 0, categoryName);
+            choiceList = choiceRepository.queryChoicesType4(title, startDate,endDate, choiceNum, 0, categoryName);
         }
 
         return new TempQ(prompt, description, choiceList);

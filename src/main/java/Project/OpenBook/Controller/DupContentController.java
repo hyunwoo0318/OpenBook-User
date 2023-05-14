@@ -25,7 +25,7 @@ public class DupContentController {
             @ApiResponse(responseCode = "201", description = "선지들 선정 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 보기나 선지 입력")
     })
-    @PostMapping("/dup-contents/{descriptionId}")
+    @PostMapping("/admin/dup-contents/{descriptionId}")
     public ResponseEntity addDupContentChoices(@PathVariable Long descriptionId,@RequestBody ChoiceIdListDto choiceIdListDto){
         List<DupContent> dupContentList = dupContentService.addDupContentChoices(descriptionId, choiceIdListDto);
         if (dupContentList == null) {
@@ -40,9 +40,13 @@ public class DupContentController {
             @ApiResponse(responseCode = "200", description = "내용이 겹치는 선지 목록중 특정 선지 제거 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 선지나 보기 입력")
     })
-    @DeleteMapping("/dup-contents/{descriptionId}")
+    @DeleteMapping("/admin/dup-contents/{descriptionId}")
     public ResponseEntity deleteDupContentChoices(@PathVariable Long descriptionId, @RequestBody Long choiceId){
-        dupContentService.deleteDupContentChoices(descriptionId, choiceId)
+        boolean res = dupContentService.deleteDupContentChoices(descriptionId, choiceId);
+        if (!res) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

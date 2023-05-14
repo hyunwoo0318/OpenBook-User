@@ -40,7 +40,7 @@ public class TopicController {
 
 
     @ApiOperation("해당 단원의 모든 topic 조회")
-    @GetMapping("/chapters/{number}/topics")
+    @GetMapping("admin/chapters/{number}/topics")
     public ResponseEntity queryChapterTopics(@PathVariable("number") int number) {
         List<Topic> topicList = chapterService.getTopicsInChapter(number);
         if (topicList == null) {
@@ -81,7 +81,6 @@ public class TopicController {
     })
     @PatchMapping("/admin/topics/{topicTitle}")
     public ResponseEntity updateTopic(@PathVariable("topicTitle")String topicTitle,@RequestBody TopicDto topicDto, BindingResult bindingResult) {
-        System.out.println(topicDto.toString());
         List<ErrorDto> errorDtoList = new ArrayList<>();
         if (bindingResult.hasErrors()) {
             List<ObjectError> allErrors = bindingResult.getAllErrors();

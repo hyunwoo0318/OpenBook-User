@@ -51,6 +51,11 @@ public class DupContentService {
 
     public boolean deleteDupContentChoices(Long descriptionId, Long choiceId) {
         DupContent dupContent = dupContentRepository.queryDupContent(descriptionId, choiceId);
-        if(dupContent == null)
+        if(dupContent == null){
+            return false;
+        }
+
+        dupContentRepository.delete(dupContent);
+        return true;
     }
 }

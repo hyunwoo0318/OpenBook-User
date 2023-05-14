@@ -22,9 +22,6 @@ import java.util.List;
 public class AnswerNoteController {
     private final AnswerNoteService answerNoteService;
 
-
-
-
     @ApiOperation("해당 토픽을 오답노트에 추가")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "오답노트 추가 성공"),
