@@ -24,10 +24,9 @@ public class Topic extends BaseEntity{
 
     @Column(unique = true)
     private String title;
-    @ColumnDefault(value = "10000")
-    private LocalDate startDate;
-    @ColumnDefault(value = "10000")
-    private LocalDate endDate;
+
+    private Integer startDate;
+    private Integer endDate;
     @ColumnDefault(value = "0")
     private int questionNum;
 
@@ -49,7 +48,7 @@ public class Topic extends BaseEntity{
     private List<Choice> choiceList = new ArrayList<>();
 
     @Builder
-    public Topic(String title, LocalDate startDate, LocalDate endDate, int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
+    public Topic(String title, Integer startDate, Integer endDate, int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -61,7 +60,7 @@ public class Topic extends BaseEntity{
 
     }
 
-    public Topic updateTopic(String title,LocalDate startDate,LocalDate endDate, String detail, Chapter chapter, Category category) {
+    public Topic updateTopic(String title,Integer startDate,Integer endDate, String detail, Chapter chapter, Category category) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;

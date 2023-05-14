@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -90,15 +89,13 @@ class QuestionControllerTest {
 
 
         for (int i = 1; i <= 1000; i++) {
-
             int year = rand.nextInt(2000) + 1;
             int month = rand.nextInt(12) + 1; // 1~12 사이의 월을 랜덤으로 생성
             int day = rand.nextInt(26) + 1; // 1부터 최대 일수 사이의 일을 랜덤으로 생성
             int length = rand.nextInt(500);
 
-
-            LocalDate startDate = LocalDate.of(year, month, day);
-            LocalDate endDate = LocalDate.of(year + length, month, day);
+            Integer startDate = year * 1000 + month * 100 + day;
+            Integer endDate = startDate + length;
 
             Category c  = null;
 
@@ -198,8 +195,8 @@ class QuestionControllerTest {
         Topic descriptionTopic = topicRepository.queryTopicByDescription(descriptionId);
         Topic answerTopic = topicRepository.queryTopicByChoice(questionDto.getAnswerChoiceId());
 
-        assertThat(answerTopic.getEndDate().isBefore(descriptionTopic.getEndDate())).isTrue();
-        assertThat(answerTopic.getStartDate().isAfter(descriptionTopic.getStartDate())).isTrue();
+        assertThat(answerTopic.getEndDate()>=(descriptionTopic.getEndDate())).isTrue();
+        assertThat(answerTopic.getStartDate()<=(descriptionTopic.getStartDate())).isTrue();
 
         //오답 선지들은 해당 범위에 없는지 테스트
         List<ChoiceContentIdDto> choiceList = questionDto.getChoiceList();
@@ -207,8 +204,8 @@ class QuestionControllerTest {
             if(c.getId() == questionDto.getAnswerChoiceId()) continue;
             else{
                 Topic topic = topicRepository.queryTopicByChoice(c.getId());
-                assertThat((topic.getEndDate().isBefore(descriptionTopic.getEndDate())) &&
-                        (topic.getStartDate().isAfter(descriptionTopic.getStartDate()))).isFalse();
+                assertThat((topic.getEndDate()<(descriptionTopic.getEndDate())) &&
+                        (topic.getStartDate()>(descriptionTopic.getStartDate()))).isFalse();
             }
         }
     }
@@ -234,7 +231,7 @@ class QuestionControllerTest {
         Topic descriptionTopic = topicRepository.queryTopicByDescription(descriptionId);
         Topic answerTopic = topicRepository.queryTopicByChoice(questionDto.getAnswerChoiceId());
 
-        assertThat(answerTopic.getStartDate().isAfter(descriptionTopic.getEndDate())).isTrue();
+        assertThat(answerTopic.getStartDate()>(descriptionTopic.getEndDate())).isTrue();
 
         //오답 선지들은 해당 범위에 없는지 테스트
         List<ChoiceContentIdDto> choiceList = questionDto.getChoiceList();
@@ -242,7 +239,7 @@ class QuestionControllerTest {
             if(c.getId() == questionDto.getAnswerChoiceId()) continue;
             else{
                 Topic topic = topicRepository.queryTopicByChoice(c.getId());
-                assertThat(topic.getStartDate().isAfter(descriptionTopic.getEndDate())).isFalse();
+                assertThat(topic.getStartDate()>(descriptionTopic.getEndDate())).isFalse();
             }
         }
     }
@@ -268,7 +265,7 @@ class QuestionControllerTest {
         Topic descriptionTopic = topicRepository.queryTopicByDescription(descriptionId);
         Topic answerTopic = topicRepository.queryTopicByChoice(questionDto.getAnswerChoiceId());
 
-        assertThat(answerTopic.getEndDate().isBefore(descriptionTopic.getStartDate())).isTrue();
+        assertThat(answerTopic.getEndDate()<(descriptionTopic.getStartDate())).isTrue();
 
         //오답 선지들은 해당 범위에 없는지 테스트
         List<ChoiceContentIdDto> choiceList = questionDto.getChoiceList();
@@ -276,7 +273,7 @@ class QuestionControllerTest {
             if(c.getId() == questionDto.getAnswerChoiceId()) continue;
             else{
                 Topic topic = topicRepository.queryTopicByChoice(c.getId());
-                assertThat(topic.getEndDate().isBefore(descriptionTopic.getStartDate())).isFalse();
+                assertThat(topic.getEndDate()<(descriptionTopic.getStartDate())).isFalse();
             }
         }
     }

@@ -24,9 +24,9 @@ public class TopicDto {
     @NotBlank(message = "카테고리를 입력해주세요")
     private String category;
 
-    private LocalDate startDate;
+    private Integer startDate;
 
-    private LocalDate endDate;
+    private Integer endDate;
 
    /* @NotBlank(message = "설명을 입력해주세요.")*/
     private String detail;

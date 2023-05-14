@@ -70,8 +70,12 @@ class ChoiceControllerTest {
 
     @BeforeAll
     public void initTestForChoiceController() {
-    URL = prefix + port;
-    restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
+        choiceRepository.deleteAllInBatch();
+        topicRepository.deleteAllInBatch();
+        chapterRepository.deleteAllInBatch();
+        categoryRepository.deleteAllInBatch();
+        URL = prefix + port;
+        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
         initEntity();
     }

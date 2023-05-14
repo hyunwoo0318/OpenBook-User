@@ -105,8 +105,8 @@ public class QuestionService {
         String prompt = prefix + " " +  categoryName + suffix;
 
         //정답 주제에 대한 보기와 선지를 가져옴
-        Choice answerChoice = choiceRepository.queryRandChoiceByTopic(title);
         Description description = descriptionRepository.findRandDescriptionByTopic(title);
+        Choice answerChoice = choiceRepository.queryRandChoiceByTopic(answerTopic.getId(),description.getId());
 
         //정답 주제와 같은 카테고리를 가진 나머지 주제들에서 선지를 가져옴
         List<Choice> choiceList = choiceRepository.queryRandChoicesByCategory(title, categoryName, choiceNum-1);
@@ -119,8 +119,8 @@ public class QuestionService {
 
         String title = answerTopic.getTitle();
         String categoryName = answerTopic.getCategory().getName();
-        LocalDate startDate = answerTopic.getStartDate();
-        LocalDate endDate = answerTopic.getEndDate();
+        Integer startDate = answerTopic.getStartDate();
+        Integer endDate = answerTopic.getEndDate();
 
         String prompt = setPrompt(categoryName, type);
 

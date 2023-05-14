@@ -9,22 +9,23 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AnswerNote extends BaseEntity{
+@Table(name = "dup_content")
+public class DupContent  extends BaseEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
+    @JoinColumn(name = "description_id")
+    private Description description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
-    private Question question;
+    @JoinColumn(name = "choice_id")
+    private Choice choice;
 
-    public AnswerNote(Customer customer,Question question) {
-        this.customer = customer;
-        this.question = question;
+    public DupContent(Description description, Choice choice) {
+        this.description = description;
+        this.choice = choice;
     }
 }

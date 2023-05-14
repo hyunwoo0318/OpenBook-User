@@ -15,22 +15,22 @@ public interface ChoiceRepositoryCustom {
 
     public List<Choice> queryChoicesById(List<Long> choiceIdList);
 
-    public Choice  queryRandChoiceByTopic(String topicTitle);
+    public Choice  queryRandChoiceByTopic(Long topicId, Long descriptionId);
 
     public List<Choice> queryRandChoicesByCategory(String exceptTopicTitle, String categoryName, int num);
 
     public List<Choice> queryRandChoicesByCategory(String categoryName, int num);
 
     @Transactional
-    public List<Choice> queryChoicesType2(LocalDate startDate, LocalDate endDate, int num, int interval, String categoryName);
+    public List<Choice> queryChoicesType2(Integer startDate, Integer endDate, int num, int interval, String categoryName);
 
     @Transactional
-    public List<Choice> queryChoicesType3(LocalDate startDate,LocalDate endDate, int num, int interval, String categoryName);
+    public List<Choice> queryChoicesType3(Integer startDate,Integer endDate, int num, int interval, String categoryName);
 
     @Transactional
-    public List<Choice> queryChoicesType4(LocalDate startDate,LocalDate endDate, int num, int interval, String categoryName);
+    public List<Choice> queryChoicesType4(Integer startDate,Integer endDate, int num, int interval, String categoryName);
 
     public Category queryCategoryByChoice(Long choiceId);
 
-    public Choice queryRandChoiceByTime(LocalDate startDate, LocalDate endDate);
+    public Choice queryRandChoiceByTime(Integer startDate, Integer endDate);
 }

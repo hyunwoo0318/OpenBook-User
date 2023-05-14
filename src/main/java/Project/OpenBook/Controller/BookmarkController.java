@@ -21,21 +21,6 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @ApiOperation("특정 회원의 오답노트 리스트 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적인 조회"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
-    })
-    @GetMapping("/{customerId}")
-    public ResponseEntity queryBookmarks(@PathVariable("customerId") Long customerId){
-        List<String> titleList = bookmarkService.queryBookmarks(customerId);
-        if (titleList == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity(titleList, HttpStatus.OK);
-    }
-
     @ApiOperation("해당 토픽을 북마크 추가")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "북마크 추가 성공"),

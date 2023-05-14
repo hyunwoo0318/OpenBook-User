@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/admin/topics")
 public class TopicController {
 
     private final TopicService topicService;

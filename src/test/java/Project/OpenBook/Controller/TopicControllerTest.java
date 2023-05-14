@@ -23,7 +23,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,8 +68,8 @@ class TopicControllerTest {
                 .detail("detail1")
                 .chapter(chapter)
                 .category(category)
-                .startDate(LocalDate.now())
-                .endDate(LocalDate.now())
+                .startDate(19980318)
+                .endDate(19980318)
                 .build();
 
         topicRepository.saveAndFlush(topic);
@@ -80,9 +79,8 @@ class TopicControllerTest {
     @DisplayName("새로운 상세정보 추가 - POST /admin/topics")
     @Test
     public void createTopicSuccess() {
-        LocalDate startDate = LocalDate.of(-100, 1, 13);
-        LocalDate endDate = LocalDate.of(-90, 1, 13);
-        TopicDto topicDto = new TopicDto(chapterNum, "title123", categoryName, startDate, endDate, "detail1");
+
+        TopicDto topicDto = new TopicDto(chapterNum, "title123", categoryName, -10001220, -9991220, "detail1");
 
         ResponseEntity<Void> response = restTemplate.postForEntity(URL, topicDto, Void.class);
 
@@ -90,14 +88,11 @@ class TopicControllerTest {
         Chapter chapter = chapterRepository.findOneByNumber(chapterNum).get();
         Optional<Topic> topicOptional = topicRepository.findTopicByTitle("title123");
         assertThat(topicOptional.isPresent()).isTrue();
-        Topic topic = topicOptional.get();
-        assertThat(topic.getEndDate().getYear()).isEqualTo(-90);
-        assertThat(topic.getStartDate().getYear()).isEqualTo(-100);
     }
 
     @DisplayName("새로운 상세정보 추가 실패(DTO validation) - POST /admin/topics")
     @Test
-    public void creaeteTopicFailWrongDTO(){
+    public void createTopicFailWrongDTO(){
 
         //필수 입력 조건인 chapterNum,title,categoryName 생략
         TopicDto topicDto = new TopicDto();

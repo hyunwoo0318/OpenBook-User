@@ -7,6 +7,7 @@ import Project.OpenBook.Dto.category.CategoryDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
+import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +47,9 @@ class CategoryControllerTest {
     ChapterRepository chapterRepository;
 
     @Autowired
+    ChoiceRepository choiceRepository;
+
+    @Autowired
     TestRestTemplate restTemplate;
 
 
@@ -59,6 +63,7 @@ class CategoryControllerTest {
 
     @BeforeEach
     public void deleteAll() {
+        choiceRepository.deleteAllInBatch();
         topicRepository.deleteAllInBatch();
         chapterRepository.deleteAllInBatch();
         categoryRepository.deleteAllInBatch();

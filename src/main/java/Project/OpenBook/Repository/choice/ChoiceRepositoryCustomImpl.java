@@ -3,6 +3,7 @@ package Project.OpenBook.Repository.choice;
 import Project.OpenBook.Domain.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static Project.OpenBook.Domain.QCategory.category;
 import static Project.OpenBook.Domain.QChoice.choice;
+import static Project.OpenBook.Domain.QDupContent.dupContent;
 import static Project.OpenBook.Domain.QTopic.topic;
 
 @Repository
@@ -41,9 +43,15 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     }
 
     @Override
-    public Choice queryRandChoiceByTopic(String topicTitle) {
-        return queryFactory.selectFrom(choice)
-                .where(choice.topic.title.eq(topicTitle))
+    public Choice queryRandChoiceByTopic(Long topicId, Long descriptionId) {
+        return queryFactory.select(choice)
+                .from(choice, dupContent)
+                .where(choice.topic.id.eq(topicId))
+                .where(choice.id.notIn(
+                        JPAExpressions.select(dupContent.choice.id)
+                                .from(dupContent)
+                                .where(dupContent.description.id.eq(descriptionId))
+                ))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(1)
                 .fetchOne();
@@ -71,7 +79,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     }
 
     @Override
-    public Choice queryRandChoiceByTime(LocalDate startDate, LocalDate endDate) {
+    public Choice queryRandChoiceByTime(Integer startDate, Integer endDate) {
         return queryFactory.selectFrom(choice)
                 .where(choice.topic.startDate.gt(startDate).or(choice.topic.endDate.lt(endDate)))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
@@ -88,7 +96,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     }
 
     @Override
-    public List<Choice> queryChoicesType2(LocalDate startDate, LocalDate endDate, int num, int interval, String categoryName) {
+    public List<Choice> queryChoicesType2(Integer startDate, Integer endDate, int num, int interval, String categoryName) {
         List<Choice> choiceList = queryFactory.selectFrom(choice)
                 .where(notInDateBetween(startDate, endDate))
                 .where(choice.topic.category.name.eq(categoryName))
@@ -106,7 +114,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
         return choiceList;
     }
     @Override
-    public List<Choice> queryChoicesType3(LocalDate startDate,LocalDate endDate, int num, int interval, String categoryName) {
+    public List<Choice> queryChoicesType3(Integer startDate,Integer endDate, int num, int interval, String categoryName) {
         List<Choice> choiceList = queryFactory.selectFrom(choice)
                 .where(choice.topic.endDate.lt(startDate))
                 .where(choice.topic.category.name.eq(categoryName))
@@ -124,7 +132,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     }
 
     @Override
-    public List<Choice> queryChoicesType4(LocalDate startDate,LocalDate endDate, int num, int interval, String categoryName) {
+    public List<Choice> queryChoicesType4(Integer startDate,Integer endDate, int num, int interval, String categoryName) {
         List<Choice> choiceList = queryFactory.selectFrom(choice)
                 .where(choice.topic.startDate.gt(endDate))
                 .where(choice.topic.category.name.eq(categoryName))
@@ -151,7 +159,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
                 .fetchOne();
     }
 
-    private BooleanExpression notInDateBetween(LocalDate ansStartDate, LocalDate ansEndDate) {
+    private BooleanExpression notInDateBetween(Integer ansStartDate, Integer ansEndDate) {
         return choice.topic.endDate.lt(ansStartDate).or(choice.topic.startDate.gt(ansEndDate));
     }
 }
