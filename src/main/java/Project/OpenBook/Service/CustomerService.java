@@ -1,6 +1,6 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Repository.CustomerRepository;
+import Project.OpenBook.Repository.customer.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

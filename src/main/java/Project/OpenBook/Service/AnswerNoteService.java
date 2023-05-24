@@ -2,7 +2,7 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.AnswerNoteDto;
-import Project.OpenBook.Repository.CustomerRepository;
+import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.answernote.AnswerNoteRepository;
 import Project.OpenBook.Repository.question.QuestionRepository;
 import lombok.RequiredArgsConstructor;

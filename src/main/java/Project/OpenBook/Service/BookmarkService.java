@@ -5,7 +5,7 @@ import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.BookmarkDto;
 import Project.OpenBook.Repository.bookmark.BookmarkRepository;
-import Project.OpenBook.Repository.CustomerRepository;
+import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

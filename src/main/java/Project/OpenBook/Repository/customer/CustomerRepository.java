@@ -1,11 +1,11 @@
-package Project.OpenBook.Repository;
+package Project.OpenBook.Repository.customer;
 
 import Project.OpenBook.Domain.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface CustomerRepository extends JpaRepository<Customer, Long> {
+public interface CustomerRepository extends JpaRepository<Customer, Long>, CustomerCustomRepository {
 
     public Optional<Customer> findByNickName(String nickName);
 }

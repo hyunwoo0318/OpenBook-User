@@ -53,5 +53,4 @@ public class CustomerController {
         return new ResponseEntity(questionIdList, HttpStatus.OK);
     }
 
-    //TODO : 로그인, 회원가입 구현
 }

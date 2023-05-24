@@ -2,42 +2,30 @@ package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.*;
+import Project.OpenBook.HttpCookieOAuth2AuthorizationRequestRepository;
+import Project.OpenBook.AuthenticationSuccessCustomHandler;
+import Project.OpenBook.Jwt.jwtCustomFilter;
 import Project.OpenBook.Repository.AdminRepository;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
-import Project.OpenBook.Repository.CustomerRepository;
+import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Service.OAuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.SecurityBuilder;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.HttpMediaTypeException;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -50,6 +38,12 @@ public class SecurityConfig {
 
     private final AdminRepository adminRepository;
     private final CustomerRepository customerRepository;
+
+    private final OAuthService oAuthService;
+
+    private final AuthenticationSuccessCustomHandler authenticationSuccessCustomHandler;
+
+    private final jwtCustomFilter jwtCustomFilter;
     private final ChoiceRepository choiceRepository;
     private final TopicRepository topicRepository;
 
@@ -60,7 +54,7 @@ public class SecurityConfig {
     private final DescriptionRepository descriptionRepository;
 
     private final String[] permitAllList = {
-            "/","/admin/login", "/users/login", "/admin/", "/users/",
+            "/","/admin/login", "/users/login", "/admin/", "/users/","/oauth2/**", "/login/**","/error/*",
             "/v2/api-docs",
             "/swagger-resources",
             "/swagger-resources/**",
@@ -82,14 +76,26 @@ public class SecurityConfig {
         return http.csrf().disable().cors().and()
                 .formLogin().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
-//                .antMatchers(permitAllList).permitAll()
-//                .antMatchers("/admin/**").hasRole("ADMIN")
-//                .antMatchers("/**").hasRole("USER")
-//                .anyRequest().authenticated()
+               // .antMatchers("/**").permitAll()
+                .antMatchers(permitAllList).permitAll()
+                .antMatchers("/admin/**").hasRole("ADMIN")
+                .antMatchers("/**").hasAnyRole("USER", "ADMIN")
+                .anyRequest().authenticated()
                 .and().httpBasic().and().
-                headers().frameOptions().sameOrigin().xssProtection().block(false).and().and().build();
+                formLogin().disable().
+                oauth2Login()
+                    .successHandler(authenticationSuccessCustomHandler)
+                .redirectionEndpoint().and()
+                .userInfoEndpoint().userService(oAuthService)
+                .and().authorizationEndpoint()
+                    .authorizationRequestRepository(cookieAuthorizationRequestRepository())
+                .and().and().
+                headers().frameOptions().sameOrigin().xssProtection().block(false).and().and()
+                .addFilterBefore(jwtCustomFilter, UsernamePasswordAuthenticationFilter.class).build();
+
+
     }
+
 
 
     @Bean
@@ -135,6 +141,12 @@ public class SecurityConfig {
         }
 
     }
+
+    @Bean
+    public HttpCookieOAuth2AuthorizationRequestRepository cookieAuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository();
+    }
+
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
