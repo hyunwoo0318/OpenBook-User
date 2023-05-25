@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.choice.ChoiceContentIdDto;
 import Project.OpenBook.Dto.description.DescriptionContentIdDto;
@@ -17,12 +18,13 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
+
+import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -45,14 +47,11 @@ public class QuestionService {
     @Transactional
     public QuestionDto makeQuestionTimeAndDescription(Long type, String categoryName, String topicTitle) {
 
+        checkCategory(categoryName);
         Topic answerTopic = null;
         //정답 토픽 선정
         if (topicTitle != null) {
-            Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
-            if (topicOptional.isEmpty()) {
-                return null;
-            }
-            answerTopic = topicOptional.get();
+            answerTopic = checkTopic(topicTitle);
         }else{
             answerTopic = topicRepository.queryRandTopicByCategory(categoryName);
         }
@@ -67,8 +66,9 @@ public class QuestionService {
         }
 
         if (tempQ.choiceList.size() != 5) {
-            return null;
+            throw new CustomException(NOT_ENOUGH_CHOICE);
         }
+
         List<ChoiceContentIdDto> choiceList = new ArrayList<>();
         Long answerId = null;
         DescriptionContentIdDto descriptionContentIdDto = new DescriptionContentIdDto(tempQ.description.getId(), tempQ.description.getContent());
@@ -159,21 +159,22 @@ public class QuestionService {
 
         Long type = questionDto.getType();
         String categoryName = questionDto.getCategoryName();
-        Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
-        if (categoryOptional.isEmpty() || type > 3) {
-            return null;
-        }
+        Category category = checkCategory(categoryName);
 
         List<Long> choiceIdList = questionDto.getChoiceList().stream().map(c -> c.getId()).collect(Collectors.toList());
         List<Choice> choiceList = choiceRepository.queryChoicesById(choiceIdList);
         Long descriptionId = questionDto.getDescription().getId();
+
+        if (type > 5) {
+            throw new CustomException(INVALID_PARAMETER);
+        }
 
         //문제 저장
         Question question = Question.builder()
                 .answerChoiceId(questionDto.getAnswerChoiceId())
                 .prompt(questionDto.getPrompt())
                 .type(type)
-                .category(categoryOptional.get())
+                .category(category)
                 .build();
         questionRepository.save(question);
 
@@ -185,11 +186,9 @@ public class QuestionService {
         questionChoiceRepository.saveAll(questionChoiceList);
 
         //보기 저장
-        Optional<Description> descriptionOptional = descriptionRepository.findById(descriptionId);
-        if (descriptionOptional.isEmpty()) {
-            return null;
-        }
-        Description description = descriptionOptional.get();
+        Description description = descriptionRepository.findById(descriptionId).orElseThrow(() -> {
+            throw new CustomException(DESCRIPTION_NOT_FOUND);
+        });
         questionDescriptionRepository.save(new QuestionDescription(question, description));
 
         return question;
@@ -198,19 +197,15 @@ public class QuestionService {
     @Transactional
     public Question updateQuestion(Long questionId, QuestionDto questionDto) {
 
-        Optional<Question> questionOptional = questionRepository.findById(questionId);
-        if (questionOptional.isEmpty()) {
-            return null;
-        }
-        Question question = questionOptional.get();
+        Question question = checkQuestion(questionId);
 
         Long type = questionDto.getType();
         String categoryName = questionDto.getCategoryName();
-        Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
-        if (categoryOptional.isEmpty() || type > 3) {
-            return null;
+        Category category = checkCategory(categoryName);
+
+        if (type > 5) {
+            throw new CustomException(INVALID_PARAMETER);
         }
-        Category category = categoryOptional.get();
 
         Question updatedQuestion = question.updateQuestion(questionDto.getPrompt(), questionDto.getAnswerChoiceId(), type, category);
 
@@ -224,10 +219,7 @@ public class QuestionService {
 
     public boolean deleteQuestion(Long questionId) {
 
-        Optional<Question> questionOptional = questionRepository.findById(questionId);
-        if (questionOptional.isEmpty()) {
-            return false;
-        }
+        checkQuestion(questionId);
         questionRepository.deleteById(questionId);
         return true;
     }
@@ -259,6 +251,24 @@ public class QuestionService {
         }
         //나중에 다른 일에 대한 문제 생성시 추가
         return prompt;
+    }
+
+    private Topic checkTopic(String topicTitle) {
+        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        });
+    }
+
+    private Category checkCategory(String categoryName) {
+        return categoryRepository.findCategoryByName(categoryName).orElseThrow(() ->{
+            throw new CustomException(CATEGORY_NOT_FOUND);
+        });
+    }
+
+    private Question checkQuestion(Long questionId) {
+        return questionRepository.findById(questionId).orElseThrow(() ->{
+            throw new CustomException(QUESTION_NOT_FOUND);
+        });
     }
 
 }

@@ -61,19 +61,7 @@ public class AdminController {
     })
     @PostMapping("/login")
     public ResponseEntity adminLogin(@Validated @RequestBody AdminDto adminDto, BindingResult bindingResult) {
-
-        List<ErrorDto> errorDtoList = new ArrayList<>();
-
-        if (bindingResult.hasErrors()) {
-            errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
-
-        Admin admin = adminService.login(adminDto.getLoginId(), adminDto.getPassword());
-
-        if (admin == null) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        adminService.login(adminDto.getLoginId(), adminDto.getPassword());
 
         return new ResponseEntity(HttpStatus.OK);
     }

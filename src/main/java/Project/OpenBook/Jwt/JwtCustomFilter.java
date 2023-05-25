@@ -1,7 +1,6 @@
 package Project.OpenBook.Jwt;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -13,7 +12,7 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @Component
-public class jwtCustomFilter implements Filter {
+public class JwtCustomFilter implements Filter {
 
     private final TokenManager tokenManager;
 
@@ -29,12 +28,10 @@ public class jwtCustomFilter implements Filter {
                 tokenManager.validateToken(token);
                 authentication = tokenManager.getAuthorities(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
-                chain.doFilter(request, response);
             }catch(Exception e){
-                res.setStatus(401);
             }
         }
-
+        chain.doFilter(request, response);
     }
 }
 

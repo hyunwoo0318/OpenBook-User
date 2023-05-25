@@ -1,5 +1,7 @@
 package Project.OpenBook.Controller;
 
+import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static Project.OpenBook.Constants.ErrorCode.INVALID_PARAMETER;
+
 @RestController
 @RequiredArgsConstructor
 public class JwtController {
@@ -31,19 +35,13 @@ public class JwtController {
     public ResponseEntity checkRefreshToken(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String refreshToken = request.getHeader("refresh-token");
         if (refreshToken.isBlank()) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            throw new CustomException(INVALID_PARAMETER);
         }
-        try {
-            boolean res = tokenManager.validateToken(refreshToken);
-            TokenDto tokenDto = tokenManager.generateToken(refreshToken);
-            if (tokenDto == null) {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST);
-            }
-            response.setHeader("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
-            response.setHeader("refresh-token",tokenDto.getRefreshToken());
-            return new ResponseEntity(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+
+        tokenManager.validateToken(refreshToken);
+        TokenDto tokenDto = tokenManager.generateToken(refreshToken);
+        response.setHeader("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
+        response.setHeader("refresh-token",tokenDto.getRefreshToken());
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

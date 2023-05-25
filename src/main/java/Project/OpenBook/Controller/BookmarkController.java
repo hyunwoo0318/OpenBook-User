@@ -29,9 +29,6 @@ public class BookmarkController {
     @PostMapping
     public ResponseEntity addBookmark(@Validated @RequestBody BookmarkDto bookmarkDto) {
         Bookmark bookmark = bookmarkService.addBookmark(bookmarkDto);
-        if (bookmark == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -43,10 +40,7 @@ public class BookmarkController {
     })
     @DeleteMapping
     public ResponseEntity deleteBookmark(@Validated @RequestBody BookmarkDto bookmarkDto) {
-        boolean res = bookmarkService.deleteBookmark(bookmarkDto);
-        if (res == false) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+        bookmarkService.deleteBookmark(bookmarkDto);
 
         return new ResponseEntity(HttpStatus.OK);
     }

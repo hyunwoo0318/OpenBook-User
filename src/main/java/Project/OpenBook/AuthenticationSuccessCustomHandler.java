@@ -38,5 +38,6 @@ public class AuthenticationSuccessCustomHandler implements AuthenticationSuccess
         if (customer.isNew()) {
             response.setHeader("Is-new", "T");
         }
+        response.setStatus(201);
     }
 }

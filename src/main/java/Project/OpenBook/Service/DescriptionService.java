@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Domain.Description;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.description.DescriptionCreateDto;
@@ -13,8 +14,10 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static Project.OpenBook.Constants.ErrorCode.DESCRIPTION_NOT_FOUND;
+import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -26,29 +29,26 @@ public class DescriptionService {
 
     public DescriptionDto queryDescription(Long descriptionId) {
 
-        Optional<Description> descriptionOptional = descriptionRepository.findById(descriptionId);
-        if (descriptionOptional.isEmpty()) {
-            return null;
-        }
-        Description description = descriptionOptional.get();
+        Description description = checkDescription(descriptionId);
 
         DescriptionDto descriptionDto = new DescriptionDto(description);
         return descriptionDto;
     }
 
     public DescriptionDto queryRandomDescription(Long descriptionId) {
+        Description prevDescription = checkDescription(descriptionId);
         Description description = descriptionRepository.queryRandDescriptionByDescription(descriptionId);
         if (description == null) {
-            return null;
+            return new DescriptionDto(prevDescription);
         }
         return new DescriptionDto(description);
     }
 
 
     public List<Description> queryDescriptionsInTopic(String topicTitle) {
-        if(topicRepository.findTopicByTitle(topicTitle).isEmpty()){
-            return null;
-        }
+        topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        });
         return descriptionRepository.findDescriptionsByTopic(topicTitle);
     }
 
@@ -57,11 +57,9 @@ public class DescriptionService {
         String topicTitle = descriptionCreateDto.getTopicTitle();
         String[] contentList = descriptionCreateDto.getContentList();
 
-        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
-        if (topicOptional.isEmpty()) {
-            return null;
-        }
-        Topic topic = topicOptional.get();
+        Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        });
         List<Description> descriptionList = Arrays.stream(contentList).map(c -> new Description(c, topic)).collect(Collectors.toList());
         descriptionRepository.saveAll(descriptionList);
         return descriptionList;
@@ -71,12 +69,7 @@ public class DescriptionService {
     @Transactional
     public Description updateDescription(Long descriptionId, DescriptionUpdateDto descriptionUpdateDto) {
 
-        Optional<Description> descriptionOptional = descriptionRepository.findById(descriptionId);
-        if (descriptionOptional.isEmpty()) {
-            return null;
-        }
-
-        Description description = descriptionOptional.get();
+        Description description = checkDescription(descriptionId);
 
         Description updateDescription = description.updateContent(descriptionUpdateDto.getContent());
         return updateDescription;
@@ -84,11 +77,14 @@ public class DescriptionService {
 
     @Transactional
     public boolean deleteDescription(Long descriptionId) {
-        Optional<Description> descriptionOptional = descriptionRepository.findById(descriptionId);
-        if (descriptionOptional.isEmpty()) {
-            return false;
-        }
+        checkDescription(descriptionId);
         descriptionRepository.deleteById(descriptionId);
         return true;
+    }
+
+    private Description checkDescription(Long descriptionId) {
+        return descriptionRepository.findById(descriptionId).orElseThrow(() ->{
+            throw new CustomException(DESCRIPTION_NOT_FOUND);
+        });
     }
 }

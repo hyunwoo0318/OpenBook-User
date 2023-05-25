@@ -35,13 +35,7 @@ public class QuestionController {
     @GetMapping("/admin/temp-question")
     public ResponseEntity makeTempQuestion(@RequestParam("category") String categoryName, @RequestParam("type") Long type,
                                            @RequestParam(value = "topic", required = false) String topicTitle){
-        if(!categoryService.findCategory(categoryName)){
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
         QuestionDto questionDto = questionService.makeQuestionTimeAndDescription(type, categoryName,topicTitle);
-        if (questionDto == null) {
-            return new ResponseEntity(new ErrorDto("question", "문제를 생성할수 없습니다."), HttpStatus.BAD_REQUEST);
-        }
         return new ResponseEntity(questionDto, HttpStatus.OK);
     }
 
@@ -53,9 +47,6 @@ public class QuestionController {
     @GetMapping("/questions/{id}")
     public ResponseEntity queryQuestion(@PathVariable Long id) {
         QuestionDto questionDto = questionService.queryQuestion(id);
-        if (questionDto == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity(questionDto, HttpStatus.OK);
     }
 
@@ -66,24 +57,9 @@ public class QuestionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 카테고리나 문제 타입 입력으로 인한 문제 생성 실패")
     })
     @PostMapping("/admin/questions")
-    public ResponseEntity addQuestion(@Validated @RequestBody QuestionDto questionDto, BindingResult bindingResult) {
+    public ResponseEntity addQuestion(@Validated @RequestBody QuestionDto questionDto) {
 
-        List<ErrorDto> errorDtoList = new ArrayList<>();
         Question question = questionService.addQuestion(questionDto);
-        if (question == null) {
-            errorDtoList.add(new ErrorDto("question", "문제 생성 실패!"));
-        }
-        if (bindingResult.hasErrors()) {
-            errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
-        }
-
-        if(!errorDtoList.isEmpty()){
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
-
-        if (question == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
 
         return new ResponseEntity(question.getId(), HttpStatus.CREATED);
     }
@@ -95,19 +71,9 @@ public class QuestionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 카테고리, 문제 타입, 문제 아이디 입력으로 인한 문제 수정 실패")
     })
     @PatchMapping("/admin/questions/{questionId}")
-    public ResponseEntity updateQuestion(@PathVariable Long questionId,@Validated @RequestBody QuestionDto questionDto, BindingResult bindingResult) {
+    public ResponseEntity updateQuestion(@PathVariable Long questionId,@Validated @RequestBody QuestionDto questionDto) {
 
-        List<ErrorDto> errorDtoList = new ArrayList<>();
         Question question = questionService.updateQuestion(questionId, questionDto);
-
-        if (question == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-
-        if (bindingResult.hasErrors()) {
-            errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
 
         return new ResponseEntity(question.getId(),HttpStatus.OK);
     }
@@ -117,13 +83,10 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "성공적인 문제 삭제"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 문제 아이디 입력으로 인한 문제 수정 실패")
     })
-    @DeleteMapping("/admin/questions/{questionId}")
+    @DeleteMapping("/admin/questions/{question-id}")
     public ResponseEntity deleteQuestion(@PathVariable("question-id") Long questionId) {
 
-        boolean res = questionService.deleteQuestion(questionId);
-        if(!res){
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+        questionService.deleteQuestion(questionId);
 
         return new ResponseEntity(HttpStatus.OK);
     }

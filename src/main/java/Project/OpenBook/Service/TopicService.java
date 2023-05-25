@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
@@ -19,6 +20,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static Project.OpenBook.Constants.ErrorCode.*;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -30,52 +33,25 @@ public class TopicService {
     private final ChapterRepository chapterRepository;
 
     public TopicDto queryTopic(String topicTitle) {
-        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
-        if (topicOptional.isEmpty()) {
-            return null;
-        }
-        Topic topic = topicOptional.get();
+        Topic topic = checkTopic(topicTitle);
 
         TopicDto topicDto = new TopicDto(topic.getChapter().getNumber(), topic.getTitle(), topic.getCategory().getName(), topic.getStartDate(), topic.getEndDate()
                 , topic.getDetail());
         return topicDto;
     }
 
-    public Topic createTopic(TopicDto topicDto, List<ErrorDto> errorDtoList) {
+    public Topic createTopic(TopicDto topicDto) {
 
-        String categoryName = topicDto.getCategory();
-        Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
-        if (categoryOptional.isEmpty()) {
-            errorDtoList.add(new ErrorDto("category", "존재하지않는 카테고리입니다."));
-        }
+        Category category = checkCategory(topicDto.getCategory());
 
-        int chapterNum = topicDto.getChapter();
-        Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(chapterNum);
-        if (chapterOptional.isEmpty()) {
-            errorDtoList.add(new ErrorDto("chapter", "존재하지않는 단원입니다."));
-        }
+        Chapter chapter = checkChapter(topicDto.getChapter());
 
-        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicDto.getTitle());
-        if (topicOptional.isPresent()) {
-            errorDtoList.add(new ErrorDto("title", "이미 존재하는 제목입니다."));
-        }
-
-        //오류가 있으면 따로 return
-        if(!errorDtoList.isEmpty())
-            return null;
-
-        //입력이 필수가 아닌 startDate, endDate, keywords처리
-        //keywordList -> keywords
-
-        /*String keywords = "";
-        if(topicDto.getKeywordList() != null){
-           keywords  = parseKeywordList(topicDto.getKeywordList());
-        }*/
+        checkDupTopicTitle(topicDto.getTitle());
 
 
         Topic topic = Topic.builder()
-                .chapter(chapterOptional.get())
-                .category(categoryOptional.get())
+                .chapter(chapter)
+                .category(category)
                 .title(topicDto.getTitle())
                 .startDate(topicDto.getStartDate())
                 .endDate(topicDto.getEndDate())
@@ -88,48 +64,25 @@ public class TopicService {
         return topic;
     }
 
-    public Topic updateTopic(String topicTitle, TopicDto topicDto, List<ErrorDto> errorDtoList) {
-        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
-        if (topicOptional.isEmpty()) {
-            return null;
-        }
+    public Topic updateTopic(String topicTitle, TopicDto topicDto) {
+        Topic topic = checkTopic(topicTitle);
 
         String categoryName = topicDto.getCategory();
-        Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
-        if (categoryOptional.isEmpty()) {
-            errorDtoList.add(new ErrorDto("category", "존재하지않는 카테고리입니다."));
-        }
+        Category category = checkCategory(categoryName);
 
         int chapterNum = topicDto.getChapter();
-        Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(chapterNum);
-        if (chapterOptional.isEmpty()) {
-            errorDtoList.add(new ErrorDto("chapter", "존재하지않는 단원입니다."));
-        }
+        Chapter chapter = checkChapter(chapterNum);
 
-        //오류가 있으면 따로 return
-        if(!errorDtoList.isEmpty())
-            return null;
-
-
-       /* String keywords = "";
-        if(topicDto.getKeywordList() != null){
-            keywords  = parseKeywordList(topicDto.getKeywordList());
-        }*/
-
-        Topic topic = topicOptional.get();
         topic.updateTopic(topicDto.getTitle(), topicDto.getStartDate(),topicDto.getEndDate(), topicDto.getDetail(),
-                chapterOptional.get(), categoryOptional.get());
+                chapter, category);
 
         return topic;
     }
 
     public boolean deleteTopic(String topicTitle) {
-        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
-        if (topicOptional.isEmpty()) {
-            return false;
-        }
+        Topic topic = checkTopic(topicTitle);
 
-        topicRepository.delete(topicOptional.get());
+        topicRepository.delete(topic);
         return true;
 
     }
@@ -141,5 +94,29 @@ public class TopicService {
     public List<String> mergeKeywordList(String keywords) {
         String[] split = keywords.split(",");
         return Arrays.asList(split);
+    }
+
+    private Chapter checkChapter(int num) {
+        return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
+            throw new CustomException(CHAPTER_NOT_FOUND);
+        });
+    }
+
+    private Category checkCategory(String categoryName) {
+        return categoryRepository.findCategoryByName(categoryName).orElseThrow(() -> {
+            throw new CustomException(CATEGORY_NOT_FOUND);
+        });
+    }
+
+    private Topic checkTopic(String topicTitle) {
+        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        });
+    }
+
+    private void checkDupTopicTitle(String topicTitle) {
+        topicRepository.findTopicByTitle(topicTitle).ifPresent(t -> {
+            throw new CustomException(DUP_TOPIC_TITLE);
+        });
     }
 }

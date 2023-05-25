@@ -36,9 +36,7 @@ public class DescriptionController {
     @GetMapping("/admin/descriptions/{descriptionId}")
     public ResponseEntity queryDescription(@PathVariable Long descriptionId) {
         DescriptionDto descriptionDto = descriptionService.queryDescription(descriptionId);
-        if (descriptionDto == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+
         return new ResponseEntity(descriptionDto, HttpStatus.OK);
     }
 
@@ -50,9 +48,7 @@ public class DescriptionController {
     @GetMapping("/topics/{topicTitle}/descriptions")
     public ResponseEntity getDescriptionsInTopic(@PathVariable String topicTitle){
         List<Description> descriptionList = descriptionService.queryDescriptionsInTopic(topicTitle);
-        if (descriptionList == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+
         List<DescriptionDto> descriptionDtoList = descriptionList.stream().map(d -> new DescriptionDto(d)).collect(Collectors.toList());
         return new ResponseEntity(descriptionDtoList, HttpStatus.OK);
     }
@@ -65,9 +61,7 @@ public class DescriptionController {
     @GetMapping("/admin/descriptions/random/{descriptionId}")
     public ResponseEntity getDescriptionInSameTopic(@PathVariable("descriptionId") Long descriptionId){
         DescriptionDto descriptionDto = descriptionService.queryRandomDescription(descriptionId);
-        if (descriptionDto == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+
         return new ResponseEntity(descriptionDto, HttpStatus.OK);
     }
 
@@ -79,17 +73,9 @@ public class DescriptionController {
             @ApiResponse(responseCode =  "404", description = "존재하지 않는 topicTitle 입력")
     })
     @PostMapping("/admin/descriptions/")
-    public ResponseEntity addDescription(@Validated @RequestBody DescriptionCreateDto descriptionCreateDto, BindingResult bindingResult){
-        List<ErrorDto> errorDtoList = new ArrayList<>();
-        List<Description> descriptionList = descriptionService.addDescription(descriptionCreateDto);
-        if (descriptionList == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity addDescription(@Validated @RequestBody DescriptionCreateDto descriptionCreateDto){
 
-        if (bindingResult.hasErrors()) {
-            errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
+        List<Description> descriptionList = descriptionService.addDescription(descriptionCreateDto);
 
         List<Long> descriptionIdList = descriptionList.stream().map(d -> d.getId()).collect(Collectors.toList());
         return new ResponseEntity(descriptionIdList, HttpStatus.CREATED);
@@ -102,17 +88,9 @@ public class DescriptionController {
             @ApiResponse(responseCode =  "404", description = "존재하지 않는 topicTitle이나 보기 id 입력으로 인한 수정 실패")
     })
     @PatchMapping("/admin/descriptions/{descriptionId}")
-    public ResponseEntity addDescription(@PathVariable Long descriptionId, @Validated @RequestBody DescriptionUpdateDto descriptionUpdateDto, BindingResult bindingResult){
-        List<ErrorDto> errorDtoList = new ArrayList<>();
-        Description description = descriptionService.updateDescription(descriptionId, descriptionUpdateDto);
-        if (description == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity addDescription(@PathVariable Long descriptionId, @Validated @RequestBody DescriptionUpdateDto descriptionUpdateDto){
 
-        if (bindingResult.hasErrors()) {
-            errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
+        Description description = descriptionService.updateDescription(descriptionId, descriptionUpdateDto);
 
         return new ResponseEntity(description.getId(), HttpStatus.OK);
     }
@@ -124,11 +102,7 @@ public class DescriptionController {
     })
     @DeleteMapping("/admin/descriptions/{descriptionId}")
     public ResponseEntity deleteDescription(@PathVariable Long descriptionId) {
-        boolean res = descriptionService.deleteDescription(descriptionId);
-        if (!res) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-
+        descriptionService.deleteDescription(descriptionId);
         return new ResponseEntity(HttpStatus.OK);
     }
 

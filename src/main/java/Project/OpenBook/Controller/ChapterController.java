@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -55,30 +56,13 @@ public class ChapterController {
     @ApiOperation(value = "단원 추가", notes = "단원제목과 단원번호를 입력해서 새로운 단원 추가")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "단원 추가 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인한 단원 추가 실패")
+            @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인한 단원 추가 실패"),
+            @ApiResponse(responseCode = "409",  description = "중복된 단원 번호 입력")
     })
     @PostMapping
-    public ResponseEntity addChapter(@Validated @RequestBody ChapterDto chapterDto, BindingResult bindingResult) {
-        List<ErrorDto> errorList = new ArrayList<>();
-        //올바른 입력 확인
-        if (bindingResult.hasErrors()) {
-            errorList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
+    public ResponseEntity addChapter(@Validated @RequestBody ChapterDto chapterDto) {
+        Chapter chapter = chapterService.createChapter(chapterDto.getTitle(), chapterDto.getNumber());
 
-        }else{
-            //저장 시도
-            Chapter chapter = chapterService.createChapter(chapterDto.getTitle(), chapterDto.getNumber());
-            //중복된 단원 번호 체크
-            if (chapter == null) {
-                errorList.add(new ErrorDto("chapter", "이미 존재하는 단원 번호입니다. 다른 단원 번호를 입력해 주세요."));
-            }
-        }
-
-        //오류가 있는 경우
-        if(!errorList.isEmpty()){
-            return new ResponseEntity(errorList, HttpStatus.BAD_REQUEST);
-        }
-
-        //단원 추가 성공
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
@@ -86,21 +70,12 @@ public class ChapterController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 변경 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 변경 시도")
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 변경 시도"),
+            @ApiResponse(responseCode = "409",  description = "중복된 단원 번호 입력")
     })
     @PatchMapping("/{num}")
-    public ResponseEntity updateChapter(@PathVariable("num") int num, @Validated @RequestBody ChapterDto chapterDto, BindingResult bindingResult) {
-
-        //올바른 입력 확인
-        if (bindingResult.hasErrors()) {
-            List<ErrorDto> errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity updateChapter(@PathVariable("num") int num, @Validated @RequestBody ChapterDto chapterDto) {
         Chapter chapter = chapterService.updateChapter(num, chapterDto.getTitle(), chapterDto.getNumber());
-        if (chapter == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -113,13 +88,7 @@ public class ChapterController {
     })
     @DeleteMapping("/{num}")
     public ResponseEntity deleteChapter(@PathVariable("num") int num) {
-        List<ErrorDto> errorDtoList = new ArrayList<>();
-        if(!chapterService.deleteChapter(num, errorDtoList) && errorDtoList.isEmpty()){
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-        if (!errorDtoList.isEmpty()) {
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
+        chapterService.deleteChapter(num);
 
         return new ResponseEntity(HttpStatus.OK);
     }

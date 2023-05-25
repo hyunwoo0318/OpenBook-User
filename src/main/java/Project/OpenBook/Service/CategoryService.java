@@ -1,5 +1,7 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.error.ErrorDto;
@@ -13,6 +15,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static Project.OpenBook.Constants.ErrorCode.*;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -25,53 +29,49 @@ public class CategoryService {
         return categoryRepository.findAll().stream().map(c -> c.getName()).collect(Collectors.toList());
     }
 
-    public Category createCategory(String categoryName, List<ErrorDto> errorDtoList) {
-        Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
-        //중복된 카테고리 입력 확인
-        if (categoryOptional.isPresent()) {
-            errorDtoList.add(new ErrorDto("name", "이미 존재하는 카테고리입니다."));
-            return null;
-        }
+    public Category createCategory(String categoryName) {
+        checkDupCategoryName(categoryName);
 
         Category category = new Category(categoryName);
         categoryRepository.save(category);
         return category;
     }
 
-    public Category updateCategory(String prevName, String afterName, List<ErrorDto> errorDtoList) {
-        Optional<Category> categoryPrevOptional = categoryRepository.findCategoryByName(prevName);
-        if (categoryPrevOptional.isEmpty()) {
-            return null;
-        }
+    public Category updateCategory(String prevName, String afterName) {
 
-        Optional<Category> categoryAfterOptional = categoryRepository.findCategoryByName(afterName);
-        if (categoryAfterOptional.isPresent()) {
-            errorDtoList.add(new ErrorDto("name", "이미 존재하는 카테고리입니다."));
-            return null;
+        Category category = checkCategory(prevName);
+        if (prevName.equals(afterName)) {
+            return category;
         }
+        checkDupCategoryName(afterName);
 
-        Category category = categoryPrevOptional.get();
         category.changeName(afterName);
         return category;
     }
 
-    public boolean deleteCategory(String categoryName) {
-        Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
-        if (categoryOptional.isEmpty()) {
-            return false;
-        }
-        Category category = categoryOptional.get();
+    public void deleteCategory(String categoryName) {
+        Category category = checkCategory(categoryName);
+
         List<Topic> topicList = topicRepository.findAllByCategory(category);
-        topicList.stream().forEach(c -> c.deleteCategory());
+        if (!topicList.isEmpty()) {
+            throw new CustomException(CATEGORY_HAS_TOPIC);
+        }
 
         categoryRepository.delete(category);
-        return true;
     }
 
 
-    public boolean findCategory(String categoryName) {
-        Optional<Category> categoryOptional = categoryRepository.findCategoryByName(categoryName);
-        if(categoryOptional.isEmpty()) return false;
-        return true;
+    private Category checkCategory(String categoryName) {
+        return categoryRepository.findCategoryByName(categoryName).orElseThrow(() -> {
+            throw new CustomException(CATEGORY_NOT_FOUND);
+        });
     }
+
+    private void checkDupCategoryName(String categoryName) {
+        categoryRepository.findCategoryByName(categoryName).ifPresent(c -> {
+            throw new CustomException(DUP_CATEGORY_NAME);
+        });
+    }
+
+
 }

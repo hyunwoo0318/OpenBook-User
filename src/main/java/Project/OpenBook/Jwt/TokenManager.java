@@ -1,5 +1,7 @@
 package Project.OpenBook.Jwt;
 
+import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import io.jsonwebtoken.*;
@@ -21,6 +23,8 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static Project.OpenBook.Constants.ErrorCode.*;
+
 @Component
 public class TokenManager {
     private Key key;
@@ -35,6 +39,7 @@ public class TokenManager {
     }
 
     public TokenDto generateToken(Authentication authentication, long id) {
+        checkCustomer(id);
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
@@ -67,45 +72,31 @@ public class TokenManager {
         Claims claims = parseClaim(refreshToken);
         long id = Long.parseLong(claims.getSubject());
 
-        Optional<Customer> customerOptional = customerRepository.findById(id);
-        if (customerOptional.isEmpty()) {
-            return null;
-        }
-        Customer customer = customerOptional.get();
+        Customer customer = checkCustomer(id);
 
         Authentication authentication = (Authentication) customer;
         return generateToken(authentication, customer.getId());
     }
 
-    public Authentication getAuthorities(String accessToken) throws Exception{
+    public Authentication getAuthorities(String accessToken){
         Claims claim = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
 
         long id = Long.parseLong(claim.getSubject());
-        Optional<Customer> findCustomer = customerRepository.findById(id);
-        if(findCustomer.isEmpty()){
-            throw new RuntimeException("유효하지 않은 사용자입니다.");
-        }
+        Customer findCustomer = checkCustomer(id);
         if(claim.get("auth") == null){
-            throw new RuntimeException("허용되지 않은 사용자입니다.");
+            throw new CustomException(NOT_AUTHORIZED);
         }
 
-        Collection<? extends GrantedAuthority> authorities = findCustomer.get().getAuthorities();
+        Collection<? extends GrantedAuthority> authorities = findCustomer.getAuthorities();
         UserDetails userDetails = new User(claim.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
     }
 
-    public boolean validateToken(String accessToken){
+    public void validateToken(String accessToken){
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
-            return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            throw new RuntimeException("Invalid JWT Token", e);
-        } catch (ExpiredJwtException e) {
-            throw new RuntimeException("Expired JWT Token", e);
-        } catch (UnsupportedJwtException e) {
-            throw new RuntimeException("Unsupported JWT Token", e);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("JWT claims string is empty.", e);
+        } catch (Exception e) {
+            throw new CustomException(INVALID_TOKEN);
         }
     }
 
@@ -113,20 +104,26 @@ public class TokenManager {
         try{
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         } catch(ExpiredJwtException e){
-            return e.getClaims();
+            throw new CustomException(INVALID_TOKEN);
         }
     }
 
     public String resolveRequest(HttpServletRequest req){
         String token = req.getHeader("Authorization");
-        if(StringUtils.hasText(token) && token.startsWith("Bearer")){
-            return token.substring(7);
+        if(!StringUtils.hasText(token) && token.startsWith("Bearer")){
+            throw new CustomException(INVALID_PARAMETER);
         }
-        return null;
+        return token.substring(7);
     }
 
     public void invalidateToken(String refreshToken) {
         Claims claims = parseClaim(refreshToken);
         claims.setExpiration(null);
+    }
+
+    private Customer checkCustomer(Long customerId) {
+        return customerRepository.findById(customerId).orElseThrow(() -> {
+            throw new CustomException(CUSTOMER_NOT_FOUND);
+        });
     }
 }

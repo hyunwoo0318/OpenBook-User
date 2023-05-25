@@ -1,5 +1,7 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.AnswerNoteDto;
 import Project.OpenBook.Repository.customer.CustomerRepository;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -24,48 +28,40 @@ public class AnswerNoteService {
         Long customerId = answerNoteDto.getCustomerId();
         Long questionId = answerNoteDto.getQuestionId();
 
-        Optional<Customer> customerOptional = customerRepository.findById(customerId);
-        if (customerOptional.isEmpty()) {
-            return null;
-        }
-        Customer customer = customerOptional.get();
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
+            throw new CustomException(CUSTOMER_NOT_FOUND);
+        });
 
-        Optional<Question> questionOptional = questionRepository.findById(questionId);
-        if(questionOptional.isEmpty()){
-            return null;
-        }
-        Question question = questionOptional.get();
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> {
+            throw new CustomException(QUESTION_NOT_FOUND);
+        });
 
         AnswerNote answerNote = new AnswerNote(customer, question);
         answerNoteRepository.save(answerNote);
         return answerNote;
     }
 
-    public boolean deleteAnswerNote(AnswerNoteDto answerNoteDto) {
+    public void deleteAnswerNote(AnswerNoteDto answerNoteDto) {
         Long customerId = answerNoteDto.getCustomerId();
         Long questionId = answerNoteDto.getQuestionId();
 
-        Optional<Customer> customerOptional = customerRepository.findById(customerId);
-        if (customerOptional.isEmpty()) {
-            return false;
-        }
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
+            throw new CustomException(CUSTOMER_NOT_FOUND);
+        });
 
-
-        Optional<Question> questionOptional = questionRepository.findById(questionId);
-        if(questionOptional.isEmpty()){
-            return false;
-        }
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> {
+            throw new CustomException(QUESTION_NOT_FOUND);
+        });
 
         AnswerNote answerNote = answerNoteRepository.queryAnswerNote(customerId, questionId);
         answerNoteRepository.delete(answerNote);
-        return true;
+
     }
 
     public List<Long> queryAnswerNotes(Long customerId) {
-        Optional<Customer> customerOptional = customerRepository.findById(customerId);
-        if (customerOptional.isEmpty()) {
-            return null;
-        }
+         customerRepository.findById(customerId).orElseThrow(() -> {
+             throw new CustomException(CUSTOMER_NOT_FOUND);
+         });
 
         List<AnswerNote> answerNoteList = answerNoteRepository.queryAnswerNotes(customerId);
         List<Long> questionIdList = answerNoteList.stream().map(a -> a.getQuestion().getId()).collect(Collectors.toList());

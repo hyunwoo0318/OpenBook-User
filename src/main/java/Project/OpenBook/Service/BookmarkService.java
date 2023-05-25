@@ -1,7 +1,10 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Domain.Bookmark;
 import Project.OpenBook.Domain.Customer;
+import Project.OpenBook.Domain.Question;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.BookmarkDto;
 import Project.OpenBook.Repository.bookmark.BookmarkRepository;
@@ -13,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,47 +31,39 @@ public class BookmarkService {
         Long customerId = bookmarkDto.getCustomerId();
         String topicTitle = bookmarkDto.getTopicTitle();
 
-        Optional<Customer> customerOptional = customerRepository.findById(customerId);
-        if (customerOptional.isEmpty()) {
-            return null;
-        }
-        Customer customer = customerOptional.get();
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
+            throw new CustomException(CUSTOMER_NOT_FOUND);
+        });
 
-        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
-        if (topicOptional.isEmpty()) {
-            return null;
-        }
-        Topic topic = topicOptional.get();
+        Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        });
 
         Bookmark bookmark = new Bookmark(customer, topic);
         bookmarkRepository.save(bookmark);
         return bookmark;
     }
 
-    public boolean deleteBookmark(BookmarkDto bookmarkDto) {
+    public void deleteBookmark(BookmarkDto bookmarkDto) {
         Long customerId = bookmarkDto.getCustomerId();
         String topicTitle = bookmarkDto.getTopicTitle();
 
-        Optional<Customer> customerOptional = customerRepository.findById(customerId);
-        if (customerOptional.isEmpty()) {
-            return false;
-        }
+        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
+            throw new CustomException(CUSTOMER_NOT_FOUND);
+        });
 
-        Optional<Topic> topicOptional = topicRepository.findTopicByTitle(topicTitle);
-        if (topicOptional.isEmpty()) {
-            return false;
-        }
+        Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        });
 
         Bookmark bookmark = bookmarkRepository.queryBookmark(customerId, topicTitle);
         bookmarkRepository.delete(bookmark);
-        return true;
     }
 
     public List<String> queryBookmarks(Long customerId) {
-        Optional<Customer> customerOptional = customerRepository.findById(customerId);
-        if (customerOptional.isEmpty()) {
-            return null;
-        }
+        customerRepository.findById(customerId).orElseThrow(() -> {
+            throw new CustomException(CUSTOMER_NOT_FOUND);
+        });
 
         List<Bookmark> bookmarkList = bookmarkRepository.queryBookmarks(customerId);
         List<String> titleList = bookmarkList.stream().map(b -> b.getTopic().getTitle()).collect(Collectors.toList());

@@ -30,9 +30,6 @@ public class AnswerNoteController {
     @PostMapping
     public ResponseEntity addAnswerNote(@Validated @RequestBody AnswerNoteDto answerNoteDto) {
         AnswerNote answerNote = answerNoteService.addAnswerNote(answerNoteDto);
-        if (answerNote == null) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -44,11 +41,7 @@ public class AnswerNoteController {
     })
     @DeleteMapping
     public ResponseEntity deleteAnswerNote(@Validated @RequestBody AnswerNoteDto answerNoteDto) {
-        boolean res = answerNoteService.deleteAnswerNote(answerNoteDto);
-        if (res == false) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-
+        answerNoteService.deleteAnswerNote(answerNoteDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 }

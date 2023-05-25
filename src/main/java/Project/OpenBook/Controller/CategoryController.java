@@ -38,22 +38,14 @@ public class CategoryController {
     @ApiOperation(value = "카테고리 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "카테고리 생성 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 입력으로 카테고리 생성 실패")
+            @ApiResponse(responseCode = "400", description = "잘못된 입력으로 카테고리 생성 실패"),
+            @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리 이름 입력")
     })
     @PostMapping
-    public ResponseEntity createCategory(@Validated @RequestBody CategoryDto categoryDto, BindingResult bindingResult) {
-        List<ErrorDto> errorDtoList = new ArrayList<>();
-        if (bindingResult.hasErrors()) {
-            errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity createCategory(@Validated @RequestBody CategoryDto categoryDto) {
+        Category category = categoryService.createCategory(categoryDto.getName());
 
-        Category category = categoryService.createCategory(categoryDto.getName(), errorDtoList);
-        if (category == null) {
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity(errorDtoList, HttpStatus.CREATED);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
 
@@ -61,25 +53,14 @@ public class CategoryController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "카테고리 수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인하여 카테고리 수정 실패"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 카테고리 수정 시도")
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 카테고리 수정 시도"),
+            @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리 이름 입력")
     })
     @PatchMapping("/{categoryName}")
-    public ResponseEntity updateCategory(@PathVariable("categoryName") String categoryName, @Validated @RequestBody CategoryDto categoryDto, BindingResult bindingResult) {
-        List<ErrorDto> errorDtoList = new ArrayList<>();
-        if (bindingResult.hasErrors()) {
-            errorDtoList = bindingResult.getFieldErrors().stream().map(err -> new ErrorDto(err.getField(), err.getDefaultMessage())).collect(Collectors.toList());
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity updateCategory(@PathVariable("categoryName") String categoryName, @Validated @RequestBody CategoryDto categoryDto) {
+        Category category = categoryService.updateCategory(categoryName, categoryDto.getName());
 
-        Category category = categoryService.updateCategory(categoryName, categoryDto.getName(), errorDtoList);
-        if (category == null && errorDtoList.isEmpty()) {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
-        if (category == null) {
-            return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity(errorDtoList, HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @ApiOperation(value = "카테고리 삭제", notes = "해당 카테고리에 속하던 상세정보의 카테고리 정보는 null")
@@ -89,9 +70,8 @@ public class CategoryController {
     })
     @DeleteMapping("/{categoryName}")
     public ResponseEntity deleteCategory(@PathVariable("categoryName") String categoryName) {
-        if(!categoryService.deleteCategory(categoryName)){
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
+        categoryService.deleteCategory(categoryName);
+
         return new ResponseEntity(HttpStatus.OK);
     }
 }

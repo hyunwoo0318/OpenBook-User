@@ -1,6 +1,8 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Constants.Role;
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Domain.Admin;
 import Project.OpenBook.Repository.AdminRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,22 +51,15 @@ public class AdminService implements UserDetailsService {
         return admin;
     }
 
-    public Admin login(String loginId, String password){
+    public void login(String loginId, String password){
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(loginId, password);
         Authentication authentication = authenticationManager.getObject().authenticate(upToken);
 
-        if(!authentication.isAuthenticated()){
-            return null;
+        if(!authentication.isAuthenticated()) {
+            throw new CustomException(ErrorCode.LOGIN_FAIL);
         }
-            Optional<Admin> adminOptional = adminRepository.findByLoginId(loginId);
-            if (adminOptional.isEmpty()) {
-                return null;
-            }
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
-
-        Admin admin = adminOptional.get();
-        return admin;
     }
 
     @Override

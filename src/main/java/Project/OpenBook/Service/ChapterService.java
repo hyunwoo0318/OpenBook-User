@@ -1,8 +1,8 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.CustomException;
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Repository.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+
+import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
 @Transactional
@@ -22,12 +24,7 @@ public class ChapterService {
 
 
     public Chapter createChapter(String title, int number) {
-
-        //chapter num은 유니크한 칼럼이므로 겹치면 안됨.
-        Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(number);
-        if(chapterOptional.isPresent()){
-            return null;
-        }
+        checkChapterNum(number);
 
         Chapter newChapter = Chapter.builder()
                 .number(number)
@@ -53,37 +50,38 @@ public class ChapterService {
     }
 
     public Chapter updateChapter(int num, String inputTitle, int inputNum) {
-        Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(num);
-        if (chapterOptional.isEmpty()) {
-            return null;
-        }
-
-        Chapter chapter = chapterOptional.get();
+        checkChapterNum(inputNum);
+        Chapter chapter = checkChapter(num);
 
         Chapter updateChapter = chapter.updateChapter(inputTitle, inputNum);
         return updateChapter;
     }
 
-    public Boolean deleteChapter(int num, List<ErrorDto> errorDtoList) {
-        Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(num);
-        if (chapterOptional.isEmpty()) {
-            return false;
-        }
+    public Boolean deleteChapter(int num) {
+        checkChapterNum(num);
+        Chapter chapter = checkChapter(num);
 
-        //해당 단원의 상세정보의 단원정보를 null로 세팅
-        List<Topic> topicList = topicRepository.findAllByChapter(chapterOptional.get());
-
+        //해당 단원에 토픽이 존재하는 경우 단원 삭제 불가능
+        List<Topic> topicList = topicRepository.findAllByChapter(chapter);
         if(!topicList.isEmpty()){
-            errorDtoList.add(new ErrorDto("topic", "해당 단원에 토픽이 존재합니다."));
-            return false;
+            throw new CustomException(CHAPTER_HAS_TOPIC);
         }
-
-        topicList.stream().forEach(t -> t.deleteChapter());
 
         //TODO : 학습분석을 구현하면 해당 학습분석을 처리하는 구문필요
 
-        Chapter chapter = chapterOptional.get();
         chapterRepository.delete(chapter);
         return true;
+    }
+
+    private void checkChapterNum(int number) {
+        chapterRepository.findOneByNumber(number).ifPresent(c -> {
+            throw new CustomException(DUP_CHAPTER_NUM);
+        });
+    }
+
+    private Chapter checkChapter(int num) {
+        return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
+            throw new CustomException(CHAPTER_NOT_FOUND);
+        });
     }
 }

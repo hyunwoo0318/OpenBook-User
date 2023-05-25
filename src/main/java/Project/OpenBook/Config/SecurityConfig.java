@@ -4,7 +4,7 @@ import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.HttpCookieOAuth2AuthorizationRequestRepository;
 import Project.OpenBook.AuthenticationSuccessCustomHandler;
-import Project.OpenBook.Jwt.jwtCustomFilter;
+import Project.OpenBook.Jwt.JwtCustomFilter;
 import Project.OpenBook.Repository.AdminRepository;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.ChapterRepository;
@@ -43,7 +43,7 @@ public class SecurityConfig {
 
     private final AuthenticationSuccessCustomHandler authenticationSuccessCustomHandler;
 
-    private final jwtCustomFilter jwtCustomFilter;
+    private final JwtCustomFilter jwtCustomFilter;
     private final ChoiceRepository choiceRepository;
     private final TopicRepository topicRepository;
 
@@ -89,11 +89,11 @@ public class SecurityConfig {
                 .userInfoEndpoint().userService(oAuthService)
                 .and().authorizationEndpoint()
                     .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-                .and().and().
-                headers().frameOptions().sameOrigin().xssProtection().block(false).and().and()
-                .addFilterBefore(jwtCustomFilter, UsernamePasswordAuthenticationFilter.class).build();
-
-
+                .and().and()
+                .headers()
+                .frameOptions().sameOrigin().xssProtection().block(false).and().and()
+               .addFilterBefore(jwtCustomFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 
 
