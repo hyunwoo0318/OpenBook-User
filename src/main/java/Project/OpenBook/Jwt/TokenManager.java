@@ -110,8 +110,11 @@ public class TokenManager {
 
     public String resolveRequest(HttpServletRequest req){
         String token = req.getHeader("Authorization");
-        if(!StringUtils.hasText(token) && token.startsWith("Bearer")){
-            throw new CustomException(INVALID_PARAMETER);
+        if (token == null) {
+            return null;
+        }
+        if(!token.startsWith("Bearer")){
+            return null;
         }
         return token.substring(7);
     }

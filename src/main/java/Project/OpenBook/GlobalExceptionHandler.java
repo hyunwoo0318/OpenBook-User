@@ -1,6 +1,7 @@
 package Project.OpenBook;
 
 import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Dto.error.ErrorMsgDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,7 +20,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ CustomException.class })
     protected ResponseEntity handleCustomException(CustomException ex) {
-        return new ResponseEntity(ex.getErrorCode().getErrorMessage(), ex.getErrorCode().getStatusCode());
+        ErrorMsgDto errorMsgDto = new ErrorMsgDto(ex.getErrorCode().getErrorMessage());
+        return new ResponseEntity(errorMsgDto, ex.getErrorCode().getStatusCode());
     }
 
     @ExceptionHandler({ Exception.class })
