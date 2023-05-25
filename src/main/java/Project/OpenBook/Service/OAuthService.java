@@ -11,6 +11,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
@@ -24,7 +25,13 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
         String provider = userRequest.getClientRegistration().getRegistrationId();
-        String oAuthId = oAuth2User.getName();
+        String oAuthId="";
+        if(provider.equals("kakao")){
+            oAuthId = oAuth2User.getName();
+        } else if (provider.equals("naver")) {
+            Map<String, Object> attributes = (Map<String, Object>) oAuth2User.getAttributes().get("response");
+            oAuthId = (String) attributes.get("id");
+        }
 
         Customer customer = customerRepository.queryCustomer(oAuthId, provider);
         if (customer == null) {

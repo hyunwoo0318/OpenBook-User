@@ -39,6 +39,7 @@ public class Customer extends BaseEntity implements OAuth2User {
 
     private String provider;
 
+    @Column(name = "oAuth_id", length = 1000)
     private String oAuthId;
 
     @Column(name = "is_new", columnDefinition = "TINYINT(1)")
@@ -53,6 +54,13 @@ public class Customer extends BaseEntity implements OAuth2User {
         this.role = role;
         this.provider = provider;
         this.oAuthId = oAuthId;
+    }
+
+    public void addDetails(String nickName, Integer age, Integer currentGrade) {
+        this.nickName= nickName;
+        this.age = age;
+        this.currentGrade = currentGrade;
+        this.isNew = false;
     }
 
 
