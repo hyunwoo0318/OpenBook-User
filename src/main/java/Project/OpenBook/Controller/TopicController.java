@@ -79,6 +79,7 @@ public class TopicController {
     @ApiOperation(value = "상세정보 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적인 삭제"),
+            @ApiResponse(responseCode = "400", description = "해당 토픽에 선지/보기가 존재하는 경우"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 상세정보 삭제 요청")
     })
     @DeleteMapping("/admin/topics/{topicTitle}")

@@ -1,9 +1,11 @@
 package Project.OpenBook.Constants;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+@JsonFormat(shape= JsonFormat.Shape.OBJECT)
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
@@ -14,8 +16,11 @@ public enum ErrorCode {
     INVALID_PARAMETER (HttpStatus.BAD_REQUEST, "파라미터 값을 확인해주세요."),
     CHAPTER_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 단원에 토픽이 존재합니다."),
     CATEGORY_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 카테고리에 토픽이 존재합니다"),
+    TOPIC_HAS_CHOICE(HttpStatus.BAD_REQUEST, "해당 토픽에 선지가 존재합니다."),
+    TOPIC_HAS_DESCRIPTION(HttpStatus.BAD_REQUEST, "해당 토픽에 보기가 존재합니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다"),
     NOT_ENOUGH_CHOICE(HttpStatus.BAD_REQUEST, "문제를 만들기 위한 선지의 수가 부족합니다."),
+    QUESTION_ERROR(HttpStatus.BAD_REQUEST, "해당 유형의 문제를 생성할수 없습니다."),
 
 
     /**

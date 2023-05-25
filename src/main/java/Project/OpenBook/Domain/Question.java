@@ -27,6 +27,7 @@ public class Question extends BaseEntity {
 
     private Long type;
 
+
     @Builder
     public Question(String prompt, Long answerChoiceId, Long type, Category category) {
         this.prompt = prompt;

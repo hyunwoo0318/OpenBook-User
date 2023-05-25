@@ -14,6 +14,7 @@ import java.util.List;
 import static Project.OpenBook.Domain.QCategory.category;
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDupContent.dupContent;
+import static Project.OpenBook.Domain.QDupDate.dupDate;
 import static Project.OpenBook.Domain.QTopic.topic;
 
 @Repository
@@ -44,8 +45,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
 
     @Override
     public Choice queryRandChoiceByTopic(Long topicId, Long descriptionId) {
-        return queryFactory.select(choice)
-                .from(choice, dupContent)
+        return queryFactory.selectFrom(choice)
                 .where(choice.topic.id.eq(topicId))
                 .where(choice.id.notIn(
                         JPAExpressions.select(dupContent.choice.id)
@@ -96,21 +96,19 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     }
 
     @Override
-    public List<Choice> queryChoicesType2(String topicTitle, Integer startDate, Integer endDate, int num, int interval, String categoryName) {
+    public List<Choice> queryChoicesType2(Topic answerTopic, Topic descriptionTopic, int num, int interval, String categoryName) {
         List<Choice> choiceList = queryFactory.selectFrom(choice)
-                .where(notInDateBetween(startDate, endDate))
                 .where(choice.topic.category.name.eq(categoryName))
+                .where(choice.topic.endDate.lt(descriptionTopic.getStartDate()))
+                .where(choice.topic.startDate.gt(descriptionTopic.getEndDate()))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(num-1)
                 .fetch();
         Choice answerChoice = queryFactory.selectFrom(choice)
-                .where(choice.topic.title.ne(topicTitle))
-                .where(choice.topic.category.name.eq(categoryName))
-                .where(choice.topic.startDate.goe(startDate))
-                .where(choice.topic.endDate.loe(endDate))
+                .where(choice.topic.eq(answerTopic))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(1)
-                .fetch().get(0);
+                .fetchOne();
         choiceList.add(answerChoice);
         return choiceList;
     }
@@ -128,7 +126,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
                 .where(choice.topic.startDate.goe(endDate))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(1)
-                .fetch().get(0);
+                .fetchOne();
         choiceList.add(answerChoice);
         return choiceList;
     }
@@ -147,7 +145,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
                 .where(choice.topic.endDate.loe(startDate))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(1)
-                .fetch().get(0);
+                .fetchOne();
         choiceList.add(answerChoice);
         return choiceList;
     }

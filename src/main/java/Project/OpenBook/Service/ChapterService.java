@@ -58,7 +58,6 @@ public class ChapterService {
     }
 
     public Boolean deleteChapter(int num) {
-        checkChapterNum(num);
         Chapter chapter = checkChapter(num);
 
         //해당 단원에 토픽이 존재하는 경우 단원 삭제 불가능

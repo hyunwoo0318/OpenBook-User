@@ -8,6 +8,7 @@ import Project.OpenBook.Dto.question.QuestionDto;
 import Project.OpenBook.Repository.CategoryRepository;
 import Project.OpenBook.Repository.QuestionChoiceRepository;
 import Project.OpenBook.Repository.QuestionDescriptionRepository;
+import Project.OpenBook.Repository.dupdate.DupDateRepository;
 import Project.OpenBook.Repository.question.QuestionRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -40,6 +40,8 @@ public class QuestionService {
     private final QuestionDescriptionRepository questionDescriptionRepository;
 
     private final CategoryRepository categoryRepository;
+
+    private final DupDateRepository dupDateRepository;
     private final Environment env;
 
     private final int choiceNum = 5;
@@ -59,9 +61,11 @@ public class QuestionService {
         TempQ tempQ = null;
         if (type == 1) {
             tempQ = makeDescriptionQuestion(answerTopic);
-        } else if(type >= 2 && type <=4){
-            tempQ = makeTimeQuestion(answerTopic, type);
-        } else if(type == 5){
+        } else if (type == 2) {
+            tempQ = makeTimeType2Question();
+        } else if (type > 2 && type <= 4) {
+            tempQ = makeTimeType34Question(answerTopic, type);
+        } else if (type == 5) {
             tempQ = makeTimeFlowQuestion(type);
         }
 
@@ -115,8 +119,7 @@ public class QuestionService {
         return new TempQ(prompt, description, choiceList);
     }
 
-    private TempQ makeTimeQuestion(Topic answerTopic, Long type) {
-
+    private TempQ makeTimeType34Question(Topic answerTopic, Long type) {
         String title = answerTopic.getTitle();
         String categoryName = answerTopic.getCategory().getName();
         Integer startDate = answerTopic.getStartDate();
@@ -127,10 +130,7 @@ public class QuestionService {
         Description description = descriptionRepository.findRandDescriptionByTopic(title);
 
         List<Choice> choiceList = new ArrayList<>();
-        if (type == 2) {
-            //정답 사건의 startDate, endDate가 겹치지 않는 4개의 사건 고르기
-            choiceList = choiceRepository.queryChoicesType2(title, startDate, endDate, choiceNum, 0, categoryName);
-        } else if (type == 3) {
+        if (type == 3) {
             //보기에서 주어진 사건보다 나중에 발생한 사건 찾는 문제
             choiceList = choiceRepository.queryChoicesType3(title, startDate, endDate,choiceNum, 0, categoryName);
         } else if (type == 4) {
@@ -140,6 +140,27 @@ public class QuestionService {
 
         return new TempQ(prompt, description, choiceList);
     }
+
+    private TempQ makeTimeType2Question() {
+
+        Topic answerTopic = dupDateRepository.queryRandomAnswerTopic();
+        if (answerTopic == null) {
+            throw new CustomException(QUESTION_ERROR);
+        }
+        Topic descriptionTopic = dupDateRepository.queryRandomDescriptionTopic(answerTopic);
+
+        String categoryName = answerTopic.getCategory().getName();
+
+        String prompt = setPrompt(categoryName, 2L);
+
+        Description description = descriptionRepository.findRandDescriptionByTopic(descriptionTopic.getTitle());
+
+        List<Choice> choiceList = choiceRepository.queryChoicesType2(answerTopic, descriptionTopic, choiceNum, 0, categoryName);
+
+        return new TempQ(prompt, description, choiceList);
+    }
+
+
 
     public TempQ makeTimeFlowQuestion(Long type) {
         String prompt = setPrompt("사건", type);

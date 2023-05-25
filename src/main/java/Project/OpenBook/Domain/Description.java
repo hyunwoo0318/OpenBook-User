@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,6 +23,9 @@ public class Description extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
+
+    @OneToMany(mappedBy = "description", cascade = CascadeType.ALL)
+    private List<DupContent> dupContentList = new ArrayList<>();
 
     public Description(String content, Topic topic) {
         this.content = content;
