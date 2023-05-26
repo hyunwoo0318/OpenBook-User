@@ -2,9 +2,9 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Constants.Role;
-import Project.OpenBook.CustomException;
+import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Admin;
-import Project.OpenBook.Repository.AdminRepository;
+import Project.OpenBook.Repository.admin.AdminRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;

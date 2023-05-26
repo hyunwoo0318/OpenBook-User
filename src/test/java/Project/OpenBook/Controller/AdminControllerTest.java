@@ -2,7 +2,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Dto.admin.AdminDto;
 import Project.OpenBook.Dto.error.ErrorDto;
-import Project.OpenBook.Repository.AdminRepository;
+import Project.OpenBook.Repository.admin.AdminRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

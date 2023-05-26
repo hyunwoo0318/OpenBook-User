@@ -1,6 +1,6 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.CustomException;
+import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Description;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.description.DescriptionCreateDto;

@@ -1,4 +1,4 @@
-package Project.OpenBook.Repository;
+package Project.OpenBook.Repository.admin;
 
 import Project.OpenBook.Domain.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;

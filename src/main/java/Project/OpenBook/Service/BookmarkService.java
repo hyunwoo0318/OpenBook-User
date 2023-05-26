@@ -1,10 +1,8 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.CustomException;
+import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Bookmark;
 import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Domain.Question;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.BookmarkDto;
 import Project.OpenBook.Repository.bookmark.BookmarkRepository;
@@ -14,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;

@@ -1,13 +1,13 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.CustomException;
+import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.choice.ChoiceContentIdDto;
 import Project.OpenBook.Dto.description.DescriptionContentIdDto;
 import Project.OpenBook.Dto.question.QuestionDto;
-import Project.OpenBook.Repository.CategoryRepository;
-import Project.OpenBook.Repository.QuestionChoiceRepository;
-import Project.OpenBook.Repository.QuestionDescriptionRepository;
+import Project.OpenBook.Repository.category.CategoryRepository;
+import Project.OpenBook.Repository.questionchoice.QuestionChoiceRepository;
+import Project.OpenBook.Repository.questiondescription.QuestionDescriptionRepository;
 import Project.OpenBook.Repository.dupdate.DupDateRepository;
 import Project.OpenBook.Repository.question.QuestionRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;

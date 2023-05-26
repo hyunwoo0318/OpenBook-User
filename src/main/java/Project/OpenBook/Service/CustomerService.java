@@ -1,14 +1,11 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.CustomException;
+import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Dto.customer.CustomerDetailDto;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 import static Project.OpenBook.Constants.ErrorCode.CUSTOMER_NOT_FOUND;
 import static Project.OpenBook.Constants.ErrorCode.DUP_NICKNAME;

@@ -1,9 +1,9 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.CustomException;
+import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Repository.ChapterRepository;
+import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

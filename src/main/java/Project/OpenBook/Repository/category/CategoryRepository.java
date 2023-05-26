@@ -1,4 +1,4 @@
-package Project.OpenBook.Repository;
+package Project.OpenBook.Repository.category;
 
 import Project.OpenBook.Domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;

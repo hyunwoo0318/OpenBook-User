@@ -1,4 +1,4 @@
-package Project.OpenBook;
+package Project.OpenBook.Utils;
 
 import Project.OpenBook.Constants.ErrorCode;
 import lombok.AllArgsConstructor;

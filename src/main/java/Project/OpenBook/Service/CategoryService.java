@@ -1,18 +1,15 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.CustomException;
+import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.error.ErrorDto;
-import Project.OpenBook.Repository.CategoryRepository;
+import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
