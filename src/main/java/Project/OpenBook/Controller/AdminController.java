@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,10 +61,11 @@ public class AdminController {
             @ApiResponse(responseCode = "401", description = "로그인 실패")
     })
     @PostMapping("/login")
-    public ResponseEntity adminLogin(@Validated @RequestBody AdminDto adminDto, BindingResult bindingResult) {
+    public ResponseEntity adminLogin(@Validated @RequestBody AdminDto adminDto, HttpServletResponse response) {
         adminService.login(adminDto.getLoginId(), adminDto.getPassword());
 
         return new ResponseEntity(HttpStatus.OK);
+
     }
 
 }

@@ -1,7 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Dto.keyword.KeywordListDto;
 import Project.OpenBook.Dto.topic.TopicDto;
 import Project.OpenBook.Dto.topic.TopicTitleListDto;
 import Project.OpenBook.Service.ChapterService;
@@ -12,12 +12,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,6 +31,17 @@ public class TopicController {
         TopicDto topicDto = topicService.queryTopic(topicTitle);
 
         return new ResponseEntity(topicDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "특정 토픽의 전체 키워드 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "특정 토픽의 전체 키워드 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
+    })
+    @GetMapping("/topics/{topicTitle}/keywords")
+    public ResponseEntity queryTopicKeyword(@PathVariable("topicTitle") String topicTitle) {
+        List<String> keywordList = topicService.queryTopicKeywords(topicTitle);
+        return new ResponseEntity(keywordList, HttpStatus.OK);
     }
 
 
@@ -59,6 +67,29 @@ public class TopicController {
 
 
         return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "특정 토픽에 키워드들 추가")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "특정 토픽에 해당 키워드들 추가 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 이름이나 토픽 제목 입력")
+    })
+    @PostMapping("/admin/topics/{topicTitle}/keywords")
+    public ResponseEntity addKeywords(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordListDto keywordListDto) {
+        topicService.addKeywords(topicTitle, keywordListDto);
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
+    @ApiOperation(value = "특정 토픽에 특정 키워드 삭제")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적인 삭제"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 이름이나 토픽 제목 입력")
+    })
+    @DeleteMapping("/admin/topics/{topicTitle}/keywords/{keywordName}")
+    public ResponseEntity deleteKeyword(@PathVariable("topicTitle") String topicTitle, @PathVariable("keywordName") String keywordName) {
+        topicService.deleteKeyword(topicTitle, keywordName);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @ApiOperation(value = "상세정보 수정")

@@ -9,9 +9,13 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
+import static Project.OpenBook.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.QTopic.topic;
+import static Project.OpenBook.Domain.QTopicKeyword.topicKeyword;
 
 @Repository
 @RequiredArgsConstructor
@@ -45,4 +49,15 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .where(choice.id.eq(choiceId))
                 .fetchOne();
     }
+
+    @Override
+    public List<String> queryTopicKeywords(String topicTitle) {
+        return queryFactory.select(topicKeyword.keyword.name)
+                .from(topicKeyword)
+                .where(topic.title.eq(topicTitle))
+                .where(topicKeyword.topic.eq(topic))
+                .where(topicKeyword.keyword.eq(keyword))
+                .fetch();
+    }
+
 }
