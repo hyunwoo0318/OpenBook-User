@@ -20,17 +20,25 @@ public class DupDateRepositoryCustomImpl implements DupDateRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
     @Override
-    public List<Topic> queryTopicsByDupDate(Integer startDate, Integer endDate) {
+    public List<Topic> queryAnswerTopics(Integer startDate, Integer endDate) {
         return queryFactory.selectFrom(topic)
-                .where(topic.startDate.loe(startDate))
-                .where(topic.endDate.goe(endDate))
+                .where(topic.startDate.gt(startDate))
+                .where(topic.endDate.lt(endDate))
+                .fetch();
+    }
+
+    @Override
+    public List<Topic> queryDescriptionTopics(Integer startDate, Integer endDate) {
+        return queryFactory.selectFrom(topic)
+                .where(topic.startDate.lt(startDate))
+                .where(topic.endDate.gt(endDate))
                 .fetch();
     }
 
     @Override
     public List<DupDate> queryAllByTopic(String topicTitle) {
         return queryFactory.selectFrom(dupDate)
-                .where(dupDate.answerTopic.title.eq(topicTitle))
+                .where(dupDate.answerTopic.title.eq(topicTitle).or(dupDate.descriptionTopic.title.eq(topicTitle)))
                 .fetch();
     }
 

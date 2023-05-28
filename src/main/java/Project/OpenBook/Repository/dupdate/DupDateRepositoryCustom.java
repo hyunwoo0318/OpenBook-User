@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface DupDateRepositoryCustom {
 
-    public List<Topic> queryTopicsByDupDate(Integer startDate, Integer endDate);
+    public List<Topic> queryAnswerTopics(Integer startDate, Integer endDate);
+    public List<Topic> queryDescriptionTopics(Integer startDate, Integer endDate);
 
     public List<DupDate> queryAllByTopic(String topicTitle);
 

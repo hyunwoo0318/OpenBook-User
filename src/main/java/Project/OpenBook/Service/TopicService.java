@@ -68,7 +68,8 @@ public class TopicService {
                 .build();
         topicRepository.save(topic);
 
-        addDupDates(topic);
+        addDescriptionTopics(topic);
+        addAnswerTopics(topic);
         return topic;
     }
 
@@ -93,7 +94,8 @@ public class TopicService {
         if (flag) {
             List<DupDate> dupDateList = dupDateRepository.queryAllByTopic(topic.getTitle());
             dupDateRepository.deleteAllInBatch(dupDateList);
-            addDupDates(topic);
+            addDescriptionTopics(topic);
+            addAnswerTopics(topic);
         }
 
         return topic;
@@ -126,8 +128,18 @@ public class TopicService {
 //        return Arrays.asList(split);
 //    }
 
-    private void addDupDates(Topic topic) {
-        List<Topic> topicList = dupDateRepository.queryTopicsByDupDate(topic.getStartDate(), topic.getEndDate());
+    private void addAnswerTopics(Topic topic) {
+        List<Topic> topicList = dupDateRepository.queryAnswerTopics(topic.getStartDate(), topic.getEndDate());
+        List<DupDate> dupDateList = new ArrayList<>();
+
+        for (Topic descriptionTopic : topicList) {
+            dupDateList.add(new DupDate(topic, descriptionTopic));
+        }
+        dupDateRepository.saveAll(dupDateList);
+    }
+
+    private void addDescriptionTopics(Topic topic) {
+        List<Topic> topicList = dupDateRepository.queryDescriptionTopics(topic.getStartDate(), topic.getEndDate());
         List<DupDate> dupDateList = new ArrayList<>();
 
         for (Topic descriptionTopic : topicList) {
