@@ -1,5 +1,7 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.KakaoConst;
+import Project.OpenBook.Constants.NaverConst;
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Jwt.TokenDto;
@@ -46,12 +48,6 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
     private final CustomerRepository customerRepository;
     private final TokenManager tokenManager;
-    private final String REDIRECT_URL_LOGIN = "http://localhost:8080/login/oauth2/code/kakao";
-    private final String REQ_URL_TOKEN = "https://kauth.kakao.com/oauth/token";
-    private final String REQ_URL_INFO = "https://kapi.kakao.com/v2/user/me";
-
-   // @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    private final String key="ca80f14a6e6b6c34ea821c46af0cc10c";
 
 
     @Override
@@ -89,6 +85,9 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         if (providerName.equals("kakao")) {
             String kakaoToken = getKakaoToken(code);
             oauthId = String.valueOf(getKakaoId(kakaoToken));
+        } else if (providerName.equals("naver")) {
+            String naverToken = getNaverToken(code);
+            oauthId = getNaverId(naverToken);
         }
 
         Customer customer = customerRepository.queryCustomer(oauthId, providerName);
@@ -107,7 +106,9 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        return tokenManager.generateToken(authorities, customer.getId());
+        TokenDto tokenDto = tokenManager.generateToken(authorities, customer.getId());
+        tokenDto.addCustomerId(customer.getId());
+        return tokenDto;
     }
 
     public String getKakaoToken(String code){
@@ -117,11 +118,11 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         String redirectURL = "";
 
         {
-            redirectURL = REDIRECT_URL_LOGIN;
+            redirectURL = KakaoConst.REDIRECT_URL_LOGIN;
         }
 
         try{
-            URL url = new URL(REQ_URL_TOKEN);
+            URL url = new URL(KakaoConst.REQ_URL_TOKEN);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setRequestMethod("POST");
@@ -131,7 +132,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("grant_type=authorization_code");
-            stringBuilder.append("&client_id=" + key);
+            stringBuilder.append("&client_id=" + KakaoConst.key);
             stringBuilder.append("&redirect_uri=" + redirectURL);
             stringBuilder.append("&code=" + code);
             bufferedWriter.write(stringBuilder.toString());
@@ -168,10 +169,107 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         return accessToken;
     }
 
+    public String getNaverToken(String code){
+
+        String accessToken = "";
+        String refreshToken = "";
+        String redirectURL = "";
+
+        {
+            redirectURL = NaverConst.REDIRECT_URL_LOGIN;
+        }
+
+        try{
+            URL url = new URL(NaverConst.REQ_URL_TOKEN);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("POST");
+            //OutputStream으로 POST 데이터를 넘겨주겠다는 옵션.
+            connection.setDoOutput(true);
+
+            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append("grant_type=authorization_code");
+            stringBuilder.append("&client_id=" + NaverConst.CLIENT_ID);
+            stringBuilder.append("&client_secret" + NaverConst.CLIENT_SECRET);
+            stringBuilder.append("&redirect_uri=" + redirectURL);
+            stringBuilder.append("&code=" + code);
+            bufferedWriter.write(stringBuilder.toString());
+            bufferedWriter.flush();
+
+            int httpCode = connection.getResponseCode();
+            if(httpCode == 200){
+                System.out.println("success!");
+            }else{
+                throw new RuntimeException("responseCode Error!" + httpCode);
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line = "";
+            String body = "";
+
+            while ((line = bufferedReader.readLine()) != null) {
+                body += line;
+            }
+            System.out.println(body);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(body);
+
+            accessToken = jsonNode.get("access_token").toString();
+            refreshToken = jsonNode.get("refresh_token").toString();
+
+            bufferedReader.close();
+            bufferedWriter.close();
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return accessToken;
+    }
+
+    public String getNaverId(String token) {
+        String id="";
+        try{
+            URL url = new URL(NaverConst.REQ_URL_INFO);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Authorization", "Bearer " + token);
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode != 200) {
+                throw new RuntimeException("responseCode Error!" + responseCode);
+            }
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            String line = "";
+            String body = "";
+
+            while ((line = bufferedReader.readLine()) != null) {
+                body += line;
+            }
+
+            System.out.println(body);
+
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(body);
+
+            id = jsonNode.get("id").toString();
+
+            bufferedReader.close();
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return id;
+    }
+
     public Long getKakaoId(String token) {
         Long id=-1L;
         try{
-            URL url = new URL(REQ_URL_INFO);
+            URL url = new URL(KakaoConst.REQ_URL_INFO);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setRequestMethod("POST");
@@ -209,27 +307,27 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
 
 
 
-    private OAuth2Token getConnect(String code, ClientRegistration provider) {
-        return WebClient.create()
-                .post()
-                .uri(provider.getProviderDetails().getTokenUri())
-                .headers(h -> {
-                    h.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-                    h.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
-                })
-                .bodyValue(tokenRequest(code, provider))
-                .retrieve()
-                .bodyToMono(OAuth2Token.class)
-                .block();
-    }
-
-    private MultiValueMap<String, String> tokenRequest(String code, ClientRegistration provider) {
-        LinkedMultiValueMap map = new LinkedMultiValueMap();
-        map.add("code", code);
-        map.add("grant_type", "authorization_code");
-        map.add("redirect_uri", provider.getRedirectUri());
-        map.add("client_secret", provider.getClientSecret());
-        map.add("client_id", provider.getClientId());
-        return map;
-    }
+//    private OAuth2Token getConnect(String code, ClientRegistration provider) {
+//        return WebClient.create()
+//                .post()
+//                .uri(provider.getProviderDetails().getTokenUri())
+//                .headers(h -> {
+//                    h.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+//                    h.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
+//                })
+//                .bodyValue(tokenRequest(code, provider))
+//                .retrieve()
+//                .bodyToMono(OAuth2Token.class)
+//                .block();
+//    }
+//
+//    private MultiValueMap<String, String> tokenRequest(String code, ClientRegistration provider) {
+//        LinkedMultiValueMap map = new LinkedMultiValueMap();
+//        map.add("code", code);
+//        map.add("grant_type", "authorization_code");
+//        map.add("redirect_uri", provider.getRedirectUri());
+//        map.add("client_secret", provider.getClientSecret());
+//        map.add("client_id", provider.getClientId());
+//        return map;
+//    }
 }

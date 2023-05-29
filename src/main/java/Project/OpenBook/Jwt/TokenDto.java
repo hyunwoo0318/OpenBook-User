@@ -11,4 +11,9 @@ public class TokenDto {
     private String type;
     private String accessToken;
     private String refreshToken;
+    private Long customerId;
+
+    public void addCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
 }

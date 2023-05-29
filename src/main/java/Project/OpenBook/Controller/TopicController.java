@@ -87,7 +87,7 @@ public class TopicController {
             @ApiResponse(responseCode = "200", description = "성공적인 삭제"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 이름이나 토픽 제목 입력")
     })
-    @DeleteMapping("/admin/topics/{topicTitle}/keywords/")
+    @DeleteMapping("/admin/topics/{topicTitle}/keywords")
     public ResponseEntity deleteKeyword(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordDto keywordDto) {
         topicService.deleteKeyword(topicTitle, keywordDto.getName());
         return new ResponseEntity(HttpStatus.OK);

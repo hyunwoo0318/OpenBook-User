@@ -204,9 +204,15 @@ public class TopicService {
     }
 
     public void deleteKeyword(String topicTitle, String keywordName) {
-        checkTopic(topicTitle);
-        checkKeyword(keywordName);
+        Topic topic = checkTopic(topicTitle);
 
-        topicKeywordRepository.deleteTopicKeyword(topicTitle, keywordName);
+        Keyword keyword = checkKeyword(keywordName);
+
+        Optional<TopicKeyword> topicKeywordOptional = topicKeywordRepository.findByTopicAndKeyword(topic, keyword);
+        if (topicKeywordOptional.isPresent()) {
+            TopicKeyword topicKeyword = topicKeywordOptional.get();
+            topicKeywordRepository.delete(topicKeyword);
+
+        }
     }
 }
