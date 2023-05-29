@@ -31,14 +31,14 @@ public class AuthenticationSuccessCustomHandler implements AuthenticationSuccess
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        Customer customer = (Customer)authentication.getPrincipal();
-        TokenDto tokenDto = tokenManager.generateToken(authentication, customer.getId());
-        response.setHeader("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
-        response.setHeader("Refresh-token", tokenDto.getRefreshToken());
-        if (customer.isNew()) {
-            response.setHeader("Is-new", "T");
-        }
-        response.setStatus(201);
-    }
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {}
+//        Customer customer = (Customer)authentication.getPrincipal();
+//        TokenDto tokenDto = tokenManager.generateToken(authentication, customer.getId());
+//        response.setHeader("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
+//        response.setHeader("Refresh-token", tokenDto.getRefreshToken());
+//        if (customer.isNew()) {
+//            response.setHeader("Is-new", "T");
+//        }
+//        response.setStatus(201);
+//    }
 }

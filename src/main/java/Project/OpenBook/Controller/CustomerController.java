@@ -4,6 +4,7 @@ import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Dto.customer.CustomerDetailDto;
 import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Service.AnswerNoteService;
 import Project.OpenBook.Service.BookmarkService;
 import Project.OpenBook.Service.CustomerService;
@@ -12,6 +13,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
@@ -19,6 +21,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,10 +74,18 @@ public class CustomerController {
         List<Long> questionIdList = answerNoteService.queryAnswerNotes(customerId);
         return new ResponseEntity(questionIdList, HttpStatus.OK);
     }
-//
-//    @GetMapping("/login/oauth2/code/{provider}")
-//    public ResponseEntity loginKakao(@PathVariable("provider")String provider,@RequestParam("code") String code) {
-//        customerService.login();
-//    }
+
+    @GetMapping("/login/oauth2/code/{provider}")
+    public ResponseEntity loginKakao(@PathVariable("provider")String provider, @RequestParam("code") String code,
+                                     HttpServletResponse response) {
+        TokenDto tokenDto = oauthService.login(provider, code);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
+        headers.add("Refresh-token", tokenDto.getRefreshToken());
+
+        return new ResponseEntity(HttpStatus.OK);
+
+
+    }
 
 }

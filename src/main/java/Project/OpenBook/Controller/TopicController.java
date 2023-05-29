@@ -1,6 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.keyword.KeywordListDto;
 import Project.OpenBook.Dto.topic.TopicDto;
 import Project.OpenBook.Dto.topic.TopicTitleListDto;
@@ -76,8 +77,8 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 이름이나 토픽 제목 입력")
     })
     @PostMapping("/admin/topics/{topicTitle}/keywords")
-    public ResponseEntity addKeywords(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordListDto keywordListDto) {
-        topicService.addKeywords(topicTitle, keywordListDto);
+    public ResponseEntity addKeywords(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordDto  keywordDto) {
+        topicService.addKeywords(topicTitle, keywordDto);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
@@ -86,9 +87,9 @@ public class TopicController {
             @ApiResponse(responseCode = "200", description = "성공적인 삭제"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 이름이나 토픽 제목 입력")
     })
-    @DeleteMapping("/admin/topics/{topicTitle}/keywords/{keywordName}")
-    public ResponseEntity deleteKeyword(@PathVariable("topicTitle") String topicTitle, @PathVariable("keywordName") String keywordName) {
-        topicService.deleteKeyword(topicTitle, keywordName);
+    @DeleteMapping("/admin/topics/{topicTitle}/keywords/")
+    public ResponseEntity deleteKeyword(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordDto keywordDto) {
+        topicService.deleteKeyword(topicTitle, keywordDto.getName());
         return new ResponseEntity(HttpStatus.OK);
     }
 

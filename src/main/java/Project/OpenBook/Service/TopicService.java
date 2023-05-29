@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.keyword.KeywordListDto;
 import Project.OpenBook.Repository.topickeyword.TopicKeywordRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
@@ -20,6 +21,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -185,19 +187,20 @@ public class TopicService {
         return topicRepository.queryTopicKeywords(topicTitle);
     }
 
-    public void addKeywords(String topicTitle, KeywordListDto keywordListDto) {
+    public void addKeywords(String topicTitle, KeywordDto keywordDto) {
         Topic topic = checkTopic(topicTitle);
+        String name = keywordDto.getName();
+        Keyword keyword;
 
-        List<Keyword> keywordList = keywordRepository.queryKeywordsList(keywordListDto.getKeywordList());
-        if(keywordList.size() != keywordListDto.getKeywordList().size()){
-            throw new CustomException(KEYWORD_NOT_FOUND);
+        Optional<Keyword> keywordOptional = keywordRepository.findByName(name);
+        if (keywordOptional.isPresent()) {
+            keyword = keywordOptional.get();
+
+        }else{
+            keyword = new Keyword(name);
+            keywordRepository.save(keyword);
         }
-        /**
-         * TODO : 기존에 있는 경우 추가하지 않는 로직 추가
-         */
-
-        List<TopicKeyword> topicKeywordList = keywordList.stream().map(k -> new TopicKeyword(topic, k)).collect(Collectors.toList());
-        topicKeywordRepository.saveAll(topicKeywordList);
+        topicKeywordRepository.save(new TopicKeyword(topic, keyword));
     }
 
     public void deleteKeyword(String topicTitle, String keywordName) {

@@ -35,13 +35,8 @@ public class TokenManager {
         this.customerRepository = customerRepository;
     }
 
-    public TokenDto generateToken(Authentication authentication, long id) {
-        checkCustomer(id);
-        String authorities = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        long now = new Date().getTime();
+    public TokenDto generateToken(String authorities, long id) {
+        checkCustomer(id);long now = new Date().getTime();
         tokenExpire = new Date(now + JwtConst.TOKEN_EXPIRED_TIME);
 
         String accessToken = Jwts.builder()
@@ -72,7 +67,7 @@ public class TokenManager {
         Customer customer = checkCustomer(id);
 
         Authentication authentication = (Authentication) customer;
-        return generateToken(authentication, customer.getId());
+        return null;
     }
 
     public Authentication getAuthorities(String accessToken){

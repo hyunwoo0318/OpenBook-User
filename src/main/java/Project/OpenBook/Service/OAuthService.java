@@ -3,12 +3,14 @@ package Project.OpenBook.Service;
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Jwt.TokenDto;
+import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
@@ -36,19 +38,20 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final CustomerRepository customerRepository;
-
+    private final TokenManager tokenManager;
     private final String REDIRECT_URL_LOGIN = "http://localhost:8080/login/oauth2/code/kakao";
     private final String REQ_URL_TOKEN = "https://kauth.kakao.com/oauth/token";
     private final String REQ_URL_INFO = "https://kapi.kakao.com/v2/user/me";
 
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    private final String key;
+   // @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private final String key="";
 
 
     @Override
@@ -100,9 +103,11 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
             customerRepository.save(customer);
         }
 
-        return null;
+        String authorities = customer.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
 
-
+        return tokenManager.generateToken(authorities, customer.getId());
     }
 
     public String getKakaoToken(String code){
