@@ -41,8 +41,8 @@ public class ChapterController {
     public ResponseEntity getChapter(){
         List<Chapter> chapterList = chapterService.getAllChapter();
         List<ChapterDto> chapterDtoList = chapterList.stream().map(c -> new ChapterDto(c.getTitle(), c.getNumber())).collect(Collectors.toList());
-        ChapterListDto chapterListDto = new ChapterListDto(chapterDtoList);
-        return new ResponseEntity(chapterListDto, HttpStatus.OK);
+
+        return new ResponseEntity(chapterDtoList, HttpStatus.OK);
     }
 
 

@@ -67,7 +67,10 @@ public class TokenManager {
         Customer customer = checkCustomer(id);
 
         Authentication authentication = (Authentication) customer;
-        return null;
+        String authorities = customer.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+        return generateToken(authorities, customer.getId());
     }
 
     public Authentication getAuthorities(String accessToken){

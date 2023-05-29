@@ -51,7 +51,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
     private final String REQ_URL_INFO = "https://kapi.kakao.com/v2/user/me";
 
    // @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    private final String key="";
+    private final String key="ca80f14a6e6b6c34ea821c46af0cc10c";
 
 
     @Override

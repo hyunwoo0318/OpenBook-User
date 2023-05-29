@@ -76,14 +76,15 @@ public class CustomerController {
     }
 
     @GetMapping("/login/oauth2/code/{provider}")
-    public ResponseEntity loginKakao(@PathVariable("provider")String provider, @RequestParam("code") String code,
-                                     HttpServletResponse response) {
+    public ResponseEntity<Object> loginKakao(@PathVariable("provider")String provider, @RequestParam("code") String code,
+                                             HttpServletResponse response) {
         TokenDto tokenDto = oauthService.login(provider, code);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
         headers.add("Refresh-token", tokenDto.getRefreshToken());
 
-        return new ResponseEntity(HttpStatus.OK);
+        return ResponseEntity.ok()
+                .headers(headers).build();
 
 
     }
