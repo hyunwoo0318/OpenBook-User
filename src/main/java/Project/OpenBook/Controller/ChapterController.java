@@ -39,16 +39,9 @@ public class ChapterController {
     })
     @GetMapping
     public ResponseEntity getChapter(){
-        List<String> titleList = new ArrayList<>();
-        List<Integer> numList = new ArrayList<>();
-
         List<Chapter> chapterList = chapterService.getAllChapter();
-        for (Chapter chapter : chapterList) {
-            titleList.add(chapter.getTitle());
-            numList.add(chapter.getNumber());
-        }
-
-        ChapterListDto chapterListDto = new ChapterListDto(titleList, numList);
+        List<ChapterDto> chapterDtoList = chapterList.stream().map(c -> new ChapterDto(c.getTitle(), c.getNumber())).collect(Collectors.toList());
+        ChapterListDto chapterListDto = new ChapterListDto(chapterDtoList);
         return new ResponseEntity(chapterListDto, HttpStatus.OK);
     }
 

@@ -7,12 +7,14 @@ import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Service.AnswerNoteService;
 import Project.OpenBook.Service.BookmarkService;
 import Project.OpenBook.Service.CustomerService;
+import Project.OpenBook.Service.OAuthService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +30,8 @@ public class CustomerController {
     private final CustomerService customerService;
     private final BookmarkService bookmarkService;
     private final AnswerNoteService answerNoteService;
+    private final OAuthService oauthService;
+    private final InMemoryClientRegistrationRepository clientRegistrationRepository;
 
     @ApiOperation("회원 추가정보 입력")
     @ApiResponses(value={
@@ -66,5 +70,10 @@ public class CustomerController {
         List<Long> questionIdList = answerNoteService.queryAnswerNotes(customerId);
         return new ResponseEntity(questionIdList, HttpStatus.OK);
     }
+//
+//    @GetMapping("/login/oauth2/code/{provider}")
+//    public ResponseEntity loginKakao(@PathVariable("provider")String provider,@RequestParam("code") String code) {
+//        customerService.login();
+//    }
 
 }

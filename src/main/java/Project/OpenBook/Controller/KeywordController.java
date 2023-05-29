@@ -48,7 +48,7 @@ public class KeywordController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 카테고리 생성 실패"),
             @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리 이름 입력")
     })
-    @PostMapping("/keywords")
+    @PostMapping("admin/keywords")
     public ResponseEntity createService(@Validated @RequestBody KeywordDto keywordDto) {
         keywordService.createKeyword(keywordDto.getName());
 
@@ -63,7 +63,7 @@ public class KeywordController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 카테고리 수정 시도"),
             @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리 이름 입력")
     })
-    @PatchMapping("keywords/{keywordName}")
+    @PatchMapping("admin/keywords/{keywordName}")
     public ResponseEntity updateKeyword(@PathVariable("keywordName") String keywordName, @Validated @RequestBody KeywordDto keywordDto) {
         if(!keywordName.equals(keywordDto.getName())){
             keywordService.updateKeyword(keywordName, keywordDto.getName());
@@ -77,7 +77,7 @@ public class KeywordController {
             @ApiResponse(responseCode = "200", description = "카테고리 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "존재히지 않는 카테고리 삭제 시도")
     })
-    @DeleteMapping("keywords/{keywordName}")
+    @DeleteMapping("admin/keywords/{keywordName}")
     public ResponseEntity deleteKeyword(@PathVariable("keywordName") String keywordName) {
         keywordService.deleteKeyword(keywordName);
 
