@@ -22,7 +22,9 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final TopicRepository topicRepository;
 
+
     public List<String> queryCategories() {
+        List<Category> all = categoryRepository.findAll();
         return categoryRepository.findAll().stream().map(c -> c.getName()).collect(Collectors.toList());
     }
 

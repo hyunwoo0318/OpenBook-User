@@ -131,6 +131,8 @@ class QuestionControllerTest {
         String categoryName = "사건";
         String prompt = "해당 사건에 대한 설명으로 옳은 것은?";
 
+        List<Category> all = categoryRepository.findAll();
+
 
         ResponseEntity<QuestionDto> response = restTemplate.getForEntity(URL + "/admin/temp-question?type=1&category=사건", QuestionDto.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
