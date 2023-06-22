@@ -20,4 +20,11 @@ public class CustomerCustomRepositoryImpl implements CustomerCustomRepository{
                 .where(customer.provider.eq(provider))
                 .fetchOne();
     }
+
+    @Override
+    public Customer queryCustomer(String code) {
+        return queryFactory.selectFrom(customer)
+                .where(customer.code.eq(code))
+                .fetchOne();
+    }
 }

@@ -5,6 +5,7 @@ import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Admin;
 import Project.OpenBook.Repository.admin.AdminRepository;
+import com.fasterxml.jackson.databind.exc.InvalidNullException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -18,6 +19,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Service
@@ -51,7 +55,7 @@ public class AdminService implements UserDetailsService {
         return admin;
     }
 
-    public void login(String loginId, String password){
+    public void login(String loginId, String password, HttpServletRequest request){
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(loginId, password);
         Authentication authentication = authenticationManager.getObject().authenticate(upToken);
 
@@ -60,6 +64,7 @@ public class AdminService implements UserDetailsService {
         }
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
+        request.getSession(true);
     }
 
     @Override
@@ -70,5 +75,13 @@ public class AdminService implements UserDetailsService {
                 .password(admin.getPassword())
                 .authorities(admin.getAuthorities())
                 .build();
+    }
+
+    public void logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session != null) {
+            session.invalidate();
+        }
     }
 }

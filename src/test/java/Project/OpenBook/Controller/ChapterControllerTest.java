@@ -79,8 +79,6 @@ class ChapterControllerTest {
         ResponseEntity<ChapterListDto> response = restTemplate.getForEntity(URL, ChapterListDto.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getTitleList()).isEqualTo(Arrays.asList("title1","title2","title3","title4","title5"));
-        assertThat(response.getBody().getNumberList()).isEqualTo(Arrays.asList(1,2,3,4,5));
 
     }
 

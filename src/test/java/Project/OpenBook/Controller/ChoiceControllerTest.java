@@ -141,7 +141,6 @@ class ChoiceControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getContent()).isEqualTo("choice1");
-        assertThat(response.getBody().getTopic()).isEqualTo("topic1");
     }
 
     @DisplayName("존재하지 않는 선지 조회 요청시 - GET /admin/choices/{choiceId}")

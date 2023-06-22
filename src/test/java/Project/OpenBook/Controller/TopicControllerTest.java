@@ -108,13 +108,13 @@ class TopicControllerTest {
     @Test
     public void createTopicFailWrongInput() {
         //제목이 중복되는 경우
-        TopicDto wrongDto1 = new TopicDto(chapterNum, "title1", categoryName, null, null, "detail123");
+        TopicDto wrongDto1 = new TopicDto(chapterNum, "title1", categoryName, 0, 0, "detail123");
 
         //존재하지 않는 단원번호를 입력한경우
-        TopicDto wrongDto2 = new TopicDto(2, "title123", categoryName, null, null, "detail123");
+        TopicDto wrongDto2 = new TopicDto(2, "title123", categoryName, 0, 0, "detail123");
 
         //존재하지 않는 카테고리를 입력한경우
-        TopicDto wrongDto3 = new TopicDto(chapterNum, "title123", "사건", null, null, "detail123");
+        TopicDto wrongDto3 = new TopicDto(chapterNum, "title123", "사건", 0, 0, "detail123");
 
         ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {
         });
@@ -136,7 +136,7 @@ class TopicControllerTest {
     @DisplayName("기존 상세정보 변경 성공 - PATCH admin/topics")
     @Test
     public void updateTopicSuccess() {
-        TopicDto dto = new TopicDto(chapterNum, "title2", categoryName, null, null, "detail123");
+        TopicDto dto = new TopicDto(chapterNum, "title2", categoryName, 0, 0, "detail123");
 
         ResponseEntity<Void> response = restTemplate.exchange(URL + "/title1", HttpMethod.PATCH, new HttpEntity<>(dto), Void.class);
 

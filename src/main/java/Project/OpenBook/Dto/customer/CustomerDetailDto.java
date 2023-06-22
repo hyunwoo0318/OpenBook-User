@@ -1,24 +1,30 @@
 package Project.OpenBook.Dto.customer;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 public class CustomerDetailDto {
 
-    @NotBlank(message = "별명을 입력해주세요.")
-    private String nickname;
+    private String nickName;
 
-    @Min(1)@Max(9)
-    private Integer currentGrade;
+    private Integer expertise;
 
-    @Min(1)@Max(100)
     private Integer age;
+
+    private String log;
+
+    private Boolean isSubscribed;
+
+    @Builder
+    public CustomerDetailDto(String nickName, Integer expertise, Integer age, String log, Boolean isSubscribed) {
+        this.nickName = nickName;
+        this.expertise = expertise;
+        this.age = age;
+        this.log = log;
+        this.isSubscribed = isSubscribed;
+    }
 }

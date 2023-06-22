@@ -25,6 +25,7 @@ out/
 
 application.yml
 local.yml
+application-test.yml
 
 ########################
 

@@ -1,9 +1,9 @@
 package Project.OpenBook.Controller;
 
-import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Customer;
+import Project.OpenBook.Dto.customer.CustomerAddDetailDto;
+import Project.OpenBook.Dto.customer.CustomerCodeList;
 import Project.OpenBook.Dto.customer.CustomerDetailDto;
-import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Service.AnswerNoteService;
 import Project.OpenBook.Service.BookmarkService;
@@ -16,16 +16,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,7 +30,6 @@ public class CustomerController {
     private final BookmarkService bookmarkService;
     private final AnswerNoteService answerNoteService;
     private final OAuthService oauthService;
-    private final InMemoryClientRegistrationRepository clientRegistrationRepository;
 
     @ApiOperation("회원 추가정보 입력")
     @ApiResponses(value={
@@ -46,8 +40,8 @@ public class CustomerController {
     })
     @PostMapping("customers/{customerId}/details")
     public ResponseEntity addDetails(@PathVariable("customerId") Long customerId,
-                                     @Validated @RequestBody CustomerDetailDto customerDetailDto){
-        Customer customer = customerService.addDetails(customerId, customerDetailDto);
+                                     @Validated @RequestBody CustomerAddDetailDto customerAddDetailDto){
+        Customer customer = customerService.addDetails(customerId, customerAddDetailDto);
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -87,8 +81,31 @@ public class CustomerController {
                 .headers(headers)
                 .body(tokenDto.getCustomerId());
         return responseEntity;
+    }
 
+    /**
+     * 관리자 페이지에서 회원 정보 관리
+     */
 
+    @ApiOperation("모든 회원의 식별코드 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "모든 회원의 식별코드 조회 성공")
+    })
+    @GetMapping("/admin/customers")
+    public ResponseEntity queryCustomers(){
+        CustomerCodeList customerCodeList = customerService.queryCustomers();
+        return new ResponseEntity<>(customerCodeList, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "특정 회원의 정보 조회", notes = "[닉네임, 최초 학습 수준, 나이, 유저 로그, 유저 구독 정보] 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "회원의 정보 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 식별코드 입력")
+    })
+    @GetMapping("/admin/customers/{code}")
+    public ResponseEntity queryCustomerDetail(@PathVariable("code") String code) {
+        CustomerDetailDto customerDetailDto = customerService.queryCustomerDetail(code);
+        return new ResponseEntity(customerDetailDto, HttpStatus.OK);
     }
 
 }

@@ -4,6 +4,7 @@ import Project.OpenBook.Domain.Admin;
 import Project.OpenBook.Dto.admin.AdminDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Service.AdminService;
+import ch.qos.logback.core.boolex.EvaluationException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,11 +63,20 @@ public class AdminController {
             @ApiResponse(responseCode = "401", description = "로그인 실패")
     })
     @PostMapping("/login")
-    public ResponseEntity adminLogin(@Validated @RequestBody AdminDto adminDto, HttpServletResponse response) {
-        adminService.login(adminDto.getLoginId(), adminDto.getPassword());
+    public ResponseEntity adminLogin(@Validated @RequestBody AdminDto adminDto, HttpServletRequest request) {
+        adminService.login(adminDto.getLoginId(), adminDto.getPassword(), request);
 
         return new ResponseEntity(HttpStatus.OK);
+    }
 
+    @ApiOperation(value="관리자 로그아웃")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공")
+    })
+    @PostMapping("/logout")
+    public ResponseEntity adminLogout(HttpServletRequest request){
+        adminService.logout(request);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

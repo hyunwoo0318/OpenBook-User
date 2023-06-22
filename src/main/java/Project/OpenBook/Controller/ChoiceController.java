@@ -86,7 +86,7 @@ public class ChoiceController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @ApiOperation(value = "여러 선지 삭제")
+    @ApiOperation(value = "선지 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적인 삭제"),
             @ApiResponse(responseCode = "404", description = "존재하지 않은 선지 삭제 시도")

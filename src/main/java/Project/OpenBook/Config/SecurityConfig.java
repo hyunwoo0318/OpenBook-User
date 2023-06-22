@@ -84,7 +84,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
                 .and().httpBasic().and().
                 formLogin().disable().
-                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
+                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().
                 oauth2Login()
                     .successHandler(authenticationSuccessCustomHandler)
                 .redirectionEndpoint().and()
@@ -122,25 +122,80 @@ public class SecurityConfig {
             Customer user1 = Customer.builder()
                     .nickName("user1")
                     .age(20)
-                    .currentGrade(5)
+                    .expertise(50)
                     .role(Role.USER)
                     .build();
             Customer user2 = Customer.builder()
                     .nickName("user2")
                     .age(30)
-                    .currentGrade(2)
+                    .expertise(20)
                     .role(Role.USER)
                     .build();
             Customer user3 = Customer.builder()
                     .nickName("user3")
                     .age(20)
-                    .currentGrade(7)
+                    .expertise(70)
                     .role(Role.USER)
                     .build();
             customerRepository.save(user1);
             customerRepository.save(user2);
             customerRepository.save(user3);
         }
+//
+//        //카테고리 전체 저장
+//        Category c1 = new Category("유물");
+//        Category c2 = new Category("사건");
+//        Category c3 = new Category("국가");
+//        Category c4 = new Category("인물");
+//
+//        categoryRepository.saveAllAndFlush(Arrays.asList(c1, c2, c3, c4));
+//
+//        //단원 전체 저장
+//        Chapter ch1 = new Chapter("ch1", 1);
+//        Chapter ch2 = new Chapter("ch2", 2);
+//        Chapter ch3 = new Chapter("ch3", 3);
+//
+//        chapterRepository.saveAllAndFlush(Arrays.asList(ch1, ch2, ch3));
+//
+//        //topic 전체 생성
+//        Random rand = new Random();
+//        List<Topic> topicList = new ArrayList<>();
+//
+//
+//        for (int i = 1; i <= 1000; i++) {
+//            int year = rand.nextInt(2000) + 1;
+//            int month = rand.nextInt(12) + 1; // 1~12 사이의 월을 랜덤으로 생성
+//            int day = rand.nextInt(26) + 1; // 1부터 최대 일수 사이의 일을 랜덤으로 생성
+//            int length = rand.nextInt(500);
+//
+//            Integer startDate = year * 1000 + month * 100 + day;
+//            Integer endDate = startDate + length;
+//
+//            Category c  = null;
+//
+//            if(i <= 10){
+//                c = c1;
+//            }else if(i <= 20){
+//                c = c2;
+//            } else if (i <= 30) {
+//                c = c3;
+//            }else {
+//                c = c4;
+//            }
+//
+//            Topic topic = new Topic("topic" + i, startDate, endDate, 0, 0, "detail" + i, ch1, c);
+//            topicList.add(topic);
+//        }
+//
+//        topicRepository.saveAllAndFlush(topicList);
+//
+//        //선지, 보기 생성
+//        for (Topic topic : topicList) {
+//            for (int i = 1; i <= 5; i++) {
+//                choiceRepository.save(new Choice("choice" + i + " in " + topic.getTitle(), topic));
+//                descriptionRepository.save(new Description("description" + i + " in " + topic.getTitle(), topic));
+//            }
+//        }
     }
 
     @Bean
