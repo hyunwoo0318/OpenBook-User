@@ -45,6 +45,16 @@ public class ChapterController {
         return new ResponseEntity(chapterDtoList, HttpStatus.OK);
     }
 
+    @ApiOperation("해당 단원의 모든 topic 조회")
+    @GetMapping("admin/chapters/{number}/topics")
+    public ResponseEntity queryChapterTopics(@PathVariable("number") int number) {
+        List<Topic> topicList = chapterService.getTopicsInChapter(number);
+
+        List<String> topicTitleList = topicList.stream().map(t -> t.getTitle()).collect(Collectors.toList());
+        TopicTitleListDto dto = new TopicTitleListDto(topicTitleList);
+        return new ResponseEntity(dto, HttpStatus.OK);
+    }
+
 
     @ApiOperation(value = "단원 추가", notes = "단원제목과 단원번호를 입력해서 새로운 단원 추가")
     @ApiResponses(value = {

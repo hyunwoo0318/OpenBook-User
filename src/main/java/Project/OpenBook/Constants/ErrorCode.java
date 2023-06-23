@@ -21,6 +21,7 @@ public enum ErrorCode {
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다"),
     NOT_ENOUGH_CHOICE(HttpStatus.BAD_REQUEST, "문제를 만들기 위한 선지의 수가 부족합니다."),
     QUESTION_ERROR(HttpStatus.BAD_REQUEST, "해당 유형의 문제를 생성할수 없습니다."),
+    KEYWORD_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 키워드를 가지고 있는 토픽이 존재합니다."),
 
 
     /**

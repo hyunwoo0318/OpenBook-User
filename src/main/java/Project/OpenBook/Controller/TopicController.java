@@ -24,9 +24,11 @@ import java.util.stream.Collectors;
 public class TopicController {
 
     private final TopicService topicService;
-    private final ChapterService chapterService;
 
     @ApiOperation(value = "각 토픽에 대한 상세정보 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
+    })
     @GetMapping("/topics/{topicTitle}")
     public ResponseEntity queryTopics( @PathVariable("topicTitle") String topicTitle) {
         TopicDto topicDto = topicService.queryTopic(topicTitle);
@@ -46,15 +48,7 @@ public class TopicController {
     }
 
 
-    @ApiOperation("해당 단원의 모든 topic 조회")
-    @GetMapping("admin/chapters/{number}/topics")
-    public ResponseEntity queryChapterTopics(@PathVariable("number") int number) {
-        List<Topic> topicList = chapterService.getTopicsInChapter(number);
 
-        List<String> topicTitleList = topicList.stream().map(t -> t.getTitle()).collect(Collectors.toList());
-        TopicTitleListDto dto = new TopicTitleListDto(topicTitleList);
-        return new ResponseEntity(dto, HttpStatus.OK);
-    }
 
     @ApiOperation(value = "새로운 상세정보 입력")
     @ApiResponses(value = {
