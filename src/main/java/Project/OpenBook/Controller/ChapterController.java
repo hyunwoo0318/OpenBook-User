@@ -5,9 +5,13 @@ import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.chapter.ChapterDto;
 import Project.OpenBook.Dto.chapter.ChapterListDto;
 import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Dto.topic.TopicTitleListDto;
 import Project.OpenBook.Service.ChapterService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -20,39 +24,49 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/chapters")
-@CrossOrigin(allowedHeaders = "*", origins = "*")
 @Slf4j
 public class ChapterController {
 
     private final ChapterService chapterService;
 
 
-    @ApiOperation(value= "모든 단원 정보 가져오기", notes = "단원 제목과 단원 번호를 조회")
+    @ApiOperation(value= "모든 단원 정보 가져오기")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping
     public ResponseEntity getChapter(){
         List<Chapter> chapterList = chapterService.getAllChapter();
-        List<ChapterDto> chapterDtoList = chapterList.stream().map(c -> new ChapterDto(c.getTitle(), c.getNumber())).collect(Collectors.toList());
+        //List<ChapterDto> chapterDtoList = chapterList.stream().map(c -> new ChapterDto(c.getTitle(), c.getNumber())).collect(Collectors.toList());
+        List<Integer> chapterNumberList = chapterList.stream().map(c -> c.getNumber()).collect(Collectors.toList());
 
-        return new ResponseEntity(chapterDtoList, HttpStatus.OK);
+        return new ResponseEntity(chapterNumberList, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "단원 이름 조회", notes = "단원 번호를 넘기면 단원 이름을 알려주는 endPoint")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "단원 이름 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
+    })
+    @GetMapping("/chapter-title")
+    public ResponseEntity getChapterTitle(@RequestParam("num") Integer num){
+        String title = chapterService.getChapterTitle(num);
+
+        return new ResponseEntity(title, HttpStatus.OK);
     }
 
     @ApiOperation("해당 단원의 모든 topic 조회")
-    @GetMapping("admin/chapters/{number}/topics")
+    @GetMapping("/{number}/topics")
     public ResponseEntity queryChapterTopics(@PathVariable("number") int number) {
-        List<Topic> topicList = chapterService.getTopicsInChapter(number);
-
-        List<String> topicTitleList = topicList.stream().map(t -> t.getTitle()).collect(Collectors.toList());
-        TopicTitleListDto dto = new TopicTitleListDto(topicTitleList);
-        return new ResponseEntity(dto, HttpStatus.OK);
+        List<AdminChapterDto> adminChapterDtoList = chapterService.getTopicsInChapter(number);
+        return new ResponseEntity(adminChapterDtoList, HttpStatus.OK);
     }
 
 

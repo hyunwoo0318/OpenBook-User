@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
@@ -40,13 +41,9 @@ public class ChapterService {
         return chapterRepository.findAll();
     }
 
-    public List<Topic> getTopicsInChapter(int number) {
-        Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(number);
-        if (chapterOptional.isEmpty()) {
-            return null;
-        }
-        Chapter chapter = chapterOptional.get();
-        return topicRepository.findAllByChapter(chapter);
+    public List<AdminChapterDto> getTopicsInChapter(int number) {
+        checkChapter(number);
+        return topicRepository.queryAdminChapterDto(number);
     }
 
     public Chapter updateChapter(int num, String inputTitle, int inputNum) {
@@ -82,5 +79,11 @@ public class ChapterService {
         return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
             throw new CustomException(CHAPTER_NOT_FOUND);
         });
+    }
+
+    public String getChapterTitle(Integer num) {
+        Chapter chapter = checkChapter(num);
+        return chapter.getTitle();
+
     }
 }
