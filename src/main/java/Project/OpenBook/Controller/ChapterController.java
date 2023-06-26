@@ -1,30 +1,21 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Chapter;
-import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.chapter.ChapterDto;
-import Project.OpenBook.Dto.chapter.ChapterListDto;
-import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Dto.chapter.ChapterNumDto;
+import Project.OpenBook.Dto.chapter.ChapterTitleDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
-import Project.OpenBook.Dto.topic.TopicTitleListDto;
 import Project.OpenBook.Service.ChapterService;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,12 +33,11 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping
-    public ResponseEntity getChapter(){
-        List<Chapter> chapterList = chapterService.getAllChapter();
-        //List<ChapterDto> chapterDtoList = chapterList.stream().map(c -> new ChapterDto(c.getTitle(), c.getNumber())).collect(Collectors.toList());
-        List<Integer> chapterNumberList = chapterList.stream().map(c -> c.getNumber()).collect(Collectors.toList());
+    public ResponseEntity queryChapter(){
+        List<Chapter> chapterList = chapterService.queryAllChapters();
+        List<ChapterDto> chapterDtoList = chapterList.stream().map(c -> new ChapterDto(c.getTitle(), c.getNumber())).collect(Collectors.toList());
 
-        return new ResponseEntity(chapterNumberList, HttpStatus.OK);
+        return new ResponseEntity(chapterDtoList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 이름 조회", notes = "단원 번호를 넘기면 단원 이름을 알려주는 endPoint")
@@ -56,16 +46,17 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/chapter-title")
-    public ResponseEntity getChapterTitle(@RequestParam("num") Integer num){
-        String title = chapterService.getChapterTitle(num);
+    public ResponseEntity queryChapterTitle(@RequestParam("num") Integer num){
+        String title = chapterService.queryChapterTitle(num);
+        ChapterTitleDto chapterTitleDto = new ChapterTitleDto(title);
 
-        return new ResponseEntity(title, HttpStatus.OK);
+        return new ResponseEntity(chapterTitleDto, HttpStatus.OK);
     }
 
     @ApiOperation("해당 단원의 모든 topic 조회")
     @GetMapping("/{number}/topics")
     public ResponseEntity queryChapterTopics(@PathVariable("number") int number) {
-        List<AdminChapterDto> adminChapterDtoList = chapterService.getTopicsInChapter(number);
+        List<AdminChapterDto> adminChapterDtoList = chapterService.queryTopicsInChapter(number);
         return new ResponseEntity(adminChapterDtoList, HttpStatus.OK);
     }
 
@@ -83,11 +74,11 @@ public class ChapterController {
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "단원 변경")
+    @ApiOperation(value = "단원 수정")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "단원 변경 성공"),
+            @ApiResponse(responseCode = "200", description = "단원 수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 변경 시도"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 수정 시도"),
             @ApiResponse(responseCode = "409",  description = "중복된 단원 번호 입력")
     })
     @PatchMapping("/{num}")

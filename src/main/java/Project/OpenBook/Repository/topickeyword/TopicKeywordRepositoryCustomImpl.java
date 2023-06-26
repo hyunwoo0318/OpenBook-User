@@ -5,6 +5,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import static Project.OpenBook.Domain.QTopicKeyword.topicKeyword;
 
 @Service
@@ -26,5 +28,12 @@ public class TopicKeywordRepositoryCustomImpl implements TopicKeywordRepositoryC
                 .where(topicKeyword.topic.title.eq(topicTitle))
                 .where(topicKeyword.keyword.name.eq(keywordName))
                 .fetchOne();
+    }
+
+    @Override
+    public List<TopicKeyword> queryTopicKeyword(String topicTitle) {
+        return queryFactory.selectFrom(topicKeyword)
+                .where(topicKeyword.topic.title.eq(topicTitle))
+                .fetch();
     }
 }

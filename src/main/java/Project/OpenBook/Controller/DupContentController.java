@@ -2,6 +2,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.DupContent;
 import Project.OpenBook.Dto.choice.ChoiceDto;
+import Project.OpenBook.Dto.choice.ChoiceIdDto;
 import Project.OpenBook.Dto.choice.ChoiceIdListDto;
 import Project.OpenBook.Service.ChoiceService;
 import Project.OpenBook.Service.DupContentService;
@@ -41,7 +42,7 @@ public class DupContentController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 보기나 선지 입력")
     })
     @PostMapping("/admin/dup-contents/{descriptionId}")
-    public ResponseEntity addDupContentChoices(@PathVariable Long descriptionId, @RequestBody ChoiceIdListDto choiceIdListDto) {
+    public ResponseEntity addDupContentChoices(@PathVariable Long descriptionId,@Validated @RequestBody ChoiceIdListDto choiceIdListDto) {
         List<DupContent> dupContentList = dupContentService.addDupContentChoices(descriptionId, choiceIdListDto);
 
         return new ResponseEntity(HttpStatus.CREATED);
@@ -50,10 +51,11 @@ public class DupContentController {
     @ApiOperation("해당 보기와 내용이 겹치는 선지 목록중 특정 선지 제거")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "내용이 겹치는 선지 목록중 특정 선지 제거 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 보기 id 입력")
     })
     @DeleteMapping("/admin/dup-contents/{descriptionId}")
-    public ResponseEntity deleteDupContentChoices(@PathVariable Long descriptionId, @RequestBody Long choiceId){
-        dupContentService.deleteDupContentChoices(descriptionId, choiceId);
+    public ResponseEntity deleteDupContentChoices(@PathVariable Long descriptionId,@Validated @RequestBody ChoiceIdDto choiceIdDto){
+        dupContentService.deleteDupContentChoices(descriptionId, choiceIdDto.getChoiceId());
 
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 
@@ -37,11 +36,11 @@ public class ChapterService {
         return newChapter;
     }
 
-    public List<Chapter> getAllChapter() {
+    public List<Chapter> queryAllChapters() {
         return chapterRepository.findAll();
     }
 
-    public List<AdminChapterDto> getTopicsInChapter(int number) {
+    public List<AdminChapterDto> queryTopicsInChapter(int number) {
         checkChapter(number);
         return topicRepository.queryAdminChapterDto(number);
     }
@@ -68,6 +67,10 @@ public class ChapterService {
         chapterRepository.delete(chapter);
         return true;
     }
+    public String queryChapterTitle(Integer num) {
+        Chapter chapter = checkChapter(num);
+        return chapter.getTitle();
+    }
 
     private void checkChapterNum(int number) {
         chapterRepository.findOneByNumber(number).ifPresent(c -> {
@@ -79,11 +82,5 @@ public class ChapterService {
         return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
             throw new CustomException(CHAPTER_NOT_FOUND);
         });
-    }
-
-    public String getChapterTitle(Integer num) {
-        Chapter chapter = checkChapter(num);
-        return chapter.getTitle();
-
     }
 }

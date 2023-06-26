@@ -45,10 +45,8 @@ public class TopicService {
     private final TopicKeywordRepository topicKeywordRepository;
 
     public TopicDto queryTopic(String topicTitle) {
-        Topic topic = checkTopic(topicTitle);
-
-        TopicDto topicDto = new TopicDto(topic.getChapter().getNumber(), topic.getTitle(), topic.getCategory().getName(), topic.getStartDate(), topic.getEndDate()
-                , topic.getDetail());
+        checkTopic(topicTitle);
+        TopicDto topicDto = topicRepository.queryTopicDto(topicTitle);
         return topicDto;
     }
 
@@ -77,6 +75,10 @@ public class TopicService {
 
     public Topic updateTopic(String topicTitle, TopicDto topicDto) {
         Topic topic = checkTopic(topicTitle);
+
+        //새로 입력받은 제목이 중복되는지 확인
+        checkDupTopicTitle(topicDto.getTitle());
+
 
         String categoryName = topicDto.getCategory();
         Category category = checkCategory(categoryName);
@@ -114,6 +116,11 @@ public class TopicService {
         List<Description> descriptionList = descriptionRepository.findDescriptionsByTopic(topicTitle);
         if (!descriptionList.isEmpty()) {
             throw new CustomException(TOPIC_HAS_DESCRIPTION);
+        }
+
+        List<TopicKeyword> topicKeywordList = topicKeywordRepository.queryTopicKeyword(topicTitle);
+        if (!topicKeywordList.isEmpty()) {
+            throw new CustomException(TOPIC_HAS_KEYWORD);
         }
 
         topicRepository.delete(topic);

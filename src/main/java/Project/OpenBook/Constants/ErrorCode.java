@@ -18,10 +18,12 @@ public enum ErrorCode {
     CATEGORY_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 카테고리에 토픽이 존재합니다"),
     TOPIC_HAS_CHOICE(HttpStatus.BAD_REQUEST, "해당 토픽에 선지가 존재합니다."),
     TOPIC_HAS_DESCRIPTION(HttpStatus.BAD_REQUEST, "해당 토픽에 보기가 존재합니다."),
+    TOPIC_HAS_KEYWORD(HttpStatus.BAD_REQUEST, "해당 토픽에 키워드가 존재합니다."),
     INVALID_TOKEN(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다"),
     NOT_ENOUGH_CHOICE(HttpStatus.BAD_REQUEST, "문제를 만들기 위한 선지의 수가 부족합니다."),
     QUESTION_ERROR(HttpStatus.BAD_REQUEST, "해당 유형의 문제를 생성할수 없습니다."),
-    KEYWORD_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 키워드를 가지고 있는 토픽이 존재합니다."),
+    KEYWORD_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 키워드를 가지는 토픽이 존재합니다."),
+    NOT_SAVED_CHOICE(HttpStatus.BAD_REQUEST, "해당 보기와 내용이 겹친 선지가 아닙니다."),
 
 
     /**

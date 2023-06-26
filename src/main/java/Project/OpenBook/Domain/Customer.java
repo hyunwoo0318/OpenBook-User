@@ -54,7 +54,7 @@ public class Customer extends BaseEntity implements OAuth2User {
     private boolean isSubscribed = true;
 
     @Builder
-    public Customer(String nickName,Integer age, Integer expertise, String role, String provider, String oAuthId) {
+    public Customer(String nickName,Integer age, Integer expertise, String role, String provider, String oAuthId, Boolean isSubscribed) {
         this.nickName = nickName;
         this.solvedNum = 0;
         this.age = age;
@@ -63,6 +63,7 @@ public class Customer extends BaseEntity implements OAuth2User {
         this.provider = provider;
         this.oAuthId = oAuthId;
         this.code = UUID.randomUUID().toString().substring(0,16);
+        this.isSubscribed = true;
     }
 
     public void addDetails(String nickName, Integer age, Integer expertise) {

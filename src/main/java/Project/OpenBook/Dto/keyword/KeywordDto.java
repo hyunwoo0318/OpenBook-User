@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class KeywordDto {
-
     @NotBlank(message = "키워드 이름을 입력해주세요")
     private String name;
 }

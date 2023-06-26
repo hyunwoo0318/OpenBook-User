@@ -14,5 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ChoiceIdListDto {
 
+    @NotEmpty(message = "선지 id를 입력해주세요.")
     List<Long> choiceIdList = new ArrayList<>();
 }

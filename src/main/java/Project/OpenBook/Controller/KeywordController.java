@@ -1,6 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Dto.keyword.KeywordDto;
+import Project.OpenBook.Dto.topic.TopicTitleDto;
 import Project.OpenBook.Service.KeywordService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,11 +23,11 @@ public class KeywordController {
 
     @ApiOperation(value = "전체 키워드 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 카테고리 조회 성공")
+            @ApiResponse(responseCode = "200", description = "전체 키워드 조회 성공")
     })
     @GetMapping("/keywords")
     public ResponseEntity queryServices() {
-        List<String> keywordList = keywordService.queryKeywords();
+        List<KeywordDto> keywordList = keywordService.queryKeywords().stream().map(k -> new KeywordDto(k)).collect(Collectors.toList());
         return new ResponseEntity(keywordList, HttpStatus.OK);
     }
 
@@ -37,7 +39,7 @@ public class KeywordController {
     })
     @GetMapping("/keywords/{keywordName}/topics")
     public ResponseEntity queryKeywordTopic(@PathVariable("keywordName") String keywordName) {
-        List<String> topicTitleList = keywordService.queryKeywordTopic(keywordName);
+        List<TopicTitleDto> topicTitleList = keywordService.queryKeywordTopic(keywordName).stream().map(k -> new TopicTitleDto(k)).collect(Collectors.toList());
         return new ResponseEntity(topicTitleList, HttpStatus.OK);
     }
 

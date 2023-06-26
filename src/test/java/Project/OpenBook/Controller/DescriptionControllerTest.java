@@ -1,16 +1,17 @@
 package Project.OpenBook.Controller;
 
-import Project.OpenBook.Domain.Category;
-import Project.OpenBook.Domain.Chapter;
-import Project.OpenBook.Domain.Choice;
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.choice.ChoiceAddDto;
 import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.Dto.choice.ChoiceUpdateDto;
+import Project.OpenBook.Dto.description.DescriptionCreateDto;
+import Project.OpenBook.Dto.description.DescriptionDto;
+import Project.OpenBook.Dto.description.DescriptionUpdateDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import org.junit.jupiter.api.*;
@@ -34,7 +35,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = { "spring.config.location=classpath:application-test.yml" })
-class ChoiceControllerTest {
+class DescriptionControllerTest {
 
     @LocalServerPort
     protected int port;
@@ -52,7 +53,7 @@ class ChoiceControllerTest {
     TopicRepository topicRepository;
 
     @Autowired
-    ChoiceRepository choiceRepository;
+    DescriptionRepository descriptionRepository;
 
     private final String prefix = "http://localhost:";
 
@@ -60,7 +61,7 @@ class ChoiceControllerTest {
 
     Topic topic1, topic2;
 
-    Choice choice1, choice2, choice3, choice4, choice5;
+    Description desc1, desc2, desc3, desc4, desc5;
 
     private void initConfig(){
         URL = prefix + port + suffix;
@@ -81,32 +82,32 @@ class ChoiceControllerTest {
         topicRepository.save(topic2);
 
         /**
-         * choice1,2,3 -> topic1
-         * choice4,5 -> topic2
+         * desc1,2,3 -> topic1
+         * desc4,5 -> topic2
          */
-        choice1 = new Choice("choice1", topic1);
-        choice2 = new Choice("choice2", topic1);
-        choice3 = new Choice("choice3", topic1);
+        desc1 = new Description("desc1", topic1);
+        desc2 = new Description("desc2", topic1);
+        desc3 = new Description("desc3", topic1);
 
-        choice4 = new Choice("choice4", topic2);
-        choice5 = new Choice("choice5", topic2);
+        desc4 = new Description("desc4", topic2);
+        desc5 = new Description("desc5", topic2);
 
-        choiceRepository.saveAllAndFlush(Arrays.asList(choice1, choice2, choice3, choice4, choice5));
+        descriptionRepository.saveAllAndFlush(Arrays.asList(desc1, desc2, desc3, desc4, desc5));
     }
     private void baseClear() {
-        choiceRepository.deleteAllInBatch();
+        descriptionRepository.deleteAllInBatch();
         topicRepository.deleteAllInBatch();
         chapterRepository.deleteAllInBatch();
         categoryRepository.deleteAllInBatch();
     }
 
     @Nested
-    @DisplayName("특정 토픽의 모든 선지 조회 - GET /admin/topics/{topicTitle}/choices/")
+    @DisplayName("특정 토픽의 모든 보기 조회 - GET /admin/topics/{topicTitle}/descriptions/")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public class queryTopicsChoices{
+    public class queryTopicDescriptions{
         @BeforeAll
         public void init(){
-            suffix = "/admin/topics/";
+            suffix = "/topics/";
             initConfig();
         }
 
@@ -120,25 +121,25 @@ class ChoiceControllerTest {
             baseClear();
         }
 
-        @DisplayName("특정 토픽의 모든 선지를 조회 성공")
+        @DisplayName("특정 토픽의 모든 보기를 조회 성공")
         @Test
-        public void queryChoicesInTopicsSuccess() {
+        public void queryDescriptionsInTopicsSuccess() {
             String topicTitle = "topic1";
-            ResponseEntity<List<ChoiceDto>> response = restTemplate.exchange(URL + "title1/choices/", HttpMethod.GET, null, new ParameterizedTypeReference<List<ChoiceDto>>() {}, topicTitle);
+            ResponseEntity<List<DescriptionDto>> response = restTemplate.exchange(URL + "title1/descriptions/", HttpMethod.GET, null, new ParameterizedTypeReference<List<DescriptionDto>>() {}, topicTitle);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            List<ChoiceDto> expectBody = Arrays.asList(new ChoiceDto(choice1), new ChoiceDto(choice2), new ChoiceDto(choice3));
+            List<DescriptionDto> expectBody = Arrays.asList(new DescriptionDto(desc1), new DescriptionDto(desc2), new DescriptionDto(desc3));
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(expectBody);
         }
     }
 
     @Nested
-    @DisplayName("특정 선지 조회 - GET /admin/choices/{choiceId}")
+    @DisplayName("특정 보기 조회 - GET /admin/descriptions/{choiceId}")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public class queryChoice{
+    public class queryDescription{
         @BeforeAll
         public void init(){
-            suffix = "/admin/choices/";
+            suffix = "/admin/descriptions/";
             initConfig();
         }
 
@@ -154,32 +155,32 @@ class ChoiceControllerTest {
 
         @DisplayName("특정 선지 조회 성공")
         @Test
-        public void queryChoicesSuccess() {
-            Long choiceId = choice1.getId();
+        public void queryDescriptionsSuccess() {
+            Long descId = desc1.getId();
 
-            ResponseEntity<ChoiceDto> response = restTemplate.getForEntity(URL + choiceId, ChoiceDto.class);
+            ResponseEntity<DescriptionDto> response = restTemplate.getForEntity(URL + descId, DescriptionDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ChoiceDto(choice1));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new DescriptionDto(desc1));
         }
 
-        @DisplayName("특정 선지 조회 실패 - 존재하지 않는 선지 id 입력")
+        @DisplayName("특정 보기 조회 실패 - 존재하지 않는 보기 id 입력")
         @Test
-        public void getChoicesFail(){
+        public void queryDescriptionFail(){
             ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "-1", ErrorMsgDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 선지 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 보기 ID입니다."));
         }
     }
 
     @Nested
-    @DisplayName("선지 여러개 추가 - POST /admin/choices/")
+    @DisplayName("보기 추가 - POST /admin/descriptions/")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public class createChoices{
+    public class createDescription{
         @BeforeAll
         public void init(){
-            suffix = "/admin/choices/";
+            suffix = "/admin/descriptions/";
             initConfig();
         }
 
@@ -193,27 +194,24 @@ class ChoiceControllerTest {
             baseClear();
         }
 
-        @DisplayName("여러개의 선지 추가 성공")
+        @DisplayName("보기 추가 성공")
         @Test
-        public void createChoicesSuccess() {
-            String[] choiceArr = {"nc1", "nc2", "nc3"};
-
-            ChoiceAddDto choiceAddDto = new ChoiceAddDto("title1", choiceArr);
-
-            ResponseEntity<Void> response = restTemplate.postForEntity(URL, choiceAddDto, Void.class);
+        public void createDescriptionSuccess() {
+            String[] contentArr = {"content"};
+            DescriptionCreateDto dto = new DescriptionCreateDto("title1", contentArr);
+            ResponseEntity<Void> response = restTemplate.postForEntity(URL, dto, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
-            List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle("title1");
-            assertThat(choiceList.size()).isEqualTo(6); // 기존 3개 + 추가한 3개
+            List<Description> descriptionList = descriptionRepository.findDescriptionsByTopic("title1");
+            assertThat(descriptionList.size()).isEqualTo(4); // 기존 3개 + 추가한 1개
         }
 
-        @DisplayName("여러개의 선지 추가 실패 - DTO Validation")
+        @DisplayName("보기 추가 실패 - DTO Validation")
         @Test
         public void createChoiceFailWrongDto(){
-            ChoiceAddDto choiceAddDto = new ChoiceAddDto();
-
-            ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(choiceAddDto), new ParameterizedTypeReference<List<ErrorDto>>() {
+            DescriptionCreateDto dto = new DescriptionCreateDto();
+            ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorDto>>() {
             });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -223,10 +221,10 @@ class ChoiceControllerTest {
         @DisplayName("여러개의 선지 추가 실패 - 존재하지 않는 토픽 제목 입력")
         @Test
         public void createChoiceFailNotExistTopic(){
-            String[] choiceArr = {"nc1", "nc2", "nc3"};
-            ChoiceAddDto choiceAddDto = new ChoiceAddDto("title-1", choiceArr);
+            String[] contentArr = {"content"};
+            DescriptionCreateDto dto = new DescriptionCreateDto("title-1", contentArr);
 
-            ResponseEntity<ErrorMsgDto> response = restTemplate.postForEntity(URL, choiceAddDto, ErrorMsgDto.class);
+            ResponseEntity<ErrorMsgDto> response = restTemplate.postForEntity(URL, dto, ErrorMsgDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 토픽 제목입니다."));
@@ -236,21 +234,21 @@ class ChoiceControllerTest {
     }
 
     @Nested
-    @DisplayName("선지 수정 - PATCH /admin/choices/{choiceId}")
+    @DisplayName("보기 수정 - PATCH /admin/descriptions/{choiceId}")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public class updateChoice{
+    public class updateDescription{
 
-        private Long choiceId;
+        private Long descriptionId;
         @BeforeAll
         public void init(){
-            suffix = "/admin/choices/";
+            suffix = "/admin/descriptions/";
             initConfig();
         }
 
         @BeforeEach
         public void setting(){
             baseSetting();
-            choiceId = choice1.getId();
+            descriptionId = desc1.getId();
         }
 
         @AfterEach
@@ -258,41 +256,41 @@ class ChoiceControllerTest {
             baseClear();
         }
 
-        @DisplayName("선지 수정 성공")
+        @DisplayName("보기 수정 성공")
         @Test
-        public void updateChoiceSuccess() {
-            ChoiceUpdateDto choiceUpdateDto = new ChoiceUpdateDto("nc1");
+        public void updateDescriptionSuccess() {
+            DescriptionUpdateDto dto = new DescriptionUpdateDto("after content");
 
-            ResponseEntity<Void> response = restTemplate.exchange(URL + choiceId, HttpMethod.PATCH, new HttpEntity<>(choiceUpdateDto), Void.class);
+            ResponseEntity<Void> response = restTemplate.exchange(URL + descriptionId, HttpMethod.PATCH, new HttpEntity<>(dto), Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-            List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle("title1");
-            assertThat(choiceList.size()).isEqualTo(3); // 기존 3개
+            List<Description> descriptionList = descriptionRepository.findDescriptionsByTopic("title1");
+            assertThat(descriptionList.size()).isEqualTo(3); // 기존의 3개
 
-            Choice afterChoice = choiceRepository.findById(choiceId).get();
-            assertThat(afterChoice.getContent()).isEqualTo("nc1");
+            Description description = descriptionRepository.findById(descriptionId).get();
+            assertThat(description.getContent()).isEqualTo("after content");
         }
 
-        @DisplayName("선지 수정 실패 - DTO Validation")
+        @DisplayName("보기 수정 실패 - DTO Validation")
         @Test
-        public void updateChoiceFailWrongDto(){
-            ChoiceUpdateDto choiceUpdateDto = new ChoiceUpdateDto();
-            ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL + choiceId, HttpMethod.PATCH, new HttpEntity<>(choiceUpdateDto), new ParameterizedTypeReference<List<ErrorDto>>() {
+        public void updateDescriptionWrongDto(){
+            DescriptionUpdateDto dto = new DescriptionUpdateDto();
+            ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.PATCH, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorDto>>() {
             });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody().size()).isEqualTo(1);
         }
 
-        @DisplayName("선지 수정 실패 - 존재하지 않는 선지id 입력")
+        @DisplayName("보기 수정 실패 - 존재하지 않는 보기id 입력")
         @Test
-        public void updateChoiceFailNotExistChoice(){
-            ChoiceUpdateDto choiceUpdateDto = new ChoiceUpdateDto("nc1");
+        public void updateDescriptionNotExistDesc(){
+            DescriptionUpdateDto dto = new DescriptionUpdateDto("content1");
 
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "123123", HttpMethod.PATCH, new HttpEntity<>(choiceUpdateDto), ErrorMsgDto.class);
+            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "123123", HttpMethod.PATCH, new HttpEntity<>(dto), ErrorMsgDto.class);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 선지 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 보기 ID입니다."));
         }
 
         //TODO : 중복된 내용의 선지 생성 막는 로직 구현
@@ -301,19 +299,19 @@ class ChoiceControllerTest {
     @Nested
     @DisplayName("선지 삭제 - DELETE /admin/choices/{choiceId}")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public class deleteChoice{
+    public class deleteDescription{
 
-        private Long choiceId;
+        private Long descriptionId;
         @BeforeAll
         public void init(){
-            suffix = "/admin/choices/";
+            suffix = "/admin/descriptions/";
             initConfig();
         }
 
         @BeforeEach
         public void setting(){
             baseSetting();
-            choiceId = choice1.getId();
+            descriptionId = desc1.getId();
         }
 
         @AfterEach
@@ -321,26 +319,26 @@ class ChoiceControllerTest {
             baseClear();
         }
 
-        @DisplayName("선지 삭제 성공")
+        @DisplayName("보기 삭제 성공")
         @Test
-        public void deleteChoiceSuccess() {
-            ResponseEntity<Void> response = restTemplate.exchange(URL + choiceId, HttpMethod.DELETE, null, Void.class);
+        public void deleteDescriptionSuccess() {
+            ResponseEntity<Void> response = restTemplate.exchange(URL + descriptionId, HttpMethod.DELETE, null, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-            List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle("title1");
-            assertThat(choiceList.size()).isEqualTo(2); // 기존 3개
-            assertThat(choiceRepository.findById(choiceId).isEmpty()).isTrue();
+            List<Description> descriptionList = descriptionRepository.findDescriptionsByTopic("title1");
+            assertThat(descriptionList.size()).isEqualTo(2); // 기존의 3개에서 1개 제거
+            assertThat(descriptionRepository.findById(descriptionId).isEmpty()).isTrue();
         }
 
 
-        @DisplayName("선지 삭제 실패 - 존재하지 않는 선지id 입력")
+        @DisplayName("보기 삭제 실패 - 존재하지 않는 보기id 입력")
         @Test
-        public void deleteChoiceFailNotExistChoice(){
+        public void deleteDescriptionFailNotExistChoice(){
             ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "123123", HttpMethod.DELETE, null, ErrorMsgDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 선지 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 보기 ID입니다."));
         }
     }
 

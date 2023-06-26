@@ -4,6 +4,7 @@ import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.keyword.KeywordListDto;
 import Project.OpenBook.Dto.topic.TopicDto;
+import Project.OpenBook.Dto.topic.TopicTitleDto;
 import Project.OpenBook.Dto.topic.TopicTitleListDto;
 import Project.OpenBook.Service.ChapterService;
 import Project.OpenBook.Service.TopicService;
@@ -43,7 +44,7 @@ public class TopicController {
     })
     @GetMapping("/topics/{topicTitle}/keywords")
     public ResponseEntity queryTopicKeyword(@PathVariable("topicTitle") String topicTitle) {
-        List<String> keywordList = topicService.queryTopicKeywords(topicTitle);
+        List<KeywordDto> keywordList = topicService.queryTopicKeywords(topicTitle).stream().map(t -> new KeywordDto(t)).collect(Collectors.toList());
         return new ResponseEntity(keywordList, HttpStatus.OK);
     }
 
@@ -59,8 +60,6 @@ public class TopicController {
     public ResponseEntity createTopic(@Validated @RequestBody TopicDto topicDto) {
 
         Topic topic = topicService.createTopic(topicDto);
-
-
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
@@ -94,11 +93,9 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 상세정보 수정 시도")
     })
     @PatchMapping("/admin/topics/{topicTitle}")
-    public ResponseEntity updateTopic(@PathVariable("topicTitle")String topicTitle,@RequestBody TopicDto topicDto) {
+    public ResponseEntity updateTopic(@PathVariable("topicTitle")String topicTitle,@Validated @RequestBody TopicDto topicDto) {
 
         Topic topic = topicService.updateTopic(topicTitle, topicDto);
-
-
         return new ResponseEntity(HttpStatus.OK);
     }
 

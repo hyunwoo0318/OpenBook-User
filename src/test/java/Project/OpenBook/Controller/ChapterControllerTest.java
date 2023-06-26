@@ -1,16 +1,20 @@
 package Project.OpenBook.Controller;
 
 
-import Project.OpenBook.Domain.Category;
-import Project.OpenBook.Domain.Chapter;
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.ChapterDto;
 import Project.OpenBook.Dto.chapter.ChapterListDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
+import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.choice.ChoiceRepository;
+import Project.OpenBook.Repository.description.DescriptionRepository;
+import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Repository.topickeyword.TopicKeywordRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,6 +46,17 @@ class ChapterControllerTest {
     @Autowired
     TopicRepository topicRepository;
     @Autowired
+    KeywordRepository keywordRepository;
+
+    @Autowired
+    ChoiceRepository choiceRepository;
+
+    @Autowired
+    DescriptionRepository descriptionRepository;
+
+    @Autowired
+    TopicKeywordRepository topicKeywordRepository;
+    @Autowired
     TestRestTemplate restTemplate;
 
     private Category c1;
@@ -67,7 +82,7 @@ class ChapterControllerTest {
         ch1 = new Chapter("ch1", chapterNum);
         chapterRepository.saveAndFlush(ch1);
 
-        t1 = new Topic("title1", null, null, 0, 0, "detail1", ch1, c1);
+        t1 = new Topic("title1", 1234, 2314, 0, 0, "detail1", ch1, c1);
         topicRepository.saveAndFlush(t1);
     }
 
@@ -103,25 +118,132 @@ class ChapterControllerTest {
         @Test
         public void queryChaptersSuccess() {
             List<Chapter> chapterList = new ArrayList<>();
-            List<ChapterDto> expectBody = new ArrayList<>();
-            expectBody.add(new ChapterDto("ch1", 1));
             for (int i = 2; i <= 5; i++) {
                 Chapter c = new Chapter("title" + i, i);
-                expectBody.add(new ChapterDto("title" + i, i));
                 chapterList.add(c);
             }
             chapterRepository.saveAllAndFlush(chapterList);
             chapterList.add(ch1);
 
-            ResponseEntity<List<ChapterDto>> response = restTemplate.exchange(URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<ChapterDto>>() {
+            ResponseEntity<List<Integer>> response = restTemplate.exchange(URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<Integer>>() {
             });
+            List<Integer> body = response.getBody();
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(expectBody);
+            assertThat(body).usingRecursiveComparison().isEqualTo(Arrays.asList(1, 2, 3, 4, 5));
         }
     }
 
-    //TODO : 특정 단원의 모든 토픽 조회기능 테스트 구현
+
+    @Nested
+    @DisplayName("단원 이름 조회 - GET /admin/chapters/chapter-title")
+    @TestInstance(PER_CLASS)
+    public class queryChapterTitle{
+
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/chapters/chapter-title";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+
+        @DisplayName("단원 이름 조회 성공")
+        @Test
+        public void queryChaptersSuccess() {
+            ResponseEntity<String> response = restTemplate.getForEntity(URL + "?num=1", String.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody()).isEqualTo("ch1");
+        }
+
+        @DisplayName("단원 이름 조회 실패 - 존재하지 않는 단원번호 입력")
+        @Test
+        public void queryChaptersFail() {
+            ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "?num=-1", ErrorMsgDto.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 단원 번호입니다."));
+        }
+    }
+
+    @Nested
+    @DisplayName("해당 단원의 모든 토픽 조회 - GET /admin/chapters/{num}/topics")
+    @TestInstance(PER_CLASS)
+    public class queryChapterTopics{
+
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/chapters/";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            topicKeywordRepository.deleteAllInBatch();
+            keywordRepository.deleteAllInBatch();
+            descriptionRepository.deleteAllInBatch();
+            choiceRepository.deleteAllInBatch();
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+
+            //t1에 키워드, 선지, 보기를 각각 2개씩 추가
+            Keyword k1 = new Keyword("k1");
+            Keyword k2 = new Keyword("k2");
+            keywordRepository.save(k1);
+            keywordRepository.save(k2);
+
+            topicKeywordRepository.save(new TopicKeyword(t1, k1));
+            topicKeywordRepository.save(new TopicKeyword(t1, k2));
+
+
+            Choice choice1 = new Choice("choice1", t1);
+            Choice choice2 = new Choice("choice2", t1);
+            choiceRepository.save(choice1);
+            choiceRepository.save(choice2);
+
+            Description des1 = new Description("des1", t1);
+            Description des2 = new Description("des2", t1);
+            descriptionRepository.save(des1);
+            descriptionRepository.save(des2);
+        }
+
+
+        @DisplayName("해당 단원의 모든 토픽 조회 성공")
+        @Test
+        public void queryChaptersTopicSuccess() {
+            ResponseEntity<List<AdminChapterDto>> response = restTemplate.exchange(URL + "1/topics", HttpMethod.GET, null, new ParameterizedTypeReference<List<AdminChapterDto>>() {
+            });
+            List<AdminChapterDto> body = response.getBody();;
+            AdminChapterDto expectBody = new AdminChapterDto("유물", "title1", 1234, 2314, 2L, 2L, 2L);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(body).usingRecursiveComparison().isEqualTo(Arrays.asList(expectBody));
+        }
+
+        @DisplayName("해당 단원의 모든 토픽 조회 실패 - 존재하지 않는 단원번호 입력")
+        @Test
+        public void queryChaptersTopicFail() {
+            ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "-1/topics", ErrorMsgDto.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 단원 번호입니다."));
+        }
+
+    }
 
     @Nested
     @DisplayName("단원 저장- POST /admin/chapters")
@@ -193,9 +315,6 @@ class ChapterControllerTest {
         }
 
     }
-
-
-
 
     @Nested
     @DisplayName("단원 수정 - PATCH /admin/chapters")

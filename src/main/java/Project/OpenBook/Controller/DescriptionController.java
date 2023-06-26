@@ -53,17 +53,17 @@ public class DescriptionController {
         return new ResponseEntity(descriptionDtoList, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "주어진 보기와 같은 토픽의 보기 조회", notes = "문제 생성/수정시 보기 새로고침을 위한 endPoint")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적인 보기 조회"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 보기 아이디 제공")
-    })
-    @GetMapping("/admin/descriptions/random/{descriptionId}")
-    public ResponseEntity getDescriptionInSameTopic(@PathVariable("descriptionId") Long descriptionId){
-        DescriptionDto descriptionDto = descriptionService.queryRandomDescription(descriptionId);
-
-        return new ResponseEntity(descriptionDto, HttpStatus.OK);
-    }
+//    @ApiOperation(value = "주어진 보기와 같은 토픽의 보기 조회", notes = "문제 생성/수정시 보기 새로고침을 위한 endPoint")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "성공적인 보기 조회"),
+//            @ApiResponse(responseCode = "404", description = "존재하지 않는 보기 아이디 제공")
+//    })
+//    @GetMapping("/admin/descriptions/random/{descriptionId}")
+//    public ResponseEntity getDescriptionInSameTopic(@PathVariable("descriptionId") Long descriptionId){
+//        DescriptionDto descriptionDto = descriptionService.queryRandomDescription(descriptionId);
+//
+//        return new ResponseEntity(descriptionDto, HttpStatus.OK);
+//    }
 
 
     @ApiOperation("보기 생성")

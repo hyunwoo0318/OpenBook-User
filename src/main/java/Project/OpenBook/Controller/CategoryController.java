@@ -31,7 +31,7 @@ public class CategoryController {
     })
     @GetMapping
     public ResponseEntity queryCategories() {
-        List<String> categoryList = categoryService.queryCategories();
+        List<CategoryDto> categoryList = categoryService.queryCategories().stream().map(c -> new CategoryDto(c)).collect(Collectors.toList());
         return new ResponseEntity(categoryList, HttpStatus.OK);
     }
 
@@ -66,6 +66,7 @@ public class CategoryController {
     @ApiOperation(value = "카테고리 삭제", notes = "해당 카테고리에 속하던 상세정보의 카테고리 정보는 null")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "카테고리 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "해당 카테고리에 토픽이 존재하는경우"),
             @ApiResponse(responseCode = "404", description = "존재히지 않는 카테고리 삭제 시도")
     })
     @DeleteMapping("/{categoryName}")
