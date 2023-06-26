@@ -98,11 +98,12 @@ class CategoryControllerTest {
                 categoryList.add(new Category("title" + i));
             }
             categoryRepository.saveAll(categoryList);
-            ResponseEntity<List<String>> response = restTemplate.exchange(URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<String>>() {
+            ResponseEntity<List<CategoryDto>> response = restTemplate.exchange(URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<CategoryDto>>() {
             });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isEqualTo(Arrays.asList("title1", "title2", "title3", "title4", "title5"));
+            assertThat(response.getBody().stream().map(c -> c.getName()).collect(Collectors.toList()))
+                    .isEqualTo(Arrays.asList("title1", "title2", "title3", "title4", "title5"));
         }
     }
 

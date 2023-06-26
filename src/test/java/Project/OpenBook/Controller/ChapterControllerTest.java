@@ -5,6 +5,7 @@ import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.ChapterDto;
 import Project.OpenBook.Dto.chapter.ChapterListDto;
+import Project.OpenBook.Dto.chapter.ChapterTitleDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
@@ -125,12 +126,11 @@ class ChapterControllerTest {
             chapterRepository.saveAllAndFlush(chapterList);
             chapterList.add(ch1);
 
-            ResponseEntity<List<Integer>> response = restTemplate.exchange(URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<Integer>>() {
+            ResponseEntity<List<ChapterDto>> response = restTemplate.exchange(URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<ChapterDto>>() {
             });
-            List<Integer> body = response.getBody();
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(body).usingRecursiveComparison().isEqualTo(Arrays.asList(1, 2, 3, 4, 5));
+            assertThat(response.getBody().stream().map(c -> c.getNumber())).usingRecursiveComparison().isEqualTo(Arrays.asList(1, 2, 3, 4, 5));
         }
     }
 
@@ -160,10 +160,11 @@ class ChapterControllerTest {
         @DisplayName("단원 이름 조회 성공")
         @Test
         public void queryChaptersSuccess() {
-            ResponseEntity<String> response = restTemplate.getForEntity(URL + "?num=1", String.class);
+            ResponseEntity<ChapterTitleDto> response = restTemplate.getForEntity(URL + "?num=1", ChapterTitleDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).isEqualTo("ch1");
+            assertThat(response.getBody().getTitle()).isEqualTo("ch1");
+
         }
 
         @DisplayName("단원 이름 조회 실패 - 존재하지 않는 단원번호 입력")

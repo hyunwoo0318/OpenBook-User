@@ -65,7 +65,7 @@ public class DupContentService {
 
     public void deleteDupContentChoices(Long descriptionId, Long choiceId) {
         checkChoice(choiceId);
-        checkChoice(descriptionId);
+        checkDescription(descriptionId);
 
         DupContent dupContent = dupContentRepository.queryDupContent(descriptionId, choiceId);
         if (dupContent == null) {

@@ -223,7 +223,7 @@ class DupContentControllerTest {
             ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.POST, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorDto>>() {
             });
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody().size()).isEqualTo(1);
         }
 
@@ -279,7 +279,7 @@ class DupContentControllerTest {
             ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.DELETE, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorDto>>() {
             });
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody().size()).isEqualTo(1);
         }
 

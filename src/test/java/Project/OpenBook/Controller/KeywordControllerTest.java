@@ -4,6 +4,7 @@ import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
+import Project.OpenBook.Dto.topic.TopicTitleDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
@@ -122,14 +124,13 @@ public class KeywordControllerTest {
         @DisplayName("전체 키워드 조회 성공")
         @Test
         public void queryKeywordsSuccess() {
-            ResponseEntity<List<String>> response = restTemplate.exchange(URL, HttpMethod.GET, null,
-                    new ParameterizedTypeReference<List<String>>() {
+            ResponseEntity<List<KeywordDto>> response = restTemplate.exchange(URL, HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<KeywordDto>>() {
                     });
 
-            List<String> body = response.getBody();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(body.size()).isEqualTo(3);
-            assertThat(body.containsAll(Set.of("k1", "k2", "k3")));
+            assertThat(response.getBody().stream().map(t -> t.getName()).collect(Collectors.toList())).isEqualTo(Arrays.asList("k1", "k2", "k3"));
+
         }
 
     }
@@ -161,14 +162,12 @@ public class KeywordControllerTest {
         @DisplayName("특정 키워드를 가지는 모든 토픽 조회 성공")
         @Test
         public void queryKeywordsSuccess() {
-            ResponseEntity<List<String>> response = restTemplate.exchange(URL + "k1/topics", HttpMethod.GET, null,
-                    new ParameterizedTypeReference<List<String>>() {
+            ResponseEntity<List<TopicTitleDto>> response = restTemplate.exchange(URL + "k1/topics", HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<TopicTitleDto>>() {
                     });
 
-            List<String> body = response.getBody();
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(body.size()).isEqualTo(1);
-            assertThat(body.containsAll(Set.of("title1")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new TopicTitleDto("title1")));
         }
 
     }
@@ -275,7 +274,7 @@ public class KeywordControllerTest {
             assertThat(body1).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 키워드 이름입니다."));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(body2).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("해당 키워드를 가지고 있는 토픽이 존재합니다."));
+            assertThat(body2).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("해당 키워드를 가지는 토픽이 존재합니다."));
         }
 
     }

@@ -26,7 +26,7 @@ public class DupContentRepositoryCustomImpl implements DupContentRepositoryCusto
         return queryFactory.selectFrom(choice)
                 .where(choice.id.in(
                         JPAExpressions
-                                .select(dupContent.id)
+                                .select(dupContent.choice.id)
                                 .from(dupContent)
                                 .where(dupContent.description.id.eq(descriptionId))
                         ))
