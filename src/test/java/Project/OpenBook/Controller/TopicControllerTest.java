@@ -3,6 +3,7 @@ package Project.OpenBook.Controller;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
+import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.topic.TopicDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
@@ -136,6 +137,7 @@ class TopicControllerTest {
         }
     }
 
+
     @Nested
     @DisplayName("특정 토픽의 전체 키워드 조회 - GET /topics/{topicTitle}/keywords")
     @TestInstance(PER_CLASS)
@@ -180,7 +182,7 @@ class TopicControllerTest {
     public class createTopic{
         @BeforeAll
         public void init(){
-            suffix = "admin/topics/";
+            suffix = "/admin/topics/";
             initConfig();
         }
 
@@ -252,12 +254,73 @@ class TopicControllerTest {
     }
 
     @Nested
+    @DisplayName("키워드 추가 - POST /admin/topics/{topicTitle}")
+    @TestInstance(PER_CLASS)
+    public class addKeyword{
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/topics/";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+        @DisplayName("키워드 추가 성공 - 기존에 존재하는 키워드의 경우")
+        @Test
+        public void addExistedKeywordsSuccess() {
+            KeywordDto k3Dto = new KeywordDto("k3");
+
+            ResponseEntity<Void> response = restTemplate.postForEntity(URL + "title1/keywords", k3Dto, Void.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            List<String> keywordList = topicRepository.queryTopicKeywords("title1");
+            assertThat(keywordList.size()).isEqualTo(3);
+        }
+
+        @DisplayName("키워드 추가 성공 - 새로운 키워드를 입력한 경우")
+        @Test
+        public void addNotExistedKeywordsSuccess() {
+            KeywordDto dto = new KeywordDto("k5000");
+
+            ResponseEntity<Void> response = restTemplate.postForEntity(URL + "title1/keywords", dto, Void.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            List<String> keywordList = topicRepository.queryTopicKeywords("title1");
+            assertThat(keywordList.size()).isEqualTo(3);
+
+            assertThat(keywordRepository.findByName("k5000").isPresent()).isTrue();
+        }
+
+        @DisplayName("키워드 추가 실패 - 이미 해당 토픽에서 해당 키워드를 가지고 있는 경우")
+        @Test
+        public void addKeywordsFail(){
+            KeywordDto k1Dto = new KeywordDto("k1");
+
+            ResponseEntity<Void> response = restTemplate.postForEntity(URL + "title1/keywords", k1Dto, Void.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            List<String> keywordList = topicRepository.queryTopicKeywords("title1");
+            assertThat(keywordList.size()).isEqualTo(2);
+        }
+
+
+
+    }
+
+    @Nested
     @DisplayName("토픽 상세정보 수정 - PATCH /admin/topics")
     @TestInstance(PER_CLASS)
     public class updateTopic{
         @BeforeAll
         public void init(){
-            suffix = "admin/topics/";
+            suffix = "/admin/topics/";
             initConfig();
         }
 
@@ -281,7 +344,7 @@ class TopicControllerTest {
         public void updateTopicSuccess() {
             TopicDto dto = new TopicDto(1, "title2", "c2", -1000, 1000, "detail123");
 
-            ResponseEntity<Void> response = restTemplate.exchange(URL + "/title1", HttpMethod.PATCH, new HttpEntity<>(dto), Void.class);
+            ResponseEntity<Void> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH, new HttpEntity<>(dto), Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(topicRepository.findTopicByTitle("title1").isEmpty()).isTrue();
@@ -342,7 +405,7 @@ class TopicControllerTest {
     public class deleteTopic{
         @BeforeAll
         public void init(){
-            suffix = "admin/topics/";
+            suffix = "/admin/topics/";
             initConfig();
         }
 
@@ -359,7 +422,7 @@ class TopicControllerTest {
         @DisplayName("토픽 삭제 성공")
         @Test
         public void deleteTopicSuccess() {
-            ResponseEntity<Void> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE, null, Void.class);
+            ResponseEntity<Void> response = restTemplate.exchange(URL + "title1", HttpMethod.DELETE, null, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(topicRepository.findTopicByTitle("title1").isEmpty()).isTrue();

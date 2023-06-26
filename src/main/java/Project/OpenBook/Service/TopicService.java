@@ -192,15 +192,23 @@ public class TopicService {
         String name = keywordDto.getName();
         Keyword keyword;
 
+        //입력받은 키워드가 새로운 키워드인 경우와 기존의 키워드인 경우를 구분
         Optional<Keyword> keywordOptional = keywordRepository.findByName(name);
+        //기존에 존재하는 키워드의 경우
         if (keywordOptional.isPresent()) {
             keyword = keywordOptional.get();
-
+            // 이미 해당 토픽에 해당 키워드가 있는 경우 해당 키워드를 추가하지 않음.
+            TopicKeyword topicKeyword = topicKeywordRepository.queryTopicKeyword(topicTitle, name);
+            if (topicKeyword == null) {
+                topicKeywordRepository.save(new TopicKeyword(topic, keyword));
+            }
         }else{
+            //새로운 키워드의 경우
+            //새로 키워드를 만들고 저장후 해당 토픽에 해당 키워드를 저장
             keyword = new Keyword(name);
             keywordRepository.save(keyword);
+            topicKeywordRepository.save(new TopicKeyword(topic, keyword));
         }
-        topicKeywordRepository.save(new TopicKeyword(topic, keyword));
     }
 
     public void deleteKeyword(String topicTitle, String keywordName) {

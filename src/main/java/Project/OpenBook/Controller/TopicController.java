@@ -71,9 +71,9 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 이름이나 토픽 제목 입력")
     })
     @PostMapping("/admin/topics/{topicTitle}/keywords")
-    public ResponseEntity addKeywords(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordDto  keywordDto) {
+    public ResponseEntity addKeywords(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordDto keywordDto) {
         topicService.addKeywords(topicTitle, keywordDto);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @ApiOperation(value = "특정 토픽에 특정 키워드 삭제")
