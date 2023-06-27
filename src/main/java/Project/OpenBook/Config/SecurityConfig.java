@@ -118,29 +118,29 @@ public class SecurityConfig {
             adminRepository.save(admin2);
         }
 
-        if(customerRepository.findByNickName("user1").isEmpty()){
-            Customer user1 = Customer.builder()
-                    .nickName("user1")
-                    .age(20)
-                    .expertise(50)
-                    .role(Role.USER)
-                    .build();
-            Customer user2 = Customer.builder()
-                    .nickName("user2")
-                    .age(30)
-                    .expertise(20)
-                    .role(Role.USER)
-                    .build();
-            Customer user3 = Customer.builder()
-                    .nickName("user3")
-                    .age(20)
-                    .expertise(70)
-                    .role(Role.USER)
-                    .build();
-            customerRepository.save(user1);
-            customerRepository.save(user2);
-            customerRepository.save(user3);
-        }
+//        if(customerRepository.findByNickName("user1").isEmpty()){
+//            Customer user1 = Customer.builder()
+//                    .nickName("user1")
+//                    .age(20)
+//                    .expertise(50)
+//                    .role(Role.USER)
+//                    .build();
+//            Customer user2 = Customer.builder()
+//                    .nickName("user2")
+//                    .age(30)
+//                    .expertise(20)
+//                    .role(Role.USER)
+//                    .build();
+//            Customer user3 = Customer.builder()
+//                    .nickName("user3")
+//                    .age(20)
+//                    .expertise(70)
+//                    .role(Role.USER)
+//                    .build();
+//            customerRepository.save(user1);
+//            customerRepository.save(user2);
+//            customerRepository.save(user3);
+//        }
 
     }
 
