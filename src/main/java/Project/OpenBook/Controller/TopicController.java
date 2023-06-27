@@ -67,7 +67,7 @@ public class TopicController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "특정 토픽에 해당 키워드들 추가 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 이름이나 토픽 제목 입력")
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
     })
     @PostMapping("/admin/topics/{topicTitle}/keywords")
     public ResponseEntity addKeywords(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordDto keywordDto) {

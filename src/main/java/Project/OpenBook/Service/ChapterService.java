@@ -46,7 +46,9 @@ public class ChapterService {
     }
 
     public Chapter updateChapter(int num, String inputTitle, int inputNum) {
-        checkChapterNum(inputNum);
+        if(num != inputNum){
+            checkChapterNum(inputNum);
+        }
         Chapter chapter = checkChapter(num);
 
         Chapter updateChapter = chapter.updateChapter(inputTitle, inputNum);
