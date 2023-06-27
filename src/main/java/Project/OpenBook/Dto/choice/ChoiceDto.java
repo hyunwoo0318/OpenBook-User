@@ -13,14 +13,12 @@ import lombok.Setter;
 public class ChoiceDto {
 
     //topicTitle
-    private String topicTitle;
 
     private String content;
 
     private Long id;
 
     public ChoiceDto(Choice choice) {
-        this.topicTitle = choice.getTopic().getTitle();
         this.id = choice.getId();
         this.content = choice.getContent();
     }

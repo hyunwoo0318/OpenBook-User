@@ -78,7 +78,7 @@ public class DescriptionController {
         List<Description> descriptionList = descriptionService.addDescription(descriptionCreateDto);
 
         List<Long> descriptionIdList = descriptionList.stream().map(d -> d.getId()).collect(Collectors.toList());
-        return new ResponseEntity(descriptionIdList, HttpStatus.CREATED);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @ApiOperation("보기 수정")
@@ -92,7 +92,7 @@ public class DescriptionController {
 
         Description description = descriptionService.updateDescription(descriptionId, descriptionUpdateDto);
 
-        return new ResponseEntity(description.getId(), HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @ApiOperation("보기 삭제")

@@ -13,12 +13,10 @@ import lombok.Setter;
 public class DescriptionDto {
 
     private Long id;
-    private String topicTitle;
     private String content;
 
     public DescriptionDto(Description description) {
         this.id = description.getId();
-        this.topicTitle = description.getTopic().getTitle();
         this.content = description.getContent();
     }
 }
