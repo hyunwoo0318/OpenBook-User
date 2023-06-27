@@ -93,6 +93,7 @@ public class CustomerController {
     })
     @GetMapping("/admin/customers")
     public ResponseEntity queryCustomers(){
+        //TODO : DTO 만들
         CustomerCodeList customerCodeList = customerService.queryCustomers();
         return new ResponseEntity<>(customerCodeList, HttpStatus.OK);
     }

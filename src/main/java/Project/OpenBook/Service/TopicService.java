@@ -218,6 +218,7 @@ public class TopicService {
         }
     }
 
+    @Transactional
     public void deleteKeyword(String topicTitle, String keywordName) {
         Topic topic = checkTopic(topicTitle);
 
@@ -227,7 +228,10 @@ public class TopicService {
         if (topicKeywordOptional.isPresent()) {
             TopicKeyword topicKeyword = topicKeywordOptional.get();
             topicKeywordRepository.delete(topicKeyword);
-
+            List<Topic> topicList = topicKeywordRepository.queryTopicsByKeyword(keywordName);
+            if (topicList.isEmpty()) {
+                keywordRepository.delete(keyword);
+            }
         }
     }
 }
