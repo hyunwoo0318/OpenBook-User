@@ -40,7 +40,7 @@ public class DupContentService {
 
     @Transactional
     public List<DupContent> addDupContentChoices(Long descriptionId, ChoiceIdListDto choiceIdListDto) {
-        List<Long> choiceIdList = choiceIdListDto.getChoiceIdList();
+        List<Long> choiceIdList = choiceIdListDto.getChoiceList();
         Description description = checkDescription(descriptionId);
 
         List<Choice> choiceList = choiceRepository.queryChoicesById(choiceIdList);

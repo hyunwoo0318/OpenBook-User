@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChoiceIdListDto {
-
     @NotEmpty(message = "선지 id를 입력해주세요.")
-    List<Long> choiceIdList = new ArrayList<>();
+    List<Long> choiceList = new ArrayList<>();
 }

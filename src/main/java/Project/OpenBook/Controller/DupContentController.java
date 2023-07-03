@@ -42,7 +42,7 @@ public class DupContentController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 보기나 선지 입력")
     })
     @PostMapping("/admin/dup-contents/{descriptionId}")
-    public ResponseEntity addDupContentChoices(@PathVariable Long descriptionId,@Validated @RequestBody ChoiceIdListDto choiceIdListDto) {
+    public ResponseEntity addDupContentChoices(@PathVariable Long descriptionId,@RequestBody ChoiceIdListDto choiceIdListDto) {
         List<DupContent> dupContentList = dupContentService.addDupContentChoices(descriptionId, choiceIdListDto);
 
         return new ResponseEntity(HttpStatus.CREATED);
