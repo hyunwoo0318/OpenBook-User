@@ -16,6 +16,7 @@ public class Choice extends BaseEntity{
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false,unique = true)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

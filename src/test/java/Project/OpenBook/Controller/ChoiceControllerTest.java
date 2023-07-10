@@ -234,7 +234,20 @@ class ChoiceControllerTest {
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
         }
 
-        //TODO : 중복된 내용의 선지 생성 막는 로직 구현
+        @DisplayName("여러개의 선지 추가 - 중복되는 내용의 선지 입력")
+        @Test
+        public void createChoiceFailDupContent() {
+            //3개중 1개가 내용이 중복됨
+            String[] choiceArr = {"choice1", "nc1", "nc2"};
+            ChoiceAddDto choiceAddDto = new ChoiceAddDto("title1", choiceArr);
+
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(choiceAddDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 선지내용입니다.")));
+
+        }
     }
 
     @Nested
@@ -287,6 +300,17 @@ class ChoiceControllerTest {
             assertThat(response.getBody().size()).isEqualTo(1);
         }
 
+        @DisplayName("선지 수정 실패 - 중복되는 내용의 선지 내용 입력")
+        @Test
+        public void updateChoiceFailDupContent(){
+            ChoiceUpdateDto choiceUpdateDto = new ChoiceUpdateDto("choice3");
+
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + choiceId, HttpMethod.PATCH,
+                    new HttpEntity<>(choiceUpdateDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 선지내용입니다.")));
+        }
+
         @DisplayName("선지 수정 실패 - 존재하지 않는 선지id 입력")
         @Test
         public void updateChoiceFailNotExistChoice(){
@@ -297,8 +321,6 @@ class ChoiceControllerTest {
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 선지 ID입니다.")));
         }
-
-        //TODO : 중복된 내용의 선지 생성 막는 로직 구현
     }
 
     @Nested

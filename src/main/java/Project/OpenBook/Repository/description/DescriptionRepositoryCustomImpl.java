@@ -78,4 +78,11 @@ public class DescriptionRepositoryCustomImpl implements DescriptionRepositoryCus
         }
         return dupChoiceDtoList;
     }
+
+    @Override
+    public Description queryDescriptionByContent(String content) {
+        return queryFactory.selectFrom(description)
+                .where(description.content.eq(content))
+                .fetchOne();
+    }
 }

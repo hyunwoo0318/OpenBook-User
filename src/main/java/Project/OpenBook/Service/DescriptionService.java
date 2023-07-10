@@ -18,8 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Project.OpenBook.Constants.ErrorCode.DESCRIPTION_NOT_FOUND;
-import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
+import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +55,7 @@ public class DescriptionService {
     public List<Description> addDescription(DescriptionCreateDto descriptionCreateDto) {
         String topicTitle = descriptionCreateDto.getTopicTitle();
         String[] contentList = descriptionCreateDto.getContentList();
+        dupDescription(contentList);
         Topic topic = checkTopic(topicTitle);
         List<Description> descriptionList = Arrays.stream(contentList).map(c -> new Description(c, topic)).collect(Collectors.toList());
         descriptionRepository.saveAll(descriptionList);
@@ -67,6 +67,8 @@ public class DescriptionService {
     public Description updateDescription(Long descriptionId, DescriptionUpdateDto descriptionUpdateDto) {
 
         Description description = checkDescription(descriptionId);
+        String[] descriptionContentList = {descriptionUpdateDto.getContent()};
+        dupDescription(descriptionContentList);
 
         Description updateDescription = description.updateContent(descriptionUpdateDto.getContent());
         return updateDescription;
@@ -96,5 +98,13 @@ public class DescriptionService {
         return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
+    }
+
+    private void dupDescription(String[] descriptionContentArr) {
+        for (String content : descriptionContentArr) {
+            if (descriptionRepository.queryDescriptionByContent(content) != null) {
+                throw new CustomException(DUP_DESCRIPTION_CONTENT);
+            }
+        }
     }
 }

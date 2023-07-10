@@ -37,6 +37,13 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     }
 
     @Override
+    public Choice queryChoiceByContent(String content) {
+        return queryFactory.selectFrom(choice)
+                .where(choice.content.eq(content))
+                .fetchOne();
+    }
+
+    @Override
     public Choice queryRandChoiceByChoice(Long choiceId) {
         QChoice choice1 = new QChoice("choice1");
         return queryFactory.select(choice)

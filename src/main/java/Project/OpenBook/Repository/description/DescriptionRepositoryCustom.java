@@ -14,4 +14,6 @@ public interface DescriptionRepositoryCustom {
     public List<Description> findDescriptionsByTopic(String topicTitle);
 
     public List<DupChoiceDto> queryDupChoices(Long descriptionId, String topicTitle);
+
+    public Description queryDescriptionByContent(String content);
 }

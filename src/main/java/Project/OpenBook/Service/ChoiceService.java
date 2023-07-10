@@ -54,6 +54,7 @@ public class ChoiceService {
         });
 
         String[] contentArr = choiceAddDto.getChoiceArr();
+        dupChoice(contentArr);
         List<Choice> choiceList = Arrays.stream(contentArr).map(c -> new Choice(c, topic)).collect(Collectors.toList());
         choiceRepository.saveAll(choiceList);
     }
@@ -61,6 +62,8 @@ public class ChoiceService {
     @Transactional
     public Choice updateChoice(ChoiceUpdateDto choiceUpdateDto, Long choiceId) {
         Choice choice = checkChoice(choiceId);
+        String[] choiceContentArr = {choiceUpdateDto.getContent()};
+        dupChoice(choiceContentArr);
         Choice updatedChoice = choice.updateContent(choiceUpdateDto.getContent());
         return updatedChoice;
     }
@@ -77,6 +80,14 @@ public class ChoiceService {
         return choiceRepository.findById(choiceId).orElseThrow(() ->{
             throw new CustomException(CHOICE_NOT_FOUND);
         });
+    }
+
+    private void dupChoice(String[] choiceContentArr) {
+        for (String content : choiceContentArr) {
+            if (choiceRepository.queryChoiceByContent(content) != null) {
+                throw new CustomException(DUP_CHOICE_CONTENT);
+            }
+        }
     }
 
 

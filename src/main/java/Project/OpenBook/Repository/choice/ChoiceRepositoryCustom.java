@@ -13,6 +13,8 @@ public interface ChoiceRepositoryCustom {
 
     public List<Choice> queryChoiceByTopicTitle(String topicTitle);
 
+    public Choice queryChoiceByContent(String content);
+
 
 
     public Choice queryRandChoiceByChoice(Long choiceId);

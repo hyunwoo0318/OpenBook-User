@@ -210,7 +210,7 @@ class DescriptionControllerTest {
 
         @DisplayName("보기 추가 실패 - DTO Validation")
         @Test
-        public void createChoiceFailWrongDto(){
+        public void createDescriptionFailWrongDto(){
             DescriptionCreateDto dto = new DescriptionCreateDto();
             ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorDto>>() {
             });
@@ -219,9 +219,9 @@ class DescriptionControllerTest {
             assertThat(response.getBody().size()).isEqualTo(2);
         }
 
-        @DisplayName("여러개의 선지 추가 실패 - 존재하지 않는 토픽 제목 입력")
+        @DisplayName("보기 추가 실패 - 존재하지 않는 토픽 제목 입력")
         @Test
-        public void createChoiceFailNotExistTopic(){
+        public void createDescriptionFailNotExistTopic(){
             String[] contentArr = {"content"};
             DescriptionCreateDto dto = new DescriptionCreateDto("title-1", contentArr);
 
@@ -232,7 +232,18 @@ class DescriptionControllerTest {
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
         }
 
-        //TODO : 중복된 내용의 선지 생성 막는 로직 구현
+        @DisplayName("보기 추가 실패 - 중복된 내용의 보기 입력")
+        @Test
+        public void createDescriptionFailDupContent(){
+            String[] contentArr = {"desc1"};
+            DescriptionCreateDto dto = new DescriptionCreateDto("title1", contentArr);
+
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL,HttpMethod.POST,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>(){});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 보기내용입니다.")));
+        }
     }
 
     @Nested
@@ -298,7 +309,18 @@ class DescriptionControllerTest {
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 보기 ID입니다.")));
         }
 
-        //TODO : 중복된 내용의 선지 생성 막는 로직 구현
+        @DisplayName("보기 수정 실패 - 중복되는 보기 내용 입력")
+        @Test
+        public void updateDescriptionFailDupContent(){
+            DescriptionUpdateDto dto = new DescriptionUpdateDto("desc3");
+
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.PATCH,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            assertThat(response.getBody().size()).isEqualTo(1);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 보기내용입니다.")));
+        }
     }
 
     @Nested
