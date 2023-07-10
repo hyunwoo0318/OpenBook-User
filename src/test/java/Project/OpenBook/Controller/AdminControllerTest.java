@@ -2,6 +2,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Dto.admin.AdminDto;
 import Project.OpenBook.Dto.error.ErrorDto;
+import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.admin.AdminRepository;
 import org.junit.jupiter.api.*;
@@ -74,18 +75,20 @@ class AdminControllerTest {
             wrongDto2.setPassword("admin1");
             AdminDto wrongDto3 = new AdminDto("admin1", "wrong");
 
-            ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
             });
-            ResponseEntity<List<ErrorDto>> response2 = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorDto>>() {
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
             });
 
             ResponseEntity<Void> response3 = restTemplate.postForEntity(URL, wrongDto3, Void.class);
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response1.getBody().get(0)).isEqualTo(new ErrorDto("password", "비밀번호를 입력해주세요."));
+            assertThat(response1.getBody().get(0)).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("비밀번호를 입력해주세요."));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response2.getBody().get(0)).isEqualTo(new ErrorDto("loginId", "로그인 아이디를 입력해주세요."));
+            assertThat(response2.getBody().get(0)).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("로그인 아이디를 입력해주세요."));
 
             assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.UNAUTHORIZED);
         }

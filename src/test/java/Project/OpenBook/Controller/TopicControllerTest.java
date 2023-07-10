@@ -143,10 +143,11 @@ class TopicControllerTest {
         @DisplayName("존재하지 않는 토픽 조회 요청")
         @Test
         public void queryTopicFail() {
-            ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "title-1", ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title-1", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 토픽 제목입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
         }
     }
 
@@ -183,10 +184,11 @@ class TopicControllerTest {
         @DisplayName("특정 토픽의 전체 키워드 조회 실패 - 존재하지 않는 토픽 제목 입력하기")
         @Test
         public void queryTopicFail(){
-            ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "title-1/keywords", ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title-1/keywords", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 토픽 제목입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
         }
     }
     @Nested
@@ -237,30 +239,33 @@ class TopicControllerTest {
         @Test
         public void createTopicFailDupTitle() {
             TopicDto wrongDto = new TopicDto(1, "title1", "c1", 0, 0, "detail123");
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("중복된 토픽 제목입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 토픽 제목입니다.")));
         }
 
         @DisplayName("새로운 토픽 추가 실패 - 존재하지 않는 단원 번호를 입력하는 경우")
         @Test
         public void createTopicFailWNotExistChapter() {
             TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0, 0, "detail123");
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 단원 번호입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 단원 번호입니다.")));
         }
 
         @DisplayName("새로운 토픽 추가 실패 - 존재하지 않는 카테고리 이름을 입력하는 경우")
         @Test
         public void createTopicFailNotExistCategory() {
             TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0, 0, "detail123");
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다.")));
         }
 
     }
@@ -378,30 +383,33 @@ class TopicControllerTest {
         @Test
         public void updateTopicFailDupTitle() {
             TopicDto wrongDto = new TopicDto(1, "title2", "c1", 0, 0, "detail123");
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL+"title1", HttpMethod.PATCH, new HttpEntity<>(wrongDto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH,
+                    new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("중복된 토픽 제목입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 토픽 제목입니다.")));
         }
 
         @DisplayName("기존 토픽 변경 실패 - 존재하지 않는 단원 입력")
         @Test
         public void updateTopicFailNotExistChapter() {
             TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0, 0, "detail123");
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL+"title1", HttpMethod.PATCH, new HttpEntity<>(wrongDto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH,
+                    new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 단원 번호입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 단원 번호입니다.")));
         }
 
         @DisplayName("기존 토픽 변경 실패 - 존재하지 않는 카테고리 입력 ")
         @Test
         public void updateTopicFailNotExistCategory() {
             TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0, 0, "detail123");
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL+"title1", HttpMethod.PATCH, new HttpEntity<>(wrongDto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH,
+                    new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다.")));
         }
     }
 
@@ -453,10 +461,11 @@ class TopicControllerTest {
         @DisplayName("토픽 삭제 실패 - 존재하지 않는 토픽 제목 입력")
         @Test
         public void deleteNotExistTopicFail() {
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "/title3", HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/title3", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 토픽 제목입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
             assertThat(topicRepository.findTopicByTitle("title1").isPresent()).isTrue();
         }
 
@@ -466,10 +475,11 @@ class TopicControllerTest {
             TopicKeyword topicKeyword = new TopicKeyword(t1, k1);
             topicKeywordRepository.saveAndFlush(topicKeyword);
 
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("해당 토픽에 키워드가 존재합니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 토픽에 키워드가 존재합니다.")));
             assertThat(topicRepository.findTopicByTitle("title1").isPresent()).isTrue();
         }
 
@@ -478,10 +488,11 @@ class TopicControllerTest {
         public void deleteTopicHasChoiceFail() {
             Choice choice1 = new Choice("ch1", t1);
             choiceRepository.save(choice1);
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("해당 토픽에 선지가 존재합니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 토픽에 선지가 존재합니다.")));
             assertThat(topicRepository.findTopicByTitle("title1").isPresent()).isTrue();
         }
 
@@ -490,10 +501,11 @@ class TopicControllerTest {
         public void deleteTopicHasDescFail() {
             Description desc1 = new Description("desc1", t1);
             descriptionRepository.save(desc1);
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("해당 토픽에 보기가 존재합니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 토픽에 보기가 존재합니다.")));
             assertThat(topicRepository.findTopicByTitle("title1").isPresent()).isTrue();
         }
 

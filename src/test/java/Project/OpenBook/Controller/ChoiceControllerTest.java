@@ -166,10 +166,11 @@ class ChoiceControllerTest {
         @DisplayName("특정 선지 조회 실패 - 존재하지 않는 선지 id 입력")
         @Test
         public void getChoicesFail(){
-            ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "-1", ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-1", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 선지 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 선지 ID입니다.")));
         }
     }
 
@@ -226,10 +227,11 @@ class ChoiceControllerTest {
             String[] choiceArr = {"nc1", "nc2", "nc3"};
             ChoiceAddDto choiceAddDto = new ChoiceAddDto("title-1", choiceArr);
 
-            ResponseEntity<ErrorMsgDto> response = restTemplate.postForEntity(URL, choiceAddDto, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(choiceAddDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 토픽 제목입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
         }
 
         //TODO : 중복된 내용의 선지 생성 막는 로직 구현
@@ -290,9 +292,10 @@ class ChoiceControllerTest {
         public void updateChoiceFailNotExistChoice(){
             ChoiceUpdateDto choiceUpdateDto = new ChoiceUpdateDto("nc1");
 
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "123123", HttpMethod.PATCH, new HttpEntity<>(choiceUpdateDto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "123123", HttpMethod.PATCH,
+                    new HttpEntity<>(choiceUpdateDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 선지 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 선지 ID입니다.")));
         }
 
         //TODO : 중복된 내용의 선지 생성 막는 로직 구현
@@ -337,10 +340,11 @@ class ChoiceControllerTest {
         @DisplayName("선지 삭제 실패 - 존재하지 않는 선지id 입력")
         @Test
         public void deleteChoiceFailNotExistChoice(){
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "123123", HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "123123", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 선지 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 선지 ID입니다.")));
         }
     }
 

@@ -163,10 +163,10 @@ class DupContentControllerTest {
         @DisplayName("특정 보기와 내용이 겹치는 모든 선지 조회 실패 - 존재하지 않는 보기 id입력")
         @Test
         public void queryDupContentChoicesFail(){
-            ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "123123", ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "123123", HttpMethod.GET, null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 보기 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 보기 ID입니다.")));
         }
     }
 
@@ -220,7 +220,8 @@ class DupContentControllerTest {
         public void createDupContentChoicesFailWrongDto(){
             ChoiceIdListDto dto = new ChoiceIdListDto();
 
-            ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.POST, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorDto>>() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.POST,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
             });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -232,10 +233,12 @@ class DupContentControllerTest {
         public void createDupContentChoicesFailNotExistChoice() {
             ChoiceIdListDto dto = new ChoiceIdListDto(Arrays.asList(choice4.getId(), choice5.getId(), 123123L, 456456L));
 
-            ResponseEntity<ErrorMsgDto> response = restTemplate.postForEntity(URL + descriptionId, dto,ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.POST,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
+            });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 선지 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 선지 ID입니다.")));
         }
     }
 
@@ -276,7 +279,7 @@ class DupContentControllerTest {
         @Test
         public void createDupContentChoicesFailWrongDto(){
             ChoiceIdDto dto = new ChoiceIdDto();
-            ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.DELETE, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorDto>>() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.DELETE, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
             });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -287,31 +290,34 @@ class DupContentControllerTest {
         @Test
         public void createDupContentChoicesFailNotExistDescription() {
             ChoiceIdDto dto = new ChoiceIdDto(choice3.getId());
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "123123", HttpMethod.DELETE, new HttpEntity<>(dto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "123123", HttpMethod.DELETE,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 보기 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 보기 ID입니다.")));
         }
 
         @DisplayName("특정 보기와 내용이 겹치는 모든 선지 선택 실패 - 존재하지 않은 선지 id입력")
         @Test
         public void createDupContentChoicesFailNotExistChoice() {
             ChoiceIdDto dto = new ChoiceIdDto(123123L);
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + descriptionId, HttpMethod.DELETE, new HttpEntity<>(dto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.DELETE,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 선지 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 선지 ID입니다.")));
         }
 
         @DisplayName("특정 보기와 내용이 겹치는 모든 선지 선택 실패 - 존재는 하지만 dupContent에 저장되지 않은 선지 삭제하려할때")
         @Test
         public void createDupContentChoicesFailNotSavedChoice() {
             ChoiceIdDto dto = new ChoiceIdDto(choice5.getId());
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + descriptionId, HttpMethod.DELETE, new HttpEntity<>(dto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + descriptionId, HttpMethod.DELETE,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("해당 보기와 내용이 겹친 선지가 아닙니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 보기와 내용이 겹친 선지가 아닙니다.")));
         }
     }
 

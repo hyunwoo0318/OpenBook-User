@@ -27,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.core.parameters.P;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.*;
@@ -170,10 +171,11 @@ class ChapterControllerTest {
         @DisplayName("단원 이름 조회 실패 - 존재하지 않는 단원번호 입력")
         @Test
         public void queryChaptersFail() {
-            ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "?num=-1", ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?num=-1", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 단원 번호입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 단원 번호입니다.")));
         }
     }
 
@@ -238,10 +240,11 @@ class ChapterControllerTest {
         @DisplayName("해당 단원의 모든 토픽 조회 실패 - 존재하지 않는 단원번호 입력")
         @Test
         public void queryChaptersTopicFail() {
-            ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "-1/topics", ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-1/topics", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 단원 번호입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 단원 번호입니다.")));
         }
 
     }
@@ -293,26 +296,29 @@ class ChapterControllerTest {
             //중복된 단원번호를 사용하는 경우
             ChapterDto wrongDto3 = new ChapterDto("title123", 1);
 
-            ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {});
-            ResponseEntity<List<ErrorDto>> response2 = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorDto>>() {});
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
-            ResponseEntity<ErrorMsgDto> response3 = restTemplate.postForEntity(URL, wrongDto3, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response3 = restTemplate.exchange(URL,HttpMethod.POST,
+                    new HttpEntity<>(wrongDto3),new ParameterizedTypeReference<List<ErrorMsgDto>>(){});
 
-            List<ErrorDto> body1 = response1.getBody();
-            List<ErrorDto> body2 = response2.getBody();
-            ErrorMsgDto body3 = response3.getBody();
+            List<ErrorMsgDto> body1 = response1.getBody();
+            List<ErrorMsgDto> body2 = response2.getBody();
+            List<ErrorMsgDto> body3 = response3.getBody();
 
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(body1.size()).isEqualTo(1);
-            assertThat(body1.get(0)).usingRecursiveComparison().isEqualTo(new ErrorDto("title", "단원제목을 입력해주세요."));
+            assertThat(body1).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto( "단원제목을 입력해주세요.")));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(body2.size()).isEqualTo(1);
-            assertThat(body2.get(0)).usingRecursiveComparison().isEqualTo(new ErrorDto("number", "단원 번호를 입력해주세요."));
+            assertThat(body2).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("단원 번호를 입력해주세요.")));
 
             assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(body3).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("중복된 단원 번호입니다."));
+            assertThat(body3).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 단원 번호입니다.")));
         }
 
     }
@@ -366,33 +372,37 @@ class ChapterControllerTest {
             ChapterDto dto3 = new ChapterDto("title123", 5);
             ChapterDto dto4 = new ChapterDto("title123", 2);
 
-            ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {});
-            ResponseEntity<List<ErrorDto>> response2 = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH, new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorDto>>() {});
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH,
+                    new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH,
+                    new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             //존재하지 않는 단원 수정 요청
-            ResponseEntity<ErrorMsgDto> response3 = restTemplate.exchange(URL + "/-1", HttpMethod.PATCH, new HttpEntity<>(dto3), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response3 = restTemplate.exchange(URL + "/-1", HttpMethod.PATCH,
+                    new HttpEntity<>(dto3), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             //이미 존재하는 단원 번호로 수정 요청
-            ResponseEntity<ErrorMsgDto> response4 = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH, new HttpEntity<>(dto4), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response4 = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH,
+                    new HttpEntity<>(dto4), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
-            List<ErrorDto> body1 = response1.getBody();
-            List<ErrorDto> body2 = response2.getBody();
-            ErrorMsgDto body3 = response3.getBody();
-            ErrorMsgDto body4 = response4.getBody();
+            List<ErrorMsgDto> body1 = response1.getBody();
+            List<ErrorMsgDto> body2 = response2.getBody();
+            List<ErrorMsgDto> body3 = response3.getBody();
+            List<ErrorMsgDto> body4 = response4.getBody();
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(body1.size()).isEqualTo(1);
-            assertThat(body1.get(0)).usingRecursiveComparison().isEqualTo(new ErrorDto("number", "단원 번호를 입력해주세요."));
+            assertThat(body1).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto( "단원 번호를 입력해주세요.")));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(body2.size()).isEqualTo(1);
-            assertThat(body2.get(0)).isEqualTo(new ErrorDto("title", "단원제목을 입력해주세요."));
+            assertThat(body2).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("단원제목을 입력해주세요.")));
 
             assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(body3).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 단원 번호입니다."));
+            assertThat(body3).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 단원 번호입니다.")));
 
             assertThat(response4.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(body4).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("중복된 단원 번호입니다."));
+            assertThat(body4).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 단원 번호입니다.")));
         }
     }
 
@@ -432,16 +442,18 @@ class ChapterControllerTest {
         @Test
         public void deleteChapterFail() {
             //존재하지 않는 단원 삭제 시도
-            ResponseEntity<ErrorMsgDto> response1 = restTemplate.exchange(URL + "/-1", HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL + "/-1", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             //토픽이 존재하는 단원 삭제 시도
-            ResponseEntity<ErrorMsgDto> response2 = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response1.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 단원 번호입니다."));
+            assertThat(response1.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 단원 번호입니다.")));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response2.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("해당 단원에 토픽이 존재합니다."));
+            assertThat(response2.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 단원에 토픽이 존재합니다.")));
             assertThat(chapterRepository.findOneByNumber(1).isPresent()).isTrue();
         }
 

@@ -167,10 +167,11 @@ class DescriptionControllerTest {
         @DisplayName("특정 보기 조회 실패 - 존재하지 않는 보기 id 입력")
         @Test
         public void queryDescriptionFail(){
-            ResponseEntity<ErrorMsgDto> response = restTemplate.getForEntity(URL + "-1", ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-1", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 보기 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 보기 ID입니다.")));
         }
     }
 
@@ -224,10 +225,11 @@ class DescriptionControllerTest {
             String[] contentArr = {"content"};
             DescriptionCreateDto dto = new DescriptionCreateDto("title-1", contentArr);
 
-            ResponseEntity<ErrorMsgDto> response = restTemplate.postForEntity(URL, dto, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL,HttpMethod.POST,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>(){});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 토픽 제목입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
         }
 
         //TODO : 중복된 내용의 선지 생성 막는 로직 구현
@@ -288,9 +290,12 @@ class DescriptionControllerTest {
         public void updateDescriptionNotExistDesc(){
             DescriptionUpdateDto dto = new DescriptionUpdateDto("content1");
 
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "123123", HttpMethod.PATCH, new HttpEntity<>(dto), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "123123", HttpMethod.PATCH,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 보기 ID입니다."));
+            assertThat(response.getBody().size()).isEqualTo(1);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 보기 ID입니다.")));
         }
 
         //TODO : 중복된 내용의 선지 생성 막는 로직 구현
@@ -335,10 +340,11 @@ class DescriptionControllerTest {
         @DisplayName("보기 삭제 실패 - 존재하지 않는 보기id 입력")
         @Test
         public void deleteDescriptionFailNotExistChoice(){
-            ResponseEntity<ErrorMsgDto> response = restTemplate.exchange(URL + "123123", HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "123123", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 보기 ID입니다."));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 보기 ID입니다.")));
         }
     }
 

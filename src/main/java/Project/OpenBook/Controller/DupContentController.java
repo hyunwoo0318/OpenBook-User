@@ -11,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.parameters.P;
@@ -45,7 +46,7 @@ public class DupContentController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 보기나 선지 입력")
     })
     @PostMapping("/admin/dup-contents/{descriptionId}")
-    public ResponseEntity addDupContentChoices(@PathVariable Long descriptionId,@RequestBody ChoiceIdListDto choiceIdListDto) {
+    public ResponseEntity addDupContentChoices(@PathVariable Long descriptionId,@Validated @RequestBody ChoiceIdListDto choiceIdListDto) {
         List<DupContent> dupContentList = dupContentService.addDupContentChoices(descriptionId, choiceIdListDto);
 
         return new ResponseEntity(HttpStatus.CREATED);

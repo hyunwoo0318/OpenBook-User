@@ -213,18 +213,20 @@ public class KeywordControllerTest {
             //이미 존재하는 키워드와 이름이 중복되는 경우
             KeywordDto wrongDto2 = new KeywordDto("k1");
 
-            ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
             });
-            ResponseEntity<ErrorMsgDto> response2 = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto2), ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
-            List<ErrorDto> body1 = response1.getBody();
-            ErrorMsgDto body2 = response2.getBody();
+            List<ErrorMsgDto> body1 = response1.getBody();
+            List<ErrorMsgDto> body2 = response2.getBody();
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(body1.get(0)).usingRecursiveComparison().isEqualTo(new ErrorDto("name", "키워드 이름을 입력해주세요"));
+            assertThat(body1).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("키워드 이름을 입력해주세요")));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(body2).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("중복된 키워드 입니다."));
+            assertThat(body2).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 키워드 입니다.")));
         }
 
     }
@@ -263,18 +265,20 @@ public class KeywordControllerTest {
         @Test
         public void queryKeywordsFail(){
             //존재하지 않는 키워드 삭제 요청
-            ResponseEntity<ErrorMsgDto> response1 = restTemplate.exchange(URL + "wrongKeywordName", HttpMethod.DELETE,null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL + "wrongKeywordName", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
             //토픽이 존재하는 키워드 삭제 요청
-            ResponseEntity<ErrorMsgDto> response2 = restTemplate.exchange(URL + "k1", HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL + "k1", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
-            ErrorMsgDto body1 = response1.getBody();
-            ErrorMsgDto body2 = response2.getBody();
+            List<ErrorMsgDto> body1 = response1.getBody();
+            List<ErrorMsgDto> body2 = response2.getBody();
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(body1).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 키워드 이름입니다."));
+            assertThat(body1).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 키워드 이름입니다.")));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(body2).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("해당 키워드를 가지는 토픽이 존재합니다."));
+            assertThat(body2).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 키워드를 가지는 토픽이 존재합니다.")));
         }
 
     }

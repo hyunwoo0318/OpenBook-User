@@ -149,17 +149,19 @@ class CategoryControllerTest {
             //이미 존재하는 카테고리
             CategoryDto wrongDto2 = new CategoryDto(categoryName);
 
-            ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {});
-            ResponseEntity<ErrorMsgDto> response2 = restTemplate.postForEntity(URL, wrongDto2, ErrorMsgDto.class);
-            List<ErrorDto> body1 = response1.getBody();
-            ErrorMsgDto body2 = response2.getBody();
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL, HttpMethod.POST,
+                    new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+            List<ErrorMsgDto> body1 = response1.getBody();
+            List<ErrorMsgDto> body2 = response2.getBody();
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(body1.size()).isEqualTo(1);
-            assertThat(body1.get(0)).usingRecursiveComparison().isEqualTo(new ErrorDto("name", "카테고리 이름을 입력해주세요"));
+            assertThat(body1).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("카테고리 이름을 입력해주세요")));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(body2).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("중복된 카테고리 이름입니다."));
+            assertThat(body2).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 카테고리 이름입니다.")));
         }
     }
 
@@ -182,6 +184,8 @@ class CategoryControllerTest {
         @BeforeEach
         public void setting(){
             baseSetting();
+            Category  c2= new Category("c2");
+            categoryRepository.save(c2);
         }
 
         @DisplayName("카테고리 수정 성공")
@@ -206,29 +210,33 @@ class CategoryControllerTest {
             //이름 입력x
             CategoryDto wrongDto1 = new CategoryDto();
             //이미 존재하는 이름인 경우
-            CategoryDto wrongDto2 = new CategoryDto(categoryName);
+            CategoryDto wrongDto2 = new CategoryDto("c2");
 
-            ResponseEntity<List<ErrorDto>> response1 = restTemplate.exchange(URL + "/인물", HttpMethod.PATCH, new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorDto>>() {
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL + "/인물", HttpMethod.PATCH,
+                    new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
             });
 
-            ResponseEntity<ErrorMsgDto> response2 = restTemplate.postForEntity(URL, wrongDto2, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL +"/" + categoryName, HttpMethod.PATCH,
+                    new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             //존재하지 않는 카테고리를 변경하려 시도하는 경우
-            ResponseEntity<ErrorMsgDto> response3 = restTemplate.exchange(URL + "/wrongName", HttpMethod.PATCH, new HttpEntity<>(dto), ErrorMsgDto.class);
-            List<ErrorDto> body1 = response1.getBody();
-            ErrorMsgDto body2 = response2.getBody();
-            ErrorMsgDto body3 = response3.getBody();
+            ResponseEntity<List<ErrorMsgDto>> response3 = restTemplate.exchange(URL + "/wrongName", HttpMethod.PATCH,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            List<ErrorMsgDto> body1 = response1.getBody();
+            List<ErrorMsgDto> body2 = response2.getBody();
+            List<ErrorMsgDto> body3 = response3.getBody();
 
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(body1.size()).isEqualTo(1);
-            assertThat(body1.get(0)).usingRecursiveComparison().isEqualTo(new ErrorDto("name", "카테고리 이름을 입력해주세요"));
+            assertThat(body1).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("카테고리 이름을 입력해주세요")));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(body2).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("중복된 카테고리 이름입니다."));
+            assertThat(body2).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 카테고리 이름입니다.")));
 
             assertThat(response3.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(body3).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다."));
+            assertThat(body3).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다.")));
 
             assertThat(categoryRepository.findAll().stream().map(c -> c.getName()).collect(Collectors.toSet()).containsAll(Set.of(categoryName)));
         }
@@ -273,20 +281,22 @@ class CategoryControllerTest {
             Chapter ch1 = new Chapter("ch1", 1);
             chapterRepository.saveAndFlush(ch1);
 
-            Topic topic = new Topic("tite1", null, null, 0, 0, "detail1", ch1, c1);
+            Topic topic = new Topic("title1", null, null, 0, 0, "detail1", ch1, c1);
             topicRepository.saveAndFlush(topic);
 
             //존재하지 않는 카테고리 삭제 시도
-            ResponseEntity<ErrorMsgDto> response1 = restTemplate.exchange(URL + "/wrongName", HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL + "/wrongName", HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             //토픽이 존재하는 카테고리 삭제 시도
-            ResponseEntity<ErrorMsgDto> response2 = restTemplate.exchange(URL + "/" + categoryName, HttpMethod.DELETE, null, ErrorMsgDto.class);
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL + "/" + categoryName, HttpMethod.DELETE,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response1.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다."));
+            assertThat(response1.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다.")));
 
             assertThat(response2.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response2.getBody()).usingRecursiveComparison().isEqualTo(new ErrorMsgDto("해당 카테고리에 토픽이 존재합니다"));
+            assertThat(response2.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 카테고리에 토픽이 존재합니다")));
 
             assertThat(categoryRepository.findCategoryByName(categoryName).isEmpty()).isFalse();
         }
