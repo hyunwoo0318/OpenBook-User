@@ -4,7 +4,6 @@ import Project.OpenBook.Domain.Choice;
 import Project.OpenBook.Dto.choice.ChoiceAddDto;
 import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.Dto.choice.ChoiceUpdateDto;
-import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Service.ChoiceService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -12,13 +11,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +28,7 @@ public class ChoiceController {
     })
     @GetMapping("/admin/topics/{topicTitle}/choices/")
     public ResponseEntity getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
-        List<ChoiceDto> choiceList = choiceService.queryTopicsByTopic(topicTitle);
+        List<ChoiceDto> choiceList = choiceService.queryChoicesByTopic(topicTitle);
         return new ResponseEntity(choiceList,HttpStatus.OK);
     }
 

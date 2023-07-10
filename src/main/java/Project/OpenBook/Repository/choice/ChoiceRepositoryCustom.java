@@ -3,6 +3,7 @@ package Project.OpenBook.Repository.choice;
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Choice;
 import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Dto.choice.DupChoiceDto;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -36,4 +37,6 @@ public interface ChoiceRepositoryCustom {
     public Category queryCategoryByChoice(Long choiceId);
 
     public Choice queryRandChoiceByTime(Integer startDate, Integer endDate);
+
+
 }

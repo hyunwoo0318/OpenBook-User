@@ -1,6 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Description;
+import Project.OpenBook.Dto.choice.DupChoiceDto;
 import Project.OpenBook.Dto.description.DescriptionCreateDto;
 import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.description.DescriptionUpdateDto;
@@ -51,6 +52,18 @@ public class DescriptionController {
 
         List<DescriptionDto> descriptionDtoList = descriptionList.stream().map(d -> new DescriptionDto(d)).collect(Collectors.toList());
         return new ResponseEntity(descriptionDtoList, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "특정 토픽의 선지들을 조회", notes = "각각의 선지가 특정 보기와 내용이 겹친다고 선정되었는지에 대한 data return")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적인 조회"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 보기id, topic제목 입력")
+    })
+    @GetMapping("/admin/descriptions/{descriptionId}/topics/{topicTitle}/choices")
+    public ResponseEntity queryTopicDupChoices(@PathVariable("descriptionId") Long descriptionId,@PathVariable("topicTitle") String topicTitle){
+        List<DupChoiceDto> dupChoiceDtoList = descriptionService.queryTopicDupChoices(descriptionId, topicTitle);
+        return new ResponseEntity(dupChoiceDtoList, HttpStatus.OK);
     }
 
 //    @ApiOperation(value = "주어진 보기와 같은 토픽의 보기 조회", notes = "문제 생성/수정시 보기 새로고침을 위한 endPoint")

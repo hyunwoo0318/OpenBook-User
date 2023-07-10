@@ -24,10 +24,9 @@ public class ChoiceService {
     private final ChoiceRepository choiceRepository;
     private final TopicRepository topicRepository;
 
-    public List<ChoiceDto> queryTopicsByTopic(String topicTitle) {
-        List<ChoiceDto> choiceDtoList = new ArrayList<>();
+    public List<ChoiceDto> queryChoicesByTopic(String topicTitle) {
         List<Choice> choiceList = choiceRepository.queryChoiceByTopicTitle(topicTitle);
-        choiceList.stream().forEach(c -> choiceDtoList.add(new ChoiceDto(c)));
+        List<ChoiceDto> choiceDtoList = choiceList.stream().map(c -> new ChoiceDto(c)).collect(Collectors.toList());
         return choiceDtoList;
     }
 

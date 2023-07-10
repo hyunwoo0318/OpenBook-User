@@ -1,5 +1,7 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Dto.choice.ChoiceDto;
+import Project.OpenBook.Dto.choice.DupChoiceDto;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Description;
 import Project.OpenBook.Domain.Topic;
@@ -46,9 +48,7 @@ public class DescriptionService {
 
 
     public List<Description> queryDescriptionsInTopic(String topicTitle) {
-        topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
+        checkTopic(topicTitle);
         return descriptionRepository.findDescriptionsByTopic(topicTitle);
     }
 
@@ -56,10 +56,7 @@ public class DescriptionService {
     public List<Description> addDescription(DescriptionCreateDto descriptionCreateDto) {
         String topicTitle = descriptionCreateDto.getTopicTitle();
         String[] contentList = descriptionCreateDto.getContentList();
-
-        Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
+        Topic topic = checkTopic(topicTitle);
         List<Description> descriptionList = Arrays.stream(contentList).map(c -> new Description(c, topic)).collect(Collectors.toList());
         descriptionRepository.saveAll(descriptionList);
         return descriptionList;
@@ -85,6 +82,19 @@ public class DescriptionService {
     private Description checkDescription(Long descriptionId) {
         return descriptionRepository.findById(descriptionId).orElseThrow(() ->{
             throw new CustomException(DESCRIPTION_NOT_FOUND);
+        });
+    }
+
+    public List<DupChoiceDto> queryTopicDupChoices(Long descriptionId, String topicTitle) {
+        checkDescription(descriptionId);
+        checkTopic(topicTitle);
+
+        return descriptionRepository.queryDupChoices(descriptionId, topicTitle);
+    }
+
+    private Topic checkTopic(String topicTitle) {
+        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
         });
     }
 }

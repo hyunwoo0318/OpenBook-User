@@ -6,6 +6,7 @@ import Project.OpenBook.Dto.choice.ChoiceIdDto;
 import Project.OpenBook.Dto.choice.ChoiceIdListDto;
 import Project.OpenBook.Service.ChoiceService;
 import Project.OpenBook.Service.DupContentService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -35,6 +36,8 @@ public class DupContentController {
 
         return new ResponseEntity(choiceDtoList, HttpStatus.OK);
     }
+
+
 
     @ApiOperation("해당 보기와 내용이 겹치는 선지들 선정")
     @ApiResponses(value = {

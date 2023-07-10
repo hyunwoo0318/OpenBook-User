@@ -1,15 +1,20 @@
 package Project.OpenBook.Repository.choice;
 
 import Project.OpenBook.Domain.*;
+import Project.OpenBook.Dto.choice.DupChoiceDto;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static Project.OpenBook.Domain.QCategory.category;
 import static Project.OpenBook.Domain.QChoice.choice;
@@ -163,4 +168,6 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     private BooleanExpression notInDateBetween(Integer ansStartDate, Integer ansEndDate) {
         return choice.topic.endDate.lt(ansStartDate).or(choice.topic.startDate.gt(ansEndDate));
     }
+
+
 }
