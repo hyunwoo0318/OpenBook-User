@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ CustomException.class })
     protected ResponseEntity handleCustomException(CustomException ex) {
         ErrorMsgDto errorMsgDto = new ErrorMsgDto(ex.getErrorCode().getErrorMessage());
-        return new ResponseEntity(errorMsgDto, ex.getErrorCode().getStatusCode());
+        List<ErrorMsgDto> errorMsgDtoList = Arrays.asList(errorMsgDto);
+        return new ResponseEntity(errorMsgDtoList, ex.getErrorCode().getStatusCode());
     }
 
     @ExceptionHandler({ Exception.class })
@@ -34,9 +36,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ResponseEntity handleBindingException(MethodArgumentNotValidException e) {
-        List<ErrorDto> errorDtoList = e.getBindingResult().getFieldErrors().stream()
-                .map(err -> new ErrorDto(err.getField(), err.getDefaultMessage()))
+        List<ErrorMsgDto> errorMsgDtoList = e.getBindingResult().getFieldErrors().stream()
+                .map(err -> new ErrorMsgDto(err.getDefaultMessage()))
                 .collect(Collectors.toList());
-        return new ResponseEntity(errorDtoList, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(errorMsgDtoList, HttpStatus.BAD_REQUEST);
     }
 }
