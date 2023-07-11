@@ -1,9 +1,9 @@
 package Project.OpenBook.Service;
 
 import Project.OpenBook.Dto.keyword.KeywordDto;
-import Project.OpenBook.Dto.keyword.KeywordListDto;
+
+import Project.OpenBook.Repository.ImageFileRepository;
 import Project.OpenBook.Repository.Sentence.SentenceRepository;
-import Project.OpenBook.Repository.topickeyword.TopicKeywordRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
@@ -15,15 +15,16 @@ import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 
@@ -43,9 +44,11 @@ public class TopicService {
     private final DescriptionRepository descriptionRepository;
 
     private final KeywordRepository keywordRepository;
-    private final TopicKeywordRepository topicKeywordRepository;
+    private final ImageFileRepository imageFileRepository;
 
     private final SentenceRepository  sentenceRepository;
+
+    private final ImageFileService imageFileService;
 
     public TopicDto queryTopic(String topicTitle) {
         checkTopic(topicTitle);
@@ -122,24 +125,14 @@ public class TopicService {
             throw new CustomException(TOPIC_HAS_DESCRIPTION);
         }
 
-        List<TopicKeyword> topicKeywordList = topicKeywordRepository.queryTopicKeyword(topicTitle);
-        if (!topicKeywordList.isEmpty()) {
+        List<Keyword> keywordList = topicRepository.queryTopicKeywords(topicTitle);
+        if (!keywordList.isEmpty()) {
             throw new CustomException(TOPIC_HAS_KEYWORD);
         }
 
         topicRepository.delete(topic);
         return true;
-
     }
-
-//    public String parseKeywordList(List<String> keywordList) {
-//      return keywordList.stream().collect(Collectors.joining(","));
-//    }
-//
-//    public List<String> mergeKeywordList(String keywords) {
-//        String[] split = keywords.split(",");
-//        return Arrays.asList(split);
-//    }
 
     private void addAnswerTopics(Topic topic) {
         List<Topic> topicList = dupDateRepository.queryAnswerTopics(topic.getStartDate(), topic.getEndDate());
@@ -193,51 +186,24 @@ public class TopicService {
         });
     }
 
-    public List<String> queryTopicKeywords(String topicTitle) {
+    public List<KeywordDto> queryTopicKeywords(String topicTitle) {
         checkTopic(topicTitle);
-        return topicRepository.queryTopicKeywords(topicTitle);
-    }
+        List<Keyword> keywordList = topicRepository.queryTopicKeywords(topicTitle);
+        List<KeywordDto> keywordDtoList = new ArrayList<>();
 
-    public void addKeywords(String topicTitle, KeywordDto keywordDto) {
-        Topic topic = checkTopic(topicTitle);
-        String name = keywordDto.getName();
-        Keyword keyword;
+        for (Keyword keyword : keywordList) {
+            String name = keyword.getName();
+            String comment = keyword.getComment();
+            Long id = keyword.getId();
 
-        //입력받은 키워드가 새로운 키워드인 경우와 기존의 키워드인 경우를 구분
-        Optional<Keyword> keywordOptional = keywordRepository.findByName(name);
-        //기존에 존재하는 키워드의 경우
-        if (keywordOptional.isPresent()) {
-            keyword = keywordOptional.get();
-            // 이미 해당 토픽에 해당 키워드가 있는 경우 해당 키워드를 추가하지 않음.
-            TopicKeyword topicKeyword = topicKeywordRepository.queryTopicKeyword(topicTitle, name);
-            if (topicKeyword == null) {
-                topicKeywordRepository.save(new TopicKeyword(topic, keyword));
-            }
-        }else{
-            //새로운 키워드의 경우
-            //새로 키워드를 만들고 저장후 해당 토픽에 해당 키워드를 저장
-            keyword = new Keyword(name);
-            keywordRepository.save(keyword);
-            topicKeywordRepository.save(new TopicKeyword(topic, keyword));
+            ImageFile imageFile = imageFileRepository.findByKeywordId(id);
+            MultipartFile file = imageFileService.convertToMultiPartFIle(imageFile);
+            KeywordDto keywordDto = new KeywordDto(name, comment, file, id);
+            keywordDtoList.add(keywordDto);
         }
+        return keywordDtoList;
     }
 
-    @Transactional
-    public void deleteKeyword(String topicTitle, String keywordName) {
-        Topic topic = checkTopic(topicTitle);
-
-        Keyword keyword = checkKeyword(keywordName);
-
-        Optional<TopicKeyword> topicKeywordOptional = topicKeywordRepository.findByTopicAndKeyword(topic, keyword);
-        if (topicKeywordOptional.isPresent()) {
-            TopicKeyword topicKeyword = topicKeywordOptional.get();
-            topicKeywordRepository.delete(topicKeyword);
-            List<Topic> topicList = topicKeywordRepository.queryTopicsByKeyword(keywordName);
-            if (topicList.isEmpty()) {
-                keywordRepository.delete(keyword);
-            }
-        }
-    }
 
     public List<Sentence> queryTopicSentences(String topicTitle) {
         checkTopic(topicTitle);

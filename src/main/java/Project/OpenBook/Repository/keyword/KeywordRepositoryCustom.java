@@ -8,7 +8,8 @@ import java.util.List;
 public interface KeywordRepositoryCustom {
 
 
-    public List<String> queryKeywordTopic(String keywordName);
+
+    public Keyword queryByNameInTopic(String name, String topicTitle);
 
     public List<Keyword> queryKeywordsList(List<String> keywordNameList);
 }

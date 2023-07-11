@@ -45,9 +45,9 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
     })
     @GetMapping("/topics/{topicTitle}/keywords")
-    public ResponseEntity queryTopicKeyword(@PathVariable("topicTitle") String topicTitle) {
-        List<KeywordDto> keywordList = topicService.queryTopicKeywords(topicTitle).stream().map(t -> new KeywordDto(t)).collect(Collectors.toList());
-        return new ResponseEntity(keywordList, HttpStatus.OK);
+    public ResponseEntity queryTopicKeywords(@PathVariable("topicTitle") String topicTitle) {
+        List<KeywordDto> keywordDtoList = topicService.queryTopicKeywords(topicTitle);
+        return new ResponseEntity(keywordDtoList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "특정 토픽의 전체 문장 조회")
@@ -76,29 +76,6 @@ public class TopicController {
 
         Topic topic = topicService.createTopic(topicDto);
         return new ResponseEntity(HttpStatus.CREATED);
-    }
-
-    @ApiOperation(value = "특정 토픽에 키워드들 추가")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "특정 토픽에 해당 키워드들 추가 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 입력"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
-    })
-    @PostMapping("/admin/topics/{topicTitle}/keywords")
-    public ResponseEntity addKeywords(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordDto keywordDto) {
-        topicService.addKeywords(topicTitle, keywordDto);
-        return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "특정 토픽에 특정 키워드 삭제")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적인 삭제"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 이름이나 토픽 제목 입력")
-    })
-    @DeleteMapping("/admin/topics/{topicTitle}/keywords")
-    public ResponseEntity deleteKeyword(@PathVariable("topicTitle") String topicTitle, @Validated @RequestBody KeywordDto keywordDto) {
-        topicService.deleteKeyword(topicTitle, keywordDto.getName());
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @ApiOperation(value = "상세정보 수정")

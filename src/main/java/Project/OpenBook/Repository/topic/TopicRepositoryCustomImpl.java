@@ -15,13 +15,11 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
-import static Project.OpenBook.Domain.QCategory.category;
-import static Project.OpenBook.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
 import static Project.OpenBook.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.QTopic.topic;
-import static Project.OpenBook.Domain.QTopicKeyword.topicKeyword;
+
 
 @Repository
 @RequiredArgsConstructor
@@ -58,22 +56,17 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
     }
 
     @Override
-    public List<String> queryTopicKeywords(String topicTitle) {
-        return queryFactory.select(topicKeyword.keyword.name)
-                .from(topicKeyword)
-                .where(topic.title.eq(topicTitle))
-                .where(topicKeyword.topic.eq(topic))
-                .where(topicKeyword.keyword.eq(keyword))
-                .fetch();
+    public List<Keyword> queryTopicKeywords(String topicTitle) {
+        return null;
     }
 
 
     @Override
     public List<AdminChapterDto> queryAdminChapterDto(Integer chapterNum) {
         List<Tuple> result = queryFactory.select(topic.category.name, topic.title, topic.startDate, topic.endDate,
-                        description.countDistinct(), choice.countDistinct(), topicKeyword.countDistinct())
+                        description.countDistinct(), choice.countDistinct(), keyword.countDistinct())
                 .from(topic)
-                .leftJoin(topicKeyword).on(topic.id.eq(topicKeyword.topic.id))
+                .leftJoin(keyword).on(topic.id.eq(keyword.topic.id))
                 .leftJoin(choice).on(topic.id.eq(choice.topic.id))
                 .leftJoin(description).on(topic.id.eq(description.topic.id))
                 .where(topic.chapter.number.eq(chapterNum))
@@ -90,7 +83,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
             if(descriptionCount == null) descriptionCount = 0L;
             Long choiceCount = t.get(choice.countDistinct());
             if(choiceCount == null) choiceCount = 0L;
-            Long keywordCount = t.get(topicKeyword.countDistinct());
+            Long keywordCount = t.get(keyword.countDistinct());
             if(keywordCount == null) keywordCount = 0L;
             AdminChapterDto adminChapterDto = new AdminChapterDto(category, title, startDate, endDate, descriptionCount, choiceCount, keywordCount);
             adminChapterDtoList.add(adminChapterDto);

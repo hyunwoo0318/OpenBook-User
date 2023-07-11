@@ -44,6 +44,8 @@ public enum ErrorCode {
     DESCRIPTION_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 보기 ID입니다."),
     KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 키워드 이름입니다."),
     SENTENCE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 문장 ID입니다."),
+
+
     /**
      * 409 - CONFLICT
      */
@@ -51,9 +53,9 @@ public enum ErrorCode {
     DUP_CHAPTER_NUM(HttpStatus.CONFLICT, "중복된 단원 번호입니다."),
     DUP_CATEGORY_NAME(HttpStatus.CONFLICT, "중복된 카테고리 이름입니다."),
     DUP_TOPIC_TITLE(HttpStatus.CONFLICT, "중복된 토픽 제목입니다."),
-    DUP_KEYWORD_NAME(HttpStatus.CONFLICT, "중복된 키워드 입니다."),
     DUP_CHOICE_CONTENT(HttpStatus.CONFLICT, "중복된 선지내용입니다."),
     DUP_DESCRIPTION_CONTENT(HttpStatus.CONFLICT, "중복된 보기내용입니다."),
+    DUP_KEYWORD_NAME(HttpStatus.CONFLICT, "중복된 키워드 이름이 해당 토픽 내에 존재합니다"),
 
     ;
 

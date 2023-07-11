@@ -1,11 +1,13 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.Domain.ImageFile;
 import Project.OpenBook.Domain.Keyword;
 import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Dto.keyword.KeywordCreateDto;
+import Project.OpenBook.Dto.keyword.KeywordUpdateDto;
+import Project.OpenBook.Repository.ImageFileRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
-import Project.OpenBook.Repository.topickeyword.TopicKeywordRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,54 +22,81 @@ import static Project.OpenBook.Constants.ErrorCode.*;
 public class KeywordService {
 
     private final KeywordRepository keywordRepository;
-    private final TopicKeywordRepository topicKeywordRepository;
+    private final ImageFileRepository imageFileRepository;
+    private final TopicRepository topicRepository;
 
     public List<String> queryKeywords() {
         return keywordRepository.findAll().stream().map(k -> k.getName()).collect(Collectors.toList());
     }
 
-    public Keyword createKeyword(String name) {
-        checkDupKeyword(name);
+    public Keyword createKeyword(KeywordCreateDto keywordCreateDto, ImageFile file) {
 
-        Keyword keyword = new Keyword(name);
-        keywordRepository.save(keyword);
-        return keyword;
-    }
+        String name = keywordCreateDto.getName();
+        String comment = keywordCreateDto.getComment();
+        String topicTitle = keywordCreateDto.getTopic();
 
-
-    public Keyword updateKeyword(String prevName, String afterName) {
-        Keyword keyword = checkKeyword(prevName);
-        checkDupKeyword(afterName);
-
-        keyword.changeName(afterName);
-        return keyword;
-    }
-
-
-    public void deleteKeyword(String keywordName) {
-        Keyword keyword = checkKeyword(keywordName);
-        List<String> topicList = keywordRepository.queryKeywordTopic(keywordName);
-        if(!topicList.isEmpty()){
-            throw new CustomException(KEYWORD_HAS_TOPIC);
-        }
-        keywordRepository.delete(keyword);
-    }
-
-    public List<String> queryKeywordTopic(String keywordName) {
-        checkKeyword(keywordName);
-        return keywordRepository.queryKeywordTopic(keywordName);
-    }
-
-
-    private void checkDupKeyword(String name) {
-        keywordRepository.findByName(name).ifPresent(k -> {
-            throw new CustomException(DUP_KEYWORD_NAME);
+        //입력 받은 토픽 제목이 실제 존재하는 토픽 제목인지 확인
+        Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
         });
+
+        //같은 토픽 내의 같은 이름의 키워드가 있는지 확인
+        checkDupKeyword(name, topicTitle);
+
+        //키워드 저장
+        Keyword keyword = new Keyword(name,comment, topic);
+        keywordRepository.save(keyword);
+
+        //이미지 저장
+        file.setKeywordId(keyword.getId());
+        imageFileRepository.save(file);
+        return keyword;
     }
 
-    private Keyword checkKeyword(String name) {
-        return keywordRepository.findByName(name).orElseThrow(() -> {
+
+    public Keyword updateKeyword(Long keywordId, KeywordUpdateDto keywordUpdateDto, ImageFile imageFile) {
+
+        String name = keywordUpdateDto.getName();
+        String comment = keywordUpdateDto.getComment();
+
+        Keyword keyword = checkKeyword(keywordId);
+        String title = keyword.getTopic().getTitle();
+
+        //키워드 이름을 변경시 중복되는 키워드 이름이 있는지 확인해야함
+        //키워드 이름이 같을 경우 확인할 필요없음.
+        if (keyword.getName() != name) {
+            checkDupKeyword(name, title);
+        }
+
+        //키워드 수정
+        Keyword afterKeyword = keyword.updateKeyword(name, title);
+
+        //이미지 수정 -> 이미지의 변경이 일어날 경우 저장
+        ImageFile prevImageFile = imageFileRepository.findByKeywordId(keywordId);
+        if (prevImageFile.getStoredFileName() != imageFile.getStoredFileName()) {
+            imageFileRepository.delete(prevImageFile.getImageId());
+            imageFileRepository.save(imageFile);
+        }
+
+        return afterKeyword;
+    }
+
+
+    private void checkDupKeyword(String name, String topicTitle) {
+        if (keywordRepository.queryByNameInTopic(name, topicTitle) != null) {
+            throw new CustomException(DUP_KEYWORD_NAME);
+        }
+    }
+
+    private Keyword checkKeyword(Long id) {
+        return keywordRepository.findById(id).orElseThrow(() -> {
             throw new CustomException(KEYWORD_NOT_FOUND);
         });
+    }
+
+    public void deleteKeyword(Long keywordId) {
+        checkKeyword(keywordId);
+
+        keywordRepository.deleteById(keywordId);
     }
 }
