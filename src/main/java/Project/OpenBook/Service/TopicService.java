@@ -75,11 +75,12 @@ public class TopicService {
 
     public Topic updateTopic(String topicTitle, TopicDto topicDto) {
         Topic topic = checkTopic(topicTitle);
+        String inputTitle = topicDto.getTitle();
 
-        //새로 입력받은 제목이 중복되는지 확인
-        checkDupTopicTitle(topicDto.getTitle());
-
-
+        if(!topicTitle.equals(inputTitle)){
+            //새로 입력받은 제목이 중복되는지 확인
+            checkDupTopicTitle(inputTitle);
+        }
         String categoryName = topicDto.getCategory();
         Category category = checkCategory(categoryName);
 
