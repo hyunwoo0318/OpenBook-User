@@ -45,11 +45,8 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
-
     private final CustomerRepository customerRepository;
     private final TokenManager tokenManager;
-
-
     @Override
     public Customer loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
@@ -117,9 +114,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         String refreshToken = "";
         String redirectURL = "";
 
-        {
-            redirectURL = KakaoConst.REDIRECT_URL_LOGIN;
-        }
+        redirectURL = KakaoConst.REDIRECT_URL_LOGIN;
 
         try{
             URL url = new URL(KakaoConst.REQ_URL_TOKEN);
@@ -175,9 +170,9 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         String refreshToken = "";
         String redirectURL = "";
 
-        {
-            redirectURL = NaverConst.REDIRECT_URL_LOGIN;
-        }
+
+        redirectURL = NaverConst.REDIRECT_URL_LOGIN;
+
 
         try{
             URL url = new URL(NaverConst.REQ_URL_TOKEN);
@@ -305,29 +300,4 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
     }
 
 
-
-
-//    private OAuth2Token getConnect(String code, ClientRegistration provider) {
-//        return WebClient.create()
-//                .post()
-//                .uri(provider.getProviderDetails().getTokenUri())
-//                .headers(h -> {
-//                    h.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-//                    h.setAcceptCharset(Collections.singletonList(StandardCharsets.UTF_8));
-//                })
-//                .bodyValue(tokenRequest(code, provider))
-//                .retrieve()
-//                .bodyToMono(OAuth2Token.class)
-//                .block();
-//    }
-//
-//    private MultiValueMap<String, String> tokenRequest(String code, ClientRegistration provider) {
-//        LinkedMultiValueMap map = new LinkedMultiValueMap();
-//        map.add("code", code);
-//        map.add("grant_type", "authorization_code");
-//        map.add("redirect_uri", provider.getRedirectUri());
-//        map.add("client_secret", provider.getClientSecret());
-//        map.add("client_id", provider.getClientId());
-//        return map;
-//    }
 }

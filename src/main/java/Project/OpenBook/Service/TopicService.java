@@ -2,6 +2,7 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.keyword.KeywordListDto;
+import Project.OpenBook.Repository.Sentence.SentenceRepository;
 import Project.OpenBook.Repository.topickeyword.TopicKeywordRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Utils.CustomException;
@@ -43,6 +44,8 @@ public class TopicService {
 
     private final KeywordRepository keywordRepository;
     private final TopicKeywordRepository topicKeywordRepository;
+
+    private final SentenceRepository  sentenceRepository;
 
     public TopicDto queryTopic(String topicTitle) {
         checkTopic(topicTitle);
@@ -234,5 +237,10 @@ public class TopicService {
                 keywordRepository.delete(keyword);
             }
         }
+    }
+
+    public List<Sentence> queryTopicSentences(String topicTitle) {
+        checkTopic(topicTitle);
+        return sentenceRepository.queryByTopicTitle(topicTitle);
     }
 }

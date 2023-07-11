@@ -33,7 +33,7 @@ public class CustomerController {
 
     @ApiOperation("회원 추가정보 입력")
     @ApiResponses(value={
-           @ApiResponse(responseCode = "200", description = "셩공적인 추가정보 입력"),
+            @ApiResponse(responseCode = "200", description = "셩공적인 추가정보 입력"),
             @ApiResponse(responseCode = "400", description = "잘못된 정보 입력"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원에 대한 정보 입력"),
             @ApiResponse(responseCode = "409", description = "중복된 닉네임 입력")
@@ -69,9 +69,9 @@ public class CustomerController {
         return new ResponseEntity(questionIdList, HttpStatus.OK);
     }
 
+    @ApiOperation("소셜 로그인")
     @GetMapping("login/{providerName}")
-    public ResponseEntity<Long> loginKakao(@PathVariable("providerName") String providerName,@RequestParam("code") String code,
-                                             HttpServletResponse response) {
+    public ResponseEntity<Long> socialLogin(@PathVariable("providerName") String providerName,@RequestParam("code") String code) {
         TokenDto tokenDto = oauthService.login(providerName, code);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());

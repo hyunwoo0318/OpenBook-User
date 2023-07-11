@@ -1,6 +1,8 @@
 package Project.OpenBook.Controller;
 
+import Project.OpenBook.Domain.Sentence;
 import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Dto.Sentence.SentenceDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.keyword.KeywordListDto;
 import Project.OpenBook.Dto.topic.TopicDto;
@@ -46,6 +48,19 @@ public class TopicController {
     public ResponseEntity queryTopicKeyword(@PathVariable("topicTitle") String topicTitle) {
         List<KeywordDto> keywordList = topicService.queryTopicKeywords(topicTitle).stream().map(t -> new KeywordDto(t)).collect(Collectors.toList());
         return new ResponseEntity(keywordList, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "특정 토픽의 전체 문장 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "특정 토픽의 전체 문장 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
+    })
+    @GetMapping("/topics/{topicTitle}/sentences")
+    public ResponseEntity queryTopicSentence(@PathVariable("topicTitle") String topicTitle) {
+        List<SentenceDto> sentenceDtoList = topicService.queryTopicSentences(topicTitle).stream()
+                                            .map(s -> new SentenceDto(s.getName(), s.getId()))
+                                            .collect(Collectors.toList());
+        return new ResponseEntity(sentenceDtoList, HttpStatus.OK);
     }
 
 
