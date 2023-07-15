@@ -2,6 +2,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Dto.chapter.ChapterDto;
+import Project.OpenBook.Dto.chapter.ChapterInfoDto;
 import Project.OpenBook.Dto.chapter.ChapterNumDto;
 import Project.OpenBook.Dto.chapter.ChapterTitleDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
@@ -53,10 +54,35 @@ public class ChapterController {
         return new ResponseEntity(chapterTitleDto, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "단원 설명 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "단원 설명 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
+    })
+    @GetMapping("/chapters/{num}/info")
+    public ResponseEntity queryChapterInfo(@PathVariable("num") Integer num){
+        String info = chapterService.queryChapterInfo(num);
+        ChapterInfoDto chapterInfoDto = new ChapterInfoDto(info);
+
+        return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "단원 설명 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "단원 설명 수정 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
+    })
+    @PatchMapping("/{num}/info")
+    public ResponseEntity updateChapterInfo(@PathVariable("num") Integer num, @Validated @RequestBody ChapterInfoDto chapterInfoDto){
+        chapterService.updateChapterInfo(num,chapterInfoDto.getContent());
+
+        return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
+    }
+
     @ApiOperation("해당 단원의 모든 topic 조회")
-    @GetMapping("/{number}/topics")
-    public ResponseEntity queryChapterTopics(@PathVariable("number") int number) {
-        List<AdminChapterDto> adminChapterDtoList = chapterService.queryTopicsInChapter(number);
+    @GetMapping("/{num}/topics")
+    public ResponseEntity queryChapterTopics(@PathVariable("num") int num) {
+        List<AdminChapterDto> adminChapterDtoList = chapterService.queryTopicsInChapter(num);
         return new ResponseEntity(adminChapterDtoList, HttpStatus.OK);
     }
 

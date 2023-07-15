@@ -17,6 +17,9 @@ public class Chapter extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Lob
+    private String content;
+
     @Column(nullable = false, unique = true)
     private int number;
 
@@ -35,6 +38,11 @@ public class Chapter extends BaseEntity {
     public Chapter updateChapter(String title, int number) {
         this.title = title;
         this.number = number;
+        return this;
+    }
+
+    public Chapter updateContent(String content) {
+        this.content = content;
         return this;
     }
 

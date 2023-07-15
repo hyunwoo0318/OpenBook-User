@@ -74,6 +74,11 @@ public class ChapterService {
         return chapter.getTitle();
     }
 
+    public String queryChapterInfo(Integer num) {
+        Chapter chapter = checkChapter(num);
+        return chapter.getContent();
+    }
+
     private void checkChapterNum(int number) {
         chapterRepository.findOneByNumber(number).ifPresent(c -> {
             throw new CustomException(DUP_CHAPTER_NUM);
@@ -84,5 +89,11 @@ public class ChapterService {
         return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
             throw new CustomException(CHAPTER_NOT_FOUND);
         });
+    }
+
+    public void updateChapterInfo(Integer num, String content) {
+        Chapter chapter = checkChapter(num);
+
+        chapter.updateContent(content);
     }
 }
