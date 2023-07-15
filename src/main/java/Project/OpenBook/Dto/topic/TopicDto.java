@@ -1,5 +1,6 @@
 package Project.OpenBook.Dto.topic;
 
+import Project.OpenBook.Dto.PrimaryDateDto;
 import lombok.*;
 
 import javax.validation.constraints.Min;
@@ -7,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 @Getter
@@ -30,5 +32,7 @@ public class TopicDto {
 
    /* @NotBlank(message = "설명을 입력해주세요.")*/
     private String detail;
+
+    private List<PrimaryDateDto> dateList;
 
 }

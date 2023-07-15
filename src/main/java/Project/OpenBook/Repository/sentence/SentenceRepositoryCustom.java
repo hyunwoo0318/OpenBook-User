@@ -1,4 +1,4 @@
-package Project.OpenBook.Repository.Sentence;
+package Project.OpenBook.Repository.sentence;
 
 import Project.OpenBook.Domain.Sentence;
 

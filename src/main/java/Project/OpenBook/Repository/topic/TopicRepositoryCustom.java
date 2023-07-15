@@ -15,7 +15,6 @@ public interface  TopicRepositoryCustom {
 
     public Topic queryTopicByChoice(Long choiceId);
 
-    public List<Keyword> queryTopicKeywords(String topicTitle);
 
     public List<AdminChapterDto> queryAdminChapterDto(Integer chapterNum);
 

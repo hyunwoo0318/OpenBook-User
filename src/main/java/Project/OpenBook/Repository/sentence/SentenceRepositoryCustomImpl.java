@@ -1,8 +1,6 @@
-package Project.OpenBook.Repository.Sentence;
+package Project.OpenBook.Repository.sentence;
 
-import Project.OpenBook.Domain.QSentence;
 import Project.OpenBook.Domain.Sentence;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

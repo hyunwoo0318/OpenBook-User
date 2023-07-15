@@ -1,9 +1,11 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Dto.PrimaryDateDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 
+import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
 import Project.OpenBook.Repository.imagefile.ImageFileRepository;
-import Project.OpenBook.Repository.Sentence.SentenceRepository;
+import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
@@ -17,14 +19,13 @@ import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -49,7 +50,7 @@ public class TopicService {
 
     private final SentenceRepository  sentenceRepository;
 
-    private final ImageFileService imageFileService;
+    private final PrimaryDateRepository primaryDateRepository;
 
     public TopicDto queryTopic(String topicTitle) {
         checkTopic(topicTitle);
@@ -63,6 +64,7 @@ public class TopicService {
         Chapter chapter = checkChapter(topicDto.getChapter());
         checkDupTopicTitle(topicDto.getTitle());
 
+        //토픽 저장
         Topic topic = Topic.builder()
                 .chapter(chapter)
                 .category(category)
@@ -75,6 +77,13 @@ public class TopicService {
                 .build();
         topicRepository.save(topic);
 
+        //연표에 표시할 날짜 저장
+        List<PrimaryDateDto> dateList = topicDto.getDateList();
+        List<PrimaryDate> primaryDateList = dateList.stream().map(d -> new PrimaryDate(d.getDate(), d.getDateCheck(), d.getDateComment(), topic))
+                .collect(Collectors.toList());
+        primaryDateRepository.saveAll(primaryDateList);
+
+        //정답과 보기가 될수 있는 토픽인지 확인후 저장
         addDescriptionTopics(topic);
         addAnswerTopics(topic);
         return topic;
@@ -100,9 +109,21 @@ public class TopicService {
             flag = true;
         }
 
+        //토픽 수정
         topic.updateTopic(topicDto.getTitle(), topicDto.getStartDate(),topicDto.getEndDate(), topicDto.getDetail(),
                 chapter, category);
 
+        //연표에 나올 날짜 수정
+        List<PrimaryDate> prevPrimaryDateList = primaryDateRepository.queryDatesByTopic(topicTitle);
+        primaryDateRepository.deleteAllInBatch(prevPrimaryDateList);
+        List<PrimaryDate> primaryDateList = topicDto.getDateList().stream()
+                .map(d -> new PrimaryDate(d.getDate(), d.getDateCheck(), d.getDateComment(), topic))
+                .collect(Collectors.toList());
+        primaryDateRepository.saveAll(primaryDateList);
+
+
+
+        //시작날짜와 종료날짜가 변경된경우 보기와 정답이 될수있는지 다시 체크
         if (flag) {
             List<DupDate> dupDateList = dupDateRepository.queryAllByTopic(topic.getTitle());
             dupDateRepository.deleteAllInBatch(dupDateList);
@@ -126,12 +147,19 @@ public class TopicService {
             throw new CustomException(TOPIC_HAS_DESCRIPTION);
         }
 
-        List<Keyword> keywordList = topicRepository.queryTopicKeywords(topicTitle);
+        List<Keyword> keywordList = keywordRepository.queryKeywordsByTopic(topicTitle);
         if (!keywordList.isEmpty()) {
             throw new CustomException(TOPIC_HAS_KEYWORD);
         }
 
+        //연표에 나올 중요 연도들 삭제
+        List<PrimaryDate> primaryDateList = primaryDateRepository.queryDatesByTopic(topicTitle);
+        primaryDateRepository.deleteAllInBatch(primaryDateList);
+
+
         topicRepository.delete(topic);
+
+
         return true;
     }
 

@@ -1,6 +1,7 @@
 package Project.OpenBook.Repository.topic;
 
 import Project.OpenBook.Domain.*;
+import Project.OpenBook.Dto.PrimaryDateDto;
 import Project.OpenBook.Dto.chapter.ChapterTitleDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Dto.topic.TopicDto;
@@ -14,10 +15,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
 import static Project.OpenBook.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.QPrimaryDate.primaryDate;
 import static Project.OpenBook.Domain.QTopic.topic;
 
 
@@ -55,11 +58,6 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .fetchOne();
     }
 
-    @Override
-    public List<Keyword> queryTopicKeywords(String topicTitle) {
-        return null;
-    }
-
 
     @Override
     public List<AdminChapterDto> queryAdminChapterDto(Integer chapterNum) {
@@ -93,21 +91,28 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
 
     @Override
     public TopicDto queryTopicDto(String topicTitle) {
-        Tuple r = queryFactory.select(topic.chapter.number, topic.title, topic.category.name, topic.startDate,
+        Tuple r1 = queryFactory.select(topic.chapter.number, topic.title, topic.category.name, topic.startDate,
                         topic.endDate, topic.detail)
                 .from(topic)
                 .where(topic.title.eq(topicTitle))
                 .fetchOne();
 
+        List<PrimaryDate> dateList = queryFactory.selectFrom(primaryDate)
+                .where(primaryDate.topic.title.eq(topicTitle))
+                .fetch();
 
-            Integer chapter = r.get(topic.chapter.number);
-            String title = r.get(topic.title);
-            String category = r.get(topic.category.name);
-            Integer startDate = r.get(topic.startDate);
-            Integer endDate = r.get(topic.endDate);
-            String detail = r.get(topic.detail);
+        List<PrimaryDateDto> dateDtoList = dateList.stream().map(d -> new PrimaryDateDto(d.getDate(), d.getDateCheck(), d.getDateComment()))
+                .collect(Collectors.toList());
 
-        return new TopicDto(chapter, title, category, startDate, endDate, detail);
+
+        Integer chapter = r1.get(topic.chapter.number);
+            String title = r1.get(topic.title);
+            String category = r1.get(topic.category.name);
+            Integer startDate = r1.get(topic.startDate);
+            Integer endDate = r1.get(topic.endDate);
+            String detail = r1.get(topic.detail);
+
+        return new TopicDto(chapter, title, category, startDate, endDate, detail, dateDtoList);
 
     }
 
