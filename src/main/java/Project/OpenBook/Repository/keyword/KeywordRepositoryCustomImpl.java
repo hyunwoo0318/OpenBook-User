@@ -23,6 +23,14 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
                 .where(keyword.topic.title.eq(topicTitle))
                 .fetchOne();
     }
+
+    @Override
+    public List<Keyword> queryKeywordsByTopic(String topicTitle) {
+        return queryFactory.selectFrom(keyword)
+                .where(keyword.topic.title.eq(topicTitle))
+                .fetch();
+    }
+
     @Override
     public List<Keyword> queryKeywordsList(List<String> keywordNameList) {
         return queryFactory.selectDistinct(keyword)

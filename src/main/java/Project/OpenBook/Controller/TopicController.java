@@ -47,6 +47,7 @@ public class TopicController {
     @GetMapping("/topics/{topicTitle}/keywords")
     public ResponseEntity queryTopicKeywords(@PathVariable("topicTitle") String topicTitle) {
         List<KeywordDto> keywordDtoList = topicService.queryTopicKeywords(topicTitle);
+
         return new ResponseEntity(keywordDtoList, HttpStatus.OK);
     }
 

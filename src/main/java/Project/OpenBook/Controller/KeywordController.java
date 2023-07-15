@@ -2,7 +2,6 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.ImageFile;
 import Project.OpenBook.Dto.keyword.KeywordCreateDto;
-import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.keyword.KeywordUpdateDto;
 import Project.OpenBook.Dto.topic.TopicTitleDto;
 import Project.OpenBook.Service.ImageFileService;
@@ -15,7 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,9 +46,9 @@ public class KeywordController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 키워드 이름 입력")
     })
     @PostMapping("admin/keywords")
-    public ResponseEntity createService(@Validated @RequestBody KeywordCreateDto keywordCreateDto) {
-        ImageFile imageFile = imageFileService.convertToImageFile(keywordCreateDto.getFile());
-        keywordService.createKeyword(keywordCreateDto, imageFile);
+    public ResponseEntity createService(@RequestPart(value = "files", required = false)MultipartFile[] files,
+                                        @Validated @RequestPart(value = "dto") KeywordCreateDto keywordCreateDto) throws IOException {
+        keywordService.createKeyword(keywordCreateDto, files);
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -61,9 +62,9 @@ public class KeywordController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 키워드 이름 입력")
     })
     @PatchMapping("admin/keywords/{keywordId}")
-    public ResponseEntity updateKeyword(@PathVariable("keywordId") Long keywordId, @Validated @RequestBody KeywordUpdateDto keywordUpdateDto) {
-        ImageFile imageFile = imageFileService.convertToImageFile(keywordUpdateDto.getFile());
-        keywordService.updateKeyword(keywordId,keywordUpdateDto ,imageFile);
+    public ResponseEntity updateKeyword(@PathVariable("keywordId") Long keywordId,@RequestPart(value = "files", required = false)MultipartFile[] files,
+                                        @Validated @RequestPart(value = "dto") KeywordUpdateDto keywordUpdateDto) throws IOException {
+        keywordService.updateKeyword(keywordId,keywordUpdateDto, files );
         return new ResponseEntity(HttpStatus.OK);
     }
 

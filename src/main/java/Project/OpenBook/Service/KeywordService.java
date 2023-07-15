@@ -1,17 +1,18 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Domain.ImageFile;
 import Project.OpenBook.Domain.Keyword;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.keyword.KeywordCreateDto;
 import Project.OpenBook.Dto.keyword.KeywordUpdateDto;
-import Project.OpenBook.Repository.ImageFileRepository;
+import Project.OpenBook.Repository.imagefile.ImageFileRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,12 +25,13 @@ public class KeywordService {
     private final KeywordRepository keywordRepository;
     private final ImageFileRepository imageFileRepository;
     private final TopicRepository topicRepository;
+    private final ImageFileService imageFileService;
 
     public List<String> queryKeywords() {
         return keywordRepository.findAll().stream().map(k -> k.getName()).collect(Collectors.toList());
     }
 
-    public Keyword createKeyword(KeywordCreateDto keywordCreateDto, ImageFile file) {
+    public Keyword createKeyword(KeywordCreateDto keywordCreateDto, MultipartFile[] files) throws IOException {
 
         String name = keywordCreateDto.getName();
         String comment = keywordCreateDto.getComment();
@@ -48,13 +50,17 @@ public class KeywordService {
         keywordRepository.save(keyword);
 
         //이미지 저장
-        file.setKeywordId(keyword.getId());
-        imageFileRepository.save(file);
+        if(files.length != 0){
+            for (MultipartFile file : files) {
+                imageFileService.storeFile(file, keyword);
+            }
+        }
+
         return keyword;
     }
 
 
-    public Keyword updateKeyword(Long keywordId, KeywordUpdateDto keywordUpdateDto, ImageFile imageFile) {
+    public Keyword updateKeyword(Long keywordId, KeywordUpdateDto keywordUpdateDto, MultipartFile[] files) throws IOException {
 
         String name = keywordUpdateDto.getName();
         String comment = keywordUpdateDto.getComment();
@@ -64,20 +70,18 @@ public class KeywordService {
 
         //키워드 이름을 변경시 중복되는 키워드 이름이 있는지 확인해야함
         //키워드 이름이 같을 경우 확인할 필요없음.
-        if (keyword.getName() != name) {
+        if (!keyword.getName().equals(name)) {
             checkDupKeyword(name, title);
         }
 
         //키워드 수정
-        Keyword afterKeyword = keyword.updateKeyword(name, title);
+        Keyword afterKeyword = keyword.updateKeyword(name, comment);
 
-        //이미지 수정 -> 이미지의 변경이 일어날 경우 저장
-        ImageFile prevImageFile = imageFileRepository.findByKeywordId(keywordId);
-        if (prevImageFile.getStoredFileName() != imageFile.getStoredFileName()) {
-            imageFileRepository.delete(prevImageFile.getImageId());
-            imageFileRepository.save(imageFile);
+        //이미지 수정
+        imageFileService.deleteImages(keywordId);
+        for (MultipartFile file : files) {
+            imageFileService.storeFile(file, afterKeyword);
         }
-
         return afterKeyword;
     }
 
@@ -97,6 +101,7 @@ public class KeywordService {
     public void deleteKeyword(Long keywordId) {
         checkKeyword(keywordId);
 
+        imageFileService.deleteImages(keywordId);
         keywordRepository.deleteById(keywordId);
     }
 }

@@ -2,7 +2,7 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Dto.keyword.KeywordDto;
 
-import Project.OpenBook.Repository.ImageFileRepository;
+import Project.OpenBook.Repository.imagefile.ImageFileRepository;
 import Project.OpenBook.Repository.Sentence.SentenceRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Utils.CustomException;
@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import javax.transaction.Transactional;
 
@@ -188,7 +189,7 @@ public class TopicService {
 
     public List<KeywordDto> queryTopicKeywords(String topicTitle) {
         checkTopic(topicTitle);
-        List<Keyword> keywordList = topicRepository.queryTopicKeywords(topicTitle);
+        List<Keyword> keywordList = keywordRepository.queryKeywordsByTopic(topicTitle);
         List<KeywordDto> keywordDtoList = new ArrayList<>();
 
         for (Keyword keyword : keywordList) {
@@ -196,9 +197,15 @@ public class TopicService {
             String comment = keyword.getComment();
             Long id = keyword.getId();
 
-            ImageFile imageFile = imageFileRepository.findByKeywordId(id);
-            MultipartFile file = imageFileService.convertToMultiPartFIle(imageFile);
-            KeywordDto keywordDto = new KeywordDto(name, comment, file, id);
+            List<ImageFile> imageFiles = imageFileRepository.queryByKeyword(id);
+            List<String> imageUrlList = new ArrayList<>();
+            for (ImageFile imageFile : imageFiles) {
+                Long imgId = imageFile.getId();
+                String url = "http://localhost:8080/images/" + imgId;
+                imageUrlList.add(url);
+            }
+
+            KeywordDto keywordDto = new KeywordDto(name, comment, imageUrlList, id);
             keywordDtoList.add(keywordDto);
         }
         return keywordDtoList;

@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -18,7 +19,7 @@ public class KeywordDto {
 
     private String comment;
 
-    private MultipartFile file;
+    private List<String> imageUrlList;
 
     private Long id;
 }
