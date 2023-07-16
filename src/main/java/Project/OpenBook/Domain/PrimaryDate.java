@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -17,20 +15,20 @@ public class PrimaryDate extends BaseEntity{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer date;
+    private Integer extraDate;
 
-    private Boolean dateCheck;
+    private Boolean extraDateCheck;
 
-    private String dateComment;
+    private String extraDateComment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    public PrimaryDate(Integer date, Boolean dateCheck, String dateComment, Topic topic) {
-        this.date = date;
-        this.dateCheck = dateCheck;
-        this.dateComment = dateComment;
+    public PrimaryDate(Integer extraDate, Boolean extraDateCheck, String extraDateComment, Topic topic) {
+        this.extraDate = extraDate;
+        this.extraDateCheck = extraDateCheck;
+        this.extraDateComment = extraDateComment;
         this.topic = topic;
     }
 }

@@ -27,6 +27,10 @@ public class Topic extends BaseEntity{
 
     private Integer startDate;
     private Integer endDate;
+
+    private Boolean startDateCheck;
+
+    private Boolean endDateCheck;
     @ColumnDefault(value = "0")
     private int questionNum;
 
@@ -48,7 +52,8 @@ public class Topic extends BaseEntity{
     private List<Choice> choiceList = new ArrayList<>();
 
     @Builder
-    public Topic(String title, Integer startDate, Integer endDate, int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
+    public Topic(String title, Integer startDate, Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
+                 int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -57,16 +62,20 @@ public class Topic extends BaseEntity{
         this.detail = detail;
         this.chapter = chapter;
         this.category = category;
-
+        this.startDateCheck = startDateCheck;
+        this.endDateCheck = endDateCheck;
     }
 
-    public Topic updateTopic(String title,Integer startDate,Integer endDate, String detail, Chapter chapter, Category category) {
+    public Topic updateTopic(String title,Integer startDate,Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
+                             String detail, Chapter chapter, Category category) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.detail = detail;
         this.chapter = chapter;
         this.category = category;
+        this.startDateCheck = startDateCheck;
+        this.endDateCheck = endDateCheck;
         return this;
     }
 

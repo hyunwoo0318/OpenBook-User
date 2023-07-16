@@ -2,13 +2,10 @@ package Project.OpenBook.Repository.topic;
 
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.PrimaryDateDto;
-import Project.OpenBook.Dto.chapter.ChapterTitleDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Dto.topic.TopicDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.MathExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -101,7 +98,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .where(primaryDate.topic.title.eq(topicTitle))
                 .fetch();
 
-        List<PrimaryDateDto> dateDtoList = dateList.stream().map(d -> new PrimaryDateDto(d.getDate(), d.getDateCheck(), d.getDateComment()))
+        List<PrimaryDateDto> dateDtoList = dateList.stream().map(d -> new PrimaryDateDto(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment()))
                 .collect(Collectors.toList());
 
 

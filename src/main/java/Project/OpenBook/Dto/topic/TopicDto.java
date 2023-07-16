@@ -28,6 +28,10 @@ public class TopicDto {
 
     private Integer startDate;
 
+    private Boolean startDateCheck;
+
+    private Boolean endDateCheck;
+
     private Integer endDate;
 
    /* @NotBlank(message = "설명을 입력해주세요.")*/

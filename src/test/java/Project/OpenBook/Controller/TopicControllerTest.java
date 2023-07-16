@@ -35,7 +35,6 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -149,7 +148,7 @@ class TopicControllerTest {
             ResponseEntity<TopicDto> response = restTemplate.getForEntity(URL + "title1", TopicDto.class);
 
             List<PrimaryDateDto> dateDtoList = primaryDateRepository.findAll().stream()
-                    .map(p -> new PrimaryDateDto(p.getDate(), p.getDateCheck(), p.getDateComment()))
+                    .map(p -> new PrimaryDateDto(p.getExtraDate(), p.getExtraDateCheck(), p.getExtraDateComment()))
                     .collect(Collectors.toList());
 
             TopicDto expectResult = new TopicDto(1, "title1", "c1", 100, 200, "detail1",dateDtoList);
@@ -404,7 +403,7 @@ class TopicControllerTest {
             List<PrimaryDate> dateList = primaryDateRepository.queryDatesByTopic(topic.getId());
             assertThat(dateList.size()).isEqualTo(1);
             PrimaryDate primaryDate = dateList.get(0);
-            assertThat(new PrimaryDateDto(primaryDate.getDate(), primaryDate.getDateCheck(), primaryDate.getDateComment()))
+            assertThat(new PrimaryDateDto(primaryDate.getExtraDate(), primaryDate.getExtraDateCheck(), primaryDate.getExtraDateComment()))
                     .usingRecursiveComparison().isEqualTo(dateDto);
         }
 
