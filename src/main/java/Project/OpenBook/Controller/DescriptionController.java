@@ -41,18 +41,6 @@ public class DescriptionController {
         return new ResponseEntity(descriptionDto, HttpStatus.OK);
     }
 
-    @ApiOperation("특정 토픽별 모든 보기 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적인 토픽별 보기 조회"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽별 보기 조회 요청")
-    })
-    @GetMapping("/topics/{topicTitle}/descriptions")
-    public ResponseEntity getDescriptionsInTopic(@PathVariable String topicTitle){
-        List<Description> descriptionList = descriptionService.queryDescriptionsInTopic(topicTitle);
-
-        List<DescriptionDto> descriptionDtoList = descriptionList.stream().map(d -> new DescriptionDto(d)).collect(Collectors.toList());
-        return new ResponseEntity(descriptionDtoList, HttpStatus.OK);
-    }
 
     @ApiOperation(value = "특정 토픽의 선지들을 조회", notes = "각각의 선지가 특정 보기와 내용이 겹친다고 선정되었는지에 대한 data return")
     @ApiResponses(value = {

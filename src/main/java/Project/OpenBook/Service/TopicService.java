@@ -117,7 +117,7 @@ public class TopicService {
                 chapter, category);
 
         //연표에 나올 날짜 수정
-        List<PrimaryDate> prevPrimaryDateList = primaryDateRepository.queryDatesByTopic(topicTitle);
+        List<PrimaryDate> prevPrimaryDateList = primaryDateRepository.queryDatesByTopic(topic.getId());
         primaryDateRepository.deleteAllInBatch(prevPrimaryDateList);
         List<PrimaryDate> primaryDateList = topicDto.getDateList().stream()
                 .map(d -> new PrimaryDate(d.getDate(), d.getDateCheck(), d.getDateComment(), topic))
@@ -156,7 +156,7 @@ public class TopicService {
         }
 
         //연표에 나올 중요 연도들 삭제
-        List<PrimaryDate> primaryDateList = primaryDateRepository.queryDatesByTopic(topicTitle);
+        List<PrimaryDate> primaryDateList = primaryDateRepository.queryDatesByTopic(topic.getId());
         primaryDateRepository.deleteAllInBatch(primaryDateList);
 
 

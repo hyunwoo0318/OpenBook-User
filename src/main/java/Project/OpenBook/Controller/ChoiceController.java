@@ -22,15 +22,7 @@ public class ChoiceController {
 
     private final ChoiceService choiceService;
 
-    @ApiOperation(value = "특정 topic의 모든 선지를 보여줌")
-    @ApiResponses( value = {
-            @ApiResponse(responseCode = "200", description = "성공적인 조회")
-    })
-    @GetMapping("/admin/topics/{topicTitle}/choices/")
-    public ResponseEntity getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
-        List<ChoiceDto> choiceList = choiceService.queryChoicesByTopic(topicTitle);
-        return new ResponseEntity(choiceList,HttpStatus.OK);
-    }
+
 
     @ApiOperation(value = "특정 선지를 보여줌")
     @ApiResponses(value = {

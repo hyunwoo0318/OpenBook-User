@@ -1,14 +1,19 @@
 package Project.OpenBook.Controller;
 
+import Project.OpenBook.Domain.Description;
 import Project.OpenBook.Domain.Sentence;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.Sentence.SentenceDto;
+import Project.OpenBook.Dto.choice.ChoiceDto;
+import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.keyword.KeywordListDto;
 import Project.OpenBook.Dto.topic.TopicDto;
 import Project.OpenBook.Dto.topic.TopicTitleDto;
 import Project.OpenBook.Dto.topic.TopicTitleListDto;
 import Project.OpenBook.Service.ChapterService;
+import Project.OpenBook.Service.ChoiceService;
+import Project.OpenBook.Service.DescriptionService;
 import Project.OpenBook.Service.TopicService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -27,6 +32,8 @@ import java.util.stream.Collectors;
 public class TopicController {
 
     private final TopicService topicService;
+    private final DescriptionService descriptionService;
+    private final ChoiceService choiceService;
 
     @ApiOperation(value = "각 토픽에 대한 상세정보 조회")
     @ApiResponses(value = {
@@ -64,7 +71,28 @@ public class TopicController {
         return new ResponseEntity(sentenceDtoList, HttpStatus.OK);
     }
 
+    @ApiOperation("특정 토픽별 모든 보기 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적인 토픽별 보기 조회"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽별 보기 조회 요청")
+    })
+    @GetMapping("/topics/{topicTitle}/descriptions")
+    public ResponseEntity getDescriptionsInTopic(@PathVariable String topicTitle){
+        List<Description> descriptionList = descriptionService.queryDescriptionsInTopic(topicTitle);
 
+        List<DescriptionDto> descriptionDtoList = descriptionList.stream().map(d -> new DescriptionDto(d)).collect(Collectors.toList());
+        return new ResponseEntity(descriptionDtoList, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "특정 토픽별 모든 선지 조회")
+    @ApiResponses( value = {
+            @ApiResponse(responseCode = "200", description = "성공적인 조회")
+    })
+    @GetMapping("/admin/topics/{topicTitle}/choices/")
+    public ResponseEntity getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
+        List<ChoiceDto> choiceList = choiceService.queryChoicesByTopic(topicTitle);
+        return new ResponseEntity(choiceList,HttpStatus.OK);
+    }
 
 
     @ApiOperation(value = "새로운 상세정보 입력")

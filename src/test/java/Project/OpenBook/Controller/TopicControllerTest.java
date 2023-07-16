@@ -2,6 +2,9 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.PrimaryDateDto;
+import Project.OpenBook.Dto.Sentence.SentenceDto;
+import Project.OpenBook.Dto.choice.ChoiceDto;
+import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
@@ -32,6 +35,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -177,9 +181,7 @@ class TopicControllerTest {
             suffix = "/topics/";
             initConfig();
 
-            file1 = new ImageFile("originalName1", "storedName1", k1);
-            file2 = new ImageFile("originalName2", "storedName2", k1);
-            imageFileRepository.saveAllAndFlush(Arrays.asList(file1, file2));
+
         }
 
         @AfterEach
@@ -191,6 +193,9 @@ class TopicControllerTest {
         @BeforeEach
         public void setting() {
             baseSetting();
+            file1 = new ImageFile( "image1.png", k1);
+            file2 = new ImageFile( "image2.png", k1);
+            imageFileRepository.saveAllAndFlush(Arrays.asList(file1, file2));
         }
         @DisplayName("특정 토픽의 전체 키워드 조회 성공")
         @Test
@@ -198,11 +203,63 @@ class TopicControllerTest {
             ResponseEntity<List<KeywordDto>> response = restTemplate.exchange(URL + "title1/keywords", HttpMethod.GET, null, new ParameterizedTypeReference<List<KeywordDto>>() {
             });
 
-            String baseImageUrl = "http://localhost:" + port + "/images/";
+            String baseImageUrl = "http://localhost:8080/images/";
 
             KeywordDto dto1 = new KeywordDto(k1.getName(), k1.getComment(), Arrays.asList(baseImageUrl + file1.getId(), baseImageUrl + file2.getId()), k1.getId());
-            KeywordDto dto2 = new KeywordDto(k2.getName(), k2.getComment(), null, k2.getId());
+            KeywordDto dto2 = new KeywordDto(k2.getName(), k2.getComment(), new ArrayList<>(), k2.getId());
+            KeywordDto dto3 = new KeywordDto(k3.getName(), k3.getComment(), new ArrayList<>(), k3.getId());
 
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2, dto3));
+        }
+
+        @DisplayName("특정 토픽의 전체 키워드 조회 실패 - 존재하지 않는 토픽 제목 입력하기")
+        @Test
+        public void queryTopicFail(){
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title-1/keywords", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_NOT_FOUND.getErrorMessage())));
+        }
+    }
+
+    @Nested
+    @DisplayName("특정 토픽의 전체 문장 조회 - GET /topics/{topicTitle}/sentences")
+    @TestInstance(PER_CLASS)
+    public class queryTopicSentence{
+
+        private Sentence s1,s2;
+        @BeforeAll
+        public void init(){
+            suffix = "/topics/";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            sentenceRepository.deleteAllInBatch();
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+            s1 = new Sentence("sentence1",t1);
+            s2 = new Sentence("sentence2",t1);
+            sentenceRepository.saveAllAndFlush(Arrays.asList(s1, s2));
+
+        }
+        @DisplayName("특정 토픽의 전체 문장 조회 성공")
+        @Test
+        public void querySentencesSuccess() {
+            ResponseEntity<List<SentenceDto>> response = restTemplate.exchange(URL + "title1/sentences", HttpMethod.GET, null, new ParameterizedTypeReference<List<SentenceDto>>() {
+            });
+
+            String baseImageUrl = "http://localhost:8080/images/";
+
+            SentenceDto dto1 = new SentenceDto(s1.getName(), s1.getId());
+            SentenceDto dto2= new SentenceDto(s2.getName(), s2.getId());
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2));
         }
@@ -215,6 +272,97 @@ class TopicControllerTest {
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_NOT_FOUND.getErrorMessage())));
+        }
+    }
+
+    @Nested
+    @DisplayName("특정 토픽의 모든 선지 조회 - GET /admin/topics/{topicTitle}/choices/")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    public class queryTopicsChoices{
+
+        private Choice choice1, choice2, choice3, choice4, choice5;
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/topics/";
+            initConfig();
+        }
+
+        @BeforeEach
+        public void setting(){
+            baseSetting();
+            /**
+             * choice1,2,3 -> topic1
+             * choice4,5 -> topic2
+             */
+            choice1 = new Choice("choice1", t1);
+            choice2 = new Choice("choice2", t1);
+            choice3 = new Choice("choice3", t1);
+
+            choice4 = new Choice("choice4", t2);
+            choice5 = new Choice("choice5", t2);
+
+            choiceRepository.saveAllAndFlush(Arrays.asList(choice1, choice2, choice3, choice4, choice5));
+        }
+
+        @AfterEach
+        public void clear(){
+            choiceRepository.deleteAllInBatch();
+            baseClear();
+        }
+
+        @DisplayName("특정 토픽의 모든 선지를 조회 성공")
+        @Test
+        public void queryChoicesInTopicsSuccess() {
+            String topicTitle = "topic1";
+            ResponseEntity<List<ChoiceDto>> response = restTemplate.exchange(URL + "title1/choices/", HttpMethod.GET, null, new ParameterizedTypeReference<List<ChoiceDto>>() {}, topicTitle);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            List<ChoiceDto> expectBody = Arrays.asList(new ChoiceDto(choice1), new ChoiceDto(choice2), new ChoiceDto(choice3));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(expectBody);
+        }
+
+        //TODO : 선지 조회 실패 로직
+    }
+
+    @Nested
+    @DisplayName("특정 토픽의 모든 보기 조회 - GET /admin/topics/{topicTitle}/descriptions/")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    public class queryTopicDescriptions{
+
+        private Description desc1, desc2, desc3, desc4, desc5;
+        @BeforeAll
+        public void init(){
+            suffix = "/topics/";
+            initConfig();
+        }
+
+        @BeforeEach
+        public void setting(){
+            baseSetting();
+            desc1 = new Description("desc1", t1);
+            desc2 = new Description("desc2", t1);
+            desc3 = new Description("desc3", t1);
+
+            desc4 = new Description("desc4", t2);
+            desc5 = new Description("desc5", t2);
+
+            descriptionRepository.saveAllAndFlush(Arrays.asList(desc1, desc2, desc3, desc4, desc5));
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @DisplayName("특정 토픽의 모든 보기를 조회 성공")
+        @Test
+        public void queryDescriptionsInTopicsSuccess() {
+            String topicTitle = "topic1";
+            ResponseEntity<List<DescriptionDto>> response = restTemplate.exchange(URL + "title1/descriptions/", HttpMethod.GET, null, new ParameterizedTypeReference<List<DescriptionDto>>() {}, topicTitle);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            List<DescriptionDto> expectBody = Arrays.asList(new DescriptionDto(desc1), new DescriptionDto(desc2), new DescriptionDto(desc3));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(expectBody);
         }
     }
     @Nested
@@ -249,14 +397,15 @@ class TopicControllerTest {
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             //토픽이 잘 생성되었는지 확인
-            assertThat(topicRepository.findTopicByTitle("title2").isPresent()).isTrue();
+            Topic topic = topicRepository.findTopicByTitle("title33").get();
             assertThat(topicRepository.findAll().size()).isEqualTo(prevSize + 1);
 
             //연표에 나올 연도가 잘 입력되었는지 확인
-            List<PrimaryDate> dateList = primaryDateRepository.queryDatesByTopic("title2");
+            List<PrimaryDate> dateList = primaryDateRepository.queryDatesByTopic(topic.getId());
             assertThat(dateList.size()).isEqualTo(1);
-            assertThat(dateList.get(0).getDate()).usingRecursiveComparison()
-                    .isEqualTo(new PrimaryDate(dateDto.getDate(), dateDto.getDateCheck(), dateDto.getDateComment(), t1));
+            PrimaryDate primaryDate = dateList.get(0);
+            assertThat(new PrimaryDateDto(primaryDate.getDate(), primaryDate.getDateCheck(), primaryDate.getDateComment()))
+                    .usingRecursiveComparison().isEqualTo(dateDto);
         }
 
         @DisplayName("토픽 생성 실패 - DTO validation")
@@ -347,10 +496,10 @@ class TopicControllerTest {
             prevSize = topicRepository.findAll().size();
             Category c2 = new Category("c2");
             categoryRepository.saveAndFlush(c2);
-            dateDtoList.add(new PrimaryDateDto(19980318, true, "birthday!"));
+            dateDtoList = Arrays.asList(new PrimaryDateDto(19980318, true, "birthday!"));
         }
 
-        @DisplayName("기존 상세정보 변경 성공 - PATCH admin/topics")
+        @DisplayName("기존 상세정보 변경 성공")
         @Test
         public void updateTopicSuccess() {
             TopicDto dto = new TopicDto(1, "title3", "c2", -1000, 1000, "detail123",dateDtoList);

@@ -100,37 +100,7 @@ class ChoiceControllerTest {
         categoryRepository.deleteAllInBatch();
     }
 
-    @Nested
-    @DisplayName("특정 토픽의 모든 선지 조회 - GET /admin/topics/{topicTitle}/choices/")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public class queryTopicsChoices{
-        @BeforeAll
-        public void init(){
-            suffix = "/admin/topics/";
-            initConfig();
-        }
 
-        @BeforeEach
-        public void setting(){
-            baseSetting();
-        }
-
-        @AfterEach
-        public void clear(){
-            baseClear();
-        }
-
-        @DisplayName("특정 토픽의 모든 선지를 조회 성공")
-        @Test
-        public void queryChoicesInTopicsSuccess() {
-            String topicTitle = "topic1";
-            ResponseEntity<List<ChoiceDto>> response = restTemplate.exchange(URL + "title1/choices/", HttpMethod.GET, null, new ParameterizedTypeReference<List<ChoiceDto>>() {}, topicTitle);
-
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            List<ChoiceDto> expectBody = Arrays.asList(new ChoiceDto(choice1), new ChoiceDto(choice2), new ChoiceDto(choice3));
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(expectBody);
-        }
-    }
 
     @Nested
     @DisplayName("특정 선지 조회 - GET /admin/choices/{choiceId}")

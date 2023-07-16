@@ -101,37 +101,7 @@ class DescriptionControllerTest {
         categoryRepository.deleteAllInBatch();
     }
 
-    @Nested
-    @DisplayName("특정 토픽의 모든 보기 조회 - GET /admin/topics/{topicTitle}/descriptions/")
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    public class queryTopicDescriptions{
-        @BeforeAll
-        public void init(){
-            suffix = "/topics/";
-            initConfig();
-        }
 
-        @BeforeEach
-        public void setting(){
-            baseSetting();
-        }
-
-        @AfterEach
-        public void clear(){
-            baseClear();
-        }
-
-        @DisplayName("특정 토픽의 모든 보기를 조회 성공")
-        @Test
-        public void queryDescriptionsInTopicsSuccess() {
-            String topicTitle = "topic1";
-            ResponseEntity<List<DescriptionDto>> response = restTemplate.exchange(URL + "title1/descriptions/", HttpMethod.GET, null, new ParameterizedTypeReference<List<DescriptionDto>>() {}, topicTitle);
-
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            List<DescriptionDto> expectBody = Arrays.asList(new DescriptionDto(desc1), new DescriptionDto(desc2), new DescriptionDto(desc3));
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(expectBody);
-        }
-    }
 
     @Nested
     @DisplayName("특정 보기 조회 - GET /admin/descriptions/{choiceId}")
@@ -247,7 +217,7 @@ class DescriptionControllerTest {
     }
 
     @Nested
-    @DisplayName("보기 수정 - PATCH /admin/descriptions/{choiceId}")
+    @DisplayName("보기 수정 - PATCH /admin/descriptions/{descriptionId}")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public class updateDescription{
 
@@ -324,7 +294,7 @@ class DescriptionControllerTest {
     }
 
     @Nested
-    @DisplayName("선지 삭제 - DELETE /admin/choices/{choiceId}")
+    @DisplayName("보기 삭제 - DELETE /admin/descriptions/{descriptionId}")
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     public class deleteDescription{
 
