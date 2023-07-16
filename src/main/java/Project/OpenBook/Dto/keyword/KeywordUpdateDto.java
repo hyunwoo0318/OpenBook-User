@@ -15,5 +15,6 @@ public class KeywordUpdateDto {
     private String name;
     private String comment;
 
-    private List<String> fileList;
+//    private List<String> fileList;
+    private String file;
 }

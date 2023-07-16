@@ -4,6 +4,7 @@ package Project.OpenBook.Controller;
 import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.ChapterDto;
+import Project.OpenBook.Dto.chapter.ChapterInfoDto;
 import Project.OpenBook.Dto.chapter.ChapterListDto;
 import Project.OpenBook.Dto.chapter.ChapterTitleDto;
 import Project.OpenBook.Dto.error.ErrorDto;
@@ -69,6 +70,8 @@ class ChapterControllerTest {
 
     String URL;
 
+    String chapterInfo;
+
     private void initConfig() {
         URL = prefix + port + suffix;
         restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
@@ -79,10 +82,10 @@ class ChapterControllerTest {
         c1 = new Category("유물");
         categoryRepository.saveAndFlush(c1);
 
-        String chapterInfo = "chapterInfo!!";
+        chapterInfo = "chapterInfo!!";
         ch1 = new Chapter("ch1", chapterNum);
-        chapterRepository.saveAndFlush(ch1);
         ch1.updateContent(chapterInfo);
+        chapterRepository.saveAndFlush(ch1);
 
         t1 = new Topic("title1", 1234, 2314, 0, 0, "detail1", ch1, c1);
         topicRepository.saveAndFlush(t1);
@@ -244,6 +247,115 @@ class ChapterControllerTest {
         }
 
     }
+
+    @Nested
+    @DisplayName("단원 학습 조회 - GET /admin/chapters/{num}/info")
+    @TestInstance(PER_CLASS)
+    public class queryChapterInfo{
+
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/chapters/";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+
+        @DisplayName("단원 학습 조회 성공")
+        @Test
+        public void queryChapterInfoSuccess() {
+            ResponseEntity<ChapterInfoDto> response = restTemplate.getForEntity(URL + ch1.getNumber() + "/info", ChapterInfoDto.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody().getContent()).isEqualTo(ch1.getContent());
+        }
+
+        @DisplayName("단원 학습 조회 실패 - 존재하지 않는 단원번호 입력")
+        @Test
+        public void queryChapterInfoFail() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-111/info", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
+
+        }
+    }
+
+    @Nested
+    @DisplayName("단원 학습 수정- PATCH /admin/chapters/{num}/info")
+    @TestInstance(PER_CLASS)
+    public class updateChapterInfo{
+
+        private int chapterNum;
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/chapters/";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+            chapterNum = ch1.getNumber();
+        }
+
+        @DisplayName("단원 학습 수정 성공")
+        @Test
+        public void updateChapterInfoSuccess() {
+            ChapterInfoDto dto = new ChapterInfoDto("new Info");
+            ResponseEntity<Void> response = restTemplate.exchange(URL + chapterNum + "/info", HttpMethod.PATCH,
+                    new HttpEntity<>(dto), Void.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(chapterRepository.findOneByNumber(chapterNum).get().getContent()).isEqualTo(dto.getContent());
+        }
+
+
+        @DisplayName("단원 학습 수정 실패 - DTO Validation")
+        @Test
+        public void updateChapterInfoFailWrongDto() {
+            //내용을 입력하지 않은 경우
+            ChapterInfoDto wrongDto = new ChapterInfoDto();
+
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + chapterNum + "/info", HttpMethod.PATCH,
+                    new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            List<ErrorMsgDto> body = response.getBody();
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+            assertThat(body.size()).isEqualTo(1);
+        }
+
+        @DisplayName("단원 학습 수정 실패 - 존재하지 않는 단원 번호 입력")
+        @Test
+        public void updateChapterFailNotFoundNum(){
+            ChapterInfoDto dto = new ChapterInfoDto("new Content");
+            //존재하지 않는 단원 수정 요청
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-1/info", HttpMethod.PATCH,
+                    new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            List<ErrorMsgDto> body = response.getBody();
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(body).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
+
+        }
+    }
+
 
     @Nested
     @DisplayName("단원 저장- POST /admin/chapters")

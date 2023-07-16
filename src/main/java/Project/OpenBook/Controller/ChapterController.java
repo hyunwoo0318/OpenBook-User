@@ -59,7 +59,7 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 설명 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
-    @GetMapping("/chapters/{num}/info")
+    @GetMapping("/{num}/info")
     public ResponseEntity queryChapterInfo(@PathVariable("num") Integer num){
         String info = chapterService.queryChapterInfo(num);
         ChapterInfoDto chapterInfoDto = new ChapterInfoDto(info);

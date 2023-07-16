@@ -36,7 +36,10 @@ public class KeywordService {
         String name = keywordCreateDto.getName();
         String comment = keywordCreateDto.getComment();
         String topicTitle = keywordCreateDto.getTopic();
+        String encodedFile = keywordCreateDto.getFile();
+/*
         List<String> fileList = keywordCreateDto.getFileList();
+*/
 
         //입력 받은 토픽 제목이 실제 존재하는 토픽 제목인지 확인
         Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
@@ -51,9 +54,10 @@ public class KeywordService {
         keywordRepository.save(keyword);
 
         //이미지 저장
-        for (String encodedFile : fileList) {
-            imageFileService.storeFile(encodedFile, keyword);
-        }
+//        for (String encodedFile : fileList) {
+//            imageFileService.storeFile(encodedFile, keyword);
+//        }
+        imageFileService.storeFile(encodedFile, keyword);
 
         return keyword;
     }
@@ -63,7 +67,8 @@ public class KeywordService {
 
         String name = keywordUpdateDto.getName();
         String comment = keywordUpdateDto.getComment();
-        List<String> fileList = keywordUpdateDto.getFileList();
+//        List<String> fileList = keywordUpdateDto.getFileList();
+        String encodedFile = keywordUpdateDto.getFile();
 
         Keyword keyword = checkKeyword(keywordId);
         String title = keyword.getTopic().getTitle();
@@ -79,9 +84,10 @@ public class KeywordService {
 
         //이미지 수정
         imageFileService.deleteImages(keywordId);
-        for (String encodedFile : fileList) {
-            imageFileService.storeFile(encodedFile, afterKeyword);
-        }
+//        for (String encodedFile : fileList) {
+//            imageFileService.storeFile(encodedFile, afterKeyword);
+//        }
+        imageFileService.storeFile(encodedFile, afterKeyword);
         return afterKeyword;
     }
 

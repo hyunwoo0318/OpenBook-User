@@ -22,5 +22,6 @@ public class KeywordCreateDto {
     private String topic;
 
 
-    private List<String> fileList = new ArrayList<>();
+//    private List<String> fileList = new ArrayList<>();
+    private String file;
 }
