@@ -98,8 +98,8 @@ class TopicControllerTest {
         ch1 = new Chapter("ch1", 1);
         chapterRepository.saveAndFlush(ch1);
 
-        t1 = new Topic("title1", 100, 200, 0, 0, "detail1", ch1, c1);
-        t2 = new Topic("title2", 300, 400, 0, 0, "detail2", ch1, c1);
+        t1 = new Topic("title1", 100, 200, false,false,0, 0, "detail1", ch1, c1);
+        t2 = new Topic("title2", 300, 400, false,false,0, 0, "detail2", ch1, c1);
         topicRepository.saveAndFlush(t1);
         topicRepository.saveAndFlush(t2);
 
@@ -151,7 +151,7 @@ class TopicControllerTest {
                     .map(p -> new PrimaryDateDto(p.getExtraDate(), p.getExtraDateCheck(), p.getExtraDateComment()))
                     .collect(Collectors.toList());
 
-            TopicDto expectResult = new TopicDto(1, "title1", "c1", 100, 200, "detail1",dateDtoList);
+            TopicDto expectResult = new TopicDto(1, "title1", "c1", 100, false,false,200, "detail1",dateDtoList);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(expectResult);
         }
@@ -390,7 +390,7 @@ class TopicControllerTest {
         @Test
         public void queryKeywordsSuccess() {
             PrimaryDateDto dateDto = new PrimaryDateDto(13330111, true, "newComment1");
-            TopicDto topicDto = new TopicDto(1, "title33", "c1", 19980318, 20230321, "detail2",Arrays.asList(dateDto));
+            TopicDto topicDto = new TopicDto(1, "title33", "c1", 19980318,false,false, 20230321, "detail2",Arrays.asList(dateDto));
 
             ResponseEntity<Void> response = restTemplate.postForEntity(URL, topicDto, Void.class);
 
@@ -426,7 +426,7 @@ class TopicControllerTest {
         @DisplayName("새로운 토픽 추가 실패 - 제목이 중복되는 경우")
         @Test
         public void createTopicFailDupTitle() {
-            TopicDto wrongDto = new TopicDto(1, "title1", "c1", 0, 0, "detail123",null);
+            TopicDto wrongDto = new TopicDto(1, "title1", "c1", 0,false,false, 0, "detail123",null);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
@@ -441,7 +441,7 @@ class TopicControllerTest {
         @DisplayName("새로운 토픽 추가 실패 - 존재하지 않는 단원 번호를 입력하는 경우")
         @Test
         public void createTopicFailWNotExistChapter() {
-            TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0, 0, "detail123",null);
+            TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0,false,false, 0, "detail123",null);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
@@ -455,7 +455,7 @@ class TopicControllerTest {
         @DisplayName("새로운 토픽 추가 실패 - 존재하지 않는 카테고리 이름을 입력하는 경우")
         @Test
         public void createTopicFailNotExistCategory() {
-            TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0, 0, "detail123",null);
+            TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0,false,false, 0, "detail123",null);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
@@ -501,7 +501,7 @@ class TopicControllerTest {
         @DisplayName("기존 상세정보 변경 성공")
         @Test
         public void updateTopicSuccess() {
-            TopicDto dto = new TopicDto(1, "title3", "c2", -1000, 1000, "detail123",dateDtoList);
+            TopicDto dto = new TopicDto(1, "title3", "c2", -1000,false,false, 1000, "detail123",dateDtoList);
 
             ResponseEntity<Void> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH, new HttpEntity<>(dto), Void.class);
 
@@ -533,7 +533,7 @@ class TopicControllerTest {
         @DisplayName("기존 토픽 변경 실패 - 중복된 제목을 입력하는 경우")
         @Test
         public void updateTopicFailDupTitle() {
-            TopicDto wrongDto = new TopicDto(1, "title2", "c1", 0, 0, "detail123",dateDtoList);
+            TopicDto wrongDto = new TopicDto(1, "title2", "c1", 0,false,false, 0, "detail123",dateDtoList);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
@@ -547,7 +547,7 @@ class TopicControllerTest {
         @DisplayName("기존 토픽 변경 실패 - 존재하지 않는 단원 입력")
         @Test
         public void updateTopicFailNotExistChapter() {
-            TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0, 0, "detail123",dateDtoList);
+            TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0,false,false, 0, "detail123",dateDtoList);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
@@ -561,7 +561,7 @@ class TopicControllerTest {
         @DisplayName("기존 토픽 변경 실패 - 존재하지 않는 카테고리 입력 ")
         @Test
         public void updateTopicFailNotExistCategory() {
-            TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0, 0, "detail123",dateDtoList);
+            TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0,false,false, 0, "detail123",dateDtoList);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 

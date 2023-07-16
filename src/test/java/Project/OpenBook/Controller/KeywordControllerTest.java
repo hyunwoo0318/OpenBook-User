@@ -79,7 +79,7 @@ public class KeywordControllerTest {
         ch1 = new Chapter("ch1", 1);
         chapterRepository.saveAndFlush(ch1);
 
-        t1 = new Topic("title1", null, null, 0, 0, "detail1", ch1, c1);
+        t1 = new Topic("title1", null, null, false,false,0, 0, "detail1", ch1, c1);
         topicRepository.saveAndFlush(t1);
 
         k1 = new Keyword("k1","c1",t1);
@@ -123,7 +123,7 @@ public class KeywordControllerTest {
         @DisplayName("키워드 생성 성공")
         @Test
         public void createKeywordsSuccess() {
-            KeywordCreateDto keywordDto = new KeywordCreateDto("newName1", "newComment1", t1.getTitle(), new ArrayList<>());
+            KeywordCreateDto keywordDto = new KeywordCreateDto("newName1", "newComment1", t1.getTitle(), "");
 
             //TODO : 파일 삽입 테스트
             ResponseEntity<Void> response = restTemplate.postForEntity(URL, keywordDto, Void.class);
@@ -157,7 +157,7 @@ public class KeywordControllerTest {
         @Test
         public void createKeywordsFailDupName() {
            //이미 존재하는 키워드와 이름이 중복되는 경우
-            KeywordCreateDto wrongDto = new KeywordCreateDto("k1", "c1", t1.getTitle(),new ArrayList<>());
+            KeywordCreateDto wrongDto = new KeywordCreateDto("k1", "c1", t1.getTitle(),"");
 
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
@@ -175,7 +175,7 @@ public class KeywordControllerTest {
         @Test
         public void createKeywordsFailWrongTopicTitle() {
             //존재하지 않는 토픽제목 입력
-            KeywordCreateDto wrongDto = new KeywordCreateDto("k1", "c1", "wrongTitle1",new ArrayList<>());
+            KeywordCreateDto wrongDto = new KeywordCreateDto("k1", "c1", "wrongTitle1","");
 
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});

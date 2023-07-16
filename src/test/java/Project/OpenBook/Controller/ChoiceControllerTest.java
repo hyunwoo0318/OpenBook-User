@@ -74,8 +74,8 @@ class ChoiceControllerTest {
         chapterRepository.save(ch1);
         categoryRepository.save(c1);
 
-        topic1 = new Topic("title1", null, null, 0, 0, "detail1", ch1, c1);
-        topic2 = new Topic("title2", null, null, 0, 0, "detail2", ch1, c1);
+        topic1 = new Topic("title1", null, null, false,false,0, 0, "detail1", ch1, c1);
+        topic2 = new Topic("title2", null, null, false,false,0, 0, "detail2", ch1, c1);
 
         topicRepository.save(topic1);
         topicRepository.save(topic2);

@@ -89,7 +89,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
     @Override
     public TopicDto queryTopicDto(String topicTitle) {
         Tuple r1 = queryFactory.select(topic.chapter.number, topic.title, topic.category.name, topic.startDate,
-                        topic.endDate, topic.detail)
+                        topic.endDate, topic.detail, topic.startDateCheck, topic.endDateCheck)
                 .from(topic)
                 .where(topic.title.eq(topicTitle))
                 .fetchOne();
@@ -108,9 +108,10 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
             Integer startDate = r1.get(topic.startDate);
             Integer endDate = r1.get(topic.endDate);
             String detail = r1.get(topic.detail);
+        Boolean startDateCheck = r1.get(topic.startDateCheck);
+        Boolean endDateCheck = r1.get(topic.endDateCheck);
 
-        return new TopicDto(chapter, title, category, startDate, endDate, detail, dateDtoList);
-
+        return new TopicDto(chapter, title, category, startDate,startDateCheck, endDateCheck, endDate, detail, dateDtoList);
     }
 
 }

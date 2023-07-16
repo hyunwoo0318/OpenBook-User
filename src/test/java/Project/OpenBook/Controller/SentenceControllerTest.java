@@ -74,8 +74,8 @@ public class SentenceControllerTest {
         chapterRepository.save(ch1);
         categoryRepository.save(c1);
 
-        t1 = new Topic("title1", null, null, 0, 0, "detail1", ch1, c1);
-        t2 = new Topic("title2", null, null, 0, 0, "detail2", ch1, c1);
+        t1 = new Topic("title1", null, null,false,false, 0, 0, "detail1", ch1, c1);
+        t2 = new Topic("title2", null, null,false,false,0, 0, "detail2", ch1, c1);
 
         topicRepository.save(t1);
         topicRepository.save(t2);

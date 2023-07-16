@@ -281,7 +281,7 @@ class CategoryControllerTest {
             Chapter ch1 = new Chapter("ch1", 1);
             chapterRepository.saveAndFlush(ch1);
 
-            Topic topic = new Topic("title1", null, null, 0, 0, "detail1", ch1, c1);
+            Topic topic = new Topic("title1", null, null, false,false,0, 0, "detail1", ch1, c1);
             topicRepository.saveAndFlush(topic);
 
             //존재하지 않는 카테고리 삭제 시도
