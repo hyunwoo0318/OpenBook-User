@@ -1,6 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.*;
+import Project.OpenBook.Dto.PrimaryDateDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
@@ -10,10 +11,11 @@ import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.dupdate.DupDateRepository;
+import Project.OpenBook.Repository.imagefile.ImageFileRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
+import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
+import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
-import Project.OpenBook.Repository.topickeyword.TopicKeywordRepository;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,11 +29,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.stream.Collectors;
 
+import static Project.OpenBook.Constants.ErrorCode.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
@@ -52,7 +55,13 @@ class TopicControllerTest {
     KeywordRepository keywordRepository;
 
     @Autowired
-    TopicKeywordRepository topicKeywordRepository;
+    SentenceRepository sentenceRepository;
+
+    @Autowired
+    ImageFileRepository imageFileRepository;
+
+    @Autowired
+    PrimaryDateRepository primaryDateRepository;
 
     @Autowired
     ChoiceRepository choiceRepository;
@@ -91,19 +100,18 @@ class TopicControllerTest {
         topicRepository.saveAndFlush(t1);
         topicRepository.saveAndFlush(t2);
 
-        k1 = new Keyword("k1");
-        k2 = new Keyword("k2");
-        k3 = new Keyword("k3");
+        k1 = new Keyword("k1","c1",t1);
+        k2 = new Keyword("k2","c2", t1);
+        k3 = new Keyword("k3","c3",t1);
         keywordRepository.saveAllAndFlush(Arrays.asList(k1, k2, k3));
 
-        TopicKeyword topicKeyword1 = new TopicKeyword(t1, k1);
-        TopicKeyword topicKeyword2 = new TopicKeyword(t1, k2);
-        topicKeywordRepository.saveAndFlush(topicKeyword1);
-        topicKeywordRepository.saveAndFlush(topicKeyword2);
+        PrimaryDate date1 = new PrimaryDate(133301111, true, "comment1", t1);
+        PrimaryDate date2 = new PrimaryDate(13330101, false, "comment1", t1);
+        primaryDateRepository.saveAllAndFlush(Arrays.asList(date1, date2));
     }
 
     private void baseClear() {
-        topicKeywordRepository.deleteAllInBatch();
+        primaryDateRepository.deleteAllInBatch();
         keywordRepository.deleteAllInBatch();
         dupDateRepository.deleteAllInBatch();
         topicRepository.deleteAllInBatch();
@@ -123,6 +131,7 @@ class TopicControllerTest {
 
         @AfterEach
         public void clear(){
+
             baseClear();
         }
 
@@ -135,7 +144,11 @@ class TopicControllerTest {
         public void queryTopicSuccess() {
             ResponseEntity<TopicDto> response = restTemplate.getForEntity(URL + "title1", TopicDto.class);
 
-            TopicDto expectResult = new TopicDto(1, "title1", "c1", 100, 200, "detail1");
+            List<PrimaryDateDto> dateDtoList = primaryDateRepository.findAll().stream()
+                    .map(p -> new PrimaryDateDto(p.getDate(), p.getDateCheck(), p.getDateComment()))
+                    .collect(Collectors.toList());
+
+            TopicDto expectResult = new TopicDto(1, "title1", "c1", 100, 200, "detail1",dateDtoList);
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(expectResult);
         }
@@ -146,24 +159,32 @@ class TopicControllerTest {
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title-1", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
+            //원하는 exception이 터졌는지 확인
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_NOT_FOUND.getErrorMessage())));
         }
     }
 
 
     @Nested
     @DisplayName("특정 토픽의 전체 키워드 조회 - GET /topics/{topicTitle}/keywords")
-    @TestInstance(PER_CLASS) //TODO
+    @TestInstance(PER_CLASS)
     public class queryTopicKeyword{
+
+        private ImageFile file1, file2;
         @BeforeAll
         public void init(){
             suffix = "/topics/";
             initConfig();
+
+            file1 = new ImageFile("originalName1", "storedName1", k1);
+            file2 = new ImageFile("originalName2", "storedName2", k1);
+            imageFileRepository.saveAllAndFlush(Arrays.asList(file1, file2));
         }
 
         @AfterEach
         public void clear(){
+            imageFileRepository.deleteAllInBatch();
             baseClear();
         }
 
@@ -177,8 +198,13 @@ class TopicControllerTest {
             ResponseEntity<List<KeywordDto>> response = restTemplate.exchange(URL + "title1/keywords", HttpMethod.GET, null, new ParameterizedTypeReference<List<KeywordDto>>() {
             });
 
+            String baseImageUrl = "http://localhost:" + port + "/images/";
+
+            KeywordDto dto1 = new KeywordDto(k1.getName(), k1.getComment(), Arrays.asList(baseImageUrl + file1.getId(), baseImageUrl + file2.getId()), k1.getId());
+            KeywordDto dto2 = new KeywordDto(k2.getName(), k2.getComment(), null, k2.getId());
+
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new KeywordDto("k1"), new KeywordDto("k2")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2));
         }
 
         @DisplayName("특정 토픽의 전체 키워드 조회 실패 - 존재하지 않는 토픽 제목 입력하기")
@@ -188,13 +214,15 @@ class TopicControllerTest {
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_NOT_FOUND.getErrorMessage())));
         }
     }
     @Nested
     @DisplayName("토픽 추가 - POST /admin/topics")
     @TestInstance(PER_CLASS)
     public class createTopic{
+
+        private int prevSize;
         @BeforeAll
         public void init(){
             suffix = "/admin/topics";
@@ -209,17 +237,26 @@ class TopicControllerTest {
         @BeforeEach
         public void setting() {
             baseSetting();
+            prevSize = topicRepository.findAll().size();
         }
         @DisplayName("토픽 생성 성공")
         @Test
         public void queryKeywordsSuccess() {
-            TopicDto topicDto = new TopicDto(1, "title33", "c1", 19980318, 20230321, "detail2");
+            PrimaryDateDto dateDto = new PrimaryDateDto(13330111, true, "newComment1");
+            TopicDto topicDto = new TopicDto(1, "title33", "c1", 19980318, 20230321, "detail2",Arrays.asList(dateDto));
 
             ResponseEntity<Void> response = restTemplate.postForEntity(URL, topicDto, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-            assertThat(topicRepository.findAll().size()).isEqualTo(3);
+            //토픽이 잘 생성되었는지 확인
             assertThat(topicRepository.findTopicByTitle("title2").isPresent()).isTrue();
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize + 1);
+
+            //연표에 나올 연도가 잘 입력되었는지 확인
+            List<PrimaryDate> dateList = primaryDateRepository.queryDatesByTopic("title2");
+            assertThat(dateList.size()).isEqualTo(1);
+            assertThat(dateList.get(0).getDate()).usingRecursiveComparison()
+                    .isEqualTo(new PrimaryDate(dateDto.getDate(), dateDto.getDateCheck(), dateDto.getDateComment(), t1));
         }
 
         @DisplayName("토픽 생성 실패 - DTO validation")
@@ -227,114 +264,72 @@ class TopicControllerTest {
         public void createTopicFailWrongDTO(){
             //필수 입력 조건인 chapterNum,title,categoryName 생략
             TopicDto topicDto = new TopicDto();
-
             ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(topicDto), new ParameterizedTypeReference<List<ErrorDto>>() {
             });
 
+            //필수 입력 조건에 대한 오류메세지가 3개 들어갔는지 확인
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody().size()).isEqualTo(3);
+
+            //토픽이 생성되지 않음을 확인
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
 
         @DisplayName("새로운 토픽 추가 실패 - 제목이 중복되는 경우")
         @Test
         public void createTopicFailDupTitle() {
-            TopicDto wrongDto = new TopicDto(1, "title1", "c1", 0, 0, "detail123");
+            TopicDto wrongDto = new TopicDto(1, "title1", "c1", 0, 0, "detail123",null);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
+            //원하는 exception이 터졌는지 확인
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 토픽 제목입니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(DUP_TOPIC_TITLE.getErrorMessage())));
+
+            //토픽이 생성되지 않음을 확인
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
 
         @DisplayName("새로운 토픽 추가 실패 - 존재하지 않는 단원 번호를 입력하는 경우")
         @Test
         public void createTopicFailWNotExistChapter() {
-            TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0, 0, "detail123");
+            TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0, 0, "detail123",null);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 단원 번호입니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
+
+            //토픽이 생성되지 않음을 확인
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
 
         @DisplayName("새로운 토픽 추가 실패 - 존재하지 않는 카테고리 이름을 입력하는 경우")
         @Test
         public void createTopicFailNotExistCategory() {
-            TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0, 0, "detail123");
+            TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0, 0, "detail123",null);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CATEGORY_NOT_FOUND.getErrorMessage())));
+
+            //토픽이 생성되지 않음을 확인
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
 
     }
 
-    @Nested
-    @DisplayName("해당 토픽에 키워드 추가 - POST /admin/topics")
-    @TestInstance(PER_CLASS)
-    public class addKeywordInTopic{
-        @BeforeAll
-        public void init(){
-            suffix = "/admin/topics/";
-            initConfig();
-        }
-
-        @AfterEach
-        public void clear(){
-            baseClear();
-        }
-
-        @BeforeEach
-        public void setting() {
-            baseSetting();
-        }
-        @DisplayName("해당 토픽에 키워드 추가 성공 - 기존에 존재하는 키워드의 경우")
-        @Test
-        public void addExistedKeywordsSuccess() {
-            KeywordDto k3Dto = new KeywordDto("k3");
-
-            ResponseEntity<Void> response = restTemplate.postForEntity(URL + "title1/keywords", k3Dto, Void.class);
-
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            List<String> keywordList = topicRepository.queryTopicKeywords("title1");
-            assertThat(keywordList.size()).isEqualTo(3);
-        }
-
-        @DisplayName("해당 토픽에 키워드 추가 성공 - 새로운 키워드를 입력한 경우")
-        @Test
-        public void addNotExistedKeywordsSuccess() {
-            KeywordDto dto = new KeywordDto("k5000");
-
-            ResponseEntity<Void> response = restTemplate.postForEntity(URL + "title1/keywords", dto, Void.class);
-
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            List<String> keywordList = topicRepository.queryTopicKeywords("title1");
-            assertThat(keywordList.size()).isEqualTo(3);
-
-            assertThat(keywordRepository.findByName("k5000").isPresent()).isTrue();
-        }
-
-        @DisplayName("해당 토픽에 키워드 추가 실패 - 이미 해당 토픽에서 해당 키워드를 가지고 있는 경우")
-        @Test
-        public void addKeywordsFail(){
-            KeywordDto k1Dto = new KeywordDto("k1");
-
-            ResponseEntity<Void> response = restTemplate.postForEntity(URL + "title1/keywords", k1Dto, Void.class);
-
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            List<String> keywordList = topicRepository.queryTopicKeywords("title1");
-            assertThat(keywordList.size()).isEqualTo(2);
-        }
-
-
-
-    }
+    //TODO : 문장
 
     @Nested
     @DisplayName("토픽 상세정보 수정 - PATCH /admin/topics/{topicTitle}")
     @TestInstance(PER_CLASS)
     public class updateTopic{
+
+        private int prevSize;
+        private List<PrimaryDateDto> dateDtoList = new ArrayList<>();
+
         @BeforeAll
         public void init(){
             suffix = "/admin/topics/";
@@ -349,22 +344,27 @@ class TopicControllerTest {
         @BeforeEach
         public void setting() {
             baseSetting();
+            prevSize = topicRepository.findAll().size();
             Category c2 = new Category("c2");
             categoryRepository.saveAndFlush(c2);
+            dateDtoList.add(new PrimaryDateDto(19980318, true, "birthday!"));
         }
 
         @DisplayName("기존 상세정보 변경 성공 - PATCH admin/topics")
         @Test
         public void updateTopicSuccess() {
-            TopicDto dto = new TopicDto(1, "title3", "c2", -1000, 1000, "detail123");
+            TopicDto dto = new TopicDto(1, "title3", "c2", -1000, 1000, "detail123",dateDtoList);
 
             ResponseEntity<Void> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH, new HttpEntity<>(dto), Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            //입력한 내용대로 내용이 변화했는지 확인
             assertThat(topicRepository.findTopicByTitle("title1").isEmpty()).isTrue();
+            assertThat(topicRepository.findTopicByTitle("title3").isPresent()).isTrue();
+            assertThat(topicRepository.queryTopicDto("title3")).usingRecursiveComparison().isEqualTo(dto);
 
-            TopicDto expectDto = topicRepository.queryTopicDto("title3");
-            assertThat(expectDto).usingRecursiveComparison().isEqualTo(dto);
+            //토픽의 전체 개수에는 변화가 없음을 확인
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
 
         @DisplayName("기존 상세정보 변경 실패 - DTO Validation")
@@ -377,39 +377,51 @@ class TopicControllerTest {
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody().size()).isEqualTo(3);
+
+            //토픽의 전체 개수에는 변화가 없음을 확인
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
 
         @DisplayName("기존 토픽 변경 실패 - 중복된 제목을 입력하는 경우")
         @Test
         public void updateTopicFailDupTitle() {
-            TopicDto wrongDto = new TopicDto(1, "title2", "c1", 0, 0, "detail123");
+            TopicDto wrongDto = new TopicDto(1, "title2", "c1", 0, 0, "detail123",dateDtoList);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("중복된 토픽 제목입니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(DUP_TOPIC_TITLE.getErrorMessage())));
+
+            //토픽의 전체 개수에는 변화가 없음을 확인
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
 
         @DisplayName("기존 토픽 변경 실패 - 존재하지 않는 단원 입력")
         @Test
         public void updateTopicFailNotExistChapter() {
-            TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0, 0, "detail123");
+            TopicDto wrongDto = new TopicDto(123, "title123", "c1", 0, 0, "detail123",dateDtoList);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 단원 번호입니다.")));
+
+            //토픽의 전체 개수에는 변화가 없음을 확인
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
 
         @DisplayName("기존 토픽 변경 실패 - 존재하지 않는 카테고리 입력 ")
         @Test
         public void updateTopicFailNotExistCategory() {
-            TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0, 0, "detail123");
+            TopicDto wrongDto = new TopicDto(1, "title123", "c-1", 0, 0, "detail123",dateDtoList);
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title1", HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 카테고리 제목입니다.")));
+
+            //토픽의 전체 개수에는 변화가 없음을 확인
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
     }
 
@@ -417,6 +429,9 @@ class TopicControllerTest {
     @DisplayName("토픽 삭제 - DELETE /admin/topics/{topicTitle}")
     @TestInstance(PER_CLASS)
     public class deleteTopic{
+
+        private int prevSize;
+        private Topic t3,t4;
         @BeforeAll
         public void init(){
             suffix = "/admin/topics/";
@@ -432,30 +447,19 @@ class TopicControllerTest {
 
         @BeforeEach
         public void setting() {
-            c1 = new Category("c1");
-            categoryRepository.saveAndFlush(c1);
+            baseSetting();
 
-            ch1 = new Chapter("ch1", 1);
-            chapterRepository.saveAndFlush(ch1);
-
-            t1 = new Topic("title1", 100, 200, 0, 0, "detail1", ch1, c1);
-            t2 = new Topic("title2", 300, 400, 0, 0, "detail2", ch1, c1);
-            topicRepository.saveAndFlush(t1);
-            topicRepository.saveAndFlush(t2);
-
-            k1 = new Keyword("k1");
-            k2 = new Keyword("k2");
-            k3 = new Keyword("k3");
-            keywordRepository.saveAllAndFlush(Arrays.asList(k1, k2, k3));
+            prevSize = topicRepository.findAll().size();
         }
 
         @DisplayName("토픽 삭제 성공")
         @Test
         public void deleteTopicSuccess() {
-            ResponseEntity<Void> response = restTemplate.exchange(URL + "title1", HttpMethod.DELETE, null, Void.class);
+            ResponseEntity<Void> response = restTemplate.exchange(URL + "title2", HttpMethod.DELETE, null, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(topicRepository.findTopicByTitle("title1").isEmpty()).isTrue();
+            assertThat(topicRepository.findTopicByTitle("title2").isEmpty()).isTrue();
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize - 1);
         }
 
         @DisplayName("토픽 삭제 실패 - 존재하지 않는 토픽 제목 입력")
@@ -465,54 +469,48 @@ class TopicControllerTest {
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 토픽 제목입니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_NOT_FOUND.getErrorMessage())));
             assertThat(topicRepository.findTopicByTitle("title1").isPresent()).isTrue();
+
+            assertThat(topicRepository.findAll().size()).isEqualTo(prevSize);
         }
 
         @DisplayName("토픽 삭제 실패 - 키워드가 존재하는 토픽 삭제 시도")
         @Test
         public void deleteTopicHasKeywordFail() {
-            TopicKeyword topicKeyword = new TopicKeyword(t1, k1);
-            topicKeywordRepository.saveAndFlush(topicKeyword);
-
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 토픽에 키워드가 존재합니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_HAS_KEYWORD.getErrorMessage())));
             assertThat(topicRepository.findTopicByTitle("title1").isPresent()).isTrue();
         }
 
         @DisplayName("토픽 삭제 실패 - 선지가 존재하는 경우")
         @Test
         public void deleteTopicHasChoiceFail() {
-            Choice choice1 = new Choice("ch1", t1);
+            Choice choice1 = new Choice("ch1", t2);
             choiceRepository.save(choice1);
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/title2", HttpMethod.DELETE,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 토픽에 선지가 존재합니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_HAS_CHOICE.getErrorMessage())));
             assertThat(topicRepository.findTopicByTitle("title1").isPresent()).isTrue();
         }
 
         @DisplayName("토픽 삭제 실패 - 보기가 존재하는 경우")
         @Test
         public void deleteTopicHasDescFail() {
-            Description desc1 = new Description("desc1", t1);
+            Description desc1 = new Description("desc1", t2);
             descriptionRepository.save(desc1);
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/title1", HttpMethod.DELETE,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/title2", HttpMethod.DELETE,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("해당 토픽에 보기가 존재합니다.")));
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_HAS_DESCRIPTION.getErrorMessage())));
             assertThat(topicRepository.findTopicByTitle("title1").isPresent()).isTrue();
         }
 
-    }
-
-    private TopicDto topicDtoConvertor(Topic topic) {
-        return new TopicDto(topic.getChapter().getNumber(), topic.getTitle(), topic.getCategory().getName(),
-                topic.getStartDate(), topic.getEndDate(), topic.getDetail());
     }
 }

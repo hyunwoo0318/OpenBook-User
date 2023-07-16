@@ -78,7 +78,10 @@ public class TopicService {
         topicRepository.save(topic);
 
         //연표에 표시할 날짜 저장
-        List<PrimaryDateDto> dateList = topicDto.getDateList();
+        List<PrimaryDateDto> dateList = new ArrayList<>();
+        if (topicDto.getDateList() != null) {
+            dateList = topicDto.getDateList();
+        }
         List<PrimaryDate> primaryDateList = dateList.stream().map(d -> new PrimaryDate(d.getDate(), d.getDateCheck(), d.getDateComment(), topic))
                 .collect(Collectors.toList());
         primaryDateRepository.saveAll(primaryDateList);
@@ -190,18 +193,12 @@ public class TopicService {
     }
 
 
-
     private Category checkCategory(String categoryName) {
         return categoryRepository.findCategoryByName(categoryName).orElseThrow(() -> {
             throw new CustomException(CATEGORY_NOT_FOUND);
         });
     }
 
-    private Keyword checkKeyword(String keywordName) {
-        return keywordRepository.findByName(keywordName).orElseThrow(() -> {
-            throw new CustomException(KEYWORD_NOT_FOUND);
-        });
-    }
 
     private Topic checkTopic(String topicTitle) {
         return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {

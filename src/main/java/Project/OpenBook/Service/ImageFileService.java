@@ -11,7 +11,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,18 +26,35 @@ public class ImageFileService {
     private final ImageFileRepository imageFileRepository;
     @Value("${file.dir}/")
     private String fileDirPath;
-    public ImageFile storeFile(MultipartFile file, Keyword keyword) throws IOException {
+    public ImageFile storeFile(String encodedFile, Keyword keyword) throws IOException {
 
-        String originalName = file.getOriginalFilename();
-        String storedFileName = createStoredFileName(originalName);
-        String path = createPath(storedFileName);
+        String[] parts = encodedFile.split(",");
+        String header = parts[0];
+        String encodedImage = parts[1]; // "data:image/png;base64," 부분을 제외한 이미지 인코딩 값
 
-        file.transferTo(new File(path));
+        String ext = extractExtension(header);
+        // 이미지 디코드
+        byte[] decodedBytes = Base64.getDecoder().decode(encodedImage);
 
-        ImageFile imageFile = new ImageFile(originalName, storedFileName, keyword);
+        String storedFileName = createStoredFileName(ext);
+
+        // 이미지 파일 저장
+        Path filePath = Files.createFile(Path.of(fileDirPath, storedFileName));
+        try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
+            fos.write(decodedBytes);
+        }
+
+        ImageFile imageFile = new ImageFile(storedFileName, keyword);
 
         imageFileRepository.save(imageFile);
         return imageFile;
+    }
+
+    private String extractExtension(String header) {
+        String[] parts = header.split("/");
+        String mediaType = parts[1];
+        String[] subParts = mediaType.split(";");
+        return subParts[0];
     }
 
     public boolean deleteImages(Long keywordId) {
@@ -52,18 +73,10 @@ public class ImageFileService {
         return true;
     }
 
-    //확장자를 추출하는 메서드
-    private String extractExt(String originalName) {
-        int idx = originalName.lastIndexOf(".");
-        return originalName.substring(idx);
-    }
-
     //storedFileName 설정하는 메서드
-    private String createStoredFileName(String originalName) {
+    private String createStoredFileName(String ext) {
         String uuid = UUID.randomUUID().toString();
-        String ext = extractExt(originalName);
-
-        return uuid + ext;
+        return uuid +"."+ ext;
     }
 
     //이미지를 저장할 파일 경로 설정하는 메서드

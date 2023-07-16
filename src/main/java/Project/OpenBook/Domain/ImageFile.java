@@ -17,14 +17,13 @@ public class ImageFile {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "keyword_id")
     private Keyword keyword;
-
-    private String originalName;
+//
+//    private String originalName;
 
     private String storedFileName;
 
-    public ImageFile(String originalName ,String storedFileName,Keyword keyword) {
+    public ImageFile(String storedFileName,Keyword keyword) {
         this.storedFileName = storedFileName;
-        this.originalName = originalName;
         this.keyword = keyword;
     }
 

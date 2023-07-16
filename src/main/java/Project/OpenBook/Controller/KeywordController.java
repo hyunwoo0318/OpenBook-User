@@ -1,9 +1,7 @@
 package Project.OpenBook.Controller;
 
-import Project.OpenBook.Domain.ImageFile;
 import Project.OpenBook.Dto.keyword.KeywordCreateDto;
 import Project.OpenBook.Dto.keyword.KeywordUpdateDto;
-import Project.OpenBook.Dto.topic.TopicTitleDto;
 import Project.OpenBook.Service.ImageFileService;
 import Project.OpenBook.Service.KeywordService;
 import io.swagger.annotations.ApiOperation;
@@ -17,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,17 +22,6 @@ public class KeywordController {
 
     private final KeywordService keywordService;
     private final ImageFileService imageFileService;
-
-//    @ApiOperation(value = "특정 키워드를 가지는 모든 토픽 조회")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "특정 키워드를 가지는 모든 토픽 조회 성공"),
-//            @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 이름 입력")
-//    })
-//    @GetMapping("/keywords/{keywordName}/topics")
-//    public ResponseEntity queryKeywordTopic(@PathVariable("keywordName") String keywordName) {
-//        List<TopicTitleDto> topicTitleList = keywordService.queryKeywordTopic(keywordName).stream().map(k -> new TopicTitleDto(k)).collect(Collectors.toList());
-//        return new ResponseEntity(topicTitleList, HttpStatus.OK);
-//    }
 
 
     @ApiOperation(value = "키워드 생성")
@@ -46,9 +31,8 @@ public class KeywordController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 키워드 이름 입력")
     })
     @PostMapping("admin/keywords")
-    public ResponseEntity createService(@RequestPart(value = "files", required = false)MultipartFile[] files,
-                                        @Validated @RequestPart(value = "dto") KeywordCreateDto keywordCreateDto) throws IOException {
-        keywordService.createKeyword(keywordCreateDto, files);
+    public ResponseEntity createService(@RequestBody KeywordCreateDto keywordCreateDto) throws IOException {
+        keywordService.createKeyword(keywordCreateDto);
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -62,9 +46,9 @@ public class KeywordController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 키워드 이름 입력")
     })
     @PatchMapping("admin/keywords/{keywordId}")
-    public ResponseEntity updateKeyword(@PathVariable("keywordId") Long keywordId,@RequestPart(value = "files", required = false)MultipartFile[] files,
-                                        @Validated @RequestPart(value = "dto") KeywordUpdateDto keywordUpdateDto) throws IOException {
-        keywordService.updateKeyword(keywordId,keywordUpdateDto, files );
+    public ResponseEntity updateKeyword(@PathVariable("keywordId") Long keywordId,
+                                        @Validated @RequestBody KeywordUpdateDto keywordUpdateDto) throws IOException {
+        keywordService.updateKeyword(keywordId,keywordUpdateDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 

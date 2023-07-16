@@ -31,11 +31,12 @@ public class KeywordService {
         return keywordRepository.findAll().stream().map(k -> k.getName()).collect(Collectors.toList());
     }
 
-    public Keyword createKeyword(KeywordCreateDto keywordCreateDto, MultipartFile[] files) throws IOException {
+    public Keyword createKeyword(KeywordCreateDto keywordCreateDto) throws IOException {
 
         String name = keywordCreateDto.getName();
         String comment = keywordCreateDto.getComment();
         String topicTitle = keywordCreateDto.getTopic();
+        List<String> fileList = keywordCreateDto.getFileList();
 
         //입력 받은 토픽 제목이 실제 존재하는 토픽 제목인지 확인
         Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
@@ -50,20 +51,19 @@ public class KeywordService {
         keywordRepository.save(keyword);
 
         //이미지 저장
-        if(files.length != 0){
-            for (MultipartFile file : files) {
-                imageFileService.storeFile(file, keyword);
-            }
+        for (String encodedFile : fileList) {
+            imageFileService.storeFile(encodedFile, keyword);
         }
 
         return keyword;
     }
 
 
-    public Keyword updateKeyword(Long keywordId, KeywordUpdateDto keywordUpdateDto, MultipartFile[] files) throws IOException {
+    public Keyword updateKeyword(Long keywordId, KeywordUpdateDto keywordUpdateDto) throws IOException {
 
         String name = keywordUpdateDto.getName();
         String comment = keywordUpdateDto.getComment();
+        List<String> fileList = keywordUpdateDto.getFileList();
 
         Keyword keyword = checkKeyword(keywordId);
         String title = keyword.getTopic().getTitle();
@@ -79,8 +79,8 @@ public class KeywordService {
 
         //이미지 수정
         imageFileService.deleteImages(keywordId);
-        for (MultipartFile file : files) {
-            imageFileService.storeFile(file, afterKeyword);
+        for (String encodedFile : fileList) {
+            imageFileService.storeFile(encodedFile, afterKeyword);
         }
         return afterKeyword;
     }

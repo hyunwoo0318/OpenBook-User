@@ -53,3 +53,7 @@ spring:
 
 jwt:
   secret: s1BttUnQn57UZmhAynlWa85Dvk0qnzu9sa12Bhdfu31mASDr9uB40AS9ureDwj12rS4jdiofq0u
+
+
+file:
+  dir: src/static/images/

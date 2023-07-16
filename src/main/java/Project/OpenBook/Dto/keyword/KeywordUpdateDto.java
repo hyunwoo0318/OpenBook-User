@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,5 +14,6 @@ public class KeywordUpdateDto {
 
     private String name;
     private String comment;
-    private MultipartFile file;
+
+    private List<String> fileList;
 }
