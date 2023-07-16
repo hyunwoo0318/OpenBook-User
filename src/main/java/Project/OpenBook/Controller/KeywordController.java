@@ -31,7 +31,7 @@ public class KeywordController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 키워드 이름 입력")
     })
     @PostMapping("admin/keywords")
-    public ResponseEntity createService(@RequestBody KeywordCreateDto keywordCreateDto) throws IOException {
+    public ResponseEntity createService(@Validated @RequestBody KeywordCreateDto keywordCreateDto) throws IOException {
         keywordService.createKeyword(keywordCreateDto);
 
         return new ResponseEntity(HttpStatus.CREATED);

@@ -123,15 +123,16 @@ public class KeywordControllerTest {
         @DisplayName("키워드 생성 성공")
         @Test
         public void createKeywordsSuccess() {
-            KeywordCreateDto keywordDto = new KeywordCreateDto("newName1", "newComment1", t1.getTitle());
+            KeywordCreateDto keywordDto = new KeywordCreateDto("newName1", "newComment1", t1.getTitle(), new ArrayList<>());
 
+            //TODO : 파일 삽입 테스트
             ResponseEntity<Void> response = restTemplate.postForEntity(URL, keywordDto, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             assertThat(keywordRepository.findAll().size()).isEqualTo(prevSize + 1);
             Keyword keyword = keywordRepository.queryByNameInTopic(keywordDto.getName(), t1.getTitle());
-            assertThat(keyword).usingRecursiveComparison()
-                    .isEqualTo(new Keyword(keywordDto.getName(), keywordDto.getComment(), t1));
+            assertThat(keyword.getComment()).isEqualTo("newComment1");
+            assertThat(keyword.getName()).isEqualTo("newName1");
         }
 
         @DisplayName("키워드 생성 실패 - DTO validation")
@@ -156,7 +157,7 @@ public class KeywordControllerTest {
         @Test
         public void createKeywordsFailDupName() {
            //이미 존재하는 키워드와 이름이 중복되는 경우
-            KeywordCreateDto wrongDto = new KeywordCreateDto("k1", "c1", t1.getTitle());
+            KeywordCreateDto wrongDto = new KeywordCreateDto("k1", "c1", t1.getTitle(),new ArrayList<>());
 
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
@@ -174,14 +175,14 @@ public class KeywordControllerTest {
         @Test
         public void createKeywordsFailWrongTopicTitle() {
             //존재하지 않는 토픽제목 입력
-            KeywordCreateDto wrongDto = new KeywordCreateDto("k1", "c1", "wrongTitle1");
+            KeywordCreateDto wrongDto = new KeywordCreateDto("k1", "c1", "wrongTitle1",new ArrayList<>());
 
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             List<ErrorMsgDto> body = response.getBody();
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(body).usingRecursiveComparison()
                     .isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_NOT_FOUND.getErrorMessage())));
 

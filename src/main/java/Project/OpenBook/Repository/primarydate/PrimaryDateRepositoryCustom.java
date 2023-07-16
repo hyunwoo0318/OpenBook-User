@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface PrimaryDateRepositoryCustom {
 
-    public List<PrimaryDate> queryDatesByTopic(String topicTitle);
+    public List<PrimaryDate> queryDatesByTopic(Long topicId);
 
 }

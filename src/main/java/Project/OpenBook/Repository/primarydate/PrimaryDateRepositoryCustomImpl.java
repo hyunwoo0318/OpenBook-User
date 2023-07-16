@@ -16,9 +16,9 @@ public class PrimaryDateRepositoryCustomImpl implements PrimaryDateRepositoryCus
 
     private final JPAQueryFactory queryFactory;
     @Override
-    public List<PrimaryDate> queryDatesByTopic(String topicTitle) {
+    public List<PrimaryDate> queryDatesByTopic(Long topicId) {
         return queryFactory.selectFrom(primaryDate)
-                .where(primaryDate.topic.title.eq(topicTitle))
+                .where(primaryDate.topic.id.eq(topicId))
                 .fetch();
     }
 

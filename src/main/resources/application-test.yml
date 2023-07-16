@@ -56,4 +56,4 @@ jwt:
 
 
 file:
-  dir: src/static/images/
+  dir: src/test/java/Project/OpenBook/TestImage
