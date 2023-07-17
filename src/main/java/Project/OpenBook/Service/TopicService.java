@@ -228,14 +228,15 @@ public class TopicService {
             Long id = keyword.getId();
 
             List<ImageFile> imageFiles = imageFileRepository.queryByKeyword(id);
-            List<String> imageUrlList = new ArrayList<>();
-            for (ImageFile imageFile : imageFiles) {
+            ImageFile imageFile = imageFiles.get(0);
+//            List<String> imageUrlList = new ArrayList<>();
+//            for (ImageFile imageFile : imageFiles) {
                 Long imgId = imageFile.getId();
                 String url = "http://localhost:8080/images/" + imgId;
-                imageUrlList.add(url);
-            }
+//                imageUrlList.add(url);
+//            }
 
-            KeywordDto keywordDto = new KeywordDto(name, comment, imageUrlList, id);
+            KeywordDto keywordDto = new KeywordDto(name, comment, url, id);
             keywordDtoList.add(keywordDto);
         }
         return keywordDtoList;

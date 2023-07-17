@@ -19,7 +19,8 @@ public class KeywordDto {
 
     private String comment;
 
-    private List<String> imageUrlList;
+//    private List<String> imageUrlList;
+    private String file;
 
     private Long id;
 }
