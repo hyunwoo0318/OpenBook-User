@@ -81,8 +81,8 @@ public class TopicService {
 
         //연표에 표시할 날짜 저장
         List<PrimaryDateDto> dateList = new ArrayList<>();
-        if (topicDto.getDateList() != null) {
-            dateList = topicDto.getDateList();
+        if (topicDto.getExtraDateList() != null) {
+            dateList = topicDto.getExtraDateList();
         }
         List<PrimaryDate> primaryDateList = dateList.stream().map(d -> new PrimaryDate(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment(), topic))
                 .collect(Collectors.toList());
@@ -121,7 +121,7 @@ public class TopicService {
         //연표에 나올 날짜 수정
         List<PrimaryDate> prevPrimaryDateList = primaryDateRepository.queryDatesByTopic(topic.getId());
         primaryDateRepository.deleteAllInBatch(prevPrimaryDateList);
-        List<PrimaryDate> primaryDateList = topicDto.getDateList().stream()
+        List<PrimaryDate> primaryDateList = topicDto.getExtraDateList().stream()
                 .map(d -> new PrimaryDate(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment(), topic))
                 .collect(Collectors.toList());
         primaryDateRepository.saveAll(primaryDateList);
