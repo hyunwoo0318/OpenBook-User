@@ -129,12 +129,12 @@ public class TopicService {
 
 
         //시작날짜와 종료날짜가 변경된경우 보기와 정답이 될수있는지 다시 체크
-        if (flag) {
-            List<DupDate> dupDateList = dupDateRepository.queryAllByTopic(topic.getTitle());
-            dupDateRepository.deleteAllInBatch(dupDateList);
-            addDescriptionTopics(topic);
-            addAnswerTopics(topic);
-        }
+//        if (flag) {
+//            List<DupDate> dupDateList = dupDateRepository.queryAllByTopic(topic.getTitle());
+//            dupDateRepository.deleteAllInBatch(dupDateList);
+//            addDescriptionTopics(topic);
+//            addAnswerTopics(topic);
+//        }
 
         return topic;
     }
@@ -179,13 +179,16 @@ public class TopicService {
     }
 
     private void addDescriptionTopics(Topic topic) {
-        List<Topic> topicList = dupDateRepository.queryDescriptionTopics(topic.getStartDate(), topic.getEndDate());
-        List<DupDate> dupDateList = new ArrayList<>();
+        if (topic.getStartDate() != null && topic.getEndDate() != null) {
+            List<Topic> topicList = dupDateRepository.queryDescriptionTopics(topic.getStartDate(), topic.getEndDate());
+            List<DupDate> dupDateList = new ArrayList<>();
 
-        for (Topic descriptionTopic : topicList) {
-            dupDateList.add(new DupDate(topic, descriptionTopic));
+            for (Topic descriptionTopic : topicList) {
+                dupDateList.add(new DupDate(topic, descriptionTopic));
+            }
+            dupDateRepository.saveAll(dupDateList);
         }
-        dupDateRepository.saveAll(dupDateList);
+
     }
 
     private Chapter checkChapter(int num) {
