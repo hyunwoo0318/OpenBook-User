@@ -57,7 +57,9 @@ public class KeywordService {
 //        for (String encodedFile : fileList) {
 //            imageFileService.storeFile(encodedFile, keyword);
 //        }
-        imageFileService.storeFile(encodedFile, keyword);
+        if (encodedFile != null) {
+            imageFileService.storeFile(encodedFile, keyword);
+        }
 
         return keyword;
     }
@@ -87,7 +89,9 @@ public class KeywordService {
 //        for (String encodedFile : fileList) {
 //            imageFileService.storeFile(encodedFile, afterKeyword);
 //        }
-        imageFileService.storeFile(encodedFile, afterKeyword);
+        if (encodedFile != null) {
+            imageFileService.storeFile(encodedFile, afterKeyword);
+        }
         return afterKeyword;
     }
 

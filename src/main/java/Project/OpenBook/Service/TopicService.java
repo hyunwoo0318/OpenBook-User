@@ -228,7 +228,8 @@ public class TopicService {
             Long id = keyword.getId();
 
             List<ImageFile> imageFiles = imageFileRepository.queryByKeyword(id);
-            ImageFile imageFile = imageFiles.get(0);
+            if(!imageFiles.isEmpty()){
+                ImageFile imageFile = imageFiles.get(0);
 //            List<String> imageUrlList = new ArrayList<>();
 //            for (ImageFile imageFile : imageFiles) {
                 Long imgId = imageFile.getId();
@@ -236,8 +237,13 @@ public class TopicService {
 //                imageUrlList.add(url);
 //            }
 
-            KeywordDto keywordDto = new KeywordDto(name, comment, url, id);
-            keywordDtoList.add(keywordDto);
+                KeywordDto keywordDto = new KeywordDto(name, comment, url, id);
+                keywordDtoList.add(keywordDto);
+            }else{
+                KeywordDto keywordDto = new KeywordDto(name, comment, null, id);
+                keywordDtoList.add(keywordDto);
+            }
+
         }
         return keywordDtoList;
     }
