@@ -193,8 +193,8 @@ class TopicControllerTest {
         public void setting() {
             baseSetting();
             file1 = new ImageFile( "image1.png", k1);
-            file2 = new ImageFile( "image2.png", k1);
-            imageFileRepository.saveAllAndFlush(Arrays.asList(file1, file2));
+            //file2 = new ImageFile( "image2.png", k1);
+            imageFileRepository.saveAllAndFlush(Arrays.asList(file1));
         }
         @DisplayName("특정 토픽의 전체 키워드 조회 성공")
         @Test
@@ -204,9 +204,9 @@ class TopicControllerTest {
 
             String baseImageUrl = "http://localhost:8080/images/";
 
-            KeywordDto dto1 = new KeywordDto(k1.getName(), k1.getComment(), Arrays.asList(baseImageUrl + file1.getId(), baseImageUrl + file2.getId()), k1.getId());
-            KeywordDto dto2 = new KeywordDto(k2.getName(), k2.getComment(), new ArrayList<>(), k2.getId());
-            KeywordDto dto3 = new KeywordDto(k3.getName(), k3.getComment(), new ArrayList<>(), k3.getId());
+            KeywordDto dto1 = new KeywordDto(k1.getName(), k1.getComment(), baseImageUrl + file1.getId(), k1.getId());
+            KeywordDto dto2 = new KeywordDto(k2.getName(), k2.getComment(), null, k2.getId());
+            KeywordDto dto3 = new KeywordDto(k3.getName(), k3.getComment(), null, k3.getId());
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2, dto3));
@@ -350,6 +350,7 @@ class TopicControllerTest {
 
         @AfterEach
         public void clear(){
+            descriptionRepository.deleteAllInBatch();
             baseClear();
         }
 

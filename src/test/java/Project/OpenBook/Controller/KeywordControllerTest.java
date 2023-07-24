@@ -123,7 +123,7 @@ public class KeywordControllerTest {
         @DisplayName("키워드 생성 성공")
         @Test
         public void createKeywordsSuccess() {
-            KeywordCreateDto keywordDto = new KeywordCreateDto("newName1", "newComment1", t1.getTitle(), "");
+            KeywordCreateDto keywordDto = new KeywordCreateDto("newName1", "newComment1", t1.getTitle(), null);
 
             //TODO : 파일 삽입 테스트
             ResponseEntity<Void> response = restTemplate.postForEntity(URL, keywordDto, Void.class);
