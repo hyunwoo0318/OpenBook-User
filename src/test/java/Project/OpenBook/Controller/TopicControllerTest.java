@@ -179,12 +179,11 @@ class TopicControllerTest {
     public class queryTopicKeyword{
 
         private ImageFile file1, file2;
+        private String imageUrl;
         @BeforeAll
         public void init(){
             suffix = "/topics/";
             initConfig();
-
-
         }
 
         @AfterEach
@@ -196,7 +195,8 @@ class TopicControllerTest {
         @BeforeEach
         public void setting() {
             baseSetting();
-            file1 = new ImageFile( "image1.png", k1);
+            imageUrl = "image1";
+            file1 = new ImageFile( imageUrl, k1);
             //file2 = new ImageFile( "image2.png", k1);
             imageFileRepository.saveAllAndFlush(Arrays.asList(file1));
         }
@@ -206,9 +206,7 @@ class TopicControllerTest {
             ResponseEntity<List<KeywordDto>> response = restTemplate.exchange(URL + "title1/keywords", HttpMethod.GET, null, new ParameterizedTypeReference<List<KeywordDto>>() {
             });
 
-            String baseImageUrl = baseUrl + "/images/";
-
-            KeywordDto dto1 = new KeywordDto(k1.getName(), k1.getComment(), baseImageUrl + file1.getId(), k1.getId());
+            KeywordDto dto1 = new KeywordDto(k1.getName(), k1.getComment(), imageUrl, k1.getId());
             KeywordDto dto2 = new KeywordDto(k2.getName(), k2.getComment(), null, k2.getId());
             KeywordDto dto3 = new KeywordDto(k3.getName(), k3.getComment(), null, k3.getId());
 

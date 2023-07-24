@@ -22,15 +22,8 @@ public class ImageController {
 
     private final ImageFileService imageFileService;
 
-    @GetMapping("/images/{imageId}")
-    public ResponseEntity queryImage(@PathVariable("imageId") Long imageId) throws IOException {
-        Path path = Paths.get(imageFileService.findPath(imageId));
-
-        byte[] imageBytes = Files.readAllBytes(path);
-        ByteArrayResource imageResource = new ByteArrayResource(imageBytes);
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(imageResource);
-    }
+//    @GetMapping("/images/{imageId}")
+//    public ResponseEntity queryImage(@PathVariable("imageId") Long imageId) throws IOException {
+//        String imageUrl = imageFileService.findImageUrl(imageId);
+//    }
 }

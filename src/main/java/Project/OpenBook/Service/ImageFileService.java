@@ -5,14 +5,14 @@ import Project.OpenBook.Domain.ImageFile;
 import Project.OpenBook.Domain.Keyword;
 import Project.OpenBook.Repository.imagefile.ImageFileRepository;
 import Project.OpenBook.Utils.CustomException;
+import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
@@ -24,8 +24,9 @@ import java.util.UUID;
 public class ImageFileService {
 
     private final ImageFileRepository imageFileRepository;
-    @Value("${file.dir}/")
-    private String fileDirPath;
+    private final AmazonS3Client amazonS3Client;
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
     public ImageFile storeFile(String encodedFile, Keyword keyword) throws IOException {
 
         String[] parts = encodedFile.split(",");
@@ -35,16 +36,15 @@ public class ImageFileService {
         String ext = extractExtension(header);
         // 이미지 디코드
         byte[] decodedBytes = Base64.getDecoder().decode(encodedImage);
+        InputStream inputStream = new ByteArrayInputStream(decodedBytes);
 
         String storedFileName = createStoredFileName(ext);
+        String imageUrl = createPath(storedFileName);
 
         // 이미지 파일 저장
-        Path filePath = Files.createFile(Path.of(fileDirPath, storedFileName));
-        try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
-            fos.write(decodedBytes);
-        }
+        amazonS3Client.putObject(bucket, storedFileName, inputStream, null);
 
-        ImageFile imageFile = new ImageFile(storedFileName, keyword);
+        ImageFile imageFile = new ImageFile(imageUrl, keyword);
 
         imageFileRepository.save(imageFile);
         return imageFile;
@@ -59,17 +59,7 @@ public class ImageFileService {
 
     public boolean deleteImages(Long keywordId) {
         List<ImageFile> imageFileList = imageFileRepository.queryByKeyword(keywordId);
-        for (ImageFile imageFile : imageFileList) {
-            String storedFileName = imageFile.getStoredFileName();
-            String path = createPath(storedFileName);
-            File file = new File(path);
-            boolean ret = file.delete();
-            if (ret) {
-                imageFileRepository.delete(imageFile);
-            }else{
-                return false;
-            }
-        }
+        imageFileRepository.deleteAllInBatch(imageFileList);
         return true;
     }
 
@@ -81,17 +71,7 @@ public class ImageFileService {
 
     //이미지를 저장할 파일 경로 설정하는 메서드
     private String createPath(String storedFileName) {
-        return fileDirPath + storedFileName;
-    }
-
-    //이미지가 저장된 경로 찾는 메서드
-    public String findPath(Long imgId) {
-        ImageFile imageFile = imageFileRepository.findById(imgId).orElseThrow(() -> {
-            throw new CustomException(ErrorCode.SENTENCE_NOT_FOUND);
-        });
-
-        String storedFileName = imageFile.getStoredFileName();
-        return createPath(storedFileName);
+        return "https://" + bucket + ".s3.ap-northeast-2.amazonaws.com/" + storedFileName;
     }
 
     public Boolean checkBase64(String encodedFile) {
@@ -100,7 +80,13 @@ public class ImageFileService {
         }
 
         try {
-            byte[] decode = Base64.getDecoder().decode(encodedFile);
+            String[] parts = encodedFile.split(",");
+            if (parts.length != 2) {
+                return false;
+            }
+
+            String encodedImage = parts[1]; // "data:image/png;base64," 부분을 제외한 이미지 인코딩 값
+            byte[] decode = Base64.getDecoder().decode(encodedImage);
             if (decode != null) {
                 return true;
             }
@@ -110,4 +96,11 @@ public class ImageFileService {
         }
     }
 
+    public String findImageUrl(Long imageId) {
+        ImageFile imageFile = imageFileRepository.findById(imageId).orElseThrow(() -> {
+            throw new CustomException(ErrorCode.IMAGE_NOT_FOUND);
+        });
+
+        return imageFile.getImageUrl();
+    }
 }

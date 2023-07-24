@@ -235,13 +235,7 @@ public class TopicService {
             List<ImageFile> imageFiles = imageFileRepository.queryByKeyword(id);
             if(!imageFiles.isEmpty()){
                 ImageFile imageFile = imageFiles.get(0);
-//            List<String> imageUrlList = new ArrayList<>();
-//            for (ImageFile imageFile : imageFiles) {
-                Long imgId = imageFile.getId();
-                String url = baseUrl + "/images/" + imgId;
-//                imageUrlList.add(url);
-//            }
-
+                String url = imageFile.getImageUrl();
                 KeywordDto keywordDto = new KeywordDto(name, comment, url, id);
                 keywordDtoList.add(keywordDto);
             }else{

@@ -89,7 +89,7 @@ public class KeywordService {
 //        for (String encodedFile : fileList) {
 //            imageFileService.storeFile(encodedFile, afterKeyword);
 //        }
-        if (encodedFile != null) {
+        if (imageFileService.checkBase64(encodedFile)) {
             imageFileService.storeFile(encodedFile, afterKeyword);
         }
         return afterKeyword;
