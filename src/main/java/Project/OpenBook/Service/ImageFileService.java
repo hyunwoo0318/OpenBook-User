@@ -95,13 +95,16 @@ public class ImageFileService {
     }
 
     public Boolean checkBase64(String encodedFile) {
-        if (encodedFile == null) {
+        if (encodedFile == null || encodedFile.equals("")) {
             return false;
         }
 
         try {
-            Base64.getDecoder().decode(encodedFile);
-            return true;
+            byte[] decode = Base64.getDecoder().decode(encodedFile);
+            if (decode != null) {
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             return false;
         }
