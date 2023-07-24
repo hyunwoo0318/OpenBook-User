@@ -94,5 +94,17 @@ public class ImageFileService {
         return createPath(storedFileName);
     }
 
+    public Boolean checkBase64(String encodedFile) {
+        if (encodedFile == null) {
+            return false;
+        }
+
+        try {
+            Base64.getDecoder().decode(encodedFile);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
 }

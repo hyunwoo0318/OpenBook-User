@@ -21,6 +21,7 @@ import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -77,6 +78,9 @@ class TopicControllerTest {
     private final String prefix = "http://localhost:";
     private String suffix;
     private String URL;
+
+    @Value("${base.url}")
+    private String baseUrl;
 
     private Topic t1,t2;
 
@@ -202,7 +206,7 @@ class TopicControllerTest {
             ResponseEntity<List<KeywordDto>> response = restTemplate.exchange(URL + "title1/keywords", HttpMethod.GET, null, new ParameterizedTypeReference<List<KeywordDto>>() {
             });
 
-            String baseImageUrl = "http://localhost:8080/images/";
+            String baseImageUrl = baseUrl + "/images/";
 
             KeywordDto dto1 = new KeywordDto(k1.getName(), k1.getComment(), baseImageUrl + file1.getId(), k1.getId());
             KeywordDto dto2 = new KeywordDto(k2.getName(), k2.getComment(), null, k2.getId());
@@ -255,7 +259,7 @@ class TopicControllerTest {
             ResponseEntity<List<SentenceDto>> response = restTemplate.exchange(URL + "title1/sentences", HttpMethod.GET, null, new ParameterizedTypeReference<List<SentenceDto>>() {
             });
 
-            String baseImageUrl = "http://localhost:8080/images/";
+            String baseImageUrl = baseUrl + "/images/";
 
             SentenceDto dto1 = new SentenceDto(s1.getName(), s1.getId());
             SentenceDto dto2= new SentenceDto(s2.getName(), s2.getId());

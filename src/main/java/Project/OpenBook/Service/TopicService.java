@@ -18,7 +18,9 @@ import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import javax.transaction.Transactional;
 
@@ -51,6 +53,9 @@ public class TopicService {
     private final SentenceRepository  sentenceRepository;
 
     private final PrimaryDateRepository primaryDateRepository;
+
+    @Value("${base.url}")
+    private String baseUrl;
 
     public TopicDto queryTopic(String topicTitle) {
         checkTopic(topicTitle);
@@ -233,7 +238,7 @@ public class TopicService {
 //            List<String> imageUrlList = new ArrayList<>();
 //            for (ImageFile imageFile : imageFiles) {
                 Long imgId = imageFile.getId();
-                String url = "http://localhost:8080/images/" + imgId;
+                String url = baseUrl + "/images/" + imgId;
 //                imageUrlList.add(url);
 //            }
 
