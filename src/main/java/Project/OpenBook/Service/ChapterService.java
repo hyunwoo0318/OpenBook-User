@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Dto.chapter.ChapterTitleInfoDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Chapter;
@@ -95,5 +96,11 @@ public class ChapterService {
         Chapter chapter = checkChapter(num);
 
         chapter.updateContent(content);
+    }
+
+    public ChapterTitleInfoDto queryChapterTitleInfo(Integer num) {
+        Chapter chapter = checkChapter(num);
+
+        return new ChapterTitleInfoDto(chapter.getTitle(), chapter.getContent());
     }
 }

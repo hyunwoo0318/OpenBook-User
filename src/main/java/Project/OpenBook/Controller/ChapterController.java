@@ -1,10 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Chapter;
-import Project.OpenBook.Dto.chapter.ChapterDto;
-import Project.OpenBook.Dto.chapter.ChapterInfoDto;
-import Project.OpenBook.Dto.chapter.ChapterNumDto;
-import Project.OpenBook.Dto.chapter.ChapterTitleDto;
+import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Service.ChapterService;
 import io.swagger.annotations.ApiOperation;
@@ -54,9 +51,9 @@ public class ChapterController {
         return new ResponseEntity(chapterTitleDto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 설명 조회")
+    @ApiOperation(value = "단원 학습 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "단원 설명 조회 성공"),
+            @ApiResponse(responseCode = "200", description = "단원 학습 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/{num}/info")
@@ -67,7 +64,19 @@ public class ChapterController {
         return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 설명 수정")
+    @ApiOperation(value = "단원 학습과 단원 이름 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "단원학습 단원이름 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
+    })
+    @GetMapping("/title-info")
+    public ResponseEntity queryChapterTitleInfo(@RequestParam("num") Integer num) {
+        ChapterTitleInfoDto chapterTitleInfoDto = chapterService.queryChapterTitleInfo(num);
+
+        return new ResponseEntity(chapterTitleInfoDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "단원 학습 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 설명 수정 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")

@@ -3,10 +3,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.chapter.ChapterDto;
-import Project.OpenBook.Dto.chapter.ChapterInfoDto;
-import Project.OpenBook.Dto.chapter.ChapterListDto;
-import Project.OpenBook.Dto.chapter.ChapterTitleDto;
+import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
@@ -98,7 +95,7 @@ class ChapterControllerTest {
     }
 
     @Nested
-    @DisplayName("단원 조회 - GET /admin/chapters")
+    @DisplayName("모든 단원 조회 - GET /admin/chapters")
     @TestInstance(PER_CLASS)
     public class queryChapters{
 
@@ -183,6 +180,92 @@ class ChapterControllerTest {
     }
 
     @Nested
+    @DisplayName("단원 이름과 단원 학습 조회 - GET /admin/chapters/title-info")
+    @TestInstance(PER_CLASS)
+    public class queryChapterTitleInfo{
+
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/chapters/title-info";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+
+        @DisplayName("단원 이름과 단원 학습 조회 성공")
+        @Test
+        public void queryChapterTitleInfoSuccess() {
+            ResponseEntity<ChapterTitleInfoDto> response = restTemplate.getForEntity(URL + "?num=1", ChapterTitleInfoDto.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody().getTitle()).isEqualTo(ch1.getTitle());
+            assertThat(response.getBody().getContent()).isEqualTo(ch1.getContent());
+        }
+
+        @DisplayName("단원 이름과 단원 학습 조회 실패 - 존재하지 않는 단원번호 입력")
+        @Test
+        public void queryChapterTitleInfoFail() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?num=-1", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto("존재하지 않는 단원 번호입니다.")));
+        }
+    }
+
+    @Nested
+    @DisplayName("단원 학습 조회 - GET /admin/chapters/{num}/info")
+    @TestInstance(PER_CLASS)
+    public class queryChapterInfo{
+
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/chapters/";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+
+        @DisplayName("단원 학습 조회 성공")
+        @Test
+        public void queryChapterInfoSuccess() {
+            ResponseEntity<ChapterInfoDto> response = restTemplate.getForEntity(URL + ch1.getNumber() + "/info", ChapterInfoDto.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody().getContent()).isEqualTo(ch1.getContent());
+        }
+
+        @DisplayName("단원 학습 조회 실패 - 존재하지 않는 단원번호 입력")
+        @Test
+        public void queryChapterInfoFail() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-111/info", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
+
+        }
+    }
+
+    @Nested
     @DisplayName("해당 단원의 모든 토픽 조회 - GET /admin/chapters/{num}/topics")
     @TestInstance(PER_CLASS)
     public class queryChapterTopics{
@@ -248,48 +331,7 @@ class ChapterControllerTest {
 
     }
 
-    @Nested
-    @DisplayName("단원 학습 조회 - GET /admin/chapters/{num}/info")
-    @TestInstance(PER_CLASS)
-    public class queryChapterInfo{
 
-        @BeforeAll
-        public void init(){
-            suffix = "/admin/chapters/";
-            initConfig();
-        }
-
-        @AfterEach
-        public void clear(){
-            baseClear();
-        }
-
-        @BeforeEach
-        public void setting() {
-            baseSetting();
-        }
-
-
-        @DisplayName("단원 학습 조회 성공")
-        @Test
-        public void queryChapterInfoSuccess() {
-            ResponseEntity<ChapterInfoDto> response = restTemplate.getForEntity(URL + ch1.getNumber() + "/info", ChapterInfoDto.class);
-
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody().getContent()).isEqualTo(ch1.getContent());
-        }
-
-        @DisplayName("단원 학습 조회 실패 - 존재하지 않는 단원번호 입력")
-        @Test
-        public void queryChapterInfoFail() {
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-111/info", HttpMethod.GET,
-                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
-
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
-
-        }
-    }
 
     @Nested
     @DisplayName("단원 학습 수정- PATCH /admin/chapters/{num}/info")
@@ -358,7 +400,7 @@ class ChapterControllerTest {
 
 
     @Nested
-    @DisplayName("단원 저장- POST /admin/chapters")
+    @DisplayName("단원 추가- POST /admin/chapters")
     @TestInstance(PER_CLASS)
     public class createChapter{
 
