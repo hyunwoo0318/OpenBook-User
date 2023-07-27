@@ -21,7 +21,7 @@ public class PrimaryDate extends BaseEntity{
 
     private String extraDateComment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 

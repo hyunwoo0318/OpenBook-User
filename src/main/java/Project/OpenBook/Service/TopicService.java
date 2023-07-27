@@ -162,13 +162,12 @@ public class TopicService {
             throw new CustomException(TOPIC_HAS_KEYWORD);
         }
 
-        //연표에 나올 중요 연도들 삭제
-        List<PrimaryDate> primaryDateList = primaryDateRepository.queryDatesByTopic(topic.getId());
-        primaryDateRepository.deleteAllInBatch(primaryDateList);
-
+        List<Sentence> sentenceList = sentenceRepository.queryByTopicTitle(topicTitle);
+        if (!sentenceList.isEmpty()) {
+            throw new CustomException(TOPIC_HAS_SENTENCE);
+        }
 
         topicRepository.delete(topic);
-
 
         return true;
     }
