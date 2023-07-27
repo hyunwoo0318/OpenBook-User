@@ -167,6 +167,9 @@ public class TopicService {
             throw new CustomException(TOPIC_HAS_SENTENCE);
         }
 
+        List<PrimaryDate> primaryDateList = primaryDateRepository.queryDatesByTopic(topic.getId());
+        primaryDateRepository.deleteAllInBatch(primaryDateList);
+
         topicRepository.delete(topic);
 
         return true;
