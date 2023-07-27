@@ -13,8 +13,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Domain.QChoice.choice;
+import static Project.OpenBook.Domain.QPrimaryDate.primaryDate;
 import static Project.OpenBook.Domain.QQuestionChoice.questionChoice;
 import static Project.OpenBook.Domain.QQuestionDescription.questionDescription;
+import static Project.OpenBook.Domain.QTopic.topic;
 
 @Repository
 @RequiredArgsConstructor
@@ -45,4 +47,6 @@ public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{
         QuestionDto questionDto = new QuestionDto(question, choiceList, descriptionDto);
         return questionDto;
     }
+
+
 }

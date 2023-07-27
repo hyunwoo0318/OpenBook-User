@@ -2,6 +2,8 @@ package Project.OpenBook.Repository.keyword;
 
 import Project.OpenBook.Domain.Keyword;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -36,6 +38,16 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
         return queryFactory.selectDistinct(keyword)
                 .from(keyword)
                 .where(keyword.name.in(keywordNameList))
+                .fetch();
+    }
+
+    @Override
+    public List<Tuple> queryWrongKeywords(String answerTopicTitle, int size) {
+        return queryFactory.select(keyword.name, keyword.comment,keyword.topic.title)
+                .from(keyword)
+                .where(keyword.topic.title.ne(answerTopicTitle))
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(size)
                 .fetch();
     }
 }

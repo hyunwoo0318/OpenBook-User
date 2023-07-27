@@ -29,8 +29,8 @@ public class Topic extends BaseEntity{
     private Integer endDate;
 
     private Boolean startDateCheck;
-
     private Boolean endDateCheck;
+
     @ColumnDefault(value = "0")
     private int questionNum;
 
@@ -50,6 +50,7 @@ public class Topic extends BaseEntity{
 
     @OneToMany(mappedBy = "topic")
     private List<Choice> choiceList = new ArrayList<>();
+
 
     @Builder
     public Topic(String title, Integer startDate, Integer endDate,Boolean startDateCheck, Boolean endDateCheck,

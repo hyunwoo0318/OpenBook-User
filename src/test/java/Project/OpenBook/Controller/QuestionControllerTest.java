@@ -1,21 +1,31 @@
 package Project.OpenBook.Controller;
 
+import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.Constants.QuestionConst;
 import Project.OpenBook.Domain.*;
+import Project.OpenBook.Dto.Sentence.SentenceWithTopicDto;
 import Project.OpenBook.Dto.choice.ChoiceContentIdDto;
-import Project.OpenBook.Dto.question.QuestionDto;
+import Project.OpenBook.Dto.error.ErrorMsgDto;
+import Project.OpenBook.Dto.keyword.KeywordNameCommentDto;
+import Project.OpenBook.Dto.keyword.KeywordWithTopicDto;
+import Project.OpenBook.Dto.question.*;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
+import Project.OpenBook.Repository.keyword.KeywordRepository;
+import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
+import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -24,7 +34,10 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
+import static Project.OpenBook.Constants.QuestionConst.WRONG_ANSWER_NUM;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 //@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 //@TestPropertySource(properties = {  "spring.config.location=classpath:application-test.yml",
@@ -300,3 +313,281 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 //
 //
 //}
+
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(properties = { "spring.config.location=classpath:application-test.yml" })
+class QuestionControllerTest{
+
+    @LocalServerPort
+    int port;
+    @Autowired
+    private TopicRepository topicRepository;
+    @Autowired
+    private ChapterRepository chapterRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
+    @Autowired
+    PrimaryDateRepository primaryDateRepository;
+    @Autowired
+    KeywordRepository keywordRepository;
+    @Autowired
+    SentenceRepository sentenceRepository;
+
+    @Autowired
+    TestRestTemplate restTemplate;
+
+    private final String prefix = "http://localhost:";
+    private String suffix;
+    private String URL;
+
+    private Topic t1,t2,t3;
+
+    private Chapter ch1;
+    private Category c1;
+
+    private PrimaryDate date1, date2;
+    private Keyword k1,k2,k3,k4,k5,k6;
+    private Sentence s1,s2,s3,s4,s5,s6;
+
+    private void initConfig() {
+        URL = prefix + port + suffix;
+        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
+        restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+    }
+
+    private void baseSetting() {
+        c1 = new Category("c1");
+        categoryRepository.saveAndFlush(c1);
+
+        ch1 = new Chapter("ch1", 1);
+        chapterRepository.saveAndFlush(ch1);
+
+        t1 = new Topic("title1", 100, 200, true,false,0, 0, "detail1", ch1, c1);
+        t2 = new Topic("title2", 300, 400, false, true, 0, 0, "detail2", ch1, c1);
+        t3 = new Topic("title3", 500, 600, false, false, 0, 0, "detail3", ch1, c1);
+        topicRepository.saveAllAndFlush(Arrays.asList(t1, t2, t3));
+
+        date1 = new PrimaryDate(13330111, true, "comment1", t1);
+        date2 = new PrimaryDate(13330101, false, "comment2", t1);
+        primaryDateRepository.saveAllAndFlush(Arrays.asList(date1, date2));
+
+        /**
+         * t1 -> k1,k2, s1,s2
+         * t2 -> k3,k4,k5, s3,s4,s5
+         * t3 -> k6, s6
+         */
+
+        k1 = new Keyword("k1", "c1", t1);
+        k2 = new Keyword("k2", "c2", t1);
+        k3 = new Keyword("k3", "c3", t2);
+        k4 = new Keyword("k4", "c4", t2);
+        k5 = new Keyword("k5", "c5", t2);
+        k6 = new Keyword("k6", "c6", t3);
+        keywordRepository.saveAllAndFlush(Arrays.asList(k1, k2, k3, k4, k5, k6));
+
+        s1 = new Sentence("s1", t1);
+        s2 = new Sentence("s2", t1);
+        s3 = new Sentence("s3", t2);
+        s4 = new Sentence("s4", t2);
+        s5 = new Sentence("s5", t2);
+        s6 = new Sentence("s6", t3);
+        sentenceRepository.saveAllAndFlush(Arrays.asList(s1, s2, s3, s4, s5, s6));
+
+    }
+
+    private void baseClear() {
+        sentenceRepository.deleteAllInBatch();
+        keywordRepository.deleteAllInBatch();
+        primaryDateRepository.deleteAllInBatch();
+        topicRepository.deleteAllInBatch();
+        chapterRepository.deleteAllInBatch();
+        categoryRepository.deleteAllInBatch();
+    }
+
+    @Nested
+    @DisplayName("연표 문제 제공 - GET /admin/questions/time-flow")
+    @TestInstance(PER_CLASS)
+    public class queryTimeFlowQuestion{
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/questions/time-flow";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+        /**
+         * expectResult - [t1.startDate, t2.endDate, date1]
+         */
+        @DisplayName("연표 문제 제공 성공")
+        @Test
+        public void queryTimeFlowQuestion(){
+            TimeFlowQuestionDto dto1 = new TimeFlowQuestionDto(t1.getStartDate(), t1.getTitle() + "의 시작연도입니다.", t1.getTitle());
+            TimeFlowQuestionDto dto2 = new TimeFlowQuestionDto(t2.getEndDate(), t2.getTitle() + "의 종료연도입니다.", t2.getTitle());
+            TimeFlowQuestionDto dto3 = new TimeFlowQuestionDto(date1.getExtraDate(), date1.getExtraDateComment(), t1.getTitle());
+
+            ResponseEntity<List<TimeFlowQuestionDto>> response = restTemplate.exchange(URL + "?num=1", HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<TimeFlowQuestionDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            List<TimeFlowQuestionDto> body = response.getBody();
+            assertThat(body.size()).isEqualTo(3);
+            assertThat(body).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2, dto3));
+        }
+
+        @DisplayName("연표 문제 제공 실패 - 존재하지 않는 단원번호 입력")
+        @Test
+        public void queryTimeFlowQuestionFail() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?num=-1", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            Assertions.assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(ErrorCode.CHAPTER_NOT_FOUND.getErrorMessage())));
+        }
+    }
+
+    @Nested
+    @DisplayName("주제보고 키워드/문장 맞추기 문제 제공 - GET /admin/questions/get-keywords")
+    @TestInstance(PER_CLASS)
+    public class queryGetKeywordsQuestion{
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/questions/get-keywords";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+        @DisplayName("주제보고 키워드/문장 맞추기 문제 제공 성공")
+        @Test
+        public void queryGetKeywordsQuestionSuccess(){
+            String topicTitle = t1.getTitle();
+            ResponseEntity<GetKeywordQuestionDto> response = restTemplate.getForEntity(URL + "?title=" + topicTitle, GetKeywordQuestionDto.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            GetKeywordQuestionDto body = response.getBody();
+
+            GetKeywordAnswerDto answerDto = body.getAnswer();
+            List<KeywordNameCommentDto> answerKeywordList = answerDto.getKeywordList();
+            List<String> answerSentenceList = answerDto.getSentenceList();
+
+            GetKeywordWrongAnswerDto wrongAnswerDto = body.getWrongAnswer();
+            List<KeywordWithTopicDto> wrongAnswerKeywordList = wrongAnswerDto.getKeywordList();
+            List<SentenceWithTopicDto> wrongAnswerSentenceList = wrongAnswerDto.getSentenceList();
+
+
+            //정답주제의 모든 키워드와 문장을 가지고 있는지 확인
+            List<Keyword> expectKeywordList = keywordRepository.queryKeywordsByTopic(topicTitle);
+            assertThat(answerKeywordList.size()).isEqualTo(expectKeywordList.size());
+            List<Sentence> expectSentenceList = sentenceRepository.queryByTopicTitle(topicTitle);
+            assertThat(answerSentenceList.size()).isEqualTo(expectSentenceList.size());
+
+            //정답 키워드, 문장이 올바른지 확인
+            Set<String> keywordNameSet = expectKeywordList.stream().map(k -> k.getName()).collect(Collectors.toSet());
+            Set<String> sentenceNameSet = expectSentenceList.stream().map(s -> s.getName()).collect(Collectors.toSet());
+            for (KeywordNameCommentDto dto : answerKeywordList) {
+                assertThat(keywordNameSet.contains(dto.getName()));
+            }
+            for (String s : answerSentenceList) {
+                assertThat(sentenceNameSet.contains(s));
+            }
+
+
+            //오답 키워드, 문장의 개수가 정해진 수인지 확인
+            assertThat(wrongAnswerKeywordList.size()).isEqualTo(answerKeywordList.size() * WRONG_ANSWER_NUM);
+            assertThat(wrongAnswerSentenceList.size()).isEqualTo(answerSentenceList.size() * WRONG_ANSWER_NUM);
+
+            //오답 키워드, 문장이 정답 주제의 키워드,문장이 아닌지 확인
+            for (KeywordWithTopicDto dto : wrongAnswerKeywordList) {
+                assertThat(dto.getTopicTitle()).isNotEqualTo(t1.getTitle());
+            }
+            for (SentenceWithTopicDto dto : wrongAnswerSentenceList) {
+                assertThat(dto.getTopicTitle()).isNotEqualTo(t1.getTitle());
+            }
+
+        }
+
+        @DisplayName("주제 보고 키워드/문장 맞추기 문제 제공 성공 - 키워드, 문장수가 부족한 경우")
+        @Test
+        public void queryGetKeywordsQuestionSuccessLessKeywordsSentence(){
+            String topicTitle = t2.getTitle();
+            ResponseEntity<GetKeywordQuestionDto> response = restTemplate.getForEntity(URL + "?title=" + topicTitle, GetKeywordQuestionDto.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            GetKeywordQuestionDto body = response.getBody();
+
+            GetKeywordAnswerDto answerDto = body.getAnswer();
+            List<KeywordNameCommentDto> answerKeywordList = answerDto.getKeywordList();
+            List<String> answerSentenceList = answerDto.getSentenceList();
+
+            GetKeywordWrongAnswerDto wrongAnswerDto = body.getWrongAnswer();
+            List<KeywordWithTopicDto> wrongAnswerKeywordList = wrongAnswerDto.getKeywordList();
+            List<SentenceWithTopicDto> wrongAnswerSentenceList = wrongAnswerDto.getSentenceList();
+
+
+            //정답주제의 모든 키워드와 문장을 가지고 있는지 확인
+            List<Keyword> expectKeywordList = keywordRepository.queryKeywordsByTopic(topicTitle);
+            assertThat(answerKeywordList.size()).isEqualTo(expectKeywordList.size());
+            List<Sentence> expectSentenceList = sentenceRepository.queryByTopicTitle(topicTitle);
+            assertThat(answerSentenceList.size()).isEqualTo(expectSentenceList.size());
+
+            //정답 키워드, 문장이 올바른지 확인
+            Set<String> keywordNameSet = expectKeywordList.stream().map(k -> k.getName()).collect(Collectors.toSet());
+            Set<String> sentenceNameSet = expectSentenceList.stream().map(s -> s.getName()).collect(Collectors.toSet());
+            for (KeywordNameCommentDto dto : answerKeywordList) {
+                assertThat(keywordNameSet.contains(dto.getName()));
+            }
+            for (String s : answerSentenceList) {
+                assertThat(sentenceNameSet.contains(s));
+            }
+
+
+            //오답 키워드, 문장이 정답 주제의 키워드,문장이 아닌지 확인
+            for (KeywordWithTopicDto dto : wrongAnswerKeywordList) {
+                assertThat(dto.getTopicTitle()).isNotEqualTo(topicTitle);
+            }
+            for (SentenceWithTopicDto dto : wrongAnswerSentenceList) {
+                assertThat(dto.getTopicTitle()).isNotEqualTo(topicTitle);
+            }
+        }
+
+        @DisplayName("주제보고 키워드/문장 맞추기 문제 제공 실패 - 존재하지 않는 토픽 제목 입력")
+        @Test
+        public void queryGetKeywordsQuestionFailWrongTitle(){
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?title=title99999", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_NOT_FOUND.getErrorMessage())));
+        }
+
+
+
+    }
+
+
+
+
+
+
+}

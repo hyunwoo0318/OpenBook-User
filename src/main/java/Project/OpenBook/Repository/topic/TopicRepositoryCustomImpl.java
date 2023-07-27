@@ -114,4 +114,14 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
         return new TopicDto(chapter, title, category, startDate,startDateCheck, endDateCheck, endDate, detail, dateDtoList);
     }
 
+    @Override
+    public List<Tuple> queryTimeFlowQuestion(Integer num) {
+        return queryFactory.select(topic, primaryDate)
+                .from(topic)
+                .leftJoin(primaryDate)
+                .on(topic.id.eq(primaryDate.topic.id))
+                .where(topic.chapter.number.eq(num))
+                .fetch();
+    }
+
 }
