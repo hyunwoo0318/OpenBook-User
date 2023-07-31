@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static Project.OpenBook.Domain.QAnswerNote.answerNote;
 import static Project.OpenBook.Domain.QBookmark.bookmark;
@@ -19,11 +20,13 @@ public class AnswerNoteRepositoryCustomImpl implements AnswerNoteRepositoryCusto
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public AnswerNote queryAnswerNote(Long customerId, Long questionId) {
-        return queryFactory.selectFrom(answerNote)
-                .where(answerNote.customer.id.eq(customerId))
-                .where(answerNote.question.id.eq(questionId))
+    public Optional<AnswerNote> queryAnswerNote(Long customerId, Long questionId) {
+        AnswerNote answerNote = queryFactory.selectFrom(QAnswerNote.answerNote)
+                .where(QAnswerNote.answerNote.customer.id.eq(customerId))
+                .where(QAnswerNote.answerNote.question.id.eq(questionId))
                 .fetchOne();
+
+        return Optional.ofNullable(answerNote);
     }
 
     @Override

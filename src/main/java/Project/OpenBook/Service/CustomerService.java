@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.CUSTOMER_NOT_FOUND;
@@ -42,10 +43,10 @@ public class CustomerService {
     }
 
     public CustomerDetailDto queryCustomerDetail(String code) {
-        Customer customer = customerRepository.queryCustomer(code);
-        if (customer == null) {
-            throw new CustomException(CUSTOMER_NOT_FOUND);
-        }
+        Customer customer = customerRepository.queryCustomer(code)
+                .orElseThrow(() -> {
+                    throw new CustomException(CUSTOMER_NOT_FOUND);
+                });
         return CustomerDetailDto.builder()
                 .age(customer.getAge())
                 .log(null)

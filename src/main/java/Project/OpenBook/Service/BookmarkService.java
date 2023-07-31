@@ -53,8 +53,8 @@ public class BookmarkService {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
 
-        Bookmark bookmark = bookmarkRepository.queryBookmark(customerId, topicTitle);
-        bookmarkRepository.delete(bookmark);
+        bookmarkRepository.queryBookmark(customerId, topicTitle)
+                .ifPresent(bookmarkRepository::delete);
     }
 
     public List<String> queryBookmarks(Long customerId) {

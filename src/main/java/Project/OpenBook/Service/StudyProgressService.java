@@ -6,7 +6,6 @@ import Project.OpenBook.Dto.ChapterProgressAddDto;
 import Project.OpenBook.Dto.TopicProgressAddDto;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
-import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepositoryCustom;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
@@ -34,14 +33,14 @@ public class StudyProgressService {
         Chapter chapter = checkChapter(chapterProgressAddDto.getNumber());
         Customer customer = checkCustomer(chapterProgressAddDto.getCustomerId());
 
-        ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer.getId(), chapter.getNumber());
-        if (chapterProgress == null) {
-            ChapterProgress newChapterProgress = new ChapterProgress(customer, chapter);
-            chapterProgressRepository.save(newChapterProgress);
-            newChapterProgress.updateWrongCount(chapterProgressAddDto.getCount());
-        }else{
-            chapterProgress.updateWrongCount(chapterProgressAddDto.getCount());
-        }
+        chapterProgressRepository.queryChapterProgress(customer.getId(), chapter.getNumber())
+                .ifPresentOrElse(
+                        c -> c.updateWrongCount(chapterProgressAddDto.getCount()),
+                () -> {
+                    ChapterProgress newChapterProgress = new ChapterProgress(customer, chapter);
+                    chapterProgressRepository.save(newChapterProgress);
+                    newChapterProgress.updateWrongCount(chapterProgressAddDto.getCount());
+                });
     }
 
     @Transactional

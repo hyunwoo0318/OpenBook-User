@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface ChapterProgressRepositoryCustom {
 
-    public ChapterProgress queryChapterProgress(Long customerId, Integer num);
+    public Optional<ChapterProgress> queryChapterProgress(Long customerId, Integer num);
 }

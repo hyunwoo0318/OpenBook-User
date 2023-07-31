@@ -16,10 +16,11 @@ public class ChapterProgressRepositoryCustomImpl implements ChapterProgressRepos
 
     private final JPAQueryFactory queryFactory;
     @Override
-    public ChapterProgress queryChapterProgress(Long customerId, Integer num) {
-        return queryFactory.selectFrom(chapterProgress)
+    public Optional<ChapterProgress> queryChapterProgress(Long customerId, Integer num) {
+        ChapterProgress findChapterProgress = queryFactory.selectFrom(chapterProgress)
                 .where(chapterProgress.chapter.number.eq(num))
                 .where(chapterProgress.customer.id.eq(customerId))
                 .fetchOne();
+        return Optional.ofNullable(findChapterProgress);
     }
 }

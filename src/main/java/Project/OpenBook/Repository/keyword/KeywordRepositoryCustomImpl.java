@@ -4,12 +4,14 @@ import Project.OpenBook.Domain.Keyword;
 
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import static Project.OpenBook.Domain.QKeyword.keyword;
 
@@ -19,11 +21,12 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Keyword queryByNameInTopic(String name, String topicTitle) {
-        return queryFactory.selectFrom(keyword)
+    public Optional<Keyword> queryByNameInTopic(String name, String topicTitle) {
+        Keyword findKeyword = queryFactory.selectFrom(keyword)
                 .where(keyword.name.eq(name))
                 .where(keyword.topic.title.eq(topicTitle))
                 .fetchOne();
+        return Optional.ofNullable(findKeyword);
     }
 
     @Override

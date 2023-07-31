@@ -15,7 +15,6 @@ import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.convert.DataSizeUnit;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -27,9 +26,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
-import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
@@ -133,9 +132,8 @@ public class StudyProgressControllerTest {
             ResponseEntity<Void> response = restTemplate.postForEntity(URL, dto, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(c2.getId(), ch1.getNumber());
-            assertThat(chapterProgress).isNotNull();
-            assertThat(chapterProgress.getWrongCount()).isEqualTo(5);
+            Optional<ChapterProgress> chapterProgressOptional = chapterProgressRepository.queryChapterProgress(c2.getId(), ch1.getNumber());
+            assertThat(chapterProgressOptional.get().getWrongCount()).isEqualTo(5);
         }
 
         @DisplayName("단원 학습 정보 입력 성공 - 이전에 학습한적이 있는 경우")
@@ -145,8 +143,8 @@ public class StudyProgressControllerTest {
             ResponseEntity<Void> response = restTemplate.postForEntity(URL, dto, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(c1.getId(), ch1.getNumber());
-            assertThat(chapterProgress.getWrongCount()).isEqualTo(8); // 기존 3 + 추가된 5
+            Optional<ChapterProgress> chapterProgressOptional = chapterProgressRepository.queryChapterProgress(c1.getId(), ch1.getNumber());
+            assertThat(chapterProgressOptional.get().getWrongCount()).isEqualTo(8); // 기존 3 + 추가된 5
         }
 
         @DisplayName("단원 학습 정보 입력 실패 - DTO Validation")

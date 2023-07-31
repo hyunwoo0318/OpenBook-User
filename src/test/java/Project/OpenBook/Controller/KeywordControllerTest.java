@@ -25,10 +25,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
 import java.security.Key;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -130,7 +127,8 @@ public class KeywordControllerTest {
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             assertThat(keywordRepository.findAll().size()).isEqualTo(prevSize + 1);
-            Keyword keyword = keywordRepository.queryByNameInTopic(keywordDto.getName(), t1.getTitle());
+            Optional<Keyword> keywordOptional = keywordRepository.queryByNameInTopic(keywordDto.getName(), t1.getTitle());
+            Keyword keyword = keywordOptional.orElseThrow();
             assertThat(keyword.getComment()).isEqualTo("newComment1");
             assertThat(keyword.getName()).isEqualTo("newName1");
         }

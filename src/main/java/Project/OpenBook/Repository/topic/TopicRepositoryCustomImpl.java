@@ -57,7 +57,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
 
 
     @Override
-    public List<AdminChapterDto> queryAdminChapterDto(Integer chapterNum) {
+    public List<Tuple> queryAdminChapterDto(Integer chapterNum) {
         List<Tuple> result = queryFactory.select(topic.category.name, topic.title, topic.startDate, topic.endDate,
                         description.countDistinct(), choice.countDistinct(), keyword.countDistinct())
                 .from(topic)
@@ -68,22 +68,8 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .groupBy(topic.id)
                 .fetch();
 
-        List<AdminChapterDto> adminChapterDtoList = new ArrayList<>();
-        for (Tuple t : result) {
-            String category = t.get(topic.category.name);
-            String title = t.get(topic.title);
-            Integer startDate = t.get(topic.startDate);
-            Integer endDate = t.get(topic.endDate);
-            Long descriptionCount = t.get(description.countDistinct());
-            if(descriptionCount == null) descriptionCount = 0L;
-            Long choiceCount = t.get(choice.countDistinct());
-            if(choiceCount == null) choiceCount = 0L;
-            Long keywordCount = t.get(keyword.countDistinct());
-            if(keywordCount == null) keywordCount = 0L;
-            AdminChapterDto adminChapterDto = new AdminChapterDto(category, title, startDate, endDate, descriptionCount, choiceCount, keywordCount);
-            adminChapterDtoList.add(adminChapterDto);
-        }
-        return adminChapterDtoList;
+
+        return result;
     }
 
     @Override

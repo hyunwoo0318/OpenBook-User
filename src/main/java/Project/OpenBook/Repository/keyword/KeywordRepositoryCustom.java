@@ -5,11 +5,12 @@ import com.querydsl.core.Tuple;
 
 import java.security.Key;
 import java.util.List;
+import java.util.Optional;
 
 public interface KeywordRepositoryCustom {
 
 
-    public Keyword queryByNameInTopic(String name, String topicTitle);
+    public Optional<Keyword> queryByNameInTopic(String name, String topicTitle);
 
     public List<Keyword> queryKeywordsByTopic(String topicTitle);
 

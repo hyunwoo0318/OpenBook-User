@@ -33,27 +33,27 @@ public class AdminService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
 
-    /**
-     * 관리자 회원가입 메서드
-     * @param loginId -> 로그인아이디
-     * @param password -> 비밀번호
-     * @return 이미 가입이 되어있는 아이디로 회원가입을 시도할경우 null 리턴
-     * @return 정상적인 경우는 가입된 Admin정보 리턴
-     */
-
-    public Admin registerAdmin(String loginId, String password) {
-        Optional<Admin> optionalAdmin = adminRepository.findByLoginId(loginId);
-        //중복된 아이디로 회원가입을 시도할경우
-        if(optionalAdmin.isPresent()) return null;
-        password = passwordEncoder.encode(password);
-        Admin admin = Admin.builder()
-                .loginId(loginId)
-                .password(password)
-                .role(Role.ADMIN)
-                .build();
-        adminRepository.save(admin);
-        return admin;
-    }
+//    /**
+//     * 관리자 회원가입 메서드
+//     * @param loginId -> 로그인아이디
+//     * @param password -> 비밀번호
+//     * @return 이미 가입이 되어있는 아이디로 회원가입을 시도할경우 null 리턴
+//     * @return 정상적인 경우는 가입된 Admin정보 리턴
+//     */
+//
+//    public Admin registerAdmin(String loginId, String password) {
+//        Optional<Admin> optionalAdmin = adminRepository.findByLoginId(loginId);
+//        //중복된 아이디로 회원가입을 시도할경우
+//        if(optionalAdmin.isPresent()) return null;
+//        password = passwordEncoder.encode(password);
+//        Admin admin = Admin.builder()
+//                .loginId(loginId)
+//                .password(password)
+//                .role(Role.ADMIN)
+//                .build();
+//        adminRepository.save(admin);
+//        return admin;
+//    }
 
     public void login(String loginId, String password, HttpServletRequest request){
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(loginId, password);

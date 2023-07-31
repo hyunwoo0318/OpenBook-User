@@ -51,9 +51,8 @@ public class AnswerNoteService {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
 
-        AnswerNote answerNote = answerNoteRepository.queryAnswerNote(customerId, questionId);
-        answerNoteRepository.delete(answerNote);
-
+        answerNoteRepository.queryAnswerNote(customerId, questionId)
+                    .ifPresent(answerNoteRepository::delete);
     }
 
     public List<Long> queryAnswerNotes(Long customerId) {
