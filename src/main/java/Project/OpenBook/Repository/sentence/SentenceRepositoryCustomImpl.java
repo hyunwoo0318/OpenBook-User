@@ -24,6 +24,15 @@ public class SentenceRepositoryCustomImpl implements SentenceRepositoryCustom{
     }
 
     @Override
+    public List<Sentence> queryByTopicTitle(String topicTitle, int size) {
+        return queryFactory.selectFrom(sentence)
+                .where(sentence.topic.title.eq(topicTitle))
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(size)
+                .fetch();
+    }
+
+    @Override
     public List<Tuple> queryWrongSentences(String answerTopicTitle, int size) {
         return queryFactory.select(sentence.name,sentence.topic.title)
                 .from(sentence)

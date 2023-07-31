@@ -391,9 +391,33 @@ public class QuestionService {
                 new GetKeywordWrongAnswerDto(wrongKeywordDtoList, wrongSentenceDtoList));
     }
 
-    public void queryGetTopicsQuestion(Integer num) {
+    public List<GetTopicQuestionDto> queryGetTopicsQuestion(Integer num) {
         Chapter chapter = checkChapter(num);
 
+        List<GetTopicQuestionDto> questionList = new ArrayList<>();
 
+        List<String> topicTitleList = topicRepository.queryTopicTitleInChapter(num);
+        for (String topicTitle : topicTitleList) {
+
+            List<Keyword> answerKeywordList = keywordRepository.queryKeywordsByTopic(topicTitle, 2);
+            List<Sentence> answerSentenceList = sentenceRepository.queryByTopicTitle(topicTitle, 1);
+
+            if (answerKeywordList.size() == 2) {
+                List<KeywordNameCommentDto> answerKeywordDtoList = answerKeywordList.stream().map(k -> new KeywordNameCommentDto(k.getName(), k.getComment()))
+                        .collect(Collectors.toList());
+                List<String> wrongTopicList = topicRepository.queryWrongTopicTitle(topicTitle, 8);
+                GetTopicQuestionDto dto1 = new GetTopicQuestionDto(topicTitle, TYPE_KEYWORD, answerKeywordDtoList, wrongTopicList);
+                questionList.add(dto1);
+            }
+
+            if (answerSentenceList.size() == 1) {
+                String answerSentence = answerSentenceList.get(0).getName();
+                List<String> wrongTopicList = topicRepository.queryWrongTopicTitle(topicTitle, 8);
+                GetTopicQuestionDto dto2 = new GetTopicQuestionDto(topicTitle, TYPE_SENTENCE, answerSentence, wrongTopicList);
+                questionList.add(dto2);
+            }
+        }
+
+        return questionList;
     }
 }

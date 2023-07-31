@@ -124,4 +124,20 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .fetch();
     }
 
+    @Override
+    public List<String> queryTopicTitleInChapter(Integer num) {
+        return queryFactory.select(topic.title)
+                .from(topic)
+                .where(topic.chapter.number.eq(num))
+                .fetch();
+    }
+
+    @Override
+    public List<String> queryWrongTopicTitle(String topicTitle,int size) {
+         return queryFactory.select(topic.title)
+                 .from(topic)
+                 .where(topic.title.ne(topicTitle))
+                 .limit(size)
+                 .fetch();
+    }
 }

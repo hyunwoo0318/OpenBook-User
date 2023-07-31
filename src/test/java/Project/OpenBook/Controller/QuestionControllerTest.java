@@ -34,6 +34,7 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static Project.OpenBook.Constants.ErrorCode.CHAPTER_NOT_FOUND;
 import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
 import static Project.OpenBook.Constants.QuestionConst.WRONG_ANSWER_NUM;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -363,10 +364,18 @@ class QuestionControllerTest{
         ch1 = new Chapter("ch1", 1);
         chapterRepository.saveAndFlush(ch1);
 
+        List<Topic> topicList = new ArrayList<>();
         t1 = new Topic("title1", 100, 200, true,false,0, 0, "detail1", ch1, c1);
         t2 = new Topic("title2", 300, 400, false, true, 0, 0, "detail2", ch1, c1);
         t3 = new Topic("title3", 500, 600, false, false, 0, 0, "detail3", ch1, c1);
-        topicRepository.saveAllAndFlush(Arrays.asList(t1, t2, t3));
+        topicList.addAll(Arrays.asList(t1, t2, t3));
+
+        //추가적으로 토픽 20개 더 추가
+        for (int i = 4; i < 24; i++) {
+            Topic topic = new Topic("title" + i,0,0,false,false,0,0,"detail" + i, ch1, c1);
+            topicList.add(topic);
+        }
+        topicRepository.saveAllAndFlush(topicList);
 
         date1 = new PrimaryDate(13330111, true, "comment1", t1);
         date2 = new PrimaryDate(13330101, false, "comment2", t1);
@@ -579,6 +588,95 @@ class QuestionControllerTest{
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_NOT_FOUND.getErrorMessage())));
+        }
+
+
+
+    }
+
+    @Nested
+    @DisplayName("키워드/문장 보고 주제 맞추기 문제 제공 - GET /admin/questions/get-topics")
+    @TestInstance(PER_CLASS)
+    public class queryGetTopicsQuestion{
+        @BeforeAll
+        public void init(){
+            suffix = "/admin/questions/get-topics";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+        /**
+         * t1 -> keyword, sentence
+         * t2 -> keyword, sentence
+         * t3  -> sentence
+         * t4 ~ -> x
+         * 총 5개의 문제가 생성되어야함
+         */
+        @DisplayName("키워드/문장 보고 주제 맞추기 문제 제공 성공")
+        @Test
+        public void queryGetTopicsQuestionSuccess(){
+            int num = ch1.getNumber();
+
+            ResponseEntity<List<GetTopicQuestionDto>> response = restTemplate.exchange(URL + "?num=" + num, HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<GetTopicQuestionDto>>() {});
+
+            List<GetTopicQuestionDto> questionDtoList = response.getBody();
+            //총 4개의 문제가 생성되었는지 확인
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(questionDtoList.size()).isEqualTo(5);
+
+            for (GetTopicQuestionDto dto : questionDtoList) {
+                //정답 주제가 t1,t2내에서 생성되었는지 확인
+                assertThat(Arrays.asList(t1.getTitle(), t2.getTitle(), t3.getTitle()).contains(dto.getAnswer())).isTrue();
+
+                //문제 타입이 키워드/문장 내로 정해졌는지 확인
+                assertThat(Arrays.asList(QuestionConst.TYPE_KEYWORD, QuestionConst.TYPE_SENTENCE).contains(dto.getType())).isTrue();
+
+                //키워드 문제에 대해서 검증
+                if (dto.getType().equals(QuestionConst.TYPE_KEYWORD)) {
+                    //문제에서 제시할 키워드의 개수가 맞는지 확인
+                    assertThat(dto.getKeywordList().size()).isEqualTo(2);
+
+                    //키워드들이 정답 주제 내의 키워드가 맞는지 확인
+                    List<KeywordNameCommentDto> keywordDtoList = keywordRepository.queryKeywordsByTopic(dto.getAnswer()).stream()
+                            .map(d -> new KeywordNameCommentDto(d.getName(), d.getComment()))
+                            .collect(Collectors.toList());
+                    assertThat(keywordDtoList.containsAll(dto.getKeywordList()));
+                }
+
+                //문장 문제에 대해서 검증
+                if (dto.getType().equals(QuestionConst.TYPE_SENTENCE)) {
+                    //문장이 정답 주제 내의 문장이 맞는지 확인
+                    List<String> sentenceList = sentenceRepository.queryByTopicTitle(dto.getAnswer()).stream()
+                            .map(d -> d.getName())
+                            .collect(Collectors.toList());
+                    assertThat(sentenceList.contains(dto.getSentence()));
+                }
+
+                //오답 주제의 개수가 8개인지 확인
+                assertThat(dto.getWrongAnswerList().size()).isEqualTo(8);
+                //각각의 오답 주제가 정답 주제와 겹치지 않는지 확인
+                assertThat(dto.getWrongAnswerList().contains(dto.getAnswer())).isFalse();
+            }
+        }
+
+        @DisplayName("키워드/문장 보고 주제 맞추기 문제 제공 실패 - 존재하지 않는 단원 번호 입력")
+        @Test
+        public void queryGetTopicsQuestionFailWrongNum(){
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?num=123123123", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
         }
 
 

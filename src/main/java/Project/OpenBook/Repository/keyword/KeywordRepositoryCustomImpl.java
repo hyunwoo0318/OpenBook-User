@@ -34,6 +34,15 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
     }
 
     @Override
+    public List<Keyword> queryKeywordsByTopic(String topicTitle, int size) {
+        return queryFactory.selectFrom(keyword)
+                .where(keyword.topic.title.eq(topicTitle))
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(size)
+                .fetch();
+    }
+
+    @Override
     public List<Keyword> queryKeywordsList(List<String> keywordNameList) {
         return queryFactory.selectDistinct(keyword)
                 .from(keyword)

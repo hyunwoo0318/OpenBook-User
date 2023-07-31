@@ -22,4 +22,8 @@ public interface  TopicRepositoryCustom {
     public TopicDto queryTopicDto(String topicTitle);
 
     public List<Tuple> queryTimeFlowQuestion(Integer num);
+
+    public List<String> queryTopicTitleInChapter(Integer num);
+
+    public List<String> queryWrongTopicTitle(String topicTitle, int size);
 }

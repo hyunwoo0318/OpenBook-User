@@ -3,6 +3,7 @@ package Project.OpenBook.Controller;
 import Project.OpenBook.Domain.Question;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.question.GetKeywordQuestionDto;
+import Project.OpenBook.Dto.question.GetTopicQuestionDto;
 import Project.OpenBook.Dto.question.QuestionDto;
 import Project.OpenBook.Dto.question.TimeFlowQuestionDto;
 import Project.OpenBook.Service.CategoryService;
@@ -117,15 +118,17 @@ public class QuestionController {
         return new ResponseEntity(questionDto, HttpStatus.OK);
     }
 
-//    @ApiOperation("키워드/문장 보고 주제 맞추기 문제 제공")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "키워드/문장 보고 주제 맞추기 문제 제공 성공"),
-//            @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
-//    })
-//    @GetMapping("/admin/questions/get-topics")
-//    public ResponseEntity queryGetTopicsQuestion(@RequestParam("num") Integer num){
-//        questionService.queryGetTopicsQuestion(num);
-//    }
+    @ApiOperation("키워드/문장 보고 주제 맞추기 문제 제공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "키워드/문장 보고 주제 맞추기 문제 제공 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
+    })
+    @GetMapping("/admin/questions/get-topics")
+    public ResponseEntity queryGetTopicsQuestion(@RequestParam("num") Integer num){
+        List<GetTopicQuestionDto> questionList = questionService.queryGetTopicsQuestion(num);
+
+        return new ResponseEntity(questionList, HttpStatus.OK);
+    }
 
 
 }
