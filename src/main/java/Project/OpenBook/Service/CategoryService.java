@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Dto.category.CategoryDto;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Topic;
@@ -23,9 +24,8 @@ public class CategoryService {
     private final TopicRepository topicRepository;
 
 
-    public List<String> queryCategories() {
-        List<Category> all = categoryRepository.findAll();
-        return categoryRepository.findAll().stream().map(c -> c.getName()).collect(Collectors.toList());
+    public List<CategoryDto> queryCategories() {
+        return categoryRepository.findAll().stream().map(c -> new CategoryDto(c.getName())).collect(Collectors.toList());
     }
 
     public Category createCategory(String categoryName) {
@@ -40,7 +40,7 @@ public class CategoryService {
 
         Category category = checkCategory(prevName);
         if (prevName.equals(afterName)) {
-            return category;
+            return category;ㄱㅜㄱ조
         }
         checkDupCategoryName(afterName);
 

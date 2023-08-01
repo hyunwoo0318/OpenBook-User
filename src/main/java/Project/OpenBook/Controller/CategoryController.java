@@ -31,7 +31,7 @@ public class CategoryController {
     })
     @GetMapping
     public ResponseEntity queryCategories() {
-        List<CategoryDto> categoryList = categoryService.queryCategories().stream().map(c -> new CategoryDto(c)).collect(Collectors.toList());
+        List<CategoryDto> categoryList = categoryService.queryCategories();
         return new ResponseEntity(categoryList, HttpStatus.OK);
     }
 
@@ -43,7 +43,7 @@ public class CategoryController {
     })
     @PostMapping
     public ResponseEntity createCategory(@Validated @RequestBody CategoryDto categoryDto) {
-        Category category = categoryService.createCategory(categoryDto.getName());
+        categoryService.createCategory(categoryDto.getName());
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -57,8 +57,8 @@ public class CategoryController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리 이름 입력")
     })
     @PatchMapping("/{categoryName}")
-    public ResponseEntity updateCategory(@PathVariable("categoryName") String categoryName, @Validated @RequestBody CategoryDto categoryDto) {
-        Category category = categoryService.updateCategory(categoryName, categoryDto.getName());
+    public ResponseEntity updateCategory(@PathVariable("categoryName") String prevCategoryName, @Validated @RequestBody CategoryDto categoryDto) {
+        categoryService.updateCategory(prevCategoryName, categoryDto.getName());
 
         return new ResponseEntity(HttpStatus.OK);
     }

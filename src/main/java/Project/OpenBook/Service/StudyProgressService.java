@@ -44,19 +44,19 @@ public class StudyProgressService {
     }
 
     @Transactional
-
     public void addTopicProgress(TopicProgressAddDto topicProgressAddDto) {
         Topic topic = checkTopic(topicProgressAddDto.getTopicTitle());
         Customer customer = checkCustomer(topicProgressAddDto.getCustomerId());
 
-        TopicProgress topicProgress = topicProgressRepository.queryTopicProgress(topic.getTitle(), customer.getId());
-        if (topicProgress == null) {
-            TopicProgress newTopicProgress = new TopicProgress(customer, topic);
-            topicProgressRepository.save(newTopicProgress);
-            newTopicProgress.updateWrongCount(topicProgressAddDto.getCount());
-        }else{
-            topicProgress.updateWrongCount(topicProgressAddDto.getCount());
-        }
+        topicProgressRepository.queryTopicProgress(topic.getTitle(), customer.getId())
+                .ifPresentOrElse(
+                        t -> t.updateWrongCount(topicProgressAddDto.getCount()),
+                        () -> {
+                            TopicProgress newTopicProgress = new TopicProgress(customer, topic);
+                            topicProgressRepository.save(newTopicProgress);
+                            newTopicProgress.updateWrongCount(topicProgressAddDto.getCount());
+                        }
+                );
     }
 
     private Customer checkCustomer(Long customerId) {

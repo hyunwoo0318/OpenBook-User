@@ -32,8 +32,7 @@ public class ChapterController {
     })
     @GetMapping
     public ResponseEntity queryChapter(){
-        List<Chapter> chapterList = chapterService.queryAllChapters();
-        List<ChapterDto> chapterDtoList = chapterList.stream().map(c -> new ChapterDto(c.getTitle(), c.getNumber())).collect(Collectors.toList());
+        List<ChapterDto> chapterDtoList = chapterService.queryAllChapters();
 
         return new ResponseEntity(chapterDtoList, HttpStatus.OK);
     }
@@ -45,8 +44,7 @@ public class ChapterController {
     })
     @GetMapping("/chapter-title")
     public ResponseEntity queryChapterTitle(@RequestParam("num") Integer num){
-        String title = chapterService.queryChapterTitle(num);
-        ChapterTitleDto chapterTitleDto = new ChapterTitleDto(title);
+        ChapterTitleDto chapterTitleDto = chapterService.queryChapterTitle(num);
 
         return new ResponseEntity(chapterTitleDto, HttpStatus.OK);
     }
@@ -58,8 +56,7 @@ public class ChapterController {
     })
     @GetMapping("/{num}/info")
     public ResponseEntity queryChapterInfo(@PathVariable("num") Integer num){
-        String info = chapterService.queryChapterInfo(num);
-        ChapterInfoDto chapterInfoDto = new ChapterInfoDto(info);
+        ChapterInfoDto chapterInfoDto = chapterService.queryChapterInfo(num);
 
         return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
     }

@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Constants.KakaoConst;
 import Project.OpenBook.Constants.NaverConst;
 import Project.OpenBook.Constants.Role;
@@ -7,6 +8,7 @@ import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.customer.CustomerRepository;
+import Project.OpenBook.Utils.CustomException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -47,19 +50,21 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
             oAuthId = (String) attributes.get("id");
         }
 
-        Customer customer = customerRepository.queryCustomer(oAuthId, provider);
-        if (customer == null) {
-            //회원가입이 되어있지 않음 -> 회원가입 시킴
-            customer = Customer.builder()
+
+        Optional<Customer> customerOptional = customerRepository.queryCustomer(oAuthId, provider);
+        if (customerOptional.isEmpty()) {
+            Customer customer = Customer.builder()
                     .oAuthId(oAuthId)
                     .provider(provider)
                     .role(Role.USER)
                     .nickName(UUID.randomUUID().toString())
                     .build();
             customerRepository.save(customer);
+            return customer;
+        }else{
+            return customerOptional.get();
         }
 
-        return customer;
     }
 
     public TokenDto login(String providerName, String code) {
@@ -73,8 +78,9 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
             oauthId = getNaverId(naverToken);
         }
 
-        Customer customer = customerRepository.queryCustomer(oauthId, providerName);
-        if (customer == null) {
+        Customer customer;
+        Optional<Customer> customerOptional = customerRepository.queryCustomer(oauthId, providerName);
+        if (customerOptional.isEmpty()) {
             //회원가입이 되어있지 않음 -> 회원가입 시킴
             customer = Customer.builder()
                     .oAuthId(oauthId)
@@ -83,6 +89,8 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
                     .nickName(UUID.randomUUID().toString())
                     .build();
             customerRepository.save(customer);
+        }else{
+            customer = customerOptional.get();
         }
 
         String authorities = customer.getAuthorities().stream()

@@ -212,8 +212,8 @@ public class StudyProgressControllerTest {
             ResponseEntity<Void> response = restTemplate.postForEntity(URL, dto, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-            TopicProgress topicProgress = topicProgressRepository.queryTopicProgress(t1.getTitle(), c2.getId());
-            assertThat(topicProgress).isNotNull();
+            TopicProgress topicProgress = topicProgressRepository.queryTopicProgress(t1.getTitle(), c2.getId())
+                    .orElseThrow();
             assertThat(topicProgress.getWrongCount()).isEqualTo(5);
         }
 
@@ -224,7 +224,7 @@ public class StudyProgressControllerTest {
             ResponseEntity<Void> response = restTemplate.postForEntity(URL, dto, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-            TopicProgress topicProgress = topicProgressRepository.queryTopicProgress(t1.getTitle(), c1.getId());
+            TopicProgress topicProgress = topicProgressRepository.queryTopicProgress(t1.getTitle(), c1.getId()).orElseThrow();
             assertThat(topicProgress.getWrongCount()).isEqualTo(8); // 기존 3 + 추가된 5
         }
 

@@ -1,5 +1,8 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Dto.chapter.ChapterDto;
+import Project.OpenBook.Dto.chapter.ChapterInfoDto;
+import Project.OpenBook.Dto.chapter.ChapterTitleDto;
 import Project.OpenBook.Dto.chapter.ChapterTitleInfoDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Utils.CustomException;
@@ -7,13 +10,20 @@ import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
+import static Project.OpenBook.Domain.QChoice.choice;
+import static Project.OpenBook.Domain.QDescription.description;
+import static Project.OpenBook.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.QTopic.topic;
 
 @Service
 @Transactional
@@ -37,13 +47,33 @@ public class ChapterService {
         return newChapter;
     }
 
-    public List<Chapter> queryAllChapters() {
-        return chapterRepository.findAll();
+    public List<ChapterDto> queryAllChapters() {
+        return chapterRepository.findAll().stream()
+                .map(c -> new ChapterDto(c.getTitle(), c.getNumber()))
+                .collect(Collectors.toList());
     }
 
     public List<AdminChapterDto> queryTopicsInChapter(int number) {
         checkChapter(number);
-        return topicRepository.queryAdminChapterDto(number);
+        List<Tuple> result = topicRepository.queryAdminChapterDto(number);
+
+        List<AdminChapterDto> adminChapterDtoList = new ArrayList<>();
+        for (Tuple t : result) {
+            String category = t.get(topic.category.name);
+            String title = t.get(topic.title);
+            Integer startDate = t.get(topic.startDate);
+            Integer endDate = t.get(topic.endDate);
+            Long descriptionCount = t.get(description.countDistinct());
+            if(descriptionCount == null) descriptionCount = 0L;
+            Long choiceCount = t.get(choice.countDistinct());
+            if(choiceCount == null) choiceCount = 0L;
+            Long keywordCount = t.get(keyword.countDistinct());
+            if(keywordCount == null) keywordCount = 0L;
+            AdminChapterDto adminChapterDto = new AdminChapterDto(category, title, startDate, endDate, descriptionCount, choiceCount, keywordCount);
+            adminChapterDtoList.add(adminChapterDto);
+        }
+
+        return adminChapterDtoList;
     }
 
     public Chapter updateChapter(int num, String inputTitle, int inputNum) {
@@ -70,14 +100,14 @@ public class ChapterService {
         chapterRepository.delete(chapter);
         return true;
     }
-    public String queryChapterTitle(Integer num) {
+    public ChapterTitleDto queryChapterTitle(Integer num) {
         Chapter chapter = checkChapter(num);
-        return chapter.getTitle();
+        return new ChapterTitleDto(chapter.getTitle());
     }
 
-    public String queryChapterInfo(Integer num) {
+    public ChapterInfoDto queryChapterInfo(Integer num) {
         Chapter chapter = checkChapter(num);
-        return chapter.getContent();
+        return new ChapterInfoDto(chapter.getContent());
     }
 
     private void checkChapterNum(int number) {

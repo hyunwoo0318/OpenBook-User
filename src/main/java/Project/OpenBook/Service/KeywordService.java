@@ -97,7 +97,7 @@ public class KeywordService {
 
 
     private void checkDupKeyword(String name, String topicTitle) {
-        if (keywordRepository.queryByNameInTopic(name, topicTitle) != null) {
+        if (keywordRepository.queryByNameInTopic(name, topicTitle).isPresent()) {
             throw new CustomException(DUP_KEYWORD_NAME);
         }
     }
@@ -111,7 +111,8 @@ public class KeywordService {
     public void deleteKeyword(Long keywordId) {
         checkKeyword(keywordId);
 
-        imageFileService.deleteImages(keywordId);
         keywordRepository.deleteById(keywordId);
+        imageFileService.deleteImages(keywordId);
+
     }
 }
