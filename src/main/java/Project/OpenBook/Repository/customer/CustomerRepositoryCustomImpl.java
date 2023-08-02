@@ -11,7 +11,7 @@ import static Project.OpenBook.Domain.QCustomer.customer;
 
 @Repository
 @RequiredArgsConstructor
-public class CustomerCustomRepositoryImpl implements CustomerRepositoryCustom {
+public class CustomerRepositoryCustomImpl implements CustomerRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
     @Override

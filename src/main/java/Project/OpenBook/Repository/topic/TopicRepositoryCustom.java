@@ -7,6 +7,7 @@ import Project.OpenBook.Dto.topic.TopicDto;
 import com.querydsl.core.Tuple;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface  TopicRepositoryCustom {
 
@@ -26,4 +27,6 @@ public interface  TopicRepositoryCustom {
     public List<String> queryTopicTitleInChapter(Integer num);
 
     public List<String> queryWrongTopicTitle(String topicTitle, int size);
+
+    public Optional<Topic> queryTopicByNumber(Integer chapterNum, Integer topicNum);
 }

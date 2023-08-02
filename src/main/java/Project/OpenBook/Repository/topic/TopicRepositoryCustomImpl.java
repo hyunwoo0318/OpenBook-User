@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Domain.QChoice.choice;
@@ -74,7 +75,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
 
     @Override
     public TopicDto queryTopicDto(String topicTitle) {
-        Tuple r1 = queryFactory.select(topic.chapter.number, topic.title, topic.category.name, topic.startDate,
+        Tuple r1 = queryFactory.select(topic.chapter.number, topic.number, topic.title, topic.category.name, topic.startDate,
                         topic.endDate, topic.detail, topic.startDateCheck, topic.endDateCheck)
                 .from(topic)
                 .where(topic.title.eq(topicTitle))
@@ -87,17 +88,17 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
         List<PrimaryDateDto> dateDtoList = dateList.stream().map(d -> new PrimaryDateDto(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment()))
                 .collect(Collectors.toList());
 
-
         Integer chapter = r1.get(topic.chapter.number);
-            String title = r1.get(topic.title);
-            String category = r1.get(topic.category.name);
-            Integer startDate = r1.get(topic.startDate);
-            Integer endDate = r1.get(topic.endDate);
-            String detail = r1.get(topic.detail);
+        Integer number = r1.get(topic.number);
+        String title = r1.get(topic.title);
+        String category = r1.get(topic.category.name);
+        Integer startDate = r1.get(topic.startDate);
+        Integer endDate = r1.get(topic.endDate);
+        String detail = r1.get(topic.detail);
         Boolean startDateCheck = r1.get(topic.startDateCheck);
         Boolean endDateCheck = r1.get(topic.endDateCheck);
 
-        return new TopicDto(chapter, title, category, startDate,startDateCheck, endDateCheck, endDate, detail, dateDtoList);
+        return new TopicDto(chapter, title, category, startDate,startDateCheck, endDateCheck, endDate,number, detail, dateDtoList);
     }
 
     @Override
@@ -125,5 +126,14 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                  .where(topic.title.ne(topicTitle))
                  .limit(size)
                  .fetch();
+    }
+
+    @Override
+    public Optional<Topic> queryTopicByNumber(Integer chapterNum, Integer topicNum) {
+        Topic findTopic = queryFactory.selectFrom(topic)
+                .where(topic.chapter.number.eq(chapterNum))
+                .where(topic.number.eq(topicNum))
+                .fetchOne();
+        return Optional.ofNullable(findTopic);
     }
 }

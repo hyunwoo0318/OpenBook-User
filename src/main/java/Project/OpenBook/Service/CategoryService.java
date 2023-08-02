@@ -40,7 +40,7 @@ public class CategoryService {
 
         Category category = checkCategory(prevName);
         if (prevName.equals(afterName)) {
-            return category;ㄱㅜㄱ조
+            return category;
         }
         checkDupCategoryName(afterName);
 

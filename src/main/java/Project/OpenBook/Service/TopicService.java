@@ -27,6 +27,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -68,10 +69,12 @@ public class TopicService {
         Category category = checkCategory(topicDto.getCategory());
         Chapter chapter = checkChapter(topicDto.getChapter());
         checkDupTopicTitle(topicDto.getTitle());
+        checkTopicNumber(topicDto.getChapter(),topicDto.getNumber());
 
         //토픽 저장
         Topic topic = Topic.builder()
                 .chapter(chapter)
+                .number(topicDto.getNumber())
                 .category(category)
                 .title(topicDto.getTitle())
                 .startDate(topicDto.getStartDate())
@@ -99,6 +102,13 @@ public class TopicService {
         return topic;
     }
 
+    private void checkTopicNumber(Integer chapterNum, Integer topicNum) {
+        topicRepository.queryTopicByNumber(chapterNum, topicNum)
+                .ifPresent(t -> {
+                    throw new CustomException(DUP_TOPIC_NUMBER);
+                } );
+    }
+
     public Topic updateTopic(String topicTitle, TopicDto topicDto) {
         Topic topic = checkTopic(topicTitle);
         String inputTitle = topicDto.getTitle();
@@ -113,14 +123,19 @@ public class TopicService {
         int chapterNum = topicDto.getChapter();
         Chapter chapter = checkChapter(chapterNum);
 
-        boolean flag = false;
+        Integer newTopicNum = topicDto.getNumber();
 
-        if(topic.getStartDate()!=topicDto.getStartDate() || topic.getEndDate() != topicDto.getEndDate()){
-            flag = true;
+        if (topic.getNumber() != newTopicNum) {
+            checkTopicNumber(chapterNum, newTopicNum);
         }
 
+//        boolean flag = false;
+//        if(topic.getStartDate()!=topicDto.getStartDate() || topic.getEndDate() != topicDto.getEndDate()){
+//            flag = true;
+//        }
+
         //토픽 수정
-        topic.updateTopic(topicDto.getTitle(), topicDto.getStartDate(),topicDto.getEndDate(),topicDto.getStartDateCheck(),
+        topic.updateTopic(newTopicNum, topicDto.getTitle(), topicDto.getStartDate(), topicDto.getEndDate(), topicDto.getStartDateCheck(),
                 topicDto.getEndDateCheck(), topicDto.getDetail(), chapter, category);
 
         //연표에 나올 날짜 수정

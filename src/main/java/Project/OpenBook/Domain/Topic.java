@@ -37,6 +37,8 @@ public class Topic extends BaseEntity{
     @ColumnDefault(value="0")
     private int choiceNum;
 
+    private Integer number;
+
     @Lob
     private String detail;
 
@@ -53,8 +55,9 @@ public class Topic extends BaseEntity{
 
 
     @Builder
-    public Topic(String title, Integer startDate, Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
+    public Topic(Integer number, String title, Integer startDate, Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
                  int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
+        this.number = number;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -67,8 +70,9 @@ public class Topic extends BaseEntity{
         this.endDateCheck = endDateCheck;
     }
 
-    public Topic updateTopic(String title,Integer startDate,Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
+    public Topic updateTopic(Integer number, String title,Integer startDate,Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
                              String detail, Chapter chapter, Category category) {
+        this.number = number;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;

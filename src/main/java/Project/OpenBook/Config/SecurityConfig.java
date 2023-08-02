@@ -38,21 +38,12 @@ import java.util.*;
 public class SecurityConfig {
 
     private final AdminRepository adminRepository;
-    private final CustomerRepository customerRepository;
 
     private final OAuthService oAuthService;
 
     private final AuthenticationSuccessCustomHandler authenticationSuccessCustomHandler;
 
     private final JwtCustomFilter jwtCustomFilter;
-    private final ChoiceRepository choiceRepository;
-    private final TopicRepository topicRepository;
-
-    private final CategoryRepository categoryRepository;
-
-    private final ChapterRepository chapterRepository;
-
-    private final DescriptionRepository descriptionRepository;
 
     private final String[] permitAllList = {
             "/","/admin/login", "/users/login", "/admin/", "/users/","/oauth2/**", "/login/**","/error/*",
@@ -118,29 +109,7 @@ public class SecurityConfig {
             adminRepository.save(admin2);
         }
 
-//        if(customerRepository.findByNickName("user1").isEmpty()){
-//            Customer user1 = Customer.builder()
-//                    .nickName("user1")
-//                    .age(20)
-//                    .expertise(50)
-//                    .role(Role.USER)
-//                    .build();
-//            Customer user2 = Customer.builder()
-//                    .nickName("user2")
-//                    .age(30)
-//                    .expertise(20)
-//                    .role(Role.USER)
-//                    .build();
-//            Customer user3 = Customer.builder()
-//                    .nickName("user3")
-//                    .age(20)
-//                    .expertise(70)
-//                    .role(Role.USER)
-//                    .build();
-//            customerRepository.save(user1);
-//            customerRepository.save(user2);
-//            customerRepository.save(user3);
-//        }
+
 
     }
 

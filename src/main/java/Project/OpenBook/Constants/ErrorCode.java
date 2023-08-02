@@ -58,6 +58,7 @@ public enum ErrorCode {
     DUP_CHOICE_CONTENT(HttpStatus.CONFLICT, "중복된 선지내용입니다."),
     DUP_DESCRIPTION_CONTENT(HttpStatus.CONFLICT, "중복된 보기내용입니다."),
     DUP_KEYWORD_NAME(HttpStatus.CONFLICT, "중복된 키워드 이름이 해당 토픽 내에 존재합니다"),
+    DUP_TOPIC_NUMBER(HttpStatus.CONFLICT, "중복된 단원 내 주제 번호입니다."),
 
     ;
 

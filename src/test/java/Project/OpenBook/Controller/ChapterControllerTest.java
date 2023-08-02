@@ -84,7 +84,7 @@ class ChapterControllerTest {
         ch1.updateContent(chapterInfo);
         chapterRepository.saveAndFlush(ch1);
 
-        t1 = new Topic("title1", 1234, 2314, false,false,0, 0, "detail1", ch1, c1);
+        t1 = new Topic(1,"title1", 1234, 2314, false,false,0, 0, "detail1", ch1, c1);
         topicRepository.saveAndFlush(t1);
     }
 
