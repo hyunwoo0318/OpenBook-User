@@ -383,7 +383,7 @@ class QuestionControllerTest{
 
         /**
          * t1 -> k1,k2, s1,s2
-         * t2 -> k3,k4,k5, s3,s4,s5
+         * t2 -> k3,k4,k5 s3,s4,s5
          * t3 -> k6, s6
          */
 
@@ -488,7 +488,7 @@ class QuestionControllerTest{
         @DisplayName("주제보고 키워드/문장 맞추기 문제 제공 성공")
         @Test
         public void queryGetKeywordsQuestionSuccess(){
-            String topicTitle = t1.getTitle();
+            String topicTitle = t3.getTitle();
             ResponseEntity<GetKeywordQuestionDto> response = restTemplate.getForEntity(URL + "?title=" + topicTitle, GetKeywordQuestionDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -527,10 +527,10 @@ class QuestionControllerTest{
 
             //오답 키워드, 문장이 정답 주제의 키워드,문장이 아닌지 확인
             for (KeywordWithTopicDto dto : wrongAnswerKeywordList) {
-                assertThat(dto.getTopicTitle()).isNotEqualTo(t1.getTitle());
+                assertThat(dto.getTopicTitle()).isNotEqualTo(topicTitle);
             }
             for (SentenceWithTopicDto dto : wrongAnswerSentenceList) {
-                assertThat(dto.getTopicTitle()).isNotEqualTo(t1.getTitle());
+                assertThat(dto.getTopicTitle()).isNotEqualTo(topicTitle);
             }
 
         }
