@@ -4,6 +4,7 @@ import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.ChapterProgressAddDto;
 import Project.OpenBook.Dto.TopicProgressAddDto;
+import Project.OpenBook.Dto.TopicProgressAddDtoList;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
@@ -44,19 +45,22 @@ public class StudyProgressService {
     }
 
     @Transactional
-    public void addTopicProgress(TopicProgressAddDto topicProgressAddDto) {
-        Topic topic = checkTopic(topicProgressAddDto.getTopicTitle());
-        Customer customer = checkCustomer(topicProgressAddDto.getCustomerId());
+    public void addTopicProgress(TopicProgressAddDtoList topicProgressAddDtoList) {
+        for (TopicProgressAddDto topicProgressAddDto : topicProgressAddDtoList.getProgressAddDtoList()) {
+            Topic topic = checkTopic(topicProgressAddDto.getTopicTitle());
+            Customer customer = checkCustomer(topicProgressAddDto.getCustomerId());
 
-        topicProgressRepository.queryTopicProgress(topic.getTitle(), customer.getId())
-                .ifPresentOrElse(
-                        t -> t.updateWrongCount(topicProgressAddDto.getCount()),
-                        () -> {
-                            TopicProgress newTopicProgress = new TopicProgress(customer, topic);
-                            topicProgressRepository.save(newTopicProgress);
-                            newTopicProgress.updateWrongCount(topicProgressAddDto.getCount());
-                        }
-                );
+            topicProgressRepository.queryTopicProgress(topic.getTitle(), customer.getId())
+                    .ifPresentOrElse(
+                            t -> t.updateWrongCount(topicProgressAddDto.getCount()),
+                            () -> {
+                                TopicProgress newTopicProgress = new TopicProgress(customer, topic);
+                                topicProgressRepository.save(newTopicProgress);
+                                newTopicProgress.updateWrongCount(topicProgressAddDto.getCount());
+                            }
+                    );
+        }
+
     }
 
     private Customer checkCustomer(Long customerId) {

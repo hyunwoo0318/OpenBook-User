@@ -5,6 +5,7 @@ import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.ChapterProgressAddDto;
 import Project.OpenBook.Dto.TopicProgressAddDto;
+import Project.OpenBook.Dto.TopicProgressAddDtoList;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
@@ -207,21 +208,24 @@ public class StudyProgressControllerTest {
         @DisplayName("주제 학습 정보 입력 성공 - 처음 학습한 경우")
         @Test
         public void addTopicProgressSuccessFirst() {
-            TopicProgressAddDto dto = new TopicProgressAddDto(c2.getId(), t1.getTitle(), 5);
+            TopicProgressAddDto dto1 = new TopicProgressAddDto(c2.getId(), t1.getTitle(), 5);
+            TopicProgressAddDto dto2 = new TopicProgressAddDto(c1.getId(), t2.getTitle(), 50);
 
-            ResponseEntity<Void> response = restTemplate.postForEntity(URL, dto, Void.class);
+            ResponseEntity<Void> response = restTemplate.postForEntity(URL, new TopicProgressAddDtoList(Arrays.asList(dto1,dto2)), Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-            TopicProgress topicProgress = topicProgressRepository.queryTopicProgress(t1.getTitle(), c2.getId())
+            TopicProgress topicProgress1 = topicProgressRepository.queryTopicProgress(t1.getTitle(), c2.getId())
                     .orElseThrow();
-            assertThat(topicProgress.getWrongCount()).isEqualTo(5);
+            assertThat(topicProgress1.getWrongCount()).isEqualTo(5);
+            TopicProgress topicProgress2 = topicProgressRepository.queryTopicProgress(t2.getTitle(), c1.getId()).orElseThrow();
+            assertThat(topicProgress2.getWrongCount()).isEqualTo(50);
         }
 
         @DisplayName("주제 학습 정보 입력 성공 - 이전에 학습한적이 있는 경우")
         @Test
         public void addTopicProgressSuccessNotFirst() {
             TopicProgressAddDto dto = new TopicProgressAddDto(c1.getId(), t1.getTitle(), 5);
-            ResponseEntity<Void> response = restTemplate.postForEntity(URL, dto, Void.class);
+            ResponseEntity<Void> response = restTemplate.postForEntity(URL, new TopicProgressAddDtoList(Arrays.asList(dto)), Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             TopicProgress topicProgress = topicProgressRepository.queryTopicProgress(t1.getTitle(), c1.getId()).orElseThrow();
@@ -233,18 +237,18 @@ public class StudyProgressControllerTest {
         public void addTopicProgressFailWrongDto() {
             //필수조건인 회원아이디, 토픽제목 생략
             TopicProgressAddDto dto = new TopicProgressAddDto();
-            ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorDto>>() {
+            ResponseEntity<List<ErrorDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(new TopicProgressAddDtoList(Arrays.asList(dto))), new ParameterizedTypeReference<List<ErrorDto>>() {
             });
 
-            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-            assertThat(response.getBody().size()).isEqualTo(2);
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody().size()).isEqualTo(1);
         }
 
         @DisplayName("주제 학습 정보 입력 실패 - 존재하지 않는 회원아이디 입력")
         @Test
         public void addTopicProgressFailNotFoundCustomerId(){
             TopicProgressAddDto dto = new TopicProgressAddDto(-1L, t1.getTitle(), 5);
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(new TopicProgressAddDtoList(Arrays.asList(dto))), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
             });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -256,7 +260,7 @@ public class StudyProgressControllerTest {
         @Test
         public void addChapterProgressFailNotFoundChapterNum(){
             TopicProgressAddDto dto = new TopicProgressAddDto(c1.getId(), "title-2-2-2-2-2", 5);
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST, new HttpEntity<>(new TopicProgressAddDtoList(Arrays.asList(dto))), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
             });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);

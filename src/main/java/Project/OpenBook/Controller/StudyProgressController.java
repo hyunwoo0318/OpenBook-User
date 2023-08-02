@@ -2,6 +2,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Dto.ChapterProgressAddDto;
 import Project.OpenBook.Dto.TopicProgressAddDto;
+import Project.OpenBook.Dto.TopicProgressAddDtoList;
 import Project.OpenBook.Service.StudyProgressService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,8 +40,8 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 제목 혹은 회원아이디 입력")
     })
     @PostMapping("/admin/progress/topic")
-    public ResponseEntity addTopicProgress(@Validated @RequestBody TopicProgressAddDto topicProgressAddDto) {
-        studyProgressService.addTopicProgress(topicProgressAddDto);
+    public ResponseEntity addTopicProgress(@Validated @RequestBody TopicProgressAddDtoList topicProgressAddDtoList) {
+        studyProgressService.addTopicProgress(topicProgressAddDtoList);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 }
