@@ -127,12 +127,12 @@ class TopicControllerTest {
     }
 
     @Nested
-    @DisplayName("특정 토픽 상세정보 조회 - GET /topics/{topicTitle}")
+    @DisplayName("특정 토픽 상세정보 조회 - GET admin/topics/{topicTitle}")
     @TestInstance(PER_CLASS)
     public class queryTopic{
         @BeforeAll
         public void init(){
-            suffix = "/topics/";
+            suffix = "/admin/topics/";
             initConfig();
         }
 

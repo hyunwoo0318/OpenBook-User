@@ -39,7 +39,7 @@ public class TopicController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
     })
-    @GetMapping("/topics/{topicTitle}")
+    @GetMapping("admin/topics/{topicTitle}")
     public ResponseEntity queryTopics( @PathVariable("topicTitle") String topicTitle) {
         TopicDto topicDto = topicService.queryTopic(topicTitle);
 
