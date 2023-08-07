@@ -3,18 +3,12 @@ package Project.OpenBook.Dto.keyword;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class KeywordUpdateDto {
-
+public class KeywordUserDto {
     private String name;
     private String comment;
-
-//    private List<String> fileList;
     private String file;
 }

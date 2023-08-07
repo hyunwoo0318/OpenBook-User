@@ -1,7 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Dto.keyword.KeywordCreateDto;
-import Project.OpenBook.Dto.keyword.KeywordUpdateDto;
+import Project.OpenBook.Dto.keyword.KeywordUserDto;
 import Project.OpenBook.Service.ImageFileService;
 import Project.OpenBook.Service.KeywordService;
 import io.swagger.annotations.ApiOperation;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -47,8 +46,8 @@ public class KeywordController {
     })
     @PatchMapping("admin/keywords/{keywordId}")
     public ResponseEntity updateKeyword(@PathVariable("keywordId") Long keywordId,
-                                        @Validated @RequestBody KeywordUpdateDto keywordUpdateDto) throws IOException {
-        keywordService.updateKeyword(keywordId,keywordUpdateDto);
+                                        @Validated @RequestBody KeywordUserDto keywordUserDto) throws IOException {
+        keywordService.updateKeyword(keywordId, keywordUserDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 

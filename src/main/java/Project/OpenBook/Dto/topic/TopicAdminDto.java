@@ -1,6 +1,6 @@
 package Project.OpenBook.Dto.topic;
 
-import Project.OpenBook.Dto.PrimaryDateDto;
+import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
 import lombok.*;
 
 import javax.validation.constraints.Min;
@@ -13,7 +13,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class TopicDto {
+public class TopicAdminDto {
 
     @Min(value = 1, message = "단원 번호를 입력해주세요.")
     private int chapter;

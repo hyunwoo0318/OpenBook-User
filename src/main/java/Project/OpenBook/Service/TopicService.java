@@ -1,15 +1,16 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Dto.PrimaryDateDto;
+import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 
+import Project.OpenBook.Dto.topic.TopicUserDto;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
 import Project.OpenBook.Repository.imagefile.ImageFileRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.topic.TopicDto;
+import Project.OpenBook.Dto.topic.TopicAdminDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.dupdate.DupDateRepository;
@@ -20,14 +21,12 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -58,30 +57,34 @@ public class TopicService {
     @Value("${base.url}")
     private String baseUrl;
 
-    public TopicDto queryTopic(String topicTitle) {
+    public TopicAdminDto queryTopicAdmin(String topicTitle) {
         checkTopic(topicTitle);
-        TopicDto topicDto = topicRepository.queryTopicDto(topicTitle);
-        return topicDto;
+        TopicAdminDto topicAdminDto = topicRepository.queryTopicAdminDto(topicTitle);
+        return topicAdminDto;
     }
 
-    public Topic createTopic(TopicDto topicDto) {
+    public TopicUserDto queryTopicUser(Integer chapterNum, Integer topicNum) {
+        return null;
+    }
 
-        Category category = checkCategory(topicDto.getCategory());
-        Chapter chapter = checkChapter(topicDto.getChapter());
-        checkDupTopicTitle(topicDto.getTitle());
-        checkTopicNumber(topicDto.getChapter(),topicDto.getNumber());
+    public Topic createTopic(TopicAdminDto topicAdminDto) {
+
+        Category category = checkCategory(topicAdminDto.getCategory());
+        Chapter chapter = checkChapter(topicAdminDto.getChapter());
+        checkDupTopicTitle(topicAdminDto.getTitle());
+        checkTopicNumber(topicAdminDto.getChapter(), topicAdminDto.getNumber());
 
         //토픽 저장
         Topic topic = Topic.builder()
                 .chapter(chapter)
-                .number(topicDto.getNumber())
+                .number(topicAdminDto.getNumber())
                 .category(category)
-                .title(topicDto.getTitle())
-                .startDate(topicDto.getStartDate())
-                .endDate(topicDto.getEndDate())
-                .detail(topicDto.getDetail())
-                .startDateCheck(topicDto.getStartDateCheck())
-                .endDateCheck(topicDto.getEndDateCheck())
+                .title(topicAdminDto.getTitle())
+                .startDate(topicAdminDto.getStartDate())
+                .endDate(topicAdminDto.getEndDate())
+                .detail(topicAdminDto.getDetail())
+                .startDateCheck(topicAdminDto.getStartDateCheck())
+                .endDateCheck(topicAdminDto.getEndDateCheck())
                 .questionNum(0)
                 .choiceNum(0)
                 .build();
@@ -89,8 +92,8 @@ public class TopicService {
 
         //연표에 표시할 날짜 저장
         List<PrimaryDateDto> dateList = new ArrayList<>();
-        if (topicDto.getExtraDateList() != null) {
-            dateList = topicDto.getExtraDateList();
+        if (topicAdminDto.getExtraDateList() != null) {
+            dateList = topicAdminDto.getExtraDateList();
         }
         List<PrimaryDate> primaryDateList = dateList.stream().map(d -> new PrimaryDate(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment(), topic))
                 .collect(Collectors.toList());
@@ -109,21 +112,21 @@ public class TopicService {
                 } );
     }
 
-    public Topic updateTopic(String topicTitle, TopicDto topicDto) {
+    public Topic updateTopic(String topicTitle, TopicAdminDto topicAdminDto) {
         Topic topic = checkTopic(topicTitle);
-        String inputTitle = topicDto.getTitle();
+        String inputTitle = topicAdminDto.getTitle();
 
         if(!topicTitle.equals(inputTitle)){
             //새로 입력받은 제목이 중복되는지 확인
             checkDupTopicTitle(inputTitle);
         }
-        String categoryName = topicDto.getCategory();
+        String categoryName = topicAdminDto.getCategory();
         Category category = checkCategory(categoryName);
 
-        int chapterNum = topicDto.getChapter();
+        int chapterNum = topicAdminDto.getChapter();
         Chapter chapter = checkChapter(chapterNum);
 
-        Integer newTopicNum = topicDto.getNumber();
+        Integer newTopicNum = topicAdminDto.getNumber();
 
         if (topic.getNumber() != newTopicNum) {
             checkTopicNumber(chapterNum, newTopicNum);
@@ -135,13 +138,13 @@ public class TopicService {
 //        }
 
         //토픽 수정
-        topic.updateTopic(newTopicNum, topicDto.getTitle(), topicDto.getStartDate(), topicDto.getEndDate(), topicDto.getStartDateCheck(),
-                topicDto.getEndDateCheck(), topicDto.getDetail(), chapter, category);
+        topic.updateTopic(newTopicNum, topicAdminDto.getTitle(), topicAdminDto.getStartDate(), topicAdminDto.getEndDate(), topicAdminDto.getStartDateCheck(),
+                topicAdminDto.getEndDateCheck(), topicAdminDto.getDetail(), chapter, category);
 
         //연표에 나올 날짜 수정
         List<PrimaryDate> prevPrimaryDateList = primaryDateRepository.queryDatesByTopic(topic.getId());
         primaryDateRepository.deleteAllInBatch(prevPrimaryDateList);
-        List<PrimaryDate> primaryDateList = topicDto.getExtraDateList().stream()
+        List<PrimaryDate> primaryDateList = topicAdminDto.getExtraDateList().stream()
                 .map(d -> new PrimaryDate(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment(), topic))
                 .collect(Collectors.toList());
         primaryDateRepository.saveAll(primaryDateList);

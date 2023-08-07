@@ -3,14 +3,13 @@ package Project.OpenBook.Service;
 import Project.OpenBook.Domain.Keyword;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.keyword.KeywordCreateDto;
-import Project.OpenBook.Dto.keyword.KeywordUpdateDto;
+import Project.OpenBook.Dto.keyword.KeywordUserDto;
 import Project.OpenBook.Repository.imagefile.ImageFileRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -65,12 +64,12 @@ public class KeywordService {
     }
 
 
-    public Keyword updateKeyword(Long keywordId, KeywordUpdateDto keywordUpdateDto) throws IOException {
+    public Keyword updateKeyword(Long keywordId, KeywordUserDto keywordUserDto) throws IOException {
 
-        String name = keywordUpdateDto.getName();
-        String comment = keywordUpdateDto.getComment();
+        String name = keywordUserDto.getName();
+        String comment = keywordUserDto.getComment();
 //        List<String> fileList = keywordUpdateDto.getFileList();
-        String encodedFile = keywordUpdateDto.getFile();
+        String encodedFile = keywordUserDto.getFile();
 
         Keyword keyword = checkKeyword(keywordId);
         String title = keyword.getTopic().getTitle();

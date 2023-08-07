@@ -1,16 +1,14 @@
 package Project.OpenBook.Repository.topic;
 
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.PrimaryDateDto;
-import Project.OpenBook.Dto.topic.AdminChapterDto;
-import Project.OpenBook.Dto.topic.TopicDto;
+import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
+import Project.OpenBook.Dto.topic.TopicAdminDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,7 +72,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
     }
 
     @Override
-    public TopicDto queryTopicDto(String topicTitle) {
+    public TopicAdminDto queryTopicAdminDto(String topicTitle) {
         Tuple r1 = queryFactory.select(topic.chapter.number, topic.number, topic.title, topic.category.name, topic.startDate,
                         topic.endDate, topic.detail, topic.startDateCheck, topic.endDateCheck)
                 .from(topic)
@@ -98,7 +96,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
         Boolean startDateCheck = r1.get(topic.startDateCheck);
         Boolean endDateCheck = r1.get(topic.endDateCheck);
 
-        return new TopicDto(chapter, title, category, startDate,startDateCheck, endDateCheck, endDate,number, detail, dateDtoList);
+        return new TopicAdminDto(chapter, title, category, startDate,startDateCheck, endDateCheck, endDate,number, detail, dateDtoList);
     }
 
     @Override

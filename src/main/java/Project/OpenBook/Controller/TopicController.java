@@ -1,17 +1,12 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Description;
-import Project.OpenBook.Domain.Sentence;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.Sentence.SentenceDto;
 import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
-import Project.OpenBook.Dto.keyword.KeywordListDto;
-import Project.OpenBook.Dto.topic.TopicDto;
-import Project.OpenBook.Dto.topic.TopicTitleDto;
-import Project.OpenBook.Dto.topic.TopicTitleListDto;
-import Project.OpenBook.Service.ChapterService;
+import Project.OpenBook.Dto.topic.TopicAdminDto;
 import Project.OpenBook.Service.ChoiceService;
 import Project.OpenBook.Service.DescriptionService;
 import Project.OpenBook.Service.TopicService;
@@ -35,16 +30,27 @@ public class TopicController {
     private final DescriptionService descriptionService;
     private final ChoiceService choiceService;
 
-    @ApiOperation(value = "각 토픽에 대한 상세정보 조회")
+    @ApiOperation(value = "각 토픽에 대한 상세정보 조회 - 관리자")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
     })
     @GetMapping("admin/topics/{topicTitle}")
-    public ResponseEntity queryTopics( @PathVariable("topicTitle") String topicTitle) {
-        TopicDto topicDto = topicService.queryTopic(topicTitle);
+    public ResponseEntity queryTopicsAdmin( @PathVariable("topicTitle") String topicTitle) {
+        TopicAdminDto topicAdminDto = topicService.queryTopicAdmin(topicTitle);
 
-        return new ResponseEntity(topicDto, HttpStatus.OK);
+        return new ResponseEntity(topicAdminDto, HttpStatus.OK);
     }
+
+//    @ApiOperation(value = "각 토픽에 대한 상세정보 조회 - 사용자")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
+//    })
+//    @GetMapping("admin/topics/{topicTitle}")
+//    public ResponseEntity queryTopicsUser( @PathVariable("topicTitle") String topicTitle) {
+//        TopicAdminDto topicAdminDto = topicService.queryTopicAdmin(topicTitle);
+//
+//        return new ResponseEntity(topicAdminDto, HttpStatus.OK);
+//    }
 
     @ApiOperation(value = "특정 토픽의 전체 키워드 조회")
     @ApiResponses(value = {
@@ -101,9 +107,9 @@ public class TopicController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 상세정보 생성 실패"),
     })
     @PostMapping("/admin/topics")
-    public ResponseEntity createTopic(@Validated @RequestBody TopicDto topicDto) {
+    public ResponseEntity createTopic(@Validated @RequestBody TopicAdminDto topicAdminDto) {
 
-        Topic topic = topicService.createTopic(topicDto);
+        Topic topic = topicService.createTopic(topicAdminDto);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
@@ -114,9 +120,9 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 상세정보 수정 시도")
     })
     @PatchMapping("/admin/topics/{topicTitle}")
-    public ResponseEntity updateTopic(@PathVariable("topicTitle")String topicTitle,@Validated @RequestBody TopicDto topicDto) {
+    public ResponseEntity updateTopic(@PathVariable("topicTitle")String topicTitle,@Validated @RequestBody TopicAdminDto topicAdminDto) {
 
-        Topic topic = topicService.updateTopic(topicTitle, topicDto);
+        Topic topic = topicService.updateTopic(topicTitle, topicAdminDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 
