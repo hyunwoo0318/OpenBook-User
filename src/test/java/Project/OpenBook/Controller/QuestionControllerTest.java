@@ -365,14 +365,14 @@ class QuestionControllerTest{
         chapterRepository.saveAndFlush(ch1);
 
         List<Topic> topicList = new ArrayList<>();
-        t1 = new Topic(1,"title1", 100, 200, true,false,0, 0, "detail1", ch1, c1);
-        t2 = new Topic(2,"title2", 300, 400, false, true, 0, 0, "detail2", ch1, c1);
-        t3 = new Topic(3,"title3", 500, 600, false, false, 0, 0, "detail3", ch1, c1);
+        t1 = new Topic("title1", 100, 200, true,false,0, 0, "detail1", ch1, c1);
+        t2 = new Topic("title2", 300, 400, false, true, 0, 0, "detail2", ch1, c1);
+        t3 = new Topic("title3", 500, 600, false, false, 0, 0, "detail3", ch1, c1);
         topicList.addAll(Arrays.asList(t1, t2, t3));
 
         //추가적으로 토픽 20개 더 추가
         for (int i = 4; i < 24; i++) {
-            Topic topic = new Topic(i,"title" + i,0,0,false,false,0,0,"detail" + i, ch1, c1);
+            Topic topic = new Topic("title" + i,0,0,false,false,0,0,"detail" + i, ch1, c1);
             topicList.add(topic);
         }
         topicRepository.saveAllAndFlush(topicList);

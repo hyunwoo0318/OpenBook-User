@@ -81,8 +81,8 @@ public class StudyProgressControllerTest {
         c2 = new Customer("c2", 23, 0, Role.USER, "Naver", "id2", false);
         customerRepository.saveAllAndFlush(Arrays.asList(c1, c2));
 
-        t1 = new Topic(1,"title1", 100, 200, false, false, 0, 0, "detail1", ch1, category);
-        t2 = new Topic(2,"title2", 300, 400, false, false, 0, 0, "detail2", ch1, category);
+        t1 = new Topic("title1", 100, 200, false, false, 0, 0, "detail1", ch1, category);
+        t2 = new Topic("title2", 300, 400, false, false, 0, 0, "detail2", ch1, category);
         topicRepository.saveAllAndFlush(Arrays.asList(t1, t2));
 
         ChapterProgress chapterProgress = new ChapterProgress(c1, ch1);

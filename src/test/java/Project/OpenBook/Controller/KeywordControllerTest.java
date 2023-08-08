@@ -76,7 +76,7 @@ public class KeywordControllerTest {
         ch1 = new Chapter("ch1", 1);
         chapterRepository.saveAndFlush(ch1);
 
-        t1 = new Topic(1,"title1", null, null, false,false,0, 0, "detail1", ch1, c1);
+        t1 = new Topic("title1", null, null, false,false,0, 0, "detail1", ch1, c1);
         topicRepository.saveAndFlush(t1);
 
         k1 = new Keyword("k1","c1",t1);
