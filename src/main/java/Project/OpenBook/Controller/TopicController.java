@@ -7,6 +7,7 @@ import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.topic.TopicAdminDto;
+import Project.OpenBook.Dto.topic.TopicNumberDto;
 import Project.OpenBook.Service.ChoiceService;
 import Project.OpenBook.Service.DescriptionService;
 import Project.OpenBook.Service.TopicService;
@@ -123,6 +124,18 @@ public class TopicController {
     public ResponseEntity updateTopic(@PathVariable("topicTitle")String topicTitle,@Validated @RequestBody TopicAdminDto topicAdminDto) {
 
         Topic topic = topicService.updateTopic(topicTitle, topicAdminDto);
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "주제 순서번호 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "주제 순서번호 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 제목 입력")
+    })
+    @PatchMapping("/admin/topic-numbers")
+    public ResponseEntity updateTopicNumber(@Validated @RequestBody List<TopicNumberDto> topicNumberDtoList) {
+        topicService.updateTopicNumber(topicNumberDtoList);
         return new ResponseEntity(HttpStatus.OK);
     }
 

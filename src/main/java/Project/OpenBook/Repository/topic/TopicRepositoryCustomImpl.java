@@ -58,7 +58,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
     @Override
     public List<Tuple> queryAdminChapterDto(Integer chapterNum) {
         List<Tuple> result = queryFactory.select(topic.category.name, topic.title, topic.startDate, topic.endDate,
-                        description.countDistinct(), choice.countDistinct(), keyword.countDistinct())
+                        description.countDistinct() , choice.countDistinct(), keyword.countDistinct())
                 .from(topic)
                 .leftJoin(keyword).on(topic.id.eq(keyword.topic.id))
                 .leftJoin(choice).on(topic.id.eq(choice.topic.id))
@@ -96,7 +96,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
         Boolean startDateCheck = r1.get(topic.startDateCheck);
         Boolean endDateCheck = r1.get(topic.endDateCheck);
 
-        return new TopicAdminDto(chapter, title, category, startDate,startDateCheck, endDateCheck, endDate,number, detail, dateDtoList);
+        return new TopicAdminDto(chapter, title, category, startDate,startDateCheck, endDateCheck, endDate, detail, dateDtoList);
     }
 
     @Override

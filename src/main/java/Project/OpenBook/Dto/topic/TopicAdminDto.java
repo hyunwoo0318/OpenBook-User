@@ -32,7 +32,6 @@ public class TopicAdminDto {
 
     private Integer endDate;
 
-    private Integer number;
 
    /* @NotBlank(message = "설명을 입력해주세요.")*/
     private String detail;

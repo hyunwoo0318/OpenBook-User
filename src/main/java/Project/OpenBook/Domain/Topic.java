@@ -9,8 +9,6 @@ import org.hibernate.annotations.ColumnDefault;
 import javax.persistence.*;
 
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,9 +53,9 @@ public class Topic extends BaseEntity{
 
 
     @Builder
-    public Topic(Integer number, String title, Integer startDate, Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
+    public Topic(String title, Integer startDate, Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
                  int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
-        this.number = number;
+        this.number = 0;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -70,9 +68,8 @@ public class Topic extends BaseEntity{
         this.endDateCheck = endDateCheck;
     }
 
-    public Topic updateTopic(Integer number, String title,Integer startDate,Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
+    public Topic updateTopic(String title,Integer startDate,Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
                              String detail, Chapter chapter, Category category) {
-        this.number = number;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -92,11 +89,15 @@ public class Topic extends BaseEntity{
         this.category = null;
     }
 
-    public void changeChapter(Chapter chapter) {
+    public void updateChapter(Chapter chapter) {
         this.chapter = chapter;
     }
 
-    public void changeCategory(Category category) {
+    public void updateCategory(Category category) {
         this.category = category;
+    }
+
+    public void updateTopicNumber(Integer number){
+        this.number = number;
     }
 }

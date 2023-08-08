@@ -3,6 +3,7 @@ package Project.OpenBook.Service;
 import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 
+import Project.OpenBook.Dto.topic.TopicNumberDto;
 import Project.OpenBook.Dto.topic.TopicUserDto;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
 import Project.OpenBook.Repository.imagefile.ImageFileRepository;
@@ -21,8 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class TopicService {
 
@@ -72,12 +71,10 @@ public class TopicService {
         Category category = checkCategory(topicAdminDto.getCategory());
         Chapter chapter = checkChapter(topicAdminDto.getChapter());
         checkDupTopicTitle(topicAdminDto.getTitle());
-        checkTopicNumber(topicAdminDto.getChapter(), topicAdminDto.getNumber());
 
         //토픽 저장
         Topic topic = Topic.builder()
                 .chapter(chapter)
-                .number(topicAdminDto.getNumber())
                 .category(category)
                 .title(topicAdminDto.getTitle())
                 .startDate(topicAdminDto.getStartDate())
@@ -99,9 +96,6 @@ public class TopicService {
                 .collect(Collectors.toList());
         primaryDateRepository.saveAll(primaryDateList);
 
-        //정답과 보기가 될수 있는 토픽인지 확인후 저장
-        addDescriptionTopics(topic);
-        addAnswerTopics(topic);
         return topic;
     }
 
@@ -126,19 +120,13 @@ public class TopicService {
         int chapterNum = topicAdminDto.getChapter();
         Chapter chapter = checkChapter(chapterNum);
 
-        Integer newTopicNum = topicAdminDto.getNumber();
-
-        if (topic.getNumber() != newTopicNum) {
-            checkTopicNumber(chapterNum, newTopicNum);
-        }
-
 //        boolean flag = false;
 //        if(topic.getStartDate()!=topicDto.getStartDate() || topic.getEndDate() != topicDto.getEndDate()){
 //            flag = true;
 //        }
 
         //토픽 수정
-        topic.updateTopic(newTopicNum, topicAdminDto.getTitle(), topicAdminDto.getStartDate(), topicAdminDto.getEndDate(), topicAdminDto.getStartDateCheck(),
+        topic.updateTopic(topicAdminDto.getTitle(), topicAdminDto.getStartDate(), topicAdminDto.getEndDate(), topicAdminDto.getStartDateCheck(),
                 topicAdminDto.getEndDateCheck(), topicAdminDto.getDetail(), chapter, category);
 
         //연표에 나올 날짜 수정
@@ -271,5 +259,13 @@ public class TopicService {
     public List<Sentence> queryTopicSentences(String topicTitle) {
         checkTopic(topicTitle);
         return sentenceRepository.queryByTopicTitle(topicTitle);
+    }
+
+    @Transactional(rollbackFor = {Exception.class})
+    public void updateTopicNumber(List<TopicNumberDto> topicNumberDtoList) {
+        for (TopicNumberDto topicNumberDto : topicNumberDtoList) {
+            Topic topic = checkTopic(topicNumberDto.getTitle());
+            topic.updateTopicNumber(topicNumberDto.getNumber());
+        }
     }
 }
