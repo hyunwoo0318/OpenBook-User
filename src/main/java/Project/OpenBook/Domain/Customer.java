@@ -54,6 +54,12 @@ public class Customer extends BaseEntity implements OAuth2User {
     @Column(name = "is_subscribed", columnDefinition = "TINYINT(1)")
     private boolean isSubscribed = true;
 
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    private List<ChapterProgress> chapterProgressList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    private List<TopicProgress> topicProgressList = new ArrayList<>();
+
     @Builder
     public Customer(String nickName,Integer age, Integer expertise, String role, String provider, String oAuthId, Boolean isSubscribed) {
         this.nickName = nickName;

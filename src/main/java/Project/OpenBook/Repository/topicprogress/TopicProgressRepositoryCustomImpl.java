@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.QTopicProgress.topicProgress;
@@ -22,5 +23,19 @@ public class TopicProgressRepositoryCustomImpl implements TopicProgressRepositor
                 .where(topicProgress.customer.id.eq(customerId))
                 .fetchOne();
         return Optional.ofNullable(findTopicProgress);
+    }
+
+    @Override
+    public List<TopicProgress> queryTopicProgress(Long customerId) {
+        return queryFactory.selectFrom(topicProgress)
+                .where(topicProgress.customer.id.eq(customerId))
+                .fetch();
+    }
+
+    @Override
+    public List<TopicProgress> queryYTopicProgress(String topicTitle) {
+        return queryFactory.selectFrom(topicProgress)
+                .where(topicProgress.topic.title.eq(topicTitle))
+                .fetch();
     }
 }

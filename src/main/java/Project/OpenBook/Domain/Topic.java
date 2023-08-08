@@ -48,8 +48,8 @@ public class Topic extends BaseEntity{
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "topic")
-    private List<Choice> choiceList = new ArrayList<>();
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE)
+    private List<TopicProgress> topicProgressList = new ArrayList<>();
 
 
     @Builder

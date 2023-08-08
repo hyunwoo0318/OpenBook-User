@@ -7,12 +7,15 @@ import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.ChapterProgress;
 import Project.OpenBook.Domain.Customer;
+import Project.OpenBook.Domain.TopicProgress;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepositoryCustom;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
+import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import Project.OpenBook.Utils.CustomException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,6 +47,8 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
     private final CustomerRepository customerRepository;
     private final TokenManager tokenManager;
     private final ChapterProgressRepository chapterProgressRepository;
+    private final TopicProgressRepository topicProgressRepository;
+    private final TopicRepository topicRepository;
     private final ChapterRepository chapterRepository;
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -101,7 +106,10 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
                     .nickName(UUID.randomUUID().toString())
                     .build();
             customerRepository.save(customer);
+
+            //단원학습, 주제학습 레코드 생성
             updateChapterProgress(customer);
+            updateTopicProgress(customer);
         }else{
             customer = customerOptional.get();
         }
@@ -113,6 +121,13 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         TokenDto tokenDto = tokenManager.generateToken(authorities, customer.getId());
         tokenDto.addCustomerId(customer.getId());
         return tokenDto;
+    }
+
+    private void updateTopicProgress(Customer customer) {
+        List<TopicProgress> topicProgressList = topicRepository.findAll().stream()
+                .map(t -> new TopicProgress(customer, t))
+                .collect(Collectors.toList());
+        topicProgressRepository.saveAll(topicProgressList);
     }
 
     private void updateChapterProgress(Customer customer) {

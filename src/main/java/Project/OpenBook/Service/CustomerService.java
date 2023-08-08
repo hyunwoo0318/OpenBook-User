@@ -2,6 +2,8 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Dto.customer.CustomerCodeList;
 import Project.OpenBook.Dto.customer.CustomerDetailDto;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
+import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Dto.customer.CustomerAddDetailDto;
@@ -21,6 +23,8 @@ import static Project.OpenBook.Constants.ErrorCode.DUP_NICKNAME;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final ChapterProgressRepository chapterProgressRepository;
+    private final TopicProgressRepository topicProgressRepository;
 
     public Customer addDetails(Long customerId, CustomerAddDetailDto customerAddDetailDto) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomException(CUSTOMER_NOT_FOUND));
@@ -54,5 +58,9 @@ public class CustomerService {
                 .isSubscribed(customer.isSubscribed())
                 .nickName(customer.getNickName())
                 .build();
+    }
+
+    public void deleteCustomer(long customerId) {
+        customerRepository.deleteById(customerId);
     }
 }

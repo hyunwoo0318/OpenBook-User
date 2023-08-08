@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,6 +82,21 @@ public class CustomerController {
                 .headers(headers)
                 .body(tokenDto.getCustomerId());
         return responseEntity;
+    }
+
+    /**
+     * 회원 탈퇴
+     */
+    @ApiOperation("회원 탈퇴")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적인 회원 탈퇴"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
+    })
+    @DeleteMapping("/customers")
+    public ResponseEntity deleteCustomer(){
+        long customerId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+        customerService.deleteCustomer(customerId);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     /**

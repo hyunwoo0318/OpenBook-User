@@ -5,10 +5,12 @@ import Project.OpenBook.Dto.keyword.KeywordDto;
 
 import Project.OpenBook.Dto.topic.TopicNumberDto;
 import Project.OpenBook.Dto.topic.TopicUserDto;
+import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
 import Project.OpenBook.Repository.imagefile.ImageFileRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
+import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.topic.TopicAdminDto;
@@ -48,10 +50,12 @@ public class TopicService {
 
     private final KeywordRepository keywordRepository;
     private final ImageFileRepository imageFileRepository;
+    private final CustomerRepository customerRepository;
 
     private final SentenceRepository  sentenceRepository;
 
     private final PrimaryDateRepository primaryDateRepository;
+    private final TopicProgressRepository topicProgressRepository;
 
     @Value("${base.url}")
     private String baseUrl;
@@ -96,7 +100,17 @@ public class TopicService {
                 .collect(Collectors.toList());
         primaryDateRepository.saveAll(primaryDateList);
 
+        //주제학습 레코드 생성
+        updateTopicProgress(topic);
+
         return topic;
+    }
+
+    private void updateTopicProgress(Topic topic) {
+        List<TopicProgress> topicProgressList = customerRepository.findAll().stream()
+                .map(c -> new TopicProgress(c, topic))
+                .collect(Collectors.toList());
+        topicProgressRepository.saveAll(topicProgressList);
     }
 
     private void checkTopicNumber(Integer chapterNum, Integer topicNum) {
