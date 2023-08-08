@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.QChapterProgress.chapterProgress;
@@ -22,5 +23,19 @@ public class ChapterProgressRepositoryCustomImpl implements ChapterProgressRepos
                 .where(chapterProgress.customer.id.eq(customerId))
                 .fetchOne();
         return Optional.ofNullable(findChapterProgress);
+    }
+
+    @Override
+    public List<ChapterProgress> queryChapterProgress(Integer num) {
+        return queryFactory.selectFrom(chapterProgress)
+                .where(chapterProgress.chapter.number.eq(num))
+                .fetch();
+    }
+
+    @Override
+    public List<ChapterProgress> queryChapterProgress(Long customerId) {
+        return queryFactory.selectFrom(chapterProgress)
+                .where(chapterProgress.customer.id.eq(customerId))
+                .fetch();
     }
 }

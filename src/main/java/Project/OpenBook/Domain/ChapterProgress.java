@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain;
 
+import Project.OpenBook.Constants.ProgressConst;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,8 @@ public class ChapterProgress  extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chapter_id")
     private Chapter chapter;
+
+    private String progress= ProgressConst.NOT_STARTED;
 
     private LocalDateTime lastStudyTime;
 

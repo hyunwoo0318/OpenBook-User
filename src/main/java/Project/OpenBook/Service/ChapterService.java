@@ -1,29 +1,36 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Dto.chapter.ChapterDto;
-import Project.OpenBook.Dto.chapter.ChapterInfoDto;
-import Project.OpenBook.Dto.chapter.ChapterTitleDto;
-import Project.OpenBook.Dto.chapter.ChapterTitleInfoDto;
+import Project.OpenBook.Constants.ProgressConst;
+import Project.OpenBook.Constants.StateConst;
+import Project.OpenBook.Domain.*;
+import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
+import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Utils.CustomException;
-import Project.OpenBook.Domain.Chapter;
-import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.status.StatusConsoleListener;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
+import static Project.OpenBook.Domain.QChapter.chapter;
+import static Project.OpenBook.Domain.QChapterProgress.chapterProgress;
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
 import static Project.OpenBook.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.QTopic.topic;
+import static com.querydsl.core.group.GroupBy.list;
 
 @Service
 @Transactional
@@ -32,6 +39,8 @@ public class ChapterService {
 
     private final ChapterRepository chapterRepository;
     private final TopicRepository topicRepository;
+    private final CustomerRepository customerRepository;
+    private final ChapterProgressRepository chapterProgressRepository;
 
 
     public Chapter createChapter(String title, int number) {
@@ -43,8 +52,16 @@ public class ChapterService {
                 .build();
 
         chapterRepository.save(newChapter);
+        updateChapterProgress(newChapter);
 
         return newChapter;
+    }
+
+    private void updateChapterProgress(Chapter newChapter) {
+        List<ChapterProgress> chapterProgressList = customerRepository.findAll().stream()
+                .map(c -> new ChapterProgress(c, newChapter))
+                .collect(Collectors.toList());
+        chapterProgressRepository.saveAll(chapterProgressList);
     }
 
     public List<ChapterDto> queryAllChapters() {
@@ -95,8 +112,8 @@ public class ChapterService {
             throw new CustomException(CHAPTER_HAS_TOPIC);
         }
 
-        //TODO : 학습분석을 구현하면 해당 학습분석을 처리하는 구문필요
-
+        List<ChapterProgress> chapterProgressList = chapterProgressRepository.queryChapterProgress(num);
+        chapterProgressRepository.deleteAllInBatch(chapterProgressList);
         chapterRepository.delete(chapter);
         return true;
     }
@@ -132,5 +149,34 @@ public class ChapterService {
         Chapter chapter = checkChapter(num);
 
         return new ChapterTitleInfoDto(chapter.getTitle(), chapter.getContent());
+    }
+
+    public List<ChapterUserDto> queryChapterUserDtos(Long customerId) {
+        Map<Integer, Group> map = chapterRepository.queryChapterUserDtos(customerId);
+        List<ChapterUserDto> chapterUserDtoList = new ArrayList<>();
+        for (Integer chapterNum : map.keySet()) {
+            Group group = map.get(chapterNum);
+            String title = group.getOne(chapter.title);
+            Integer number = group.getOne(chapter.number);
+            String progress = group.getOne(chapterProgress.progress);
+            String status = getStatus(progress);
+            List<String> topicList = group.getList(topic).stream()
+                    .sorted(Comparator.comparing(Topic::getNumber))
+                    .map(Topic::getTitle)
+                    .collect(Collectors.toList());
+            ChapterUserDto chapterUserDto = new ChapterUserDto(title, number, status, progress, topicList);
+            chapterUserDtoList.add(chapterUserDto);
+        }
+        return chapterUserDtoList;
+    }
+
+    private String getStatus(String progress) {
+        if(progress.equals(ProgressConst.NOT_STARTED)){
+            return StateConst.NOT_STARTED;
+        }else if(progress.equals(ProgressConst.GET_TOPIC_BY_SENTENCE)){
+            return StateConst.DONE;
+        }else{
+            return StateConst.IN_PROGRESS;
+        }
     }
 }

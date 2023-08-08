@@ -4,14 +4,20 @@ import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Constants.KakaoConst;
 import Project.OpenBook.Constants.NaverConst;
 import Project.OpenBook.Constants.Role;
+import Project.OpenBook.Domain.Chapter;
+import Project.OpenBook.Domain.ChapterProgress;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
+import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.chapter.ChapterRepositoryCustom;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Utils.CustomException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -26,6 +32,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,6 +43,11 @@ import java.util.stream.Collectors;
 public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
     private final CustomerRepository customerRepository;
     private final TokenManager tokenManager;
+    private final ChapterProgressRepository chapterProgressRepository;
+    private final ChapterRepository chapterRepository;
+
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private String kakaoKey;
     @Override
     public Customer loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 
@@ -89,6 +101,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
                     .nickName(UUID.randomUUID().toString())
                     .build();
             customerRepository.save(customer);
+            updateChapterProgress(customer);
         }else{
             customer = customerOptional.get();
         }
@@ -102,11 +115,20 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
         return tokenDto;
     }
 
+    private void updateChapterProgress(Customer customer) {
+        List<ChapterProgress> chapterProgressList = chapterRepository.findAll().stream()
+                .map(c -> new ChapterProgress(customer, c))
+                .collect(Collectors.toList());
+        chapterProgressRepository.saveAll(chapterProgressList);
+    }
+
     public String getKakaoToken(String code){
 
         String accessToken = "";
         String refreshToken = "";
         String redirectURL = "";
+
+
 
         redirectURL = KakaoConst.REDIRECT_URL_LOGIN;
 
@@ -121,7 +143,7 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("grant_type=authorization_code");
-            stringBuilder.append("&client_id=" + KakaoConst.key);
+            stringBuilder.append("&client_id=" + kakaoKey);
             stringBuilder.append("&redirect_uri=" + redirectURL);
             stringBuilder.append("&code=" + code);
             bufferedWriter.write(stringBuilder.toString());
