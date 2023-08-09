@@ -39,7 +39,6 @@ public class KeywordControllerTest {
     @LocalServerPort
     int port;
 
-    private final String imageUrl = "../TestImage/";
     @Autowired
     ChapterRepository chapterRepository;
     @Autowired
@@ -52,6 +51,7 @@ public class KeywordControllerTest {
     KeywordRepository keywordRepository;
 
 
+    private final String imageUrl = "../TestImage/";
     private Category c1;
     private Chapter ch1;
     private Topic t1;
@@ -79,9 +79,9 @@ public class KeywordControllerTest {
         t1 = new Topic("title1", null, null, false,false,0, 0, "detail1", ch1, c1);
         topicRepository.saveAndFlush(t1);
 
-        k1 = new Keyword("k1","c1",t1);
-        k2 = new Keyword("k2","c2", t1);
-        k3 = new Keyword("k3","c3",t1);
+        k1 = new Keyword("k1","c1",t1, imageUrl);
+        k2 = new Keyword("k2","c2", t1,null);
+        k3 = new Keyword("k3","c3",t1,null);
         keywordRepository.saveAllAndFlush(Arrays.asList(k1, k2, k3));
     }
 

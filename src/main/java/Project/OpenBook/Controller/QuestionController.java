@@ -2,10 +2,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Question;
 import Project.OpenBook.Dto.error.ErrorDto;
-import Project.OpenBook.Dto.question.GetKeywordQuestionDto;
-import Project.OpenBook.Dto.question.GetTopicQuestionDto;
-import Project.OpenBook.Dto.question.QuestionDto;
-import Project.OpenBook.Dto.question.TimeFlowQuestionDto;
+import Project.OpenBook.Dto.question.*;
 import Project.OpenBook.Service.CategoryService;
 import Project.OpenBook.Service.QuestionService;
 import io.swagger.annotations.ApiOperation;
@@ -99,33 +96,57 @@ public class QuestionController {
             @ApiResponse(responseCode = "200", description = "연표문제 제공 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
-    @GetMapping("/admin/questions/time-flow")
+    @GetMapping("/questions/time-flow")
     public ResponseEntity queryTimeFlowQuestion(@RequestParam("num") Integer num) {
         List<TimeFlowQuestionDto> timeFlowQuestionDtoList = questionService.queryTimeFlowQuestion(num);
 
         return new ResponseEntity(timeFlowQuestionDtoList, HttpStatus.OK);
     }
 
-    @ApiOperation("주제보고 키워드/문장 맞추기 문제 제공")
+    @ApiOperation("주제보고 키워드 맞추기 문제 제공")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "주제보고 키워드/문장 맞추기 문제 제공 성공"),
+            @ApiResponse(responseCode = "200", description = "주제보고 문장 맞추기 문제 제공 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
     })
-    @GetMapping("/admin/questions/get-keywords")
+    @GetMapping("/questions/get-keywords")
     public ResponseEntity queryGetKeywordsQuestion(@RequestParam("title") String topicTitle) {
         GetKeywordQuestionDto questionDto = questionService.queryGetKeywordsQuestion(topicTitle);
 
         return new ResponseEntity(questionDto, HttpStatus.OK);
     }
 
-    @ApiOperation("키워드/문장 보고 주제 맞추기 문제 제공")
+    @ApiOperation("주제보고 문장 맞추기 문제 제공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "주제보고 문장 맞추기 문제 제공 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
+    })
+    @GetMapping("/questions/get-sentences")
+    public ResponseEntity queryGetSentencesQuestion(@RequestParam("title") String topicTitle) {
+        GetSentenceQuestionDto questionDto = questionService.queryGetSentencesQuestion(topicTitle);
+
+        return new ResponseEntity(questionDto, HttpStatus.OK);
+    }
+
+    @ApiOperation("키워드 보고 주제 맞추기 문제 제공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "키워드 보고 주제 맞추기 문제 제공 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
+    })
+    @GetMapping("/questions/get-topics-keywords")
+    public ResponseEntity queryGetTopicsByKeywordQuestion(@RequestParam("num") Integer num){
+        List<GetTopicByKeywordQuestionDto> questionList = questionService.queryGetTopicsByKeywordQuestion(num);
+
+        return new ResponseEntity(questionList, HttpStatus.OK);
+    }
+
+    @ApiOperation("문장 보고 주제 맞추기 문제 제공")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "키워드/문장 보고 주제 맞추기 문제 제공 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
     })
-    @GetMapping("/admin/questions/get-topics")
-    public ResponseEntity queryGetTopicsQuestion(@RequestParam("num") Integer num){
-        List<GetTopicQuestionDto> questionList = questionService.queryGetTopicsQuestion(num);
+    @GetMapping("/questions/get-topics-sentences")
+    public ResponseEntity queryGetTopicsBySentenceQuestion(@RequestParam("num") Integer num){
+        List<GetTopicBySentenceQuestionDto> questionList = questionService.queryGetTopicsBySentenceQuestion(num);
 
         return new ResponseEntity(questionList, HttpStatus.OK);
     }

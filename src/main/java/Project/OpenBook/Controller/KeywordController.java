@@ -2,7 +2,6 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Dto.keyword.KeywordCreateDto;
 import Project.OpenBook.Dto.keyword.KeywordUserDto;
-import Project.OpenBook.Service.ImageFileService;
 import Project.OpenBook.Service.KeywordService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +19,6 @@ import java.io.IOException;
 public class KeywordController {
 
     private final KeywordService keywordService;
-    private final ImageFileService imageFileService;
 
 
     @ApiOperation(value = "키워드 생성")

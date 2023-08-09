@@ -289,8 +289,8 @@ class ChapterControllerTest {
             baseSetting();
 
             //t1에 키워드, 선지, 보기를 각각 2개씩 추가
-            Keyword k1 = new Keyword("k1","c1", t1);
-            Keyword k2 = new Keyword("k2","c2",t1);
+            Keyword k1 = new Keyword("k1","c1", t1,null);
+            Keyword k2 = new Keyword("k2","c2",t1,null);
             keywordRepository.save(k1);
             keywordRepository.save(k2);
 
