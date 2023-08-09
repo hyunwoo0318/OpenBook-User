@@ -3,13 +3,16 @@ package Project.OpenBook.Repository.topic;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
 import Project.OpenBook.Dto.topic.TopicAdminDto;
+import Project.OpenBook.Dto.topic.TopicCustomerDto;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.group.Group;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -17,7 +20,10 @@ import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
 import static Project.OpenBook.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.QPrimaryDate.primaryDate;
+import static Project.OpenBook.Domain.QSentence.sentence;
 import static Project.OpenBook.Domain.QTopic.topic;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 
 
 @Repository
@@ -97,6 +103,17 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
         Boolean endDateCheck = r1.get(topic.endDateCheck);
 
         return new TopicAdminDto(chapter, title, category, startDate,startDateCheck, endDateCheck, endDate, detail, dateDtoList);
+    }
+
+    @Override
+    public Map<String, Group> queryTopicCustomerDto(String topicTitle) {
+         return queryFactory.from(topic)
+                .leftJoin(primaryDate).on(primaryDate.topic.eq(topic))
+                .leftJoin(sentence).on(sentence.topic.eq(topic))
+                .leftJoin(keyword).on(keyword.topic.eq(topic))
+                .where(topic.title.eq(topicTitle))
+                .transform(groupBy(topic.title).as(topic.category.name, topic.startDate, topic.endDate,
+                        list(keyword), list(sentence.name), list(primaryDate)));
     }
 
     @Override

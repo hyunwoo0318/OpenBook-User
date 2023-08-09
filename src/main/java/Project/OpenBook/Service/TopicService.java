@@ -1,13 +1,15 @@
 package Project.OpenBook.Service;
 
 import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
+import Project.OpenBook.Dto.PrimaryDate.PrimaryDateUserDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 
+import Project.OpenBook.Dto.keyword.KeywordUserDto;
+import Project.OpenBook.Dto.topic.TopicCustomerDto;
 import Project.OpenBook.Dto.topic.TopicNumberDto;
 import Project.OpenBook.Dto.topic.TopicUserDto;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
-import Project.OpenBook.Repository.imagefile.ImageFileRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
@@ -20,6 +22,7 @@ import Project.OpenBook.Repository.dupdate.DupDateRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
+import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -29,10 +32,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
 import static Project.OpenBook.Constants.ErrorCode.*;
+import static Project.OpenBook.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.QPrimaryDate.primaryDate;
+import static Project.OpenBook.Domain.QSentence.sentence;
+import static Project.OpenBook.Domain.QTopic.topic;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +57,6 @@ public class TopicService {
     private final DescriptionRepository descriptionRepository;
 
     private final KeywordRepository keywordRepository;
-    private final ImageFileRepository imageFileRepository;
     private final CustomerRepository customerRepository;
 
     private final SentenceRepository  sentenceRepository;
@@ -246,27 +253,9 @@ public class TopicService {
 
     public List<KeywordDto> queryTopicKeywords(String topicTitle) {
         checkTopic(topicTitle);
-        List<Keyword> keywordList = keywordRepository.queryKeywordsByTopic(topicTitle);
-        List<KeywordDto> keywordDtoList = new ArrayList<>();
-
-        for (Keyword keyword : keywordList) {
-            String name = keyword.getName();
-            String comment = keyword.getComment();
-            Long id = keyword.getId();
-
-            List<ImageFile> imageFiles = imageFileRepository.queryByKeyword(id);
-            if(!imageFiles.isEmpty()){
-                ImageFile imageFile = imageFiles.get(0);
-                String url = imageFile.getImageUrl();
-                KeywordDto keywordDto = new KeywordDto(name, comment, url, id);
-                keywordDtoList.add(keywordDto);
-            }else{
-                KeywordDto keywordDto = new KeywordDto(name, comment, null, id);
-                keywordDtoList.add(keywordDto);
-            }
-
-        }
-        return keywordDtoList;
+        return keywordRepository.queryKeywordsByTopic(topicTitle).stream()
+                .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId()))
+                .collect(Collectors.toList());
     }
 
 
@@ -281,5 +270,28 @@ public class TopicService {
             Topic topic = checkTopic(topicNumberDto.getTitle());
             topic.updateTopicNumber(topicNumberDto.getNumber());
         }
+    }
+
+    public TopicCustomerDto queryTopicCustomer(String topicTitle, Long customerId) {
+
+        /**
+         * TODO : progress 갱신 로직
+         */
+
+        Map<String, Group> topicCustomerDtoMap = topicRepository.queryTopicCustomerDto(topicTitle);
+        Group group = topicCustomerDtoMap.get(topicTitle);
+
+        Integer startDate = group.getOne(topic.startDate);
+        Integer endDate = group.getOne(topic.endDate);
+        String category = group.getOne(topic.category.name);
+        List<String> sentenceList = group.getList(sentence.name);
+        List<KeywordUserDto> keywordList = group.getList(keyword).stream()
+                .map(k -> new KeywordUserDto(k.getName(), k.getComment(), k.getImageUrl()))
+                .collect(Collectors.toList());
+        List<PrimaryDateUserDto> extraDateList = group.getList(primaryDate).stream()
+                .map(p -> new PrimaryDateUserDto(p.getExtraDate(), p.getExtraDateComment()))
+                .collect(Collectors.toList());
+
+        return new TopicCustomerDto(category, startDate, endDate, extraDateList, keywordList, sentenceList);
     }
 }

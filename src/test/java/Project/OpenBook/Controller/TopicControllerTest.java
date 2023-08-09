@@ -14,7 +14,6 @@ import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.dupdate.DupDateRepository;
-import Project.OpenBook.Repository.imagefile.ImageFileRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
@@ -61,8 +60,6 @@ class TopicControllerTest {
     @Autowired
     SentenceRepository sentenceRepository;
 
-    @Autowired
-    ImageFileRepository imageFileRepository;
 
     @Autowired
     PrimaryDateRepository primaryDateRepository;
@@ -78,6 +75,8 @@ class TopicControllerTest {
     private final String prefix = "http://localhost:";
     private String suffix;
     private String URL;
+
+    private String imageUrl = "../testImage";
 
     @Value("${base.url}")
     private String baseUrl;
@@ -107,9 +106,9 @@ class TopicControllerTest {
         topicRepository.saveAndFlush(t1);
         topicRepository.saveAndFlush(t2);
 
-        k1 = new Keyword("k1","c1",t1);
-        k2 = new Keyword("k2","c2", t1);
-        k3 = new Keyword("k3","c3",t1);
+        k1 = new Keyword("k1","c1",t1,imageUrl);
+        k2 = new Keyword("k2","c2", t1,null);
+        k3 = new Keyword("k3","c3",t1,null);
         keywordRepository.saveAllAndFlush(Arrays.asList(k1, k2, k3));
 
         PrimaryDate date1 = new PrimaryDate(133301111, true, "comment1", t1);
@@ -138,7 +137,6 @@ class TopicControllerTest {
 
         @AfterEach
         public void clear(){
-
             baseClear();
         }
 
@@ -177,9 +175,6 @@ class TopicControllerTest {
     @DisplayName("특정 토픽의 전체 키워드 조회 - GET /topics/{topicTitle}/keywords")
     @TestInstance(PER_CLASS)
     public class queryTopicKeyword{
-
-        private ImageFile file1, file2;
-        private String imageUrl;
         @BeforeAll
         public void init(){
             suffix = "/topics/";
@@ -188,17 +183,12 @@ class TopicControllerTest {
 
         @AfterEach
         public void clear(){
-            imageFileRepository.deleteAllInBatch();
             baseClear();
         }
 
         @BeforeEach
         public void setting() {
             baseSetting();
-            imageUrl = "image1";
-            file1 = new ImageFile( imageUrl, k1);
-            //file2 = new ImageFile( "image2.png", k1);
-            imageFileRepository.saveAllAndFlush(Arrays.asList(file1));
         }
         @DisplayName("특정 토픽의 전체 키워드 조회 성공")
         @Test

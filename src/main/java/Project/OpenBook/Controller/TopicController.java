@@ -7,6 +7,7 @@ import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.topic.TopicAdminDto;
+import Project.OpenBook.Dto.topic.TopicCustomerDto;
 import Project.OpenBook.Dto.topic.TopicNumberDto;
 import Project.OpenBook.Service.ChoiceService;
 import Project.OpenBook.Service.DescriptionService;
@@ -17,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,16 +44,17 @@ public class TopicController {
         return new ResponseEntity(topicAdminDto, HttpStatus.OK);
     }
 
-//    @ApiOperation(value = "각 토픽에 대한 상세정보 조회 - 사용자")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
-//    })
-//    @GetMapping("admin/topics/{topicTitle}")
-//    public ResponseEntity queryTopicsUser( @PathVariable("topicTitle") String topicTitle) {
-//        TopicAdminDto topicAdminDto = topicService.queryTopicAdmin(topicTitle);
-//
-//        return new ResponseEntity(topicAdminDto, HttpStatus.OK);
-//    }
+    @ApiOperation(value = "각 토픽에 대한 상세정보 조회 - 사용자")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
+    })
+    @GetMapping("/topics/{topicTitle}")
+    public ResponseEntity queryTopicsUser( @PathVariable("topicTitle") String topicTitle) {
+        Long customerId = getCustomerId();
+        TopicCustomerDto topicCustomerDto = topicService.queryTopicCustomer(topicTitle, customerId);
+
+        return new ResponseEntity(topicCustomerDto, HttpStatus.OK);
+    }
 
     @ApiOperation(value = "특정 토픽의 전체 키워드 조회")
     @ApiResponses(value = {
@@ -149,5 +152,9 @@ public class TopicController {
     public ResponseEntity deleteTopic(@PathVariable("topicTitle") String topicTitle) {
         topicService.deleteTopic(topicTitle);
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    public Long getCustomerId(){
+        return Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 }
