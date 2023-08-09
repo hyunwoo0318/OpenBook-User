@@ -10,7 +10,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class GetKeywordAnswerDto {
-    private List<KeywordNameCommentDto> keywordList;
-    private List<String> sentenceList;
+public class GetTopicByKeywordQuestionDto {
+    private String answer;
+    private List<KeywordNameCommentDto> answerKeywordList;
+    private List<String> wrongAnswerList;
 }

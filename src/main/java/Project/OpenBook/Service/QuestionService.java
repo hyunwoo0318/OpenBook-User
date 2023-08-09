@@ -369,52 +369,79 @@ public class QuestionService {
     public GetKeywordQuestionDto queryGetKeywordsQuestion(String topicTitle) {
         Topic topic = checkTopic(topicTitle);
 
-        //정답 키워드, 문장 조회
+        //정답 키워드조회
         List<Keyword> answerKeywordList = keywordRepository.queryKeywordsByTopic(topicTitle);
         int answerKeywordSize = answerKeywordList.size();
+
+        //오답 키워드조회
+        List<Tuple> wrongKeywordRet = keywordRepository.queryWrongKeywords(topicTitle, answerKeywordSize * WRONG_ANSWER_NUM);
+
+        //return할 dto생성
+        List<KeywordNameCommentDto> answerList = answerKeywordList.stream().map(k -> new KeywordNameCommentDto(k.getName(), k.getComment())).collect(Collectors.toList());
+        List<KeywordWithTopicDto> wrongAnswerList = wrongKeywordRet.stream()
+                .map(k -> new KeywordWithTopicDto(k.get(keyword.name), k.get(keyword.comment), k.get(keyword.topic.title))).collect(Collectors.toList());
+
+        return new GetKeywordQuestionDto(answerList, wrongAnswerList);
+    }
+
+    @Transactional
+    public GetSentenceQuestionDto queryGetSentencesQuestion(String topicTitle) {
+        Topic topic = checkTopic(topicTitle);
+
+        //정답 문장 조회
         List<Sentence> answerSentenceList = sentenceRepository.queryByTopicTitle(topicTitle);
         int answerSentenceSize = answerSentenceList.size();
 
-        //오답 키워드, 문장 조회
-        List<Tuple> wrongKeywordRet = keywordRepository.queryWrongKeywords(topicTitle, answerKeywordSize * WRONG_ANSWER_NUM);
+        //오답 문장 조회
         List<Tuple> wrongSentenceRet = sentenceRepository.queryWrongSentences(topicTitle, answerSentenceSize * WRONG_ANSWER_NUM);
 
+
         //return할 dto생성
-        List<KeywordNameCommentDto> answerKeywordDtoList = answerKeywordList.stream().map(k -> new KeywordNameCommentDto(k.getName(), k.getComment())).collect(Collectors.toList());
-        List<String> answerSentenceDtoList = answerSentenceList.stream().map(s -> s.getName()).collect(Collectors.toList());
-        List<KeywordWithTopicDto> wrongKeywordDtoList = wrongKeywordRet.stream()
-                .map(k -> new KeywordWithTopicDto(k.get(keyword.name), k.get(keyword.comment), k.get(keyword.topic.title))).collect(Collectors.toList());
-        List<SentenceWithTopicDto> wrongSentenceDtoList = wrongSentenceRet.stream()
+        List<String> answerList = answerSentenceList.stream().map(s -> s.getName()).collect(Collectors.toList());
+
+        List<SentenceWithTopicDto> wrongAnswerList = wrongSentenceRet.stream()
                 .map(s -> new SentenceWithTopicDto(s.get(sentence.name), s.get(sentence.topic.title))).collect(Collectors.toList());
 
-        return new GetKeywordQuestionDto(new GetKeywordAnswerDto(answerKeywordDtoList, answerSentenceDtoList),
-                new GetKeywordWrongAnswerDto(wrongKeywordDtoList, wrongSentenceDtoList));
+        return new GetSentenceQuestionDto(answerList, wrongAnswerList);
     }
 
-    public List<GetTopicQuestionDto> queryGetTopicsQuestion(Integer num) {
+    public List<GetTopicByKeywordQuestionDto> queryGetTopicsByKeywordQuestion(Integer num) {
         Chapter chapter = checkChapter(num);
 
-        List<GetTopicQuestionDto> questionList = new ArrayList<>();
+        List<GetTopicByKeywordQuestionDto> questionList = new ArrayList<>();
 
         List<String> topicTitleList = topicRepository.queryTopicTitleInChapter(num);
         for (String topicTitle : topicTitleList) {
 
             List<Keyword> answerKeywordList = keywordRepository.queryKeywordsByTopic(topicTitle, 2);
-            List<Sentence> answerSentenceList = sentenceRepository.queryByTopicTitle(topicTitle, 1);
 
             if (answerKeywordList.size() == 2) {
                 List<KeywordNameCommentDto> answerKeywordDtoList = answerKeywordList.stream().map(k -> new KeywordNameCommentDto(k.getName(), k.getComment()))
                         .collect(Collectors.toList());
                 List<String> wrongTopicList = topicRepository.queryWrongTopicTitle(topicTitle, 8);
-                GetTopicQuestionDto dto1 = new GetTopicQuestionDto(topicTitle, TYPE_KEYWORD, answerKeywordDtoList, wrongTopicList);
+                GetTopicByKeywordQuestionDto dto1 = new GetTopicByKeywordQuestionDto(topicTitle, answerKeywordDtoList, wrongTopicList);
                 questionList.add(dto1);
             }
+        }
+
+        return questionList;
+    }
+
+    public List<GetTopicBySentenceQuestionDto> queryGetTopicsBySentenceQuestion(Integer num) {
+        Chapter chapter = checkChapter(num);
+
+        List<GetTopicBySentenceQuestionDto> questionList = new ArrayList<>();
+
+        List<String> topicTitleList = topicRepository.queryTopicTitleInChapter(num);
+        for (String topicTitle : topicTitleList) {
+
+            List<Sentence> answerSentenceList = sentenceRepository.queryByTopicTitle(topicTitle, 1);
 
             if (answerSentenceList.size() == 1) {
                 String answerSentence = answerSentenceList.get(0).getName();
                 List<String> wrongTopicList = topicRepository.queryWrongTopicTitle(topicTitle, 8);
-                GetTopicQuestionDto dto2 = new GetTopicQuestionDto(topicTitle, TYPE_SENTENCE, answerSentence, wrongTopicList);
-                questionList.add(dto2);
+                GetTopicBySentenceQuestionDto dto = new GetTopicBySentenceQuestionDto(topicTitle, answerSentence, wrongTopicList);
+                questionList.add(dto);
             }
         }
 
