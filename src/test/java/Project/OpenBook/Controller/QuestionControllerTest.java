@@ -415,12 +415,12 @@ class QuestionControllerTest{
     }
 
     @Nested
-    @DisplayName("연표 문제 제공 - GET /admin/questions/time-flow")
+    @DisplayName("연표 문제 제공 - GET /questions/time-flow")
     @TestInstance(PER_CLASS)
     public class queryTimeFlowQuestion{
         @BeforeAll
         public void init(){
-            suffix = "/admin/questions/time-flow";
+            suffix = "/questions/time-flow";
             initConfig();
         }
 
@@ -466,12 +466,12 @@ class QuestionControllerTest{
     }
 
     @Nested
-    @DisplayName("주제보고 키워드 맞추기 문제 제공 - GET /admin/questions/get-keywords")
+    @DisplayName("주제보고 키워드 맞추기 문제 제공 - GET /questions/get-keywords")
     @TestInstance(PER_CLASS)
     public class queryGetKeywordsQuestion{
         @BeforeAll
         public void init(){
-            suffix = "/admin/questions/get-keywords";
+            suffix = "/questions/get-keywords";
             initConfig();
         }
 
@@ -564,12 +564,12 @@ class QuestionControllerTest{
     }
 
     @Nested
-    @DisplayName("주제보고 문장 맞추기 문제 제공 - GET /admin/questions/get-sentences")
+    @DisplayName("주제보고 문장 맞추기 문제 제공 - GET /questions/get-sentences")
     @TestInstance(PER_CLASS)
     public class queryGetSentencesQuestion{
         @BeforeAll
         public void init(){
-            suffix = "/admin/questions/get-sentences";
+            suffix = "/questions/get-sentences";
             initConfig();
         }
 
@@ -664,12 +664,12 @@ class QuestionControllerTest{
     }
 
     @Nested
-    @DisplayName("키워드 보고 주제 맞추기 문제 제공 - GET /admin/questions/get-topics-keywords")
+    @DisplayName("키워드 보고 주제 맞추기 문제 제공 - GET /questions/get-topics-keywords")
     @TestInstance(PER_CLASS)
     public class queryGetTopicsByKeywordQuestion{
         @BeforeAll
         public void init(){
-            suffix = "/admin/questions/get-topics-keywords";
+            suffix = "/questions/get-topics-keywords";
             initConfig();
         }
 
@@ -736,12 +736,12 @@ class QuestionControllerTest{
     }
 
     @Nested
-    @DisplayName("문장 보고 주제 맞추기 문제 제공 - GET /admin/questions/get-topics-sentences")
+    @DisplayName("문장 보고 주제 맞추기 문제 제공 - GET /questions/get-topics-sentences")
     @TestInstance(PER_CLASS)
     public class queryGetTopicsBySentenceQuestion{
         @BeforeAll
         public void init(){
-            suffix = "/admin/questions/get-topics-sentences";
+            suffix = "/questions/get-topics-sentences";
             initConfig();
         }
 

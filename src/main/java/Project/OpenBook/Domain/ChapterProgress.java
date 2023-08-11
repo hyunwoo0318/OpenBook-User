@@ -37,7 +37,8 @@ public class ChapterProgress  extends BaseEntity{
         this.chapter = chapter;
     }
 
-    public ChapterProgress updateLastStudyTime() {
+    public ChapterProgress updateProgress(String progressConst) {
+        this.progress = progress;
         this.lastStudyTime = LocalDateTime.now();
         return this;
     }

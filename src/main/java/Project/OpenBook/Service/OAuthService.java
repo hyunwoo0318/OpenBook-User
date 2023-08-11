@@ -119,7 +119,6 @@ public class OAuthService implements OAuth2UserService<OAuth2UserRequest, OAuth2
                 .collect(Collectors.joining(","));
 
         TokenDto tokenDto = tokenManager.generateToken(authorities, customer.getId());
-        tokenDto.addCustomerId(customer.getId());
         return tokenDto;
     }
 

@@ -2,6 +2,7 @@ package Project.OpenBook.Controller;
 
 
 import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.error.ErrorDto;
@@ -9,10 +10,13 @@ import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
+import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
+import com.nimbusds.jose.proc.SecurityContext;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,8 +28,18 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.test.context.support.TestExecutionEvent;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.*;
 
@@ -35,12 +49,15 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = { "spring.config.location=classpath:application-test.yml" })
+@Sql(scripts = {"classpath:db/initUser.sql"})
 class ChapterControllerTest {
 
     @LocalServerPort
     int port;
     @Autowired
     ChapterRepository chapterRepository;
+    @Autowired
+    ChapterProgressRepository chapterProgressRepository;
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
@@ -55,11 +72,16 @@ class ChapterControllerTest {
     DescriptionRepository descriptionRepository;
 
     @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
     TestRestTemplate restTemplate;
 
     private Category c1;
     private Chapter ch1;
     private Topic t1;
+
+    private Customer customer1, customer2;
 
     private final int chapterNum = 1;
     private final String prefix = "http://localhost:";
@@ -71,11 +93,13 @@ class ChapterControllerTest {
 
     private void initConfig() {
         URL = prefix + port + suffix;
-        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
-        restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+//        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
     }
 
     private void baseSetting() {
+        customer1 = customerRepository.findByLoginId("id123").get();
+        customer2 = customerRepository.findByLoginId("id456").get();
+
         c1 = new Category("유물");
         categoryRepository.saveAndFlush(c1);
 
@@ -89,9 +113,21 @@ class ChapterControllerTest {
     }
 
     private void baseClear() {
+        customerRepository.deleteAllInBatch();
         topicRepository.deleteAllInBatch();
         chapterRepository.deleteAllInBatch();
         categoryRepository.deleteAllInBatch();
+    }
+
+    private Long initCustomer1() {
+        Collection<? extends GrantedAuthority> authorities = customer1.getAuthorities();
+        Long customerId = customer1.getId();
+        String subject = String.valueOf(customerId);
+
+        UserDetails userDetails = new User(subject, "", authorities);
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return customerId;
     }
 
     @Nested
@@ -223,9 +259,9 @@ class ChapterControllerTest {
     }
 
     @Nested
-    @DisplayName("단원 학습 조회 - GET /admin/chapters/{num}/info")
+    @DisplayName("단원 학습 조회(관리자) - GET /admin/chapters/{num}/info")
     @TestInstance(PER_CLASS)
-    public class queryChapterInfo{
+    public class queryChapterInfoAdmin{
 
         @BeforeAll
         public void init(){
@@ -255,6 +291,57 @@ class ChapterControllerTest {
 
         @DisplayName("단원 학습 조회 실패 - 존재하지 않는 단원번호 입력")
         @Test
+        public void queryChapterInfoFail() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-111/info", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
+
+        }
+    }
+
+    @Nested
+    @DisplayName("단원 학습 조회(사용자) - GET /chapters/{num}/info")
+    @TestInstance(PER_CLASS)
+    public class queryChapterInfoCustomer{
+
+        @BeforeAll
+        public void init(){
+            suffix = "/chapters/";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+
+        @DisplayName("단원 학습 조회 성공")
+        @Test
+        @WithUserDetails(value = "id123", setupBefore = TestExecutionEvent.TEST_EXECUTION)
+        public void queryChapterInfoSuccess() {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            int chapterNum = ch1.getNumber();
+            ResponseEntity<ChapterInfoDto> response = restTemplate.getForEntity(URL + chapterNum + "/info", ChapterInfoDto.class);
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(response.getBody().getContent()).isEqualTo(ch1.getContent());
+
+            //progress update test
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(1L, chapterNum).orElseThrow();
+            assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.CHAPTER_INFO);
+        }
+
+        @DisplayName("단원 학습 조회 실패 - 존재하지 않는 단원번호 입력")
+        @Test
+        @WithUserDetails(value = "123",setupBefore = TestExecutionEvent.TEST_EXECUTION)
         public void queryChapterInfoFail() {
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-111/info", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});

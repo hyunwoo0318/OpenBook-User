@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import java.util.Optional;
+
 import static Project.OpenBook.Constants.ErrorCode.CHAPTER_NOT_FOUND;
 import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
 
@@ -82,5 +84,16 @@ public class StudyProgressService {
     }
 
 
+    public void updateProgress(Long customerId, Integer chapterNum,  String chapterProgressConst) {
+        Chapter chapter = checkChapter(chapterNum);
+        Customer customer = checkCustomer(customerId);
 
+        ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customerId, chapterNum).orElseGet(() -> {
+            ChapterProgress newChapterProgress = new ChapterProgress(customer, chapter);
+            chapterProgressRepository.save(newChapterProgress);
+            return newChapterProgress;
+        });
+
+        chapterProgress.updateProgress(chapterProgressConst);
+    }
 }

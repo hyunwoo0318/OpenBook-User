@@ -1,16 +1,19 @@
 package Project.OpenBook.Controller;
 
+import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Domain.Question;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.question.*;
 import Project.OpenBook.Service.CategoryService;
 import Project.OpenBook.Service.QuestionService;
+import Project.OpenBook.Service.StudyProgressService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +27,7 @@ import java.util.stream.Collectors;
 public class QuestionController {
 
     private final QuestionService questionService;
-    private final CategoryService categoryService;
-
+    private final StudyProgressService studyProgressService;
 //    @ApiOperation("문제를 임의로 생성해 보여줌")
 //    @ApiResponses(value = {
 //            @ApiResponse(responseCode = "200", description = "성공적인 문제 생성"),
@@ -97,8 +99,9 @@ public class QuestionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/questions/time-flow")
-    public ResponseEntity queryTimeFlowQuestion(@RequestParam("num") Integer num) {
-        List<TimeFlowQuestionDto> timeFlowQuestionDtoList = questionService.queryTimeFlowQuestion(num);
+    public ResponseEntity queryTimeFlowQuestion(@RequestParam("num") Integer num, @RequestParam("type")String type) {
+        Long customerId = getCustomerId();
+        List<TimeFlowQuestionDto> timeFlowQuestionDtoList = questionService.queryTimeFlowQuestion(customerId, num, type);
 
         return new ResponseEntity(timeFlowQuestionDtoList, HttpStatus.OK);
     }
@@ -134,7 +137,8 @@ public class QuestionController {
     })
     @GetMapping("/questions/get-topics-keywords")
     public ResponseEntity queryGetTopicsByKeywordQuestion(@RequestParam("num") Integer num){
-        List<GetTopicByKeywordQuestionDto> questionList = questionService.queryGetTopicsByKeywordQuestion(num);
+        Long customerId = getCustomerId();
+        List<GetTopicByKeywordQuestionDto> questionList = questionService.queryGetTopicsByKeywordQuestion(customerId, num);
 
         return new ResponseEntity(questionList, HttpStatus.OK);
     }
@@ -146,10 +150,13 @@ public class QuestionController {
     })
     @GetMapping("/questions/get-topics-sentences")
     public ResponseEntity queryGetTopicsBySentenceQuestion(@RequestParam("num") Integer num){
-        List<GetTopicBySentenceQuestionDto> questionList = questionService.queryGetTopicsBySentenceQuestion(num);
+        Long customerId = getCustomerId();
+        List<GetTopicBySentenceQuestionDto> questionList = questionService.queryGetTopicsBySentenceQuestion(customerId,num);
 
         return new ResponseEntity(questionList, HttpStatus.OK);
     }
 
-
+    public Long getCustomerId(){
+        return Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
+    }
 }

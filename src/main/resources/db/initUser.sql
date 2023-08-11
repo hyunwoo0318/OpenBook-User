@@ -1,0 +1,2 @@
+insert into customer (nick_name,login_id,password, age,is_new,is_subscribed,role) values ('nickname111','id123','pw123', 23,false,false,'ROLE_USER');
+insert into customer (nick_name,login_id,password, age,is_new,is_subscribed,role) values ('nickname222','id456','pw123', 32,false,false,'ROLE_USER');

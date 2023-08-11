@@ -64,6 +64,8 @@ public class TopicService {
     private final PrimaryDateRepository primaryDateRepository;
     private final TopicProgressRepository topicProgressRepository;
 
+    private final StudyProgressService studyProgressService;
+
     @Value("${base.url}")
     private String baseUrl;
 
@@ -274,10 +276,7 @@ public class TopicService {
 
     public TopicCustomerDto queryTopicCustomer(String topicTitle, Long customerId) {
 
-        /**
-         * TODO : progress 갱신 로직
-         */
-
+        Topic findTopic = checkTopic(topicTitle);
         Map<String, Group> topicCustomerDtoMap = topicRepository.queryTopicCustomerDto(topicTitle);
         Group group = topicCustomerDtoMap.get(topicTitle);
 
@@ -285,12 +284,16 @@ public class TopicService {
         Integer endDate = group.getOne(topic.endDate);
         String category = group.getOne(topic.category.name);
         List<String> sentenceList = group.getList(sentence.name);
+        Integer chapterNum = group.getOne(topic.chapter.number);
         List<KeywordUserDto> keywordList = group.getList(keyword).stream()
                 .map(k -> new KeywordUserDto(k.getName(), k.getComment(), k.getImageUrl()))
                 .collect(Collectors.toList());
         List<PrimaryDateUserDto> extraDateList = group.getList(primaryDate).stream()
                 .map(p -> new PrimaryDateUserDto(p.getExtraDate(), p.getExtraDateComment()))
                 .collect(Collectors.toList());
+
+        //progress update
+        studyProgressService.updateProgress(customerId, chapterNum, topicTitle);
 
         return new TopicCustomerDto(category, startDate, endDate, extraDateList, keywordList, sentenceList);
     }

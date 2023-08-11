@@ -11,6 +11,7 @@ import Project.OpenBook.Dto.topic.TopicCustomerDto;
 import Project.OpenBook.Dto.topic.TopicNumberDto;
 import Project.OpenBook.Service.ChoiceService;
 import Project.OpenBook.Service.DescriptionService;
+import Project.OpenBook.Service.StudyProgressService;
 import Project.OpenBook.Service.TopicService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,6 +33,7 @@ public class TopicController {
     private final TopicService topicService;
     private final DescriptionService descriptionService;
     private final ChoiceService choiceService;
+    private final StudyProgressService studyProgressService;
 
     @ApiOperation(value = "각 토픽에 대한 상세정보 조회 - 관리자")
     @ApiResponses(value = {

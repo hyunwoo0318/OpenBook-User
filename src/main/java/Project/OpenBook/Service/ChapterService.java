@@ -41,6 +41,7 @@ public class ChapterService {
     private final TopicRepository topicRepository;
     private final CustomerRepository customerRepository;
     private final ChapterProgressRepository chapterProgressRepository;
+    private final StudyProgressService studyProgressService;
 
 
     public Chapter createChapter(String title, int number) {
@@ -122,10 +123,20 @@ public class ChapterService {
         return new ChapterTitleDto(chapter.getTitle());
     }
 
-    public ChapterInfoDto queryChapterInfo(Integer num) {
+    public ChapterInfoDto queryChapterInfoAdmin(Integer num) {
         Chapter chapter = checkChapter(num);
         return new ChapterInfoDto(chapter.getContent());
     }
+
+    public ChapterInfoDto queryChapterInfoCustomer(Long customerId,Integer num) {
+        Chapter chapter = checkChapter(num);
+
+        //progress update
+        studyProgressService.updateProgress(customerId, num, ProgressConst.CHAPTER_INFO);
+
+        return new ChapterInfoDto(chapter.getContent());
+    }
+
 
     private void checkChapterNum(int number) {
         chapterRepository.findOneByNumber(number).ifPresent(c -> {

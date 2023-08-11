@@ -1,11 +1,13 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Config.SecurityConfig;
+import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
 import Project.OpenBook.Service.ChapterService;
+import Project.OpenBook.Service.StudyProgressService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 public class ChapterController {
 
     private final ChapterService chapterService;
+    private final StudyProgressService studyProgressService;
 
 
     @ApiOperation(value= "모든 단원 정보 가져오기 - 관리자")
@@ -48,7 +52,6 @@ public class ChapterController {
     public ResponseEntity queryChapterUser(){
         Long customerId = getCustomerId();
         List<ChapterUserDto> chapterUserDtoList = chapterService.queryChapterUserDtos(customerId);
-
         return new ResponseEntity(chapterUserDtoList, HttpStatus.OK);
     }
 
@@ -64,14 +67,27 @@ public class ChapterController {
         return new ResponseEntity(chapterTitleDto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 학습 조회")
+    @ApiOperation(value = "단원 학습 조회 - 관리자")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 학습 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/admin/chapters/{num}/info")
-    public ResponseEntity queryChapterInfo(@PathVariable("num") Integer num){
-        ChapterInfoDto chapterInfoDto = chapterService.queryChapterInfo(num);
+    public ResponseEntity queryChapterInfoAdmin(@PathVariable("num") Integer num){
+        ChapterInfoDto chapterInfoDto = chapterService.queryChapterInfoAdmin(num);
+
+        return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "단원 학습 조회 - 사용자")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "단원 학습 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
+    })
+    @GetMapping("/chapters/{num}/info")
+    public ResponseEntity queryChapterInfoCustomer(@PathVariable("num") Integer num){
+        Long customerId = getCustomerId();
+        ChapterInfoDto chapterInfoDto = chapterService.queryChapterInfoCustomer(customerId,num);
 
         return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
     }
@@ -149,6 +165,7 @@ public class ChapterController {
     }
 
     public Long getCustomerId(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
     }
 }

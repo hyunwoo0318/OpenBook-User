@@ -112,7 +112,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .leftJoin(sentence).on(sentence.topic.eq(topic))
                 .leftJoin(keyword).on(keyword.topic.eq(topic))
                 .where(topic.title.eq(topicTitle))
-                .transform(groupBy(topic.title).as(topic.category.name, topic.startDate, topic.endDate,
+                .transform(groupBy(topic.title).as(topic.category.name, topic.startDate, topic.endDate,topic.chapter.number,
                         list(keyword), list(sentence.name), list(primaryDate)));
     }
 

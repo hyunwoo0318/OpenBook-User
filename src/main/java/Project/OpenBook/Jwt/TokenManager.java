@@ -36,7 +36,8 @@ public class TokenManager {
     }
 
     public TokenDto generateToken(String authorities, long id) {
-        checkCustomer(id);long now = new Date().getTime();
+        checkCustomer(id);
+        long now = new Date().getTime();
         tokenExpire = new Date(now + JwtConst.TOKEN_EXPIRED_TIME);
 
         String accessToken = Jwts.builder()

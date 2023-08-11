@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.QuestionConst;
 import Project.OpenBook.Dto.Sentence.SentenceWithTopicDto;
 import Project.OpenBook.Dto.keyword.KeywordNameCommentDto;
@@ -55,6 +56,8 @@ public class QuestionService {
 
     private final KeywordRepository keywordRepository;
     private final SentenceRepository sentenceRepository;
+
+    private final StudyProgressService studyProgressService;
 
 
 //    @Transactional
@@ -313,7 +316,7 @@ public class QuestionService {
     }
 
 
-    public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Integer num) {
+    public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Long customerId, Integer num, String type) {
         Chapter chapter = checkChapter(num);
 
         List<Tuple> tuples = topicRepository.queryTimeFlowQuestion(num);
@@ -348,6 +351,14 @@ public class QuestionService {
                     timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(primaryDate.getExtraDate(), primaryDate.getExtraDateComment(), topicTitle));
                 }
             }
+
+        }
+
+        //progress update
+        if(type.equals("Study")){
+            studyProgressService.updateProgress(customerId, num, ProgressConst.TIME_FLOW_STUDY);
+        }else if(type.equals("Question")){
+            studyProgressService.updateProgress(customerId, num, ProgressConst.TIME_FLOW_QUESTION);
         }
 
         //연도 순으로 오름차순으로 정렬
@@ -405,7 +416,7 @@ public class QuestionService {
         return new GetSentenceQuestionDto(answerList, wrongAnswerList);
     }
 
-    public List<GetTopicByKeywordQuestionDto> queryGetTopicsByKeywordQuestion(Integer num) {
+    public List<GetTopicByKeywordQuestionDto> queryGetTopicsByKeywordQuestion(Long customerId, Integer num) {
         Chapter chapter = checkChapter(num);
 
         List<GetTopicByKeywordQuestionDto> questionList = new ArrayList<>();
@@ -424,10 +435,13 @@ public class QuestionService {
             }
         }
 
+        //progress update
+        studyProgressService.updateProgress(customerId, num, ProgressConst.GET_TOPIC_BY_KEYWORD);
+
         return questionList;
     }
 
-    public List<GetTopicBySentenceQuestionDto> queryGetTopicsBySentenceQuestion(Integer num) {
+    public List<GetTopicBySentenceQuestionDto> queryGetTopicsBySentenceQuestion(Long customerId, Integer num) {
         Chapter chapter = checkChapter(num);
 
         List<GetTopicBySentenceQuestionDto> questionList = new ArrayList<>();
@@ -444,6 +458,9 @@ public class QuestionService {
                 questionList.add(dto);
             }
         }
+
+        //progress update
+        studyProgressService.updateProgress(customerId, num, ProgressConst.GET_TOPIC_BY_SENTENCE);
 
         return questionList;
     }
