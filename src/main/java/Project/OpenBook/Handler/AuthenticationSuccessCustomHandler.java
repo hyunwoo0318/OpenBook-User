@@ -18,10 +18,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationSuccessCustomHandler implements AuthenticationSuccessHandler {
 
-    private final TokenManager tokenManager;
-    private final CustomerRepository customerRepository;
-
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         AuthenticationSuccessHandler.super.onAuthenticationSuccess(request, response, chain, authentication);
@@ -29,13 +25,5 @@ public class AuthenticationSuccessCustomHandler implements AuthenticationSuccess
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {}
-//        Customer customer = (Customer)authentication.getPrincipal();
-//        TokenDto tokenDto = tokenManager.generateToken(authentication, customer.getId());
-//        response.setHeader("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
-//        response.setHeader("Refresh-token", tokenDto.getRefreshToken());
-//        if (customer.isNew()) {
-//            response.setHeader("Is-new", "T");
-//        }
-//        response.setStatus(201);
-//    }
+
 }

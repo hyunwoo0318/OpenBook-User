@@ -19,7 +19,6 @@ public class JwtCustomFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse res = (HttpServletResponse) response;
 
         String token = tokenManager.resolveRequest(req);
         Authentication authentication = null;

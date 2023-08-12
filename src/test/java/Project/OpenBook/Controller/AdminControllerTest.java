@@ -3,8 +3,6 @@ package Project.OpenBook.Controller;
 import Project.OpenBook.Dto.admin.AdminDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
-import Project.OpenBook.Jwt.TokenManager;
-import Project.OpenBook.Repository.admin.AdminRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringBootConfiguration;
@@ -37,8 +35,6 @@ class AdminControllerTest {
     @Autowired
     TestRestTemplate restTemplate;
 
-    @Autowired
-    AdminRepository adminRepository;
 
     private final String prefix = "http://localhost:";
 

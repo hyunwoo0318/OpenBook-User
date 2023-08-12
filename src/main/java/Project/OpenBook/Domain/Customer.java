@@ -23,7 +23,7 @@ import java.util.*;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Customer extends BaseEntity implements OAuth2User {
+public class Customer extends BaseEntity implements OAuth2User, UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +44,7 @@ public class Customer extends BaseEntity implements OAuth2User {
     private String role;
 
     private String provider;
+    private String password;
 
     @Column(name = "oAuth_id", length = 1000)
     private String oAuthId;
@@ -72,6 +73,17 @@ public class Customer extends BaseEntity implements OAuth2User {
         this.code = UUID.randomUUID().toString().substring(0,16);
         this.isSubscribed = true;
     }
+
+    /**
+     * 관리자를 위한 생성자
+     */
+    public Customer(String nickName,String password, String role){
+        this.nickName = nickName;
+        this.password = password;
+        this.role = role;
+    }
+
+
 
     public void addDetails(String nickName, Integer age, Integer expertise) {
         this.nickName= nickName;
@@ -108,4 +120,31 @@ public class Customer extends BaseEntity implements OAuth2User {
     }
 
 
+    /**
+     * UserDetails
+     */
+    @Override
+    public String getUsername() {
+        return nickName;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }

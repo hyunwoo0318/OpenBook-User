@@ -1,6 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Customer;
+import Project.OpenBook.Dto.admin.AdminDto;
 import Project.OpenBook.Dto.customer.CustomerAddDetailDto;
 import Project.OpenBook.Dto.customer.CustomerCodeList;
 import Project.OpenBook.Dto.customer.CustomerDetailDto;
@@ -8,7 +9,6 @@ import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Service.AnswerNoteService;
 import Project.OpenBook.Service.BookmarkService;
 import Project.OpenBook.Service.CustomerService;
-import Project.OpenBook.Service.OAuthService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @RestController
@@ -30,7 +29,7 @@ public class CustomerController {
     private final CustomerService customerService;
     private final BookmarkService bookmarkService;
     private final AnswerNoteService answerNoteService;
-    private final OAuthService oauthService;
+
 
     @ApiOperation("회원 추가정보 입력")
     @ApiResponses(value={
@@ -72,8 +71,8 @@ public class CustomerController {
 
     @ApiOperation("소셜 로그인")
     @GetMapping("login/{providerName}")
-    public ResponseEntity<Long> socialLogin(@PathVariable("providerName") String providerName,@RequestParam("code") String code) {
-        TokenDto tokenDto = oauthService.login(providerName, code);
+    public ResponseEntity<Long> socialLogin(@PathVariable("providerName") String providerName,@RequestParam("code") String code) throws Exception{
+        TokenDto tokenDto = customerService.loginOauth2(providerName, code);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
         headers.set("Refresh-token", tokenDto.getRefreshToken());
@@ -109,7 +108,6 @@ public class CustomerController {
     })
     @GetMapping("/admin/customers")
     public ResponseEntity queryCustomers(){
-        //TODO : DTO 만들
         CustomerCodeList customerCodeList = customerService.queryCustomers();
         return new ResponseEntity<>(customerCodeList, HttpStatus.OK);
     }
@@ -123,6 +121,25 @@ public class CustomerController {
     public ResponseEntity queryCustomerDetail(@PathVariable("code") String code) {
         CustomerDetailDto customerDetailDto = customerService.queryCustomerDetail(code);
         return new ResponseEntity(customerDetailDto, HttpStatus.OK);
+    }
+
+    /**
+     * 관리자 로그인
+     * @param adminDto(아이디, 비밀번호)
+     * @return
+     */
+
+    @ApiOperation(value = "관리자 로그인", notes = "아이디와 비밀번호를 입력받아 관리자 로그인")
+    @ApiResponses(value={
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력"),
+            @ApiResponse(responseCode = "401", description = "로그인 실패")
+    })
+    @PostMapping("/admin/login")
+    public ResponseEntity adminLogin(@Validated @RequestBody AdminDto adminDto) {
+        customerService.loginAdmin(adminDto.getLoginId(), adminDto.getPassword());
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
