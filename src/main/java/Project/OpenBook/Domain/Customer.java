@@ -23,7 +23,7 @@ import java.util.*;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Customer extends BaseEntity implements OAuth2User, UserDetails {
+public class Customer extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -74,9 +74,6 @@ public class Customer extends BaseEntity implements OAuth2User, UserDetails {
         this.isSubscribed = true;
     }
 
-    /**
-     * 관리자를 위한 생성자
-     */
     public Customer(String nickName,String password, String role){
         this.nickName = nickName;
         this.password = password;
@@ -92,31 +89,11 @@ public class Customer extends BaseEntity implements OAuth2User, UserDetails {
         this.isNew = false;
     }
 
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        Map<String, Object> m = new HashMap<>();
-        m.put("role", this.role);
-        m.put("nickName", this.nickName);
-        m.put("isNew", this.isNew);
-        return m;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorityList = new ArrayList<>();
         authorityList.add(new SimpleGrantedAuthority(role));
         return authorityList;
-    }
-
-    @Override
-    public <A> A getAttribute(String name) {
-        return OAuth2User.super.getAttribute(name);
-    }
-
-    @Override
-    public String getName() {
-        return String.valueOf(id);
     }
 
 

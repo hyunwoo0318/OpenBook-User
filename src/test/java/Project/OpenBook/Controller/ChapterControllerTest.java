@@ -4,11 +4,14 @@ package Project.OpenBook.Controller;
 import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.Role;
+import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Dto.topic.AdminChapterDto;
+import Project.OpenBook.Jwt.TokenDto;
+import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
@@ -17,7 +20,9 @@ import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import Project.OpenBook.Service.CustomerService;
+import Project.OpenBook.Utils.WithAccount;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +42,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -44,8 +50,11 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -53,7 +62,7 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = { "spring.config.location=classpath:application-test.yml" })
-@Sql(scripts = {"classpath:/DB/initCustomer.sql"})
+//@Sql(value = {"classpath:/DB/initCustomer.sql"})
 @ContextConfiguration
 class ChapterControllerTest {
 
@@ -63,6 +72,9 @@ class ChapterControllerTest {
     ChapterRepository chapterRepository;
     @Autowired
     ChapterProgressRepository chapterProgressRepository;
+
+    @Autowired
+    TopicProgressRepository topicProgressRepository;
     @Autowired
     CategoryRepository categoryRepository;
     @Autowired
@@ -79,10 +91,20 @@ class ChapterControllerTest {
     @Autowired
     CustomerRepository customerRepository;
 
+
+
+    @Autowired
+    TokenManager tokenManager;
+
     @Autowired
     TestRestTemplate restTemplate;
     @Autowired
     CustomerService customerService;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    private TokenDto tokenDto;
 
     private Category c1;
     private Chapter ch1;
@@ -104,8 +126,9 @@ class ChapterControllerTest {
 
     private void baseSetting() {
 
-        customer1 = customerRepository.findByNickName("customer1").get();
-        customer2 = customerRepository.findByNickName("customer2").get();
+        customer1 = new Customer("customer1", passwordEncoder.encode("customer1"), Role.USER);
+        customer2 = new Customer("customer2", passwordEncoder.encode("customer2"), Role.USER);
+        customerRepository.saveAllAndFlush(Arrays.asList(customer1, customer2));
 
         c1 = new Category("유물");
         categoryRepository.saveAndFlush(c1);
@@ -120,6 +143,9 @@ class ChapterControllerTest {
     }
 
     private void baseClear() {
+        topicProgressRepository.deleteAllInBatch();
+        chapterProgressRepository.deleteAllInBatch();
+        chapterProgressRepository.deleteAllInBatch();
         customerRepository.deleteAllInBatch();
         topicRepository.deleteAllInBatch();
         chapterRepository.deleteAllInBatch();
@@ -138,9 +164,9 @@ class ChapterControllerTest {
     }
 
     @Nested
-    @DisplayName("모든 단원 조회 - GET /admin/chapters")
+    @DisplayName("모든 단원 조회(관리자) - GET /admin/chapters")
     @TestInstance(PER_CLASS)
-    public class queryChapters{
+    public class queryChaptersAdmin{
 
         @BeforeAll
         public void init(){
@@ -175,6 +201,75 @@ class ChapterControllerTest {
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody().stream().map(c -> c.getNumber())).usingRecursiveComparison().isEqualTo(Arrays.asList(1, 2, 3, 4, 5));
+        }
+    }
+
+    @Nested
+    @DisplayName("모든 단원 조회(사용자) - GET /chapters")
+    @TestInstance(PER_CLASS)
+    public class queryChaptersCustomer{
+
+        Chapter ch2, ch3;
+        @BeforeAll
+        public void init(){
+            suffix = "/chapters";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+            ch2 = new Chapter("ch2", 2);
+            ch3 = new Chapter("ch3", 3);
+            chapterRepository.saveAll(Arrays.asList(ch2, ch3));
+
+            ChapterProgress cp2 = new ChapterProgress(customer1, ch2);
+            ChapterProgress cp3 = new ChapterProgress(customer1, ch3);
+            chapterProgressRepository.saveAll(Arrays.asList(cp2, cp3));
+
+            /**
+             * ch2 -> 연표 문제
+             * ch3 -> 키워드 보고 문제 맞추기
+             */
+            cp2 = cp2.updateProgress(ProgressConst.TIME_FLOW_QUESTION);
+            cp3 = cp3.updateProgress(ProgressConst.GET_TOPIC_BY_KEYWORD);
+
+            chapterProgressRepository.saveAllAndFlush(Arrays.asList(cp2, cp3));
+        }
+
+
+        @DisplayName("단원 전체 조회(사용자) 성공")
+        @Test
+        public void queryChaptersCustomerSuccess() {
+
+            ResponseEntity<List<ChapterUserDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<ChapterUserDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            List<ChapterUserDto> body = response.getBody();
+            assertThat(body.size()).isEqualTo(chapterRepository.findAll().size());
+
+            //1단원
+            ChapterUserDto chapter1Dto =
+                    new ChapterUserDto(ch1.getTitle(), ch1.getNumber(), StateConst.NOT_STARTED, ProgressConst.NOT_STARTED, Arrays.asList(t1.getTitle()));
+            assertThat(body.get(0)).usingRecursiveComparison().isEqualTo(chapter1Dto);
+
+            //2단원
+            ChapterUserDto chapter2Dto
+                    = new ChapterUserDto(ch2.getTitle(), ch2.getNumber(), StateConst.IN_PROGRESS, ProgressConst.TIME_FLOW_QUESTION, new ArrayList<String>());
+            assertThat(body.get(1)).usingRecursiveComparison().isEqualTo(chapter2Dto);
+
+            //3딘원
+            ChapterUserDto chapter3Dto
+                    = new ChapterUserDto(ch3.getTitle(), ch3.getNumber(), StateConst.IN_PROGRESS, ProgressConst.GET_TOPIC_BY_KEYWORD, new ArrayList<String>());
+            assertThat(body.get(2)).usingRecursiveComparison().isEqualTo(chapter3Dto);
+
         }
     }
 
@@ -317,6 +412,7 @@ class ChapterControllerTest {
         public void init(){
             suffix = "/chapters/";
             initConfig();
+
         }
 
         @AfterEach
@@ -327,23 +423,26 @@ class ChapterControllerTest {
         @BeforeEach
         public void setting() {
             baseSetting();
+            ChapterProgress chapterProgress = new ChapterProgress(customer1, ch1);
+            chapterProgressRepository.save(chapterProgress);
         }
 
 
         @DisplayName("단원 학습 조회 성공")
         @Test
-        @WithUserDetails(value = "customer1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "customerService")
+//        @WithAccount(value = "customer1")
         public void queryChapterInfoSuccess() {
             int chapterNum = ch1.getNumber();
-            SecurityContext context = SecurityContextHolder.getContext();
-            Authentication authentication = context.getAuthentication();
-            ResponseEntity<ChapterInfoDto> response = restTemplate.getForEntity(URL + chapterNum + "/info", ChapterInfoDto.class);
+
+            ResponseEntity<ChapterInfoDto> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+            .getForEntity(URL + chapterNum + "/info", ChapterInfoDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody().getContent()).isEqualTo(ch1.getContent());
 
             //progress update test
-            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(1L, chapterNum).orElseThrow();
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), chapterNum).orElseThrow();
             assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.CHAPTER_INFO);
         }
 
@@ -351,12 +450,17 @@ class ChapterControllerTest {
         @Test
         @WithUserDetails(value = "customer1",setupBefore = TestExecutionEvent.TEST_EXECUTION)
         public void queryChapterInfoFail() {
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-111/info", HttpMethod.GET,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "-111/info", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
 
+            //progress not update test
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), chapterNum).orElseThrow();
+            assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.NOT_STARTED);
         }
     }
 

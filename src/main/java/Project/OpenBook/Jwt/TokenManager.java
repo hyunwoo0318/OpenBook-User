@@ -84,8 +84,8 @@ public class TokenManager {
         }
 
         Collection<? extends GrantedAuthority> authorities = findCustomer.getAuthorities();
-        UserDetails userDetails = new User(claim.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
+//        UserDetails userDetails = new User(claim.getSubject(), "", authorities);
+        return new UsernamePasswordAuthenticationToken(findCustomer, "", authorities);
     }
 
     public void validateToken(String accessToken){

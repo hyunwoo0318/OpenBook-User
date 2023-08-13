@@ -65,7 +65,7 @@ import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
-public class CustomerService implements UserDetailsService, OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class CustomerService implements UserDetailsService {
 
     private final CustomerRepository customerRepository;
     private final ChapterRepository chapterRepository;
@@ -116,6 +116,10 @@ public class CustomerService implements UserDetailsService, OAuth2UserService<OA
         customerRepository.deleteById(customerId);
     }
 
+    public Optional<Customer> queryCustomer(String nickName){
+        return customerRepository.findByNickName(nickName);
+    }
+
     /**
      * 관리자
      */
@@ -138,20 +142,7 @@ public class CustomerService implements UserDetailsService, OAuth2UserService<OA
             throw new CustomException(LOGIN_FAIL);
         });
     }
-//
-    public Customer getCustomer(User principal){
-        Long customerId = Long.valueOf(principal.getUsername());
-        return customerRepository.findById(customerId).orElseThrow(() -> {
-            throw new CustomException(LOGIN_FAIL);
-        });
-    }
-//
-//    public Customer getCustomer(String username){
-//        Long customerId = 1L;
-//        return customerRepository.findById(customerId).orElseThrow(() -> {
-//            throw new CustomException(LOGIN_FAIL);
-//        });
-//    }
+
 
     /**
      * Oauth2
@@ -164,37 +155,6 @@ public class CustomerService implements UserDetailsService, OAuth2UserService<OA
 
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String naverClientSecret;
-
-    @Override
-    public Customer loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
-        OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
-        OAuth2User oAuth2User = delegate.loadUser(userRequest);
-        String provider = userRequest.getClientRegistration().getRegistrationId();
-        String oAuthId = "";
-        if (provider.equals("kakao")) {
-            oAuthId = oAuth2User.getName();
-        } else if (provider.equals("naver")) {
-            Map<String, Object> attributes = (Map<String, Object>) oAuth2User.getAttributes().get("response");
-            oAuthId = (String) attributes.get("id");
-        }
-
-
-        Optional<Customer> customerOptional = customerRepository.queryCustomer(oAuthId, provider);
-        if (customerOptional.isEmpty()) {
-            Customer customer = Customer.builder()
-                    .oAuthId(oAuthId)
-                    .provider(provider)
-                    .role(Role.USER)
-                    .nickName(UUID.randomUUID().toString())
-                    .build();
-            customerRepository.save(customer);
-            return customer;
-        }else{
-            return customerOptional.get();
-        }
-
-    }
 
     public TokenDto loginOauth2(String providerName, String code) throws Exception{
         String oauthId = "";

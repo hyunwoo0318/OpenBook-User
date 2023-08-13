@@ -276,19 +276,23 @@ public class TopicService {
 
     public TopicCustomerDto queryTopicCustomer(String topicTitle, Long customerId) {
 
-        Topic findTopic = checkTopic(topicTitle);
+        checkTopic(topicTitle);
         Map<String, Group> topicCustomerDtoMap = topicRepository.queryTopicCustomerDto(topicTitle);
         Group group = topicCustomerDtoMap.get(topicTitle);
 
         Integer startDate = group.getOne(topic.startDate);
         Integer endDate = group.getOne(topic.endDate);
         String category = group.getOne(topic.category.name);
-        List<String> sentenceList = group.getList(sentence.name);
+        List<String> sentenceList = group.getList(sentence.name).stream()
+                .distinct()
+                .collect(Collectors.toList());
         Integer chapterNum = group.getOne(topic.chapter.number);
         List<KeywordUserDto> keywordList = group.getList(keyword).stream()
+                .distinct()
                 .map(k -> new KeywordUserDto(k.getName(), k.getComment(), k.getImageUrl()))
                 .collect(Collectors.toList());
         List<PrimaryDateUserDto> extraDateList = group.getList(primaryDate).stream()
+                .distinct()
                 .map(p -> new PrimaryDateUserDto(p.getExtraDate(), p.getExtraDateComment()))
                 .collect(Collectors.toList());
 

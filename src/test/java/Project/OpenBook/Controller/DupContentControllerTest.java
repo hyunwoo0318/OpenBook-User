@@ -9,10 +9,12 @@ import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.dupcontent.DupContentRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
+import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import org.assertj.core.api.ObjectAssert;
 import org.assertj.core.api.RecursiveComparisonAssert;
 import org.junit.jupiter.api.*;
@@ -48,6 +50,12 @@ class DupContentControllerTest {
     ChapterRepository chapterRepository;
 
     @Autowired
+    ChapterProgressRepository chapterProgressRepository;
+
+    @Autowired
+    TopicProgressRepository topicProgressRepository;
+
+    @Autowired
     CategoryRepository categoryRepository;
 
     @Autowired
@@ -72,7 +80,6 @@ class DupContentControllerTest {
 
     private void initConfig(){
         URL = prefix + port + suffix;
-        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 

@@ -1,7 +1,9 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.QuestionConst;
+import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.Sentence.SentenceWithTopicDto;
 import Project.OpenBook.Dto.choice.ChoiceContentIdDto;
@@ -11,7 +13,9 @@ import Project.OpenBook.Dto.keyword.KeywordWithTopicDto;
 import Project.OpenBook.Dto.question.*;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
+import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
@@ -29,8 +33,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
+import springfox.documentation.annotations.ApiIgnore;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -331,9 +338,17 @@ class QuestionControllerTest{
     @Autowired
     PrimaryDateRepository primaryDateRepository;
     @Autowired
+    private CustomerRepository customerRepository;
+    @Autowired
     KeywordRepository keywordRepository;
     @Autowired
     SentenceRepository sentenceRepository;
+
+    @Autowired
+    ChapterProgressRepository chapterProgressRepository;
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     TestRestTemplate restTemplate;
@@ -341,6 +356,8 @@ class QuestionControllerTest{
     private final String prefix = "http://localhost:";
     private String suffix;
     private String URL;
+
+    private Customer customer1, customer2;
 
     private Topic t1,t2,t3;
 
@@ -353,16 +370,22 @@ class QuestionControllerTest{
 
     private void initConfig() {
         URL = prefix + port + suffix;
-        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
-        restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 
     private void baseSetting() {
+
+        customer1 = new Customer("customer1", passwordEncoder.encode("customer1"), Role.USER);
+        customer2 = new Customer("customer2", passwordEncoder.encode("customer2"), Role.USER);
+        customerRepository.saveAllAndFlush(Arrays.asList(customer1, customer2));
+
         c1 = new Category("c1");
         categoryRepository.saveAndFlush(c1);
 
         ch1 = new Chapter("ch1", 1);
         chapterRepository.saveAndFlush(ch1);
+
+        ChapterProgress chapterProgress = new ChapterProgress(customer1, ch1);
+        chapterProgressRepository.saveAndFlush(chapterProgress);
 
         List<Topic> topicList = new ArrayList<>();
         t1 = new Topic("title1", 100, 200, true,false,0, 0, "detail1", ch1, c1);
@@ -406,6 +429,8 @@ class QuestionControllerTest{
     }
 
     private void baseClear() {
+        chapterProgressRepository.deleteAllInBatch();
+        customerRepository.deleteAllInBatch();
         sentenceRepository.deleteAllInBatch();
         keywordRepository.deleteAllInBatch();
         primaryDateRepository.deleteAllInBatch();
@@ -414,57 +439,92 @@ class QuestionControllerTest{
         categoryRepository.deleteAllInBatch();
     }
 
-//    @Nested
-//    @DisplayName("연표 문제 제공 - GET /questions/time-flow")
-//    @TestInstance(PER_CLASS)
-//    public class queryTimeFlowQuestion{
-//        @BeforeAll
-//        public void init(){
-//            suffix = "/questions/time-flow";
-//            initConfig();
-//        }
-//
-//        @AfterEach
-//        public void clear(){
-//            baseClear();
-//        }
-//
-//        @BeforeEach
-//        public void setting() {
-//            baseSetting();
-//        }
-//
-//        /**
-//         * expectResult - [t1.startDate, t2.endDate, date1]
-//         */
-//        @DisplayName("연표 문제 제공 성공")
-//        @Test
-//        public void queryTimeFlowQuestion(){
-//            TimeFlowQuestionDto dto1 = new TimeFlowQuestionDto(t1.getStartDate(), t1.getTitle() + "의 시작연도입니다.", t1.getTitle());
-//            TimeFlowQuestionDto dto2 = new TimeFlowQuestionDto(t2.getEndDate(), t2.getTitle() + "의 종료연도입니다.", t2.getTitle());
-//            TimeFlowQuestionDto dto3 = new TimeFlowQuestionDto(date1.getExtraDate(), date1.getExtraDateComment(), t1.getTitle());
-//
-//            ResponseEntity<List<TimeFlowQuestionDto>> response = restTemplate.exchange(URL + "?num=1", HttpMethod.GET, null,
-//                    new ParameterizedTypeReference<List<TimeFlowQuestionDto>>() {});
-//
-//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//
-//            List<TimeFlowQuestionDto> body = response.getBody();
-//            assertThat(body.size()).isEqualTo(3);
-//            assertThat(body).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2, dto3));
-//        }
-//
-//        @DisplayName("연표 문제 제공 실패 - 존재하지 않는 단원번호 입력")
-//        @Test
-//        public void queryTimeFlowQuestionFail() {
-//            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?num=-1", HttpMethod.GET,
-//                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
-//
-//            Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-//            Assertions.assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(ErrorCode.CHAPTER_NOT_FOUND.getErrorMessage())));
-//        }
-//    }
-//
+    @Nested
+    @DisplayName("연표 제공 - GET /questions/time-flow")
+    @TestInstance(PER_CLASS)
+    public class queryTimeFlowQuestion{
+        @BeforeAll
+        public void init(){
+            suffix = "/questions/time-flow";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+        /**
+         * expectResult - [t1.startDate, t2.endDate, date1]
+         */
+        @DisplayName("연표 문제 제공 성공")
+        @Test
+        public void queryTimeFlowQuestion(){
+            TimeFlowQuestionDto dto1 = new TimeFlowQuestionDto(t1.getStartDate(), t1.getTitle() + "의 시작연도입니다.", t1.getTitle());
+            TimeFlowQuestionDto dto2 = new TimeFlowQuestionDto(t2.getEndDate(), t2.getTitle() + "의 종료연도입니다.", t2.getTitle());
+            TimeFlowQuestionDto dto3 = new TimeFlowQuestionDto(date1.getExtraDate(), date1.getExtraDateComment(), t1.getTitle());
+
+            ResponseEntity<List<TimeFlowQuestionDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "?num=1&type=Question", HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<TimeFlowQuestionDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            List<TimeFlowQuestionDto> body = response.getBody();
+            assertThat(body.size()).isEqualTo(3);
+            assertThat(body).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2, dto3));
+
+            //process update test
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), ch1.getNumber()).orElseThrow();
+            Assertions.assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.TIME_FLOW_QUESTION);
+        }
+
+        @DisplayName("연표 학습 제공 성공")
+        @Test
+        public void queryTimeFlowStudy(){
+            TimeFlowQuestionDto dto1 = new TimeFlowQuestionDto(t1.getStartDate(), t1.getTitle() + "의 시작연도입니다.", t1.getTitle());
+            TimeFlowQuestionDto dto2 = new TimeFlowQuestionDto(t2.getEndDate(), t2.getTitle() + "의 종료연도입니다.", t2.getTitle());
+            TimeFlowQuestionDto dto3 = new TimeFlowQuestionDto(date1.getExtraDate(), date1.getExtraDateComment(), t1.getTitle());
+
+            ResponseEntity<List<TimeFlowQuestionDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "?num=1&type=Study", HttpMethod.GET, null,
+                    new ParameterizedTypeReference<List<TimeFlowQuestionDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+            List<TimeFlowQuestionDto> body = response.getBody();
+            assertThat(body.size()).isEqualTo(3);
+            assertThat(body).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2, dto3));
+
+            //process update test
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), ch1.getNumber()).orElseThrow();
+            Assertions.assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.TIME_FLOW_STUDY);
+        }
+
+        @DisplayName("연표 제공 실패 - 존재하지 않는 단원번호 입력")
+        @Test
+        public void queryTimeFlowFail() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "?num=-1&type=Question", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            Assertions.assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(ErrorCode.CHAPTER_NOT_FOUND.getErrorMessage())));
+
+            //process update test
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), ch1.getNumber()).orElseThrow();
+            Assertions.assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.NOT_STARTED);
+        }
+    }
+
     @Nested
     @DisplayName("주제보고 키워드 맞추기 문제 제공 - GET /questions/get-keywords")
     @TestInstance(PER_CLASS)
@@ -661,152 +721,171 @@ class QuestionControllerTest{
 
 
 
-//    }
-//
-//    @Nested
-//    @DisplayName("키워드 보고 주제 맞추기 문제 제공 - GET /questions/get-topics-keywords")
-//    @TestInstance(PER_CLASS)
-//    public class queryGetTopicsByKeywordQuestion{
-//        @BeforeAll
-//        public void init(){
-//            suffix = "/questions/get-topics-keywords";
-//            initConfig();
-//        }
-//
-//        @AfterEach
-//        public void clear(){
-//            baseClear();
-//        }
-//
-//        @BeforeEach
-//        public void setting() {
-//            baseSetting();
-//        }
-//
-//        /**
-//         * t1 -> keyword
-//         * t2 -> keyword
-//         * t3 ~ -> x
-//         * 총 2개의 문제가 생성되어야함
-//         */
-//        @DisplayName("키워드/문장 보고 주제 맞추기 문제 제공 성공")
-//        @Test
-//        public void queryGetTopicsByKeywordQuestionSuccess(){
-//            int num = ch1.getNumber();
-//
-//            ResponseEntity<List<GetTopicByKeywordQuestionDto>> response = restTemplate.exchange(URL + "?num=" + num, HttpMethod.GET,
-//                    null, new ParameterizedTypeReference<List<GetTopicByKeywordQuestionDto>>() {});
-//
-//            List<GetTopicByKeywordQuestionDto> questionDtoList = response.getBody();
-//            //총 2개의 문제가 생성되었는지 확인
-//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//            assertThat(questionDtoList.size()).isEqualTo(2);
-//
-//            for (GetTopicByKeywordQuestionDto dto : questionDtoList) {
-//                //정답 주제가 t1,t2내에서 생성되었는지 확인
-//                assertThat(Arrays.asList(t1.getTitle(), t2.getTitle(), t3.getTitle()).contains(dto.getAnswer())).isTrue();
-//
-//
-//
-//                //문제에서 제시할 키워드의 개수가 맞는지 확인
-//                assertThat(dto.getAnswerKeywordList().size()).isEqualTo(2);
-//
-//                //키워드들이 정답 주제 내의 키워드가 맞는지 확인
-//                List<KeywordNameCommentDto> keywordDtoList = keywordRepository.queryKeywordsByTopic(dto.getAnswer()).stream()
-//                                                                .map(d -> new KeywordNameCommentDto(d.getName(), d.getComment()))
-//                                                                .collect(Collectors.toList());
-//                assertThat(keywordDtoList.containsAll(dto.getAnswerKeywordList()));
-//
-//                //오답 주제의 개수가 8개인지 확인
-//                assertThat(dto.getWrongAnswerList().size()).isEqualTo(8);
-//                //각각의 오답 주제가 정답 주제와 겹치지 않는지 확인
-//                assertThat(dto.getWrongAnswerList().contains(dto.getAnswer())).isFalse();
-//            }
-//        }
-//
-//        @DisplayName("키워드 보고 주제 맞추기 문제 제공 실패 - 존재하지 않는 단원 번호 입력")
-//        @Test
-//        public void queryGetTopicsByKeywordQuestionFailWrongNum(){
-//            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?num=123123123", HttpMethod.GET,
-//                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
-//
-//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-//            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
-//        }
-//    }
-//
-//    @Nested
-//    @DisplayName("문장 보고 주제 맞추기 문제 제공 - GET /questions/get-topics-sentences")
-//    @TestInstance(PER_CLASS)
-//    public class queryGetTopicsBySentenceQuestion{
-//        @BeforeAll
-//        public void init(){
-//            suffix = "/questions/get-topics-sentences";
-//            initConfig();
-//        }
-//
-//        @AfterEach
-//        public void clear(){
-//            baseClear();
-//        }
-//
-//        @BeforeEach
-//        public void setting() {
-//            baseSetting();
-//        }
-//
-//        /**
-//         * t1 -> sentence
-//         * t2 -> sentence
-//         * t3  -> sentence
-//         * t4 ~ -> x
-//         * 총 3개의 문제가 생성되어야함
-//         */
-//        @DisplayName("문장 보고 주제 맞추기 문제 제공 성공")
-//        @Test
-//        public void queryGetTopicsBySentencesQuestionSuccess(){
-//            int num = ch1.getNumber();
-//
-//            ResponseEntity<List<GetTopicBySentenceQuestionDto>> response = restTemplate.exchange(URL + "?num=" + num, HttpMethod.GET,
-//                    null, new ParameterizedTypeReference<List<GetTopicBySentenceQuestionDto>>() {});
-//
-//            List<GetTopicBySentenceQuestionDto> questionDtoList = response.getBody();
-//            //총 3개의 문제가 생성되었는지 확인
-//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//            assertThat(questionDtoList.size()).isEqualTo(3);
-//
-//            for (GetTopicBySentenceQuestionDto dto : questionDtoList) {
-//                //정답 주제가 t1,t2내에서 생성되었는지 확인
-//                assertThat(Arrays.asList(t1.getTitle(), t2.getTitle(), t3.getTitle()).contains(dto.getAnswer())).isTrue();
-//
-//
-//                //문장이 정답 주제 내의 문장이 맞는지 확인
-//                List<String> sentenceList = sentenceRepository.queryByTopicTitle(dto.getAnswer()).stream()
-//                            .map(d -> d.getName())
-//                            .collect(Collectors.toList());
-//                assertThat(sentenceList.contains(dto.getSentence()));
-//
-//                //오답 주제의 개수가 8개인지 확인
-//                assertThat(dto.getWrongAnswerList().size()).isEqualTo(8);
-//                //각각의 오답 주제가 정답 주제와 겹치지 않는지 확인
-//                assertThat(dto.getWrongAnswerList().contains(dto.getAnswer())).isFalse();
-//            }
-//        }
-//
-//        @DisplayName("문장 보고 주제 맞추기 문제 제공 실패 - 존재하지 않는 단원 번호 입력")
-//        @Test
-//        public void queryGetTopicsBySentencesQuestionFailWrongNum(){
-//            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?num=123123123", HttpMethod.GET,
-//                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
-//
-//            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-//            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
-//        }
     }
 
+    @Nested
+    @DisplayName("키워드 보고 주제 맞추기 문제 제공 - GET /questions/get-topics-keywords")
+    @TestInstance(PER_CLASS)
+    public class queryGetTopicsByKeywordQuestion{
+        @BeforeAll
+        public void init(){
+            suffix = "/questions/get-topics-keywords";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+        /**
+         * t1 -> keyword
+         * t2 -> keyword
+         * t3 ~ -> x
+         * 총 2개의 문제가 생성되어야함
+         */
+        @DisplayName("키워드/문장 보고 주제 맞추기 문제 제공 성공")
+        @Test
+        public void queryGetTopicsByKeywordQuestionSuccess(){
+            int num = ch1.getNumber();
+
+            ResponseEntity<List<GetTopicByKeywordQuestionDto>> response = restTemplate
+                    .withBasicAuth("customer1","customer1")
+                    .exchange(URL + "?num=" + num, HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<GetTopicByKeywordQuestionDto>>() {});
+
+            List<GetTopicByKeywordQuestionDto> questionDtoList = response.getBody();
+            //총 2개의 문제가 생성되었는지 확인
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(questionDtoList.size()).isEqualTo(2);
+
+            for (GetTopicByKeywordQuestionDto dto : questionDtoList) {
+                //정답 주제가 t1,t2내에서 생성되었는지 확인
+                assertThat(Arrays.asList(t1.getTitle(), t2.getTitle(), t3.getTitle()).contains(dto.getAnswer())).isTrue();
 
 
 
+                //문제에서 제시할 키워드의 개수가 맞는지 확인
+                assertThat(dto.getAnswerKeywordList().size()).isEqualTo(2);
+
+                //키워드들이 정답 주제 내의 키워드가 맞는지 확인
+                List<KeywordNameCommentDto> keywordDtoList = keywordRepository.queryKeywordsByTopic(dto.getAnswer()).stream()
+                                                                .map(d -> new KeywordNameCommentDto(d.getName(), d.getComment()))
+                                                                .collect(Collectors.toList());
+                assertThat(keywordDtoList.containsAll(dto.getAnswerKeywordList()));
+
+                //오답 주제의 개수가 8개인지 확인
+                assertThat(dto.getWrongAnswerList().size()).isEqualTo(8);
+                //각각의 오답 주제가 정답 주제와 겹치지 않는지 확인
+                assertThat(dto.getWrongAnswerList().contains(dto.getAnswer())).isFalse();
+            }
+
+            //process update test
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), ch1.getNumber()).orElseThrow();
+            Assertions.assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.GET_TOPIC_BY_KEYWORD);
+        }
+
+        @DisplayName("키워드 보고 주제 맞추기 문제 제공 실패 - 존재하지 않는 단원 번호 입력")
+        @Test
+        public void queryGetTopicsByKeywordQuestionFailWrongNum(){
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+
+                    .exchange(URL + "?num=123123123", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
+
+            //process update test
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), ch1.getNumber()).orElseThrow();
+            Assertions.assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.NOT_STARTED);
+        }
+    }
+
+    @Nested
+    @DisplayName("문장 보고 주제 맞추기 문제 제공 - GET /questions/get-topics-sentences")
+    @TestInstance(PER_CLASS)
+    public class queryGetTopicsBySentenceQuestion{
+        @BeforeAll
+        public void init(){
+            suffix = "/questions/get-topics-sentences";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+
+        /**
+         * t1 -> sentence
+         * t2 -> sentence
+         * t3  -> sentence
+         * t4 ~ -> x
+         * 총 3개의 문제가 생성되어야함
+         */
+        @DisplayName("문장 보고 주제 맞추기 문제 제공 성공")
+        @Test
+        public void queryGetTopicsBySentencesQuestionSuccess(){
+            int num = ch1.getNumber();
+
+            ResponseEntity<List<GetTopicBySentenceQuestionDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "?num=" + num, HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<GetTopicBySentenceQuestionDto>>() {});
+
+            List<GetTopicBySentenceQuestionDto> questionDtoList = response.getBody();
+            //총 3개의 문제가 생성되었는지 확인
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(questionDtoList.size()).isEqualTo(3);
+
+            for (GetTopicBySentenceQuestionDto dto : questionDtoList) {
+                //정답 주제가 t1,t2내에서 생성되었는지 확인
+                assertThat(Arrays.asList(t1.getTitle(), t2.getTitle(), t3.getTitle()).contains(dto.getAnswer())).isTrue();
 
 
+                //문장이 정답 주제 내의 문장이 맞는지 확인
+                List<String> sentenceList = sentenceRepository.queryByTopicTitle(dto.getAnswer()).stream()
+                            .map(d -> d.getName())
+                            .collect(Collectors.toList());
+                assertThat(sentenceList.contains(dto.getSentence()));
+
+                //오답 주제의 개수가 8개인지 확인
+                assertThat(dto.getWrongAnswerList().size()).isEqualTo(8);
+                //각각의 오답 주제가 정답 주제와 겹치지 않는지 확인
+                assertThat(dto.getWrongAnswerList().contains(dto.getAnswer())).isFalse();
+            }
+
+            //process update test
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), ch1.getNumber()).orElseThrow();
+            Assertions.assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.GET_TOPIC_BY_SENTENCE);
+        }
+
+        @DisplayName("문장 보고 주제 맞추기 문제 제공 실패 - 존재하지 않는 단원 번호 입력")
+        @Test
+        public void queryGetTopicsBySentencesQuestionFailWrongNum(){
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "?num=123123123", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
+
+            //process update test
+            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), ch1.getNumber()).orElseThrow();
+            Assertions.assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.NOT_STARTED);
+        }
+    }
 }

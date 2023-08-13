@@ -66,7 +66,6 @@ class CategoryControllerTest {
 
     private void initConfig() {
         URL = prefix + port + suffix;
-        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 

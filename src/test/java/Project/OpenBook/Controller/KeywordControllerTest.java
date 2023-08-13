@@ -9,8 +9,10 @@ import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.topic.TopicTitleDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -50,6 +52,12 @@ public class KeywordControllerTest {
     @Autowired
     KeywordRepository keywordRepository;
 
+    @Autowired
+    ChapterProgressRepository chapterProgressRepository;
+
+    @Autowired
+    TopicProgressRepository topicProgressRepository;
+
 
     private final String imageUrl = "../TestImage/";
     private Category c1;
@@ -65,7 +73,6 @@ public class KeywordControllerTest {
 
     private void initConfig() {
         URL = prefix + port + suffix;
-        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 

@@ -17,11 +17,9 @@ import org.apache.logging.log4j.status.StatusConsoleListener;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static Project.OpenBook.Domain.QChapter.chapter;
@@ -162,7 +160,26 @@ public class ChapterService {
         return new ChapterTitleInfoDto(chapter.getTitle(), chapter.getContent());
     }
 
-    public List<ChapterUserDto> queryChapterUserDtos(Long customerId) {
+    public List<ChapterUserDto> queryChapterUserDtos(Customer customer) {
+        Long customerId = customer.getId();
+
+        //ChapterProgress가 오류로 인해 없는경우 고려
+        int totalChapterCnt = chapterRepository.findAll().size();
+        List<ChapterProgress> customerChapterProgressList = chapterProgressRepository.queryChapterProgress(customerId);
+        if(totalChapterCnt != customerChapterProgressList.size()){
+            Set<Integer> chapterNumSet = customerChapterProgressList.stream()
+                    .map(c -> c.getChapter().getNumber())
+                    .collect(Collectors.toSet());
+
+            for (int i = 1; i <= totalChapterCnt; i++) {
+                if(!chapterNumSet.contains(i)){
+                    Chapter chapter = checkChapter(i);
+                    ChapterProgress chapterProgress = new ChapterProgress(customer, chapter);
+                    chapterProgressRepository.save(chapterProgress);
+                }
+            }
+        }
+
         Map<Integer, Group> map = chapterRepository.queryChapterUserDtos(customerId);
         List<ChapterUserDto> chapterUserDtoList = new ArrayList<>();
         for (Integer chapterNum : map.keySet()) {
@@ -178,7 +195,13 @@ public class ChapterService {
             ChapterUserDto chapterUserDto = new ChapterUserDto(title, number, status, progress, topicList);
             chapterUserDtoList.add(chapterUserDto);
         }
-        return chapterUserDtoList;
+
+        //단원순으로 정렬
+        List<ChapterUserDto> sortedChapterUserDtoList = chapterUserDtoList.stream()
+                .sorted(Comparator.comparing(ChapterUserDto::getNumber))
+                .collect(Collectors.toList());
+
+        return sortedChapterUserDtoList;
     }
 
     private String getStatus(String progress) {

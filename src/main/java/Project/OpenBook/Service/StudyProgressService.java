@@ -84,6 +84,7 @@ public class StudyProgressService {
     }
 
 
+    @Transactional
     public void updateProgress(Long customerId, Integer chapterNum,  String chapterProgressConst) {
         Chapter chapter = checkChapter(chapterNum);
         Customer customer = checkCustomer(customerId);

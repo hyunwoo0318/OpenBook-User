@@ -63,20 +63,14 @@ public class SecurityConfig {
                 .userDetailsService(customerService)
                 .formLogin().disable()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
+                .antMatchers("**").permitAll()
 //                .antMatchers(permitAllList).permitAll()
 //                .antMatchers("/admin/**").hasAnyRole("ADMIN", "USER")
 //                .antMatchers("/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and().httpBasic().and().
                 formLogin().disable().
-                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().
-                oauth2Login()
-                    .successHandler(authenticationSuccessCustomHandler)
-                .redirectionEndpoint()
-                .and().authorizationEndpoint()
-                    .authorizationRequestRepository(cookieAuthorizationRequestRepository())
-                .and().and()
+                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and()
                 .headers()
                 .frameOptions().sameOrigin().xssProtection().block(false).and().and()
                .addFilterBefore(jwtCustomFilter, UsernamePasswordAuthenticationFilter.class)

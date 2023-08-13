@@ -21,6 +21,7 @@ public class JwtCustomFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
 
         String token = tokenManager.resolveRequest(req);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         Authentication authentication = null;
         if(token != null){
             try{

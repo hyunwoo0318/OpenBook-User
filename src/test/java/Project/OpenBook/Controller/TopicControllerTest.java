@@ -1,23 +1,31 @@
 package Project.OpenBook.Controller;
 
+import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
+import Project.OpenBook.Dto.PrimaryDate.PrimaryDateUserDto;
 import Project.OpenBook.Dto.Sentence.SentenceDto;
 import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
+import Project.OpenBook.Dto.keyword.KeywordNameCommentDto;
+import Project.OpenBook.Dto.keyword.KeywordUserDto;
 import Project.OpenBook.Dto.topic.TopicAdminDto;
+import Project.OpenBook.Dto.topic.TopicCustomerDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
+import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.dupdate.DupDateRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +38,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.ArrayList;
@@ -59,16 +68,26 @@ class TopicControllerTest {
 
     @Autowired
     SentenceRepository sentenceRepository;
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
+    ChapterProgressRepository chapterProgressRepository;
 
 
     @Autowired
     PrimaryDateRepository primaryDateRepository;
 
     @Autowired
+    TopicProgressRepository topicProgressRepository;
+
+    @Autowired
     ChoiceRepository choiceRepository;
 
     @Autowired
     DescriptionRepository descriptionRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
     @Autowired
     TestRestTemplate restTemplate;
 
@@ -81,6 +100,7 @@ class TopicControllerTest {
     @Value("${base.url}")
     private String baseUrl;
 
+    private Customer customer1, customer2;
     private Topic t1,t2;
 
     private Chapter ch1;
@@ -90,16 +110,21 @@ class TopicControllerTest {
 
     private void initConfig() {
         URL = prefix + port + suffix;
-        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
-        restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 
     private void baseSetting() {
+
+        customer1 = new Customer("customer1", passwordEncoder.encode("customer1"), Role.USER);
+        customer2 = new Customer("customer2", passwordEncoder.encode("customer2"), Role.USER);
+        customerRepository.saveAllAndFlush(Arrays.asList(customer1, customer2));
+
         c1 = new Category("c1");
         categoryRepository.saveAndFlush(c1);
 
         ch1 = new Chapter("ch1", 1);
         chapterRepository.saveAndFlush(ch1);
+
+        chapterProgressRepository.saveAndFlush(new ChapterProgress(customer1, ch1));
 
         t1 = new Topic("title1", 100, 200, false,false,0, 0, "detail1", ch1, c1);
         t2 = new Topic("title2", 300, 400, false,false,0, 0, "detail2", ch1, c1);
@@ -117,6 +142,9 @@ class TopicControllerTest {
     }
 
     private void baseClear() {
+        topicProgressRepository.deleteAllInBatch();
+        chapterProgressRepository.deleteAllInBatch();
+        customerRepository.deleteAllInBatch();
         primaryDateRepository.deleteAllInBatch();
         keywordRepository.deleteAllInBatch();
         dupDateRepository.deleteAllInBatch();
@@ -126,9 +154,9 @@ class TopicControllerTest {
     }
 
     @Nested
-    @DisplayName("특정 토픽 상세정보 조회 - GET admin/topics/{topicTitle}")
+    @DisplayName("특정 토픽 상세정보 조회(관리자) - GET admin/topics/{topicTitle}")
     @TestInstance(PER_CLASS)
-    public class queryTopic{
+    public class queryTopicAdmin{
         @BeforeAll
         public void init(){
             suffix = "/admin/topics/";
@@ -162,6 +190,68 @@ class TopicControllerTest {
         @Test
         public void queryTopicFail() {
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "title-1", HttpMethod.GET,
+                    null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
+
+            //원하는 exception이 터졌는지 확인
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+            assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(TOPIC_NOT_FOUND.getErrorMessage())));
+        }
+    }
+
+    @Nested
+    @DisplayName("특정 토픽 상세정보 조회(사용자) - GET /topics/{topicTitle}")
+    @TestInstance(PER_CLASS)
+    public class queryTopicCustomer{
+        @BeforeAll
+        public void init(){
+            suffix = "/topics/";
+            initConfig();
+        }
+
+        @AfterEach
+        public void clear(){
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting() {
+            baseSetting();
+        }
+        @DisplayName("특정 토픽 상세정보 조회 성공")
+        @Test
+        public void queryTopicCustomerSuccess() {
+            ResponseEntity<TopicCustomerDto> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .getForEntity(URL + "title1", TopicCustomerDto.class);
+
+            List<PrimaryDateUserDto> dateDtoList = primaryDateRepository.queryDatesByTopic(t1.getId()).stream()
+                    .map(p -> new PrimaryDateUserDto(p.getExtraDate(), p.getExtraDateComment()))
+                    .collect(Collectors.toList());
+
+            List<KeywordUserDto> keywordList = keywordRepository.queryKeywordsByTopic(t1.getTitle()).stream()
+                    .map(k -> new KeywordUserDto(k.getName(), k.getComment(), k.getImageUrl()))
+                    .collect(Collectors.toList());
+
+            List<String> sentenceList = sentenceRepository.queryByTopicTitle(t1.getTitle()).stream()
+                    .map(Sentence::getName)
+                    .collect(Collectors.toList());
+
+            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+            TopicCustomerDto body = response.getBody();
+            assertThat(body.getStartDate()).isEqualTo(t1.getStartDate());
+            assertThat(body.getEndDate()).isEqualTo(t1.getEndDate());
+            assertThat(body.getCategory()).isEqualTo(c1.getName());
+            assertThat(body.getExtraDateList().containsAll(dateDtoList)).isTrue();
+            assertThat(body.getKeywordList().containsAll(keywordList)).isTrue();
+            assertThat(body.getSentenceList().containsAll(sentenceList)).isTrue();
+        }
+
+        @DisplayName("존재하지 않는 토픽 조회 요청")
+        @Test
+        public void queryTopicCustomerFail() {
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "title-1", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             //원하는 exception이 터졌는지 확인

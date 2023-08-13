@@ -37,7 +37,6 @@ import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = { "spring.config.location=classpath:application-test.yml" })
 public class StudyProgressControllerTest {
-
     @LocalServerPort
     int port;
     @Autowired
@@ -65,7 +64,6 @@ public class StudyProgressControllerTest {
 
     private void initConfig() {
         URL = prefix + port + suffix;
-        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 

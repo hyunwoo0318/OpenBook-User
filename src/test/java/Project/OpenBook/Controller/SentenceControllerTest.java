@@ -11,8 +11,10 @@ import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,6 +56,11 @@ public class SentenceControllerTest {
     @Autowired
     SentenceRepository sentenceRepository;
 
+    @Autowired
+    ChapterProgressRepository chapterProgressRepository;
+
+    @Autowired
+    TopicProgressRepository topicProgressRepository;
     private final String prefix = "http://localhost:";
 
     private String URL,suffix;
@@ -64,7 +71,6 @@ public class SentenceControllerTest {
 
     private void initConfig(){
         URL = prefix + port + suffix;
-        restTemplate = restTemplate.withBasicAuth("admin1", "admin1");
         restTemplate.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
     }
 
