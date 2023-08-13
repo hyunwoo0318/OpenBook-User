@@ -24,13 +24,7 @@ public class BookmarkService {
     private final TopicRepository topicRepository;
 
 
-    public Bookmark addBookmark(BookmarkDto bookmarkDto) {
-        Long customerId = bookmarkDto.getCustomerId();
-        String topicTitle = bookmarkDto.getTopicTitle();
-
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
-            throw new CustomException(CUSTOMER_NOT_FOUND);
-        });
+    public Bookmark addBookmark(Customer customer, String topicTitle) {
 
         Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
@@ -41,28 +35,17 @@ public class BookmarkService {
         return bookmark;
     }
 
-    public void deleteBookmark(BookmarkDto bookmarkDto) {
-        Long customerId = bookmarkDto.getCustomerId();
-        String topicTitle = bookmarkDto.getTopicTitle();
-
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> {
-            throw new CustomException(CUSTOMER_NOT_FOUND);
-        });
-
+    public void deleteBookmark(Customer customer, String topicTitle) {
         Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
 
-        bookmarkRepository.queryBookmark(customerId, topicTitle)
+        bookmarkRepository.queryBookmark(customer.getId(), topicTitle)
                 .ifPresent(bookmarkRepository::delete);
     }
 
-    public List<String> queryBookmarks(Long customerId) {
-        customerRepository.findById(customerId).orElseThrow(() -> {
-            throw new CustomException(CUSTOMER_NOT_FOUND);
-        });
-
-        List<Bookmark> bookmarkList = bookmarkRepository.queryBookmarks(customerId);
+    public List<String> queryBookmarks(Customer customer) {
+        List<Bookmark> bookmarkList = bookmarkRepository.queryBookmarks(customer.getId());
         List<String> titleList = bookmarkList.stream().map(b -> b.getTopic().getTitle()).collect(Collectors.toList());
         return titleList;
     }

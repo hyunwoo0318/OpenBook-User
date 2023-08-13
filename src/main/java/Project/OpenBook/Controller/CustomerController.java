@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -51,9 +52,9 @@ public class CustomerController {
             @ApiResponse(responseCode = "200", description = "성공적인 조회"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
     })
-    @GetMapping("customers/{customerId}/bookmarks")
-    public ResponseEntity queryBookmarks(@PathVariable("customerId") Long customerId){
-        List<String> titleList = bookmarkService.queryBookmarks(customerId);
+    @GetMapping("customer-infos/bookmarks")
+    public ResponseEntity queryBookmarks(@AuthenticationPrincipal Customer customer){
+        List<String> titleList = bookmarkService.queryBookmarks(customer);
 
         return new ResponseEntity(titleList, HttpStatus.OK);
     }

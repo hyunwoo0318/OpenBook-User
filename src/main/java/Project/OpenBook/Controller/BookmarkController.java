@@ -1,6 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Bookmark;
+import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Dto.BookmarkDto;
 import Project.OpenBook.Service.BookmarkService;
 import io.swagger.annotations.ApiOperation;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +29,9 @@ public class BookmarkController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @PostMapping
-    public ResponseEntity addBookmark(@Validated @RequestBody BookmarkDto bookmarkDto) {
-        Bookmark bookmark = bookmarkService.addBookmark(bookmarkDto);
+    public ResponseEntity addBookmark(@AuthenticationPrincipal Customer customer,
+                                      @RequestBody String topicTitle) {
+        Bookmark bookmark = bookmarkService.addBookmark(customer, topicTitle);
 
         return new ResponseEntity(HttpStatus.CREATED);
     }
@@ -39,8 +42,9 @@ public class BookmarkController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @DeleteMapping
-    public ResponseEntity deleteBookmark(@Validated @RequestBody BookmarkDto bookmarkDto) {
-        bookmarkService.deleteBookmark(bookmarkDto);
+    public ResponseEntity deleteBookmark(@AuthenticationPrincipal Customer customer,
+                                         @RequestBody String topicTitle) {
+        bookmarkService.deleteBookmark(customer, topicTitle);
 
         return new ResponseEntity(HttpStatus.OK);
     }
