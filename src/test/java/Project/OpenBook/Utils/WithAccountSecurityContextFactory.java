@@ -1,8 +1,6 @@
 package Project.OpenBook.Utils;
 
 import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Repository.customer.CustomerRepository;
-import Project.OpenBook.Service.CustomerService;
 import com.amazonaws.services.kms.model.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

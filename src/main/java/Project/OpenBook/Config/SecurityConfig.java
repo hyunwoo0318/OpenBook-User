@@ -3,7 +3,6 @@ package Project.OpenBook.Config;
 import Project.OpenBook.Repository.HttpCookieOAuth2AuthorizationRequestRepository;
 import Project.OpenBook.Handler.AuthenticationSuccessCustomHandler;
 import Project.OpenBook.Jwt.JwtCustomFilter;
-import Project.OpenBook.Service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

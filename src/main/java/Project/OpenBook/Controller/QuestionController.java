@@ -1,29 +1,16 @@
 package Project.OpenBook.Controller;
 
-import Project.OpenBook.Constants.ProgressConst;
-import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Domain.Question;
-import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.question.*;
-import Project.OpenBook.Service.CategoryService;
-import Project.OpenBook.Service.CustomerService;
 import Project.OpenBook.Service.QuestionService;
-import Project.OpenBook.Service.StudyProgressService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor

@@ -35,13 +35,14 @@ public class TokenManager {
         this.customerRepository = customerRepository;
     }
 
-    public TokenDto generateToken(String authorities, long id) {
-        checkCustomer(id);
+    public TokenDto generateToken(Customer customer) {
+        Long customerId = customer.getId();
+        String authorities = getAuthorities(customer);
         long now = new Date().getTime();
         tokenExpire = new Date(now + JwtConst.TOKEN_EXPIRED_TIME);
 
         String accessToken = Jwts.builder()
-                .setSubject(String.valueOf(id))
+                .setSubject(String.valueOf(customerId))
                 .claim("auth", authorities) // claim -> jwt body custom claim
                 .setIssuer(JwtConst.TOKEN_ISSUER)
                 .setExpiration(tokenExpire) // 일반적인 claim에 대해서는 setter를 제공함
@@ -49,7 +50,7 @@ public class TokenManager {
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setSubject(String.valueOf(id))
+                .setSubject(String.valueOf(customerId))
                 .setExpiration(tokenExpire) // 표준에서 refresh token과 access token을 유효기간을 같이 설정하도록 권고
                 .signWith(key,SignatureAlgorithm.HS256)
                 .compact();
@@ -61,6 +62,11 @@ public class TokenManager {
                 .build();
     }
 
+    private String getAuthorities(Customer customer) {
+        return customer.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+    }
     public TokenDto generateToken(String refreshToken) {
         Claims claims = parseClaim(refreshToken);
         long id = Long.parseLong(claims.getSubject());
@@ -71,7 +77,7 @@ public class TokenManager {
         String authorities = customer.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
-        return generateToken(authorities, customer.getId());
+        return generateToken(customer);
     }
 
     public Authentication getAuthorities(String accessToken){
@@ -84,7 +90,6 @@ public class TokenManager {
         }
 
         Collection<? extends GrantedAuthority> authorities = findCustomer.getAuthorities();
-//        UserDetails userDetails = new User(claim.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(findCustomer, "", authorities);
     }
 

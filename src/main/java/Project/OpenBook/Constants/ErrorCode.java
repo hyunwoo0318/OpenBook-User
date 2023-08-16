@@ -25,7 +25,7 @@ public enum ErrorCode {
     QUESTION_ERROR(HttpStatus.BAD_REQUEST, "해당 유형의 문제를 생성할수 없습니다."),
     KEYWORD_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 키워드를 가지는 토픽이 존재합니다."),
     NOT_SAVED_CHOICE(HttpStatus.BAD_REQUEST, "해당 보기와 내용이 겹친 선지가 아닙니다."),
-
+    WRONG_PROVIDER_NAME(HttpStatus.BAD_REQUEST, "잘못된 소셜 로그인 provider name입니다."),
 
     /**
      * 401 - UNAUTHORIZED

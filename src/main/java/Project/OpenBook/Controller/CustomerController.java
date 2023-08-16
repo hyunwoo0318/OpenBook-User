@@ -8,7 +8,7 @@ import Project.OpenBook.Dto.customer.CustomerDetailDto;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Service.AnswerNoteService;
 import Project.OpenBook.Service.BookmarkService;
-import Project.OpenBook.Service.CustomerService;
+import Project.OpenBook.Service.Customer.CustomerService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -29,9 +29,6 @@ public class CustomerController {
 
     private final CustomerService customerService;
     private final BookmarkService bookmarkService;
-    private final AnswerNoteService answerNoteService;
-
-
     @ApiOperation("회원 추가정보 입력")
     @ApiResponses(value={
             @ApiResponse(responseCode = "200", description = "셩공적인 추가정보 입력"),
