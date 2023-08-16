@@ -132,7 +132,7 @@ public class CustomerService implements UserDetailsService {
             customer = Customer.builder()
                     .oAuthId(oauthId)
                     .provider(providerName)
-                    .role(Role.USER)
+                    .roles(Role.USER)
                     .nickName(UUID.randomUUID().toString())
                     .build();
             customerRepository.save(customer);

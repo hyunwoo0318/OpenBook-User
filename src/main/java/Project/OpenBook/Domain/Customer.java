@@ -1,20 +1,13 @@
 package Project.OpenBook.Domain;
 
-import Project.OpenBook.Constants.Role;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.bytebuddy.dynamic.loading.InjectionClassLoader;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.GenericGenerator;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import javax.persistence.*;
 import java.util.*;
@@ -41,7 +34,7 @@ public class Customer extends BaseEntity implements UserDetails {
 
     private Integer expertise;
 
-    private String role;
+    private String roles;
 
     private String provider;
     private String password;
@@ -62,22 +55,22 @@ public class Customer extends BaseEntity implements UserDetails {
     private List<TopicProgress> topicProgressList = new ArrayList<>();
 
     @Builder
-    public Customer(String nickName,Integer age, Integer expertise, String role, String provider, String oAuthId, Boolean isSubscribed) {
+    public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId, Boolean isSubscribed) {
         this.nickName = nickName;
         this.solvedNum = 0;
         this.age = age;
         this.expertise = expertise;
-        this.role = role;
+        this.roles = roles;
         this.provider = provider;
         this.oAuthId = oAuthId;
         this.code = UUID.randomUUID().toString().substring(0,16);
         this.isSubscribed = true;
     }
 
-    public Customer(String nickName,String password, String role){
+    public Customer(String nickName,String password, String roles){
         this.nickName = nickName;
         this.password = password;
-        this.role = role;
+        this.roles = roles;
     }
 
 
@@ -92,7 +85,7 @@ public class Customer extends BaseEntity implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorityList = new ArrayList<>();
-        authorityList.add(new SimpleGrantedAuthority(role));
+        authorityList.add(new SimpleGrantedAuthority(roles));
         return authorityList;
     }
 
