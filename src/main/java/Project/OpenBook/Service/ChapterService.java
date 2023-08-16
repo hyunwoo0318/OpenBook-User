@@ -11,15 +11,12 @@ import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.status.StatusConsoleListener;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static Project.OpenBook.Domain.QChapter.chapter;
@@ -69,7 +66,7 @@ public class ChapterService {
                 .collect(Collectors.toList());
     }
 
-    public List<AdminChapterDto> queryTopicsInChapter(int number) {
+    public List<AdminChapterDto> queryTopicsInChapterAdmin(int number) {
         checkChapter(number);
         List<Tuple> result = topicRepository.queryAdminChapterDto(number);
 
@@ -126,13 +123,10 @@ public class ChapterService {
         return new ChapterInfoDto(chapter.getContent());
     }
 
-    public ChapterInfoDto queryChapterInfoCustomer(Long customerId,Integer num) {
+    public ChapterTitleInfoDto queryChapterInfoCustomer(Integer num) {
         Chapter chapter = checkChapter(num);
 
-        //progress update
-        studyProgressService.updateProgress(customerId, num, ProgressConst.CHAPTER_INFO);
-
-        return new ChapterInfoDto(chapter.getContent());
+        return new ChapterTitleInfoDto(chapter.getTitle(), chapter.getContent());
     }
 
 
@@ -163,54 +157,53 @@ public class ChapterService {
     public List<ChapterUserDto> queryChapterUserDtos(Customer customer) {
         Long customerId = customer.getId();
 
-        //ChapterProgress가 오류로 인해 없는경우 고려
-        int totalChapterCnt = chapterRepository.findAll().size();
-        List<ChapterProgress> customerChapterProgressList = chapterProgressRepository.queryChapterProgress(customerId);
-        if(totalChapterCnt != customerChapterProgressList.size()){
-            Set<Integer> chapterNumSet = customerChapterProgressList.stream()
-                    .map(c -> c.getChapter().getNumber())
-                    .collect(Collectors.toSet());
+        List<ChapterUserDto> chapterUserDtoList = new ArrayList<>();
+        List<Tuple> ret = chapterRepository.queryChapterUserDtos(customerId);
+        for (Tuple tuple : ret) {
+            String chapterTitle = tuple.get(chapter.title);
+            Integer chapterNum = tuple.get(chapter.number);
+            String progress = tuple.get(chapterProgress.progress);
 
-            for (int i = 1; i <= totalChapterCnt; i++) {
-                if(!chapterNumSet.contains(i)){
-                    Chapter chapter = checkChapter(i);
-                    ChapterProgress chapterProgress = new ChapterProgress(customer, chapter);
-                    chapterProgressRepository.save(chapterProgress);
+            if (progress == null) {
+                Chapter chapter = checkChapter(chapterNum);
+                ChapterProgress chapterProgress = new ChapterProgress(customer, chapter, ProgressConst.NOT_STARTED);
+                chapterProgressRepository.save(chapterProgress);
+                progress = ProgressConst.NOT_STARTED;
+            }
+
+            /**
+             * state 결정
+             * 1. 해당 단원을 진행한 바가 있으면 OPEN
+             * 2. 해당 단원을 진행하지 않았으나 이전 단원이 COMPLETE 상태이면 OPEN
+             * 3. 해당 단원을 진행하지 않고 이전 단원이 COMPLETE 상태가 아니면 CLOSED
+             */
+
+            String state;
+            if (!progress.equals(ProgressConst.NOT_STARTED) || chapterNum.equals(1)) {
+                state = StateConst.OPEN;
+            }else {
+                String prevProgress = chapterUserDtoList.get(chapterUserDtoList.size() - 1).getProgress();
+                if(prevProgress.equals(ProgressConst.COMPLETE)){
+                    state = StateConst.OPEN;
+                }else{
+                    state = StateConst.LOCKED;
                 }
             }
+            ChapterUserDto dto = new ChapterUserDto(chapterTitle, chapterNum, state, progress);
+            chapterUserDtoList.add(dto);
         }
 
-        Map<Integer, Group> map = chapterRepository.queryChapterUserDtos(customerId);
-        List<ChapterUserDto> chapterUserDtoList = new ArrayList<>();
-        for (Integer chapterNum : map.keySet()) {
-            Group group = map.get(chapterNum);
-            String title = group.getOne(chapter.title);
-            Integer number = group.getOne(chapter.number);
-            String progress = group.getOne(chapterProgress.progress);
-            String status = getStatus(progress);
-            List<String> topicList = group.getList(topic).stream()
-                    .sorted(Comparator.comparing(Topic::getNumber))
-                    .map(Topic::getTitle)
-                    .collect(Collectors.toList());
-            ChapterUserDto chapterUserDto = new ChapterUserDto(title, number, status, progress, topicList);
-            chapterUserDtoList.add(chapterUserDto);
-        }
-
-        //단원순으로 정렬
         List<ChapterUserDto> sortedChapterUserDtoList = chapterUserDtoList.stream()
                 .sorted(Comparator.comparing(ChapterUserDto::getNumber))
                 .collect(Collectors.toList());
 
+
         return sortedChapterUserDtoList;
     }
 
-    private String getStatus(String progress) {
-        if(progress.equals(ProgressConst.NOT_STARTED)){
-            return StateConst.NOT_STARTED;
-        }else if(progress.equals(ProgressConst.GET_TOPIC_BY_SENTENCE)){
-            return StateConst.DONE;
-        }else{
-            return StateConst.IN_PROGRESS;
-        }
+    public List<String> queryTopicsInChapterCustomer(int num) {
+        checkChapter(num);
+        return topicRepository.queryTopicTitleCustomer(num);
     }
+
 }

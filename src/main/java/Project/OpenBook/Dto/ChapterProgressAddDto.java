@@ -10,8 +10,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChapterProgressAddDto {
-    @NotNull(message = "회원아이디를 입력해주세요.")
-    private Long customerId;
 
     @NotNull(message = "단원 번호를 입력해주세요.")
     private Integer number;

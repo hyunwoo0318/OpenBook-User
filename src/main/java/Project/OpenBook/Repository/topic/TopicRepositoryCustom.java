@@ -32,4 +32,6 @@ public interface  TopicRepositoryCustom {
     public List<String> queryWrongTopicTitle(String topicTitle, int size);
 
     public Optional<Topic> queryTopicByNumber(Integer chapterNum, Integer topicNum);
+
+    public List<String> queryTopicTitleCustomer(int num);
 }

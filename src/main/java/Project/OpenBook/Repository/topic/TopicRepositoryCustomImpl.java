@@ -151,4 +151,13 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .fetchOne();
         return Optional.ofNullable(findTopic);
     }
+
+    @Override
+    public List<String> queryTopicTitleCustomer(int num) {
+        return queryFactory.select(topic.title)
+                .from(topic)
+                .where(topic.chapter.number.eq(num))
+                .orderBy(topic.number.asc())
+                .fetch();
+    }
 }

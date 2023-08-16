@@ -17,7 +17,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -74,16 +73,16 @@ public class ChapterController {
         return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 학습 조회 - 사용자")
+    @ApiOperation(value = "단원 제목/학습 조회 - 사용자")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 학습 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/chapters/{num}/info")
-    public ResponseEntity queryChapterInfoCustomer(@AuthenticationPrincipal Customer customer, @PathVariable("num") Integer num){
-        ChapterInfoDto chapterInfoDto = chapterService.queryChapterInfoCustomer(customer.getId(),num);
+    public ResponseEntity queryChapterInfoCustomer(@PathVariable("num") Integer num){
+        ChapterTitleInfoDto chapterTitleInfoDto = chapterService.queryChapterInfoCustomer(num);
 
-        return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
+        return new ResponseEntity(chapterTitleInfoDto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 학습과 단원 이름 조회")
@@ -110,11 +109,22 @@ public class ChapterController {
         return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
     }
 
-    @ApiOperation("해당 단원의 모든 topic 조회")
+    @ApiOperation("해당 단원의 모든 topic 조회 - 관리자")
     @GetMapping("/admin/chapters/{num}/topics")
-    public ResponseEntity queryChapterTopics(@PathVariable("num") int num) {
-        List<AdminChapterDto> adminChapterDtoList = chapterService.queryTopicsInChapter(num);
+    public ResponseEntity queryChapterTopicsAdmin(@PathVariable("num") int num) {
+        List<AdminChapterDto> adminChapterDtoList = chapterService.queryTopicsInChapterAdmin(num);
         return new ResponseEntity(adminChapterDtoList, HttpStatus.OK);
+    }
+
+    @ApiOperation("해당 단원의 모든 topic 조회 - 사용자")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "전체 topic 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
+    })
+    @GetMapping("/chapters/{num}/topics")
+    public ResponseEntity queryChapterTopicsCustomer(@PathVariable("num") int num){
+        List<String> topicTitleList = chapterService.queryTopicsInChapterCustomer(num);
+        return new ResponseEntity(topicTitleList, HttpStatus.OK);
     }
 
 

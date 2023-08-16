@@ -1,5 +1,6 @@
 package Project.OpenBook.Repository.sentence;
 
+import Project.OpenBook.Domain.QSentence;
 import Project.OpenBook.Domain.Sentence;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static Project.OpenBook.Domain.QSentence.sentence;
 
@@ -16,6 +18,16 @@ import static Project.OpenBook.Domain.QSentence.sentence;
 public class SentenceRepositoryCustomImpl implements SentenceRepositoryCustom{
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public Optional<Sentence> querySentenceByContentInTopic(String name, String topicTitle) {
+        Sentence sentence = queryFactory.selectFrom(QSentence.sentence)
+                .where(QSentence.sentence.topic.title.eq(topicTitle))
+                .where(QSentence.sentence.name.eq(name))
+                .fetchOne();
+        return Optional.ofNullable(sentence);
+    }
+
     @Override
     public List<Sentence> queryByTopicTitle(String topicTitle) {
         return queryFactory.selectFrom(sentence)

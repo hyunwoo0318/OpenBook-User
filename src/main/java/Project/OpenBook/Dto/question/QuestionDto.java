@@ -1,53 +1,39 @@
 package Project.OpenBook.Dto.question;
 
-import Project.OpenBook.Domain.Question;
-import Project.OpenBook.Dto.choice.ChoiceContentIdDto;
-import Project.OpenBook.Dto.description.DescriptionContentIdDto;
-import lombok.*;
+import Project.OpenBook.Dto.keyword.KeywordNameCommentDto;
+import Project.OpenBook.Dto.question.QuestionChoiceDto;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor
 public class QuestionDto {
 
-    private Long id;
-    private Long type;
-    @NotBlank(message = "질문을 입력해주세요.")
-    private String prompt;
+    private String answer;
 
-    @NotBlank(message = "카테고리 이름을 입력해주세요")
-    private String categoryName;
+    /**
+     * 문제
+     */
+    private String questionSentence;
 
-    private DescriptionContentIdDto description;
-    @Size(min = 5, max = 5)
-    private List<ChoiceContentIdDto>  choiceList;
+    private String description;
 
-    @NotNull(message = "정답 ID를 입력해주세요.")
-    private Long answerChoiceId;
+    private String descriptionSentence;
+
+    private List<KeywordNameCommentDto> descriptionKeyword;
+
+    private List<QuestionChoiceDto> choiceList;
 
     @Builder
-    public QuestionDto(Long id,Long type, String prompt, String categoryName, DescriptionContentIdDto description, List<ChoiceContentIdDto> choiceList, Long answerChoiceId) {
-        this.id = id;
-        this.type = type;
-        this.prompt = prompt;
-        this.categoryName = categoryName;
+    public QuestionDto(String answer, String questionSentence, String description, String descriptionSentence, List<KeywordNameCommentDto> descriptionKeyword, List<QuestionChoiceDto> choiceList) {
+        this.answer = answer;
+        this.questionSentence = questionSentence;
         this.description = description;
+        this.descriptionSentence = descriptionSentence;
+        this.descriptionKeyword = descriptionKeyword;
         this.choiceList = choiceList;
-        this.answerChoiceId = answerChoiceId;
-    }
-
-    public QuestionDto(Question question,List<ChoiceContentIdDto> choiceList, DescriptionContentIdDto descriptionContentIdDto) {
-        this.id = question.getId();
-        this.type = question.getType();
-        this.prompt = question.getPrompt();
-        this.categoryName = question.getCategory().getName();
-        this.choiceList = choiceList;
-        this.answerChoiceId = question.getAnswerChoiceId();
-        this.description = descriptionContentIdDto;
     }
 }

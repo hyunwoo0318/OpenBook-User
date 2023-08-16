@@ -11,8 +11,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TopicProgressAddDto {
-    @NotNull(message = "회원아이디를 입력해주세요.")
-    private Long customerId;
 
     @NotBlank(message = "토픽 제목을 입력해주세요.")
     private String topicTitle;

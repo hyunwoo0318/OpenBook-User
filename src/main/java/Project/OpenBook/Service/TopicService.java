@@ -274,7 +274,7 @@ public class TopicService {
         }
     }
 
-    public TopicCustomerDto queryTopicCustomer(String topicTitle, Long customerId) {
+    public TopicCustomerDto queryTopicCustomer(String topicTitle) {
 
         checkTopic(topicTitle);
         Map<String, Group> topicCustomerDtoMap = topicRepository.queryTopicCustomerDto(topicTitle);
@@ -295,9 +295,6 @@ public class TopicService {
                 .distinct()
                 .map(p -> new PrimaryDateUserDto(p.getExtraDate(), p.getExtraDateComment()))
                 .collect(Collectors.toList());
-
-        //progress update
-        studyProgressService.updateProgress(customerId, chapterNum, topicTitle);
 
         return new TopicCustomerDto(category, startDate, endDate, extraDateList, keywordList, sentenceList);
     }

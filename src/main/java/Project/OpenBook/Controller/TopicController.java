@@ -54,9 +54,8 @@ public class TopicController {
             @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
     })
     @GetMapping("/topics/{topicTitle}")
-    public ResponseEntity queryTopicsUser(@AuthenticationPrincipal Customer customer,
-                                          @PathVariable("topicTitle") String topicTitle) {
-        TopicCustomerDto topicCustomerDto = topicService.queryTopicCustomer(topicTitle, customer.getId());
+    public ResponseEntity queryTopicsUser(@PathVariable("topicTitle") String topicTitle) {
+        TopicCustomerDto topicCustomerDto = topicService.queryTopicCustomer(topicTitle);
 
         return new ResponseEntity(topicCustomerDto, HttpStatus.OK);
     }

@@ -209,7 +209,7 @@ class ChapterControllerTest {
     @TestInstance(PER_CLASS)
     public class queryChaptersCustomer{
 
-        Chapter ch2, ch3;
+        Chapter ch2, ch3, ch4;
         @BeforeAll
         public void init(){
             suffix = "/chapters";
@@ -226,20 +226,18 @@ class ChapterControllerTest {
             baseSetting();
             ch2 = new Chapter("ch2", 2);
             ch3 = new Chapter("ch3", 3);
-            chapterRepository.saveAll(Arrays.asList(ch2, ch3));
-
-            ChapterProgress cp2 = new ChapterProgress(customer1, ch2);
-            ChapterProgress cp3 = new ChapterProgress(customer1, ch3);
-            chapterProgressRepository.saveAll(Arrays.asList(cp2, cp3));
+            ch4 = new Chapter("ch4", 4);
+            chapterRepository.saveAll(Arrays.asList(ch2, ch3, ch4));
 
             /**
              * ch2 -> 연표 문제
-             * ch3 -> 키워드 보고 문제 맞추기
+             * ch3 -> 완료
+             * ch4 -> Not Started
              */
-            cp2 = cp2.updateProgress(ProgressConst.TIME_FLOW_QUESTION);
-            cp3 = cp3.updateProgress(ProgressConst.GET_TOPIC_BY_KEYWORD);
-
-            chapterProgressRepository.saveAllAndFlush(Arrays.asList(cp2, cp3));
+            ChapterProgress cp2 = new ChapterProgress(customer1, ch2, ProgressConst.TIME_FLOW_QUESTION);
+            ChapterProgress cp3 = new ChapterProgress(customer1, ch3, ProgressConst.COMPLETE);
+            ChapterProgress cp4 = new ChapterProgress(customer1, ch4, ProgressConst.NOT_STARTED);
+            chapterProgressRepository.saveAll(Arrays.asList(cp2, cp3, cp4));
         }
 
 
@@ -257,18 +255,24 @@ class ChapterControllerTest {
 
             //1단원
             ChapterUserDto chapter1Dto =
-                    new ChapterUserDto(ch1.getTitle(), ch1.getNumber(), StateConst.NOT_STARTED, ProgressConst.NOT_STARTED, Arrays.asList(t1.getTitle()));
+                    new ChapterUserDto(ch1.getTitle(), ch1.getNumber(), StateConst.OPEN, ProgressConst.NOT_STARTED);
+                    new ChapterUserDto(ch1.getTitle(), ch1.getNumber(), StateConst.OPEN, ProgressConst.NOT_STARTED);
             assertThat(body.get(0)).usingRecursiveComparison().isEqualTo(chapter1Dto);
 
             //2단원
             ChapterUserDto chapter2Dto
-                    = new ChapterUserDto(ch2.getTitle(), ch2.getNumber(), StateConst.IN_PROGRESS, ProgressConst.TIME_FLOW_QUESTION, new ArrayList<String>());
+                    = new ChapterUserDto(ch2.getTitle(), ch2.getNumber(), StateConst.OPEN, ProgressConst.TIME_FLOW_QUESTION);
             assertThat(body.get(1)).usingRecursiveComparison().isEqualTo(chapter2Dto);
 
             //3딘원
             ChapterUserDto chapter3Dto
-                    = new ChapterUserDto(ch3.getTitle(), ch3.getNumber(), StateConst.IN_PROGRESS, ProgressConst.GET_TOPIC_BY_KEYWORD, new ArrayList<String>());
+                    = new ChapterUserDto(ch3.getTitle(), ch3.getNumber(), StateConst.OPEN, ProgressConst.COMPLETE);
             assertThat(body.get(2)).usingRecursiveComparison().isEqualTo(chapter3Dto);
+
+            //4단원
+            ChapterUserDto chapter4Dto
+                    = new ChapterUserDto(ch4.getTitle(), ch4.getNumber(), StateConst.OPEN, ProgressConst.NOT_STARTED);
+            assertThat(body.get(3)).usingRecursiveComparison().isEqualTo(chapter4Dto);
 
         }
     }
@@ -430,20 +434,16 @@ class ChapterControllerTest {
 
         @DisplayName("단원 학습 조회 성공")
         @Test
-//        @WithAccount(value = "customer1")
         public void queryChapterInfoSuccess() {
             int chapterNum = ch1.getNumber();
 
-            ResponseEntity<ChapterInfoDto> response = restTemplate
+            ResponseEntity<ChapterTitleInfoDto> response = restTemplate
                     .withBasicAuth("customer1", "customer1")
-            .getForEntity(URL + chapterNum + "/info", ChapterInfoDto.class);
+            .getForEntity(URL + chapterNum + "/info", ChapterTitleInfoDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody().getContent()).isEqualTo(ch1.getContent());
-
-            //progress update test
-            ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customer1.getId(), chapterNum).orElseThrow();
-            assertThat(chapterProgress.getProgress()).isEqualTo(ProgressConst.CHAPTER_INFO);
+            assertThat(response.getBody().getTitle()).isEqualTo(ch1.getTitle());
         }
 
         @DisplayName("단원 학습 조회 실패 - 존재하지 않는 단원번호 입력")

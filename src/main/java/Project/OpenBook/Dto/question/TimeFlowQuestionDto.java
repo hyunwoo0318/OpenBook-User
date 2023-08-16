@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TimeFlowQuestionDto {
-
     private Integer date;
     private String comment;
     private String topicTitle;

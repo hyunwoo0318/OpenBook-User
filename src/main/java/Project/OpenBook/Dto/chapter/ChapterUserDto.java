@@ -16,6 +16,4 @@ public class ChapterUserDto {
     private Integer number;
     private String state;
     private String progress;
-    private List<String> topicList = new ArrayList<>();
-
 }

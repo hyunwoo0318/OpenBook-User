@@ -1,6 +1,7 @@
 package Project.OpenBook.Repository.chapter;
 
 import Project.OpenBook.Domain.*;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.group.Group;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,11 +22,10 @@ public class ChapterRepositoryCustomImpl implements ChapterRepositoryCustom{
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Map<Integer, Group> queryChapterUserDtos(Long customerId) {
-            return queryFactory.from(chapter)
-                .leftJoin(topic).on(topic.chapter.eq(chapter))
-                .leftJoin(chapterProgress).on(chapterProgress.chapter.eq(chapter))
-                    .where(chapterProgress.customer.id.eq(customerId))
-                .transform(groupBy(chapter.number).as(chapter.number, chapter.title, chapterProgress.progress, list(topic)));
+    public List<Tuple> queryChapterUserDtos(Long customerId) {
+        return queryFactory.select(chapter.title, chapter.number, chapterProgress.progress)
+                    .from(chapter)
+                    .leftJoin(chapterProgress).on(chapterProgress.chapter.eq(chapter))
+                    .fetch();
     }
 }
