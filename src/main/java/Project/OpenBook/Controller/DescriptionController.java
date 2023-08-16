@@ -35,10 +35,10 @@ public class DescriptionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 보기 조회 요청")
     })
     @GetMapping("/admin/descriptions/{descriptionId}")
-    public ResponseEntity queryDescription(@PathVariable Long descriptionId) {
+    public ResponseEntity<DescriptionDto> queryDescription(@PathVariable Long descriptionId) {
         DescriptionDto descriptionDto = descriptionService.queryDescription(descriptionId);
 
-        return new ResponseEntity(descriptionDto, HttpStatus.OK);
+        return new ResponseEntity<DescriptionDto>(descriptionDto, HttpStatus.OK);
     }
 
 
@@ -49,9 +49,9 @@ public class DescriptionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 보기id, topic제목 입력")
     })
     @GetMapping("/admin/descriptions/{descriptionId}/topics/{topicTitle}/choices")
-    public ResponseEntity queryTopicDupChoices(@PathVariable("descriptionId") Long descriptionId,@PathVariable("topicTitle") String topicTitle){
+    public ResponseEntity<List<DupChoiceDto>> queryTopicDupChoices(@PathVariable("descriptionId") Long descriptionId,@PathVariable("topicTitle") String topicTitle){
         List<DupChoiceDto> dupChoiceDtoList = descriptionService.queryTopicDupChoices(descriptionId, topicTitle);
-        return new ResponseEntity(dupChoiceDtoList, HttpStatus.OK);
+        return new ResponseEntity<List<DupChoiceDto>>(dupChoiceDtoList, HttpStatus.OK);
     }
 
 //    @ApiOperation(value = "주어진 보기와 같은 토픽의 보기 조회", notes = "문제 생성/수정시 보기 새로고침을 위한 endPoint")
@@ -74,12 +74,12 @@ public class DescriptionController {
             @ApiResponse(responseCode =  "404", description = "존재하지 않는 topicTitle 입력")
     })
     @PostMapping("/admin/descriptions/")
-    public ResponseEntity addDescription(@Validated @RequestBody DescriptionCreateDto descriptionCreateDto){
+    public ResponseEntity<Void> addDescription(@Validated @RequestBody DescriptionCreateDto descriptionCreateDto){
 
         List<Description> descriptionList = descriptionService.addDescription(descriptionCreateDto);
 
         List<Long> descriptionIdList = descriptionList.stream().map(d -> d.getId()).collect(Collectors.toList());
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @ApiOperation("보기 수정")
@@ -89,11 +89,11 @@ public class DescriptionController {
             @ApiResponse(responseCode =  "404", description = "존재하지 않는 topicTitle이나 보기 id 입력으로 인한 수정 실패")
     })
     @PatchMapping("/admin/descriptions/{descriptionId}")
-    public ResponseEntity addDescription(@PathVariable Long descriptionId, @Validated @RequestBody DescriptionUpdateDto descriptionUpdateDto){
+    public ResponseEntity<Void> addDescription(@PathVariable Long descriptionId, @Validated @RequestBody DescriptionUpdateDto descriptionUpdateDto){
 
         Description description = descriptionService.updateDescription(descriptionId, descriptionUpdateDto);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ApiOperation("보기 삭제")
@@ -102,9 +102,9 @@ public class DescriptionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 topicTitle이나 보기 id 입력으로 인한 삭제 실패")
     })
     @DeleteMapping("/admin/descriptions/{descriptionId}")
-    public ResponseEntity deleteDescription(@PathVariable Long descriptionId) {
+    public ResponseEntity<Void> deleteDescription(@PathVariable Long descriptionId) {
         descriptionService.deleteDescription(descriptionId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 

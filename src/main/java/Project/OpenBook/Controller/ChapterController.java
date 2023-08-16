@@ -33,10 +33,10 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping("/admin/chapters")
-    public ResponseEntity queryChapterAdmin(){
+    public ResponseEntity<List<ChapterDto>> queryChapterAdmin(){
         List<ChapterDto> chapterDtoList = chapterService.queryAllChapters();
 
-        return new ResponseEntity(chapterDtoList, HttpStatus.OK);
+        return new ResponseEntity<List<ChapterDto>>(chapterDtoList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "모든 단원 정보 가져오기 - 사용자")
@@ -44,9 +44,9 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping("/chapters")
-    public ResponseEntity queryChapterUser(@AuthenticationPrincipal Customer customer){
+    public ResponseEntity<List<ChapterUserDto>> queryChapterUser(@AuthenticationPrincipal Customer customer){
         List<ChapterUserDto> chapterUserDtoList = chapterService.queryChapterUserDtos(customer);
-        return new ResponseEntity(chapterUserDtoList, HttpStatus.OK);
+        return new ResponseEntity<List<ChapterUserDto>>(chapterUserDtoList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 이름 조회", notes = "단원 번호를 넘기면 단원 이름을 알려주는 endPoint")
@@ -55,10 +55,10 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/admin/chapters/chapter-title")
-    public ResponseEntity queryChapterTitle(@RequestParam("num") Integer num){
+    public ResponseEntity<ChapterTitleDto> queryChapterTitle(@RequestParam("num") Integer num){
         ChapterTitleDto chapterTitleDto = chapterService.queryChapterTitle(num);
 
-        return new ResponseEntity(chapterTitleDto, HttpStatus.OK);
+        return new ResponseEntity<ChapterTitleDto>(chapterTitleDto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 학습 조회 - 관리자")
@@ -67,10 +67,10 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/admin/chapters/{num}/info")
-    public ResponseEntity queryChapterInfoAdmin(@PathVariable("num") Integer num){
+    public ResponseEntity<ChapterInfoDto> queryChapterInfoAdmin(@PathVariable("num") Integer num){
         ChapterInfoDto chapterInfoDto = chapterService.queryChapterInfoAdmin(num);
 
-        return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
+        return new ResponseEntity<ChapterInfoDto>(chapterInfoDto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 제목/학습 조회 - 사용자")
@@ -79,10 +79,10 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/chapters/{num}/info")
-    public ResponseEntity queryChapterInfoCustomer(@PathVariable("num") Integer num){
+    public ResponseEntity<ChapterTitleInfoDto> queryChapterInfoCustomer(@PathVariable("num") Integer num){
         ChapterTitleInfoDto chapterTitleInfoDto = chapterService.queryChapterInfoCustomer(num);
 
-        return new ResponseEntity(chapterTitleInfoDto, HttpStatus.OK);
+        return new ResponseEntity<ChapterTitleInfoDto>(chapterTitleInfoDto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 학습과 단원 이름 조회")
@@ -91,10 +91,10 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/admin/chapters/title-info")
-    public ResponseEntity queryChapterTitleInfo(@RequestParam("num") Integer num) {
+    public ResponseEntity<ChapterTitleInfoDto> queryChapterTitleInfo(@RequestParam("num") Integer num) {
         ChapterTitleInfoDto chapterTitleInfoDto = chapterService.queryChapterTitleInfo(num);
 
-        return new ResponseEntity(chapterTitleInfoDto, HttpStatus.OK);
+        return new ResponseEntity<ChapterTitleInfoDto>(chapterTitleInfoDto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 학습 수정")
@@ -103,17 +103,17 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @PatchMapping("/admin/chapters/{num}/info")
-    public ResponseEntity updateChapterInfo(@PathVariable("num") Integer num, @Validated @RequestBody ChapterInfoDto chapterInfoDto){
-        chapterService.updateChapterInfo(num,chapterInfoDto.getContent());
+    public ResponseEntity<ChapterInfoDto> updateChapterInfo(@PathVariable("num") Integer num, @Validated @RequestBody ChapterInfoDto inputChapterInfoDto){
+        ChapterInfoDto chapterInfoDto = chapterService.updateChapterInfo(num, inputChapterInfoDto.getContent());
 
-        return new ResponseEntity(chapterInfoDto, HttpStatus.OK);
+        return new ResponseEntity<ChapterInfoDto>(chapterInfoDto, HttpStatus.OK);
     }
 
     @ApiOperation("해당 단원의 모든 topic 조회 - 관리자")
     @GetMapping("/admin/chapters/{num}/topics")
-    public ResponseEntity queryChapterTopicsAdmin(@PathVariable("num") int num) {
+    public ResponseEntity<List<AdminChapterDto>> queryChapterTopicsAdmin(@PathVariable("num") int num) {
         List<AdminChapterDto> adminChapterDtoList = chapterService.queryTopicsInChapterAdmin(num);
-        return new ResponseEntity(adminChapterDtoList, HttpStatus.OK);
+        return new ResponseEntity<List<AdminChapterDto>>(adminChapterDtoList, HttpStatus.OK);
     }
 
     @ApiOperation("해당 단원의 모든 topic 조회 - 사용자")
@@ -122,9 +122,9 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
     })
     @GetMapping("/chapters/{num}/topics")
-    public ResponseEntity queryChapterTopicsCustomer(@PathVariable("num") int num){
+    public ResponseEntity<List<String>> queryChapterTopicsCustomer(@PathVariable("num") int num){
         List<String> topicTitleList = chapterService.queryTopicsInChapterCustomer(num);
-        return new ResponseEntity(topicTitleList, HttpStatus.OK);
+        return new ResponseEntity<List<String>>(topicTitleList, HttpStatus.OK);
     }
 
 
@@ -135,10 +135,10 @@ public class ChapterController {
             @ApiResponse(responseCode = "409",  description = "중복된 단원 번호 입력")
     })
     @PostMapping("/admin/chapters")
-    public ResponseEntity addChapter(@Validated @RequestBody ChapterDto chapterDto) {
-        Chapter chapter = chapterService.createChapter(chapterDto.getTitle(), chapterDto.getNumber());
+    public ResponseEntity<Void> addChapter(@Validated @RequestBody ChapterDto chapterDto) {
+        chapterService.createChapter(chapterDto.getTitle(), chapterDto.getNumber());
 
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "단원 수정")
@@ -149,10 +149,10 @@ public class ChapterController {
             @ApiResponse(responseCode = "409",  description = "중복된 단원 번호 입력")
     })
     @PatchMapping("/admin/chapters/{num}")
-    public ResponseEntity updateChapter(@PathVariable("num") int num, @Validated @RequestBody ChapterDto chapterDto) {
-        Chapter chapter = chapterService.updateChapter(num, chapterDto.getTitle(), chapterDto.getNumber());
+    public ResponseEntity<Void> updateChapter(@PathVariable("num") int num, @Validated @RequestBody ChapterDto chapterDto) {
+        chapterService.updateChapter(num, chapterDto.getTitle(), chapterDto.getNumber());
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 삭제")
@@ -162,9 +162,9 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 삭제 시도")
     })
     @DeleteMapping("/admin/chapters/{num}")
-    public ResponseEntity deleteChapter(@PathVariable("num") int num) {
+    public ResponseEntity<Void> deleteChapter(@PathVariable("num") int num) {
         chapterService.deleteChapter(num);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

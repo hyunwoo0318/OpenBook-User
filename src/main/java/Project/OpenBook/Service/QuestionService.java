@@ -29,31 +29,15 @@ import static Project.OpenBook.Domain.QSentence.sentence;
 public class QuestionService {
 
     private final TopicRepository topicRepository;
-
     private final QuestionRepository questionRepository;
-
     private final CategoryRepository categoryRepository;
-
     private final ChapterRepository chapterRepository;
-
     private final KeywordRepository keywordRepository;
     private final SentenceRepository sentenceRepository;
 
     private Topic checkTopic(String topicTitle) {
         return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
-        });
-    }
-
-    private Category checkCategory(String categoryName) {
-        return categoryRepository.findCategoryByName(categoryName).orElseThrow(() ->{
-            throw new CustomException(CATEGORY_NOT_FOUND);
-        });
-    }
-
-    private Question checkQuestion(Long questionId) {
-        return questionRepository.findById(questionId).orElseThrow(() ->{
-            throw new CustomException(QUESTION_NOT_FOUND);
         });
     }
 

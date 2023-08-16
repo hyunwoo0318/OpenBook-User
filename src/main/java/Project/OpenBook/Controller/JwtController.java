@@ -30,7 +30,7 @@ public class JwtController {
             @ApiResponse(responseCode = "400", description = "refresh token이 유효하지 않음")
     })
     @GetMapping("/refresh-token")
-    public ResponseEntity checkRefreshToken(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public ResponseEntity<Void> checkRefreshToken(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String refreshToken = request.getHeader("refresh-token");
         if (refreshToken.isBlank()) {
             throw new CustomException(INVALID_PARAMETER);
@@ -40,6 +40,6 @@ public class JwtController {
         TokenDto tokenDto = tokenManager.generateToken(refreshToken);
         response.setHeader("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
         response.setHeader("refresh-token",tokenDto.getRefreshToken());
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

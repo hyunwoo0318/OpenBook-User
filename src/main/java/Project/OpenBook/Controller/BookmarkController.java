@@ -29,11 +29,11 @@ public class BookmarkController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @PostMapping
-    public ResponseEntity addBookmark(@AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> addBookmark(@AuthenticationPrincipal Customer customer,
                                       @RequestBody String topicTitle) {
         Bookmark bookmark = bookmarkService.addBookmark(customer, topicTitle);
 
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @ApiOperation("해당 토픽에 대한 북마크 제거")
@@ -42,11 +42,11 @@ public class BookmarkController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @DeleteMapping
-    public ResponseEntity deleteBookmark(@AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> deleteBookmark(@AuthenticationPrincipal Customer customer,
                                          @RequestBody String topicTitle) {
         bookmarkService.deleteBookmark(customer, topicTitle);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

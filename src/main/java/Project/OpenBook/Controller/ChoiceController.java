@@ -22,18 +22,16 @@ public class ChoiceController {
 
     private final ChoiceService choiceService;
 
-
-
     @ApiOperation(value = "특정 선지를 보여줌")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적인 조회"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 선지 조회 요청")
     })
     @GetMapping("/admin/choices/{choiceId}")
-    public ResponseEntity getChoice(@PathVariable("choiceId") Long choiceId) {
+    public ResponseEntity<ChoiceDto> getChoice(@PathVariable("choiceId") Long choiceId) {
         ChoiceDto choiceDto = choiceService.queryChoice(choiceId);
 
-        return new ResponseEntity(choiceDto, HttpStatus.OK);
+        return new ResponseEntity<ChoiceDto>(choiceDto, HttpStatus.OK);
     }
 
 //    @ApiOperation(value = "주어진 선지와 같은 주제의 선지 보여주기", notes = "문제 생성/수정시 선지 새로고침을 위한 endPoint")
@@ -54,10 +52,10 @@ public class ChoiceController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인한 선지 추가 실패")
     })
     @PostMapping("/admin/choices/")
-    public ResponseEntity addChoices(@Validated @RequestBody ChoiceAddDto choiceAddDto){
+    public ResponseEntity<Void> addChoices(@Validated @RequestBody ChoiceAddDto choiceAddDto){
         choiceService.addChoices(choiceAddDto);
 
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "선지 수정")
@@ -67,11 +65,11 @@ public class ChoiceController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 선지 수정 요청")
     })
     @PatchMapping("/admin/choices/{choiceId}")
-    public ResponseEntity updateChoices(@PathVariable Long choiceId,@Validated @RequestBody ChoiceUpdateDto choiceUpdateDto) {
+    public ResponseEntity<Void> updateChoices(@PathVariable Long choiceId,@Validated @RequestBody ChoiceUpdateDto choiceUpdateDto) {
 
         Choice choice = choiceService.updateChoice(choiceUpdateDto, choiceId);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "선지 삭제")
@@ -80,10 +78,10 @@ public class ChoiceController {
             @ApiResponse(responseCode = "404", description = "존재하지 않은 선지 삭제 시도")
     })
     @DeleteMapping("/admin/choices/{choiceId}")
-    public ResponseEntity deleteChoices(@PathVariable Long choiceId) {
+    public ResponseEntity<Void> deleteChoices(@PathVariable Long choiceId) {
         choiceService.deleteChoice(choiceId);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

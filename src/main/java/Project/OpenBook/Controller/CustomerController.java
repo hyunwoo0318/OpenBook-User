@@ -40,11 +40,11 @@ public class CustomerController {
             @ApiResponse(responseCode = "409", description = "중복된 닉네임 입력")
     })
     @PostMapping("customers/{customerId}/details")
-    public ResponseEntity addDetails(@PathVariable("customerId") Long customerId,
+    public ResponseEntity<Void> addDetails(@PathVariable("customerId") Long customerId,
                                      @Validated @RequestBody CustomerAddDetailDto customerAddDetailDto){
         Customer customer = customerService.addDetails(customerId, customerAddDetailDto);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ApiOperation("특정 회원의 북마크 리스트 조회")
@@ -53,22 +53,22 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
     })
     @GetMapping("customer-infos/bookmarks")
-    public ResponseEntity queryBookmarks(@AuthenticationPrincipal Customer customer){
+    public ResponseEntity<List<String>> queryBookmarks(@AuthenticationPrincipal Customer customer){
         List<String> titleList = bookmarkService.queryBookmarks(customer);
 
-        return new ResponseEntity(titleList, HttpStatus.OK);
+        return new ResponseEntity<List<String>>(titleList, HttpStatus.OK);
     }
 
-    @ApiOperation("특정 회원의 오답노트 리스트 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적인 조회"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
-    })
-    @GetMapping("customers/{customerId}/answer-notes")
-    public ResponseEntity queryAnswerNotes(@PathVariable("customerId") Long customerId){
-        List<Long> questionIdList = answerNoteService.queryAnswerNotes(customerId);
-        return new ResponseEntity(questionIdList, HttpStatus.OK);
-    }
+//    @ApiOperation("특정 회원의 오답노트 리스트 조회")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "성공적인 조회"),
+//            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
+//    })
+//    @GetMapping("customers/{customerId}/answer-notes")
+//    public ResponseEntity queryAnswerNotes(@PathVariable("customerId") Long customerId){
+//        List<Long> questionIdList = answerNoteService.queryAnswerNotes(customerId);
+//        return new ResponseEntity(questionIdList, HttpStatus.OK);
+//    }
 
     @ApiOperation("소셜 로그인")
     @GetMapping("login/{providerName}")
@@ -93,10 +93,10 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
     })
     @DeleteMapping("/customers")
-    public ResponseEntity deleteCustomer(){
+    public ResponseEntity<Void> deleteCustomer(){
         long customerId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
         customerService.deleteCustomer(customerId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     /**
@@ -108,9 +108,9 @@ public class CustomerController {
             @ApiResponse(responseCode = "200", description = "모든 회원의 식별코드 조회 성공")
     })
     @GetMapping("/admin/customers")
-    public ResponseEntity queryCustomers(){
+    public ResponseEntity<CustomerCodeList> queryCustomers(){
         CustomerCodeList customerCodeList = customerService.queryCustomers();
-        return new ResponseEntity<>(customerCodeList, HttpStatus.OK);
+        return new ResponseEntity<CustomerCodeList>(customerCodeList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "특정 회원의 정보 조회", notes = "[닉네임, 최초 학습 수준, 나이, 유저 로그, 유저 구독 정보] 조회")
@@ -119,9 +119,9 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 식별코드 입력")
     })
     @GetMapping("/admin/customers/{code}")
-    public ResponseEntity queryCustomerDetail(@PathVariable("code") String code) {
+    public ResponseEntity<CustomerDetailDto> queryCustomerDetail(@PathVariable("code") String code) {
         CustomerDetailDto customerDetailDto = customerService.queryCustomerDetail(code);
-        return new ResponseEntity(customerDetailDto, HttpStatus.OK);
+        return new ResponseEntity<CustomerDetailDto>(customerDetailDto, HttpStatus.OK);
     }
 
     /**

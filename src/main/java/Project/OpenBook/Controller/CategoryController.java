@@ -5,6 +5,8 @@ import Project.OpenBook.Dto.category.CategoryDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Service.CategoryService;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +32,9 @@ public class CategoryController {
             @ApiResponse(responseCode = "200", description = "전체 카테고리 조회 성공")
     })
     @GetMapping
-    public ResponseEntity queryCategories() {
+    public ResponseEntity<List<CategoryDto>> queryCategories() {
         List<CategoryDto> categoryList = categoryService.queryCategories();
-        return new ResponseEntity(categoryList, HttpStatus.OK);
+        return new ResponseEntity<List<CategoryDto>>(categoryList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "카테고리 생성")
@@ -42,10 +44,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리 이름 입력")
     })
     @PostMapping
-    public ResponseEntity createCategory(@Validated @RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<Void> createCategory(@Validated @RequestBody CategoryDto categoryDto) {
         categoryService.createCategory(categoryDto.getName());
 
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
 
@@ -57,10 +59,10 @@ public class CategoryController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 카테고리 이름 입력")
     })
     @PatchMapping("/{categoryName}")
-    public ResponseEntity updateCategory(@PathVariable("categoryName") String prevCategoryName, @Validated @RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<Void> updateCategory(@PathVariable("categoryName") String prevCategoryName, @Validated @RequestBody CategoryDto categoryDto) {
         categoryService.updateCategory(prevCategoryName, categoryDto.getName());
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "카테고리 삭제", notes = "해당 카테고리에 속하던 상세정보의 카테고리 정보는 null")
@@ -70,9 +72,9 @@ public class CategoryController {
             @ApiResponse(responseCode = "404", description = "존재히지 않는 카테고리 삭제 시도")
     })
     @DeleteMapping("/{categoryName}")
-    public ResponseEntity deleteCategory(@PathVariable("categoryName") String categoryName) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable("categoryName") String categoryName) {
         categoryService.deleteCategory(categoryName);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

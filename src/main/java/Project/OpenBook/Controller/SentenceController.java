@@ -26,9 +26,9 @@ public class SentenceController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
     })
     @PostMapping("/admin/sentences")
-    public ResponseEntity createSentence(@Validated @RequestBody SentenceCreateDto sentenceCreateDto){
+    public ResponseEntity<Void> createSentence(@Validated @RequestBody SentenceCreateDto sentenceCreateDto){
         sentenceService.createSentence(sentenceCreateDto);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @ApiOperation("문장 수정")
@@ -38,9 +38,9 @@ public class SentenceController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 문장 아이디 입력")
     })
     @PatchMapping("/admin/sentences/{sentenceId}")
-    public ResponseEntity updateSentence(@PathVariable Long sentenceId, @Validated @RequestBody SentenceUpdateDto sentenceUpdateDto){
+    public ResponseEntity<Void> updateSentence(@PathVariable Long sentenceId, @Validated @RequestBody SentenceUpdateDto sentenceUpdateDto){
         sentenceService.updateSentence(sentenceId,sentenceUpdateDto);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ApiOperation("문장 삭제")
@@ -49,9 +49,9 @@ public class SentenceController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 문장 아이디 입력")
     })
     @DeleteMapping("/admin/sentences/{sentenceId}")
-    public ResponseEntity createSentence(@PathVariable Long sentenceId){
+    public ResponseEntity<Void> createSentence(@PathVariable Long sentenceId){
         sentenceService.deleteSentence(sentenceId);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 }

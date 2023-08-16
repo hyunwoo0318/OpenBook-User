@@ -30,10 +30,10 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원번호 혹은 회원아이디 입력")
     })
     @PostMapping("/study-progress/chapter/wrong-count")
-    public ResponseEntity addChapterProgressWrongCount(@AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> addChapterProgressWrongCount(@AuthenticationPrincipal Customer customer,
             @Validated @RequestBody ChapterProgressAddDto chapterProgressAddDto) {
         studyProgressService.addChapterProgressWrongCount(customer, chapterProgressAddDto);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @ApiOperation("단원 학습 정보 입력 - progress 갱신")
@@ -43,10 +43,10 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원번호 혹은 회원아이디 입력")
     })
     @PostMapping("/study-progress/chapter/progress")
-    public ResponseEntity addChapterProgressProgressUpdate(@AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> addChapterProgressProgressUpdate(@AuthenticationPrincipal Customer customer,
                                                            @Validated @RequestBody ProgressDto progressDto) {
         studyProgressService.updateChapterProgress(customer, progressDto);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @ApiOperation("주제 학습 정보 입력")
@@ -56,9 +56,9 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 제목 혹은 회원아이디 입력")
     })
     @PostMapping("/study-progress/topic/wrong-count")
-    public ResponseEntity addTopicProgress(@AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> addTopicProgress(@AuthenticationPrincipal Customer customer,
             @Validated @RequestBody TopicProgressAddDtoList topicProgressAddDtoList) {
         studyProgressService.addTopicProgressWrongCount(customer, topicProgressAddDtoList);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 }

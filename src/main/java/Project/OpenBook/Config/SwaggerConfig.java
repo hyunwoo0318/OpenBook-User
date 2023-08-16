@@ -3,6 +3,7 @@ package Project.OpenBook.Config;
 import com.fasterxml.classmate.TypeResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -24,6 +25,7 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     @Bean
     public Docket api(TypeResolver typeResolver) {
         return new Docket(DocumentationType.OAS_30) // 3.0 문서버전으로 세팅
+                .ignoredParameterTypes(AuthenticationPrincipal.class)
                 .useDefaultResponseMessages(false)
                 .apiInfo(apiInfo())
                 .select()

@@ -43,10 +43,10 @@ public class TopicController {
             @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
     })
     @GetMapping("admin/topics/{topicTitle}")
-    public ResponseEntity queryTopicsAdmin( @PathVariable("topicTitle") String topicTitle) {
+    public ResponseEntity<TopicAdminDto> queryTopicsAdmin( @PathVariable("topicTitle") String topicTitle) {
         TopicAdminDto topicAdminDto = topicService.queryTopicAdmin(topicTitle);
 
-        return new ResponseEntity(topicAdminDto, HttpStatus.OK);
+        return new ResponseEntity<TopicAdminDto>(topicAdminDto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "각 토픽에 대한 상세정보 조회 - 사용자")
@@ -54,10 +54,10 @@ public class TopicController {
             @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
     })
     @GetMapping("/topics/{topicTitle}")
-    public ResponseEntity queryTopicsUser(@PathVariable("topicTitle") String topicTitle) {
+    public ResponseEntity<TopicCustomerDto> queryTopicsUser(@PathVariable("topicTitle") String topicTitle) {
         TopicCustomerDto topicCustomerDto = topicService.queryTopicCustomer(topicTitle);
 
-        return new ResponseEntity(topicCustomerDto, HttpStatus.OK);
+        return new ResponseEntity<TopicCustomerDto>(topicCustomerDto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "특정 토픽의 전체 키워드 조회")
@@ -66,10 +66,10 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
     })
     @GetMapping("/topics/{topicTitle}/keywords")
-    public ResponseEntity queryTopicKeywords(@PathVariable("topicTitle") String topicTitle) {
+    public ResponseEntity<List<KeywordDto>> queryTopicKeywords(@PathVariable("topicTitle") String topicTitle) {
         List<KeywordDto> keywordDtoList = topicService.queryTopicKeywords(topicTitle);
 
-        return new ResponseEntity(keywordDtoList, HttpStatus.OK);
+        return new ResponseEntity<List<KeywordDto>>(keywordDtoList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "특정 토픽의 전체 문장 조회")
@@ -78,11 +78,11 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
     })
     @GetMapping("/topics/{topicTitle}/sentences")
-    public ResponseEntity queryTopicSentence(@PathVariable("topicTitle") String topicTitle) {
+    public ResponseEntity<List<SentenceDto>> queryTopicSentence(@PathVariable("topicTitle") String topicTitle) {
         List<SentenceDto> sentenceDtoList = topicService.queryTopicSentences(topicTitle).stream()
                                             .map(s -> new SentenceDto(s.getName(), s.getId()))
                                             .collect(Collectors.toList());
-        return new ResponseEntity(sentenceDtoList, HttpStatus.OK);
+        return new ResponseEntity<List<SentenceDto>>(sentenceDtoList, HttpStatus.OK);
     }
 
     @ApiOperation("특정 토픽별 모든 보기 조회")
@@ -91,11 +91,11 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽별 보기 조회 요청")
     })
     @GetMapping("/topics/{topicTitle}/descriptions")
-    public ResponseEntity getDescriptionsInTopic(@PathVariable String topicTitle){
+    public ResponseEntity<List<DescriptionDto>> getDescriptionsInTopic(@PathVariable String topicTitle){
         List<Description> descriptionList = descriptionService.queryDescriptionsInTopic(topicTitle);
 
         List<DescriptionDto> descriptionDtoList = descriptionList.stream().map(d -> new DescriptionDto(d)).collect(Collectors.toList());
-        return new ResponseEntity(descriptionDtoList, HttpStatus.OK);
+        return new ResponseEntity<List<DescriptionDto>>(descriptionDtoList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "특정 토픽별 모든 선지 조회")
@@ -103,9 +103,9 @@ public class TopicController {
             @ApiResponse(responseCode = "200", description = "성공적인 조회")
     })
     @GetMapping("/admin/topics/{topicTitle}/choices/")
-    public ResponseEntity getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
+    public ResponseEntity<List<ChoiceDto>> getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
         List<ChoiceDto> choiceList = choiceService.queryChoicesByTopic(topicTitle);
-        return new ResponseEntity(choiceList,HttpStatus.OK);
+        return new ResponseEntity<List<ChoiceDto>>(choiceList,HttpStatus.OK);
     }
 
 
@@ -115,10 +115,10 @@ public class TopicController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 상세정보 생성 실패"),
     })
     @PostMapping("/admin/topics")
-    public ResponseEntity createTopic(@Validated @RequestBody TopicAdminDto topicAdminDto) {
+    public ResponseEntity<Void> createTopic(@Validated @RequestBody TopicAdminDto topicAdminDto) {
 
         Topic topic = topicService.createTopic(topicAdminDto);
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "상세정보 수정")
@@ -128,10 +128,10 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 상세정보 수정 시도")
     })
     @PatchMapping("/admin/topics/{topicTitle}")
-    public ResponseEntity updateTopic(@PathVariable("topicTitle")String topicTitle,@Validated @RequestBody TopicAdminDto topicAdminDto) {
+    public ResponseEntity<Void> updateTopic(@PathVariable("topicTitle")String topicTitle,@Validated @RequestBody TopicAdminDto topicAdminDto) {
 
         Topic topic = topicService.updateTopic(topicTitle, topicAdminDto);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "주제 순서번호 수정")
@@ -141,9 +141,9 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 제목 입력")
     })
     @PatchMapping("/admin/topic-numbers")
-    public ResponseEntity updateTopicNumber(@Validated @RequestBody List<TopicNumberDto> topicNumberDtoList) {
+    public ResponseEntity<Void> updateTopicNumber(@Validated @RequestBody List<TopicNumberDto> topicNumberDtoList) {
         topicService.updateTopicNumber(topicNumberDtoList);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "상세정보 삭제")
@@ -153,8 +153,8 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 상세정보 삭제 요청")
     })
     @DeleteMapping("/admin/topics/{topicTitle}")
-    public ResponseEntity deleteTopic(@PathVariable("topicTitle") String topicTitle) {
+    public ResponseEntity<Void> deleteTopic(@PathVariable("topicTitle") String topicTitle) {
         topicService.deleteTopic(topicTitle);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }

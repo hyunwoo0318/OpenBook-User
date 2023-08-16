@@ -142,10 +142,11 @@ public class ChapterService {
         });
     }
 
-    public void updateChapterInfo(Integer num, String content) {
+    public ChapterInfoDto updateChapterInfo(Integer num, String content) {
         Chapter chapter = checkChapter(num);
 
         chapter.updateContent(content);
+        return new ChapterInfoDto(chapter.getContent());
     }
 
     public ChapterTitleInfoDto queryChapterTitleInfo(Integer num) {

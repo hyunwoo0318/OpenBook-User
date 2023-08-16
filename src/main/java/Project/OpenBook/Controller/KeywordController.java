@@ -28,10 +28,10 @@ public class KeywordController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 키워드 이름 입력")
     })
     @PostMapping("admin/keywords")
-    public ResponseEntity createService(@Validated @RequestBody KeywordCreateDto keywordCreateDto) throws IOException {
+    public ResponseEntity<Void> createService(@Validated @RequestBody KeywordCreateDto keywordCreateDto) throws IOException {
         keywordService.createKeyword(keywordCreateDto);
 
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
 
@@ -43,10 +43,10 @@ public class KeywordController {
             @ApiResponse(responseCode = "409", description = "이미 존재하는 키워드 이름 입력")
     })
     @PatchMapping("admin/keywords/{keywordId}")
-    public ResponseEntity updateKeyword(@PathVariable("keywordId") Long keywordId,
+    public ResponseEntity<Void> updateKeyword(@PathVariable("keywordId") Long keywordId,
                                         @Validated @RequestBody KeywordUserDto keywordUserDto) throws IOException {
         keywordService.updateKeyword(keywordId, keywordUserDto);
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
     @ApiOperation(value = "키워드 삭제")
@@ -55,10 +55,10 @@ public class KeywordController {
             @ApiResponse(responseCode = "404", description = "존재히지 않는 키워드 삭제 시도")
     })
     @DeleteMapping("admin/keywords/{keywordId}")
-    public ResponseEntity deleteKeyword(@PathVariable("keywordId") Long keywordId) {
+    public ResponseEntity<Void> deleteKeyword(@PathVariable("keywordId") Long keywordId) {
         keywordService.deleteKeyword(keywordId);
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }
 
