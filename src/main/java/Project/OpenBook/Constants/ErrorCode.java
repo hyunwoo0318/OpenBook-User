@@ -46,6 +46,7 @@ public enum ErrorCode {
     KEYWORD_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 키워드 이름입니다."),
     SENTENCE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 문장 ID입니다."),
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 이미지 ID입니다."),
+    PROGRESS_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 Progress 이름입니다."),
 
 
     /**

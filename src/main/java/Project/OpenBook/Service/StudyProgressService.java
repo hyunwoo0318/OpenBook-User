@@ -1,8 +1,10 @@
 package Project.OpenBook.Service;
 
 import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.ChapterProgressAddDto;
+import Project.OpenBook.Dto.ProgressDto;
 import Project.OpenBook.Dto.TopicProgressAddDto;
 import Project.OpenBook.Dto.TopicProgressAddDtoList;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
@@ -16,10 +18,12 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
-import static Project.OpenBook.Constants.ErrorCode.CHAPTER_NOT_FOUND;
-import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
+import static Project.OpenBook.Constants.ErrorCode.*;
+import static Project.OpenBook.Constants.ProgressConst.*;
 
 @Service
 @RequiredArgsConstructor
@@ -30,11 +34,12 @@ public class StudyProgressService {
     private final ChapterRepository chapterRepository;
     private final TopicRepository topicRepository;
 
+    private final List<String> progressList = Arrays.asList(NOT_STARTED, CHAPTER_INFO, TIME_FLOW_STUDY, TIME_FLOW_QUESTION, GET_TOPIC_BY_KEYWORD, GET_TOPIC_BY_SENTENCE, COMPLETE);
+
 
     @Transactional
-    public void addChapterProgress(ChapterProgressAddDto chapterProgressAddDto) {
+    public void addChapterProgressWrongCount(Customer customer, ChapterProgressAddDto chapterProgressAddDto) {
         Chapter chapter = checkChapter(chapterProgressAddDto.getNumber());
-        Customer customer = checkCustomer(chapterProgressAddDto.getCustomerId());
 
         chapterProgressRepository.queryChapterProgress(customer.getId(), chapter.getNumber())
                 .ifPresentOrElse(
@@ -47,10 +52,9 @@ public class StudyProgressService {
     }
 
     @Transactional
-    public void addTopicProgress(TopicProgressAddDtoList topicProgressAddDtoList) {
+    public void addTopicProgressWrongCount(Customer customer, TopicProgressAddDtoList topicProgressAddDtoList) {
         for (TopicProgressAddDto topicProgressAddDto : topicProgressAddDtoList.getProgressAddDtoList()) {
             Topic topic = checkTopic(topicProgressAddDto.getTopicTitle());
-            Customer customer = checkCustomer(topicProgressAddDto.getCustomerId());
 
             topicProgressRepository.queryTopicProgress(topic.getTitle(), customer.getId())
                     .ifPresentOrElse(
@@ -83,18 +87,24 @@ public class StudyProgressService {
         });
     }
 
+    public boolean checkProgress(String progress){
+        return progressList.contains(progress);
+    }
 
     @Transactional
-    public void updateProgress(Long customerId, Integer chapterNum,  String chapterProgressConst) {
+    public void updateChapterProgress(Customer customer, ProgressDto progressDto) {
+        String progress = progressDto.getProgress();
+        if(!checkProgress(progress)){
+            throw new CustomException(PROGRESS_NOT_FOUND);
+        }
+        Integer chapterNum = progressDto.getNumber();
         Chapter chapter = checkChapter(chapterNum);
-        Customer customer = checkCustomer(customerId);
-
-        ChapterProgress chapterProgress = chapterProgressRepository.queryChapterProgress(customerId, chapterNum).orElseGet(() -> {
-            ChapterProgress newChapterProgress = new ChapterProgress(customer, chapter);
-            chapterProgressRepository.save(newChapterProgress);
-            return newChapterProgress;
+        chapterProgressRepository.queryChapterProgress(customer.getId(), chapterNum).ifPresentOrElse(cp ->{
+                     cp.updateProgress(progress);
+                     },
+                () -> {
+                    ChapterProgress chapterProgress = new ChapterProgress(customer, chapter, progress);
+                    chapterProgressRepository.save(chapterProgress);
         });
-
-        chapterProgress.updateProgress(chapterProgressConst);
     }
 }
