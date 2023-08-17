@@ -64,11 +64,6 @@ public class TopicService {
     private final PrimaryDateRepository primaryDateRepository;
     private final TopicProgressRepository topicProgressRepository;
 
-    private final StudyProgressService studyProgressService;
-
-    @Value("${base.url}")
-    private String baseUrl;
-
     public TopicAdminDto queryTopicAdmin(String topicTitle) {
         checkTopic(topicTitle);
         TopicAdminDto topicAdminDto = topicRepository.queryTopicAdminDto(topicTitle);

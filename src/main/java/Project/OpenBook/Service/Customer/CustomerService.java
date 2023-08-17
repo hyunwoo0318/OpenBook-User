@@ -44,10 +44,10 @@ public class CustomerService implements UserDetailsService {
     private final TopicProgressRepository topicProgressRepository;
     private final ChapterProgressRepository chapterProgressRepository;
     private final AuthenticationManagerBuilder authenticationManager;
-    private final WebClient.Builder webClientBuilder;
-
 
     private final TokenManager tokenManager;
+    private final KakaoLogin kakaoLogin;
+    private final NaverLogin naverLogin;
 
     public Customer addDetails(Long customerId, CustomerAddDetailDto customerAddDetailDto) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomException(CUSTOMER_NOT_FOUND));
@@ -150,9 +150,9 @@ public class CustomerService implements UserDetailsService {
 
     private Oauth2Login getOauth2LoginStrategy(String providerName) {
         if(providerName.equals("kakao")){
-            return new KakaoLogin(webClientBuilder);
+            return kakaoLogin;
         }else if(providerName.equals("naver")){
-            return new NaverLogin(webClientBuilder);
+            return naverLogin;
         }else{
             throw new CustomException(WRONG_PROVIDER_NAME);
         }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.UnsupportedEncodingException;
@@ -14,16 +15,23 @@ import java.util.Map;
 
 import static Project.OpenBook.Constants.ErrorCode.LOGIN_FAIL;
 
-@RequiredArgsConstructor
+
+@Component
 public class NaverLogin implements Oauth2Login {
 
-    private final WebClient.Builder webClientBuilder;
+    private WebClient.Builder webClientBuilder;
 
     @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String naverClientId;
 
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String naverClientSecret;
+
+    public NaverLogin(@Value("${spring.security.oauth2.client.registration.naver.client-id}") String naverClientId, @Value("${spring.security.oauth2.client.registration.naver.client-secret}") String naverClientSecret, WebClient.Builder builder) {
+        this.naverClientId = naverClientId;
+        this.naverClientSecret = naverClientSecret;
+        this.webClientBuilder = builder;
+    }
     @Override
     public String login(String code) throws UnsupportedEncodingException, JsonProcessingException {
         String state = URLEncoder.encode("https://nid.naver.com/oauth2.0/token", StandardCharsets.UTF_8.toString());
