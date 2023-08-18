@@ -8,28 +8,26 @@ import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import com.querydsl.core.Tuple;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.convert.DataSizeUnit;
-import org.springframework.boot.test.autoconfigure.data.jdbc.DataJdbcTest;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
 
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.QChapterProgress.chapterProgress;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @Import(TestQueryDslConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
+@DisplayName("ChpaterRepository class")
 public class ChapterRepositoryTest {
 
     @Autowired
@@ -42,11 +40,16 @@ public class ChapterRepositoryTest {
     TestEntityManager entityManager;
 
     @Nested
-    @DisplayName("findAll() Test")
+    @DisplayName("findAll() 메서드는")
     public class findAllTest{
 
+        @AfterEach
+        public void clear(){
+            chapterRepository.deleteAllInBatch();
+        }
+
         @Test
-        @DisplayName("repo가 비어있는 경우")
+        @DisplayName("chapterRepository가 비어있다면")
         public void findAllNoInstance() {
             //given
 
@@ -54,11 +57,12 @@ public class ChapterRepositoryTest {
             List<Chapter> chapterList = chapterRepository.findAll();
 
             //then
-            assertThat(chapterList.isEmpty()).isTrue();
+            assertTrue(chapterList.isEmpty(), "빈 List를 리턴한다.");
         }
 
         @Test
-        @DisplayName("일반적인 경우")
+        @Transactional
+        @DisplayName("chapterRepository에 chapter가 존재한다면")
         public void findAllSuccess() {
             //given
             Chapter ch1 = new Chapter("ch1", 1);
@@ -70,19 +74,25 @@ public class ChapterRepositoryTest {
             List<Chapter> chapterList = chapterRepository.findAll();
 
             //then
-            assertThat(chapterList.size()).isEqualTo(2);
-            assertThat(chapterList.containsAll(Arrays.asList(ch1, ch2))).isTrue();
+            assertEquals(chapterList.size(), 2);
+            assertTrue(chapterList.containsAll(Arrays.asList(ch1, ch2)), "chapter 전체를 하나의 리스트로 리턴한다.");
         }
 
     }
 
     @Nested
-    @DisplayName("findOneByNumber() Test")
+    @Transactional
+    @DisplayName("findOneByNumber() 메서드는")
     public class findOneTest{
 
         private Chapter ch1, ch2;
 
-        @DisplayName("해당 번호를 가지고 있는 단원이 존재하지 않는 경우")
+        @AfterEach
+        public void clear(){
+            chapterRepository.deleteAllInBatch();
+        }
+
+        @DisplayName("해당 번호를 가지고 있는 단원이 존재하지 않는다면")
         @Test
         public void chapterNotExist() {
             //given
@@ -92,10 +102,10 @@ public class ChapterRepositoryTest {
             Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(3);
 
             //then
-            assertThat(chapterOptional.isEmpty()).isTrue();
+            assertTrue(chapterOptional.isEmpty(), "null값을 Optional로 감싸서 리턴한다.");
         }
 
-        @DisplayName("해당 번호를 가지고 있는 단원이 존재하는 경우")
+        @DisplayName("해당 번호를 가지고 있는 단원이 존재한다면")
         @Test
         public void chapterExist() {
             //given
@@ -105,9 +115,7 @@ public class ChapterRepositoryTest {
             Optional<Chapter> chapterOptional = chapterRepository.findOneByNumber(ch1.getNumber());
 
             //then
-            assertThat(chapterOptional.isPresent()).isTrue();
-            Chapter findChapter = chapterOptional.get();
-            assertThat(findChapter.equals(ch1));
+            assertEquals(chapterOptional.get(),ch1, "해당 번호를 가지는 단원을 리턴한다.");
         }
 
         private void initChapter() {
@@ -116,87 +124,120 @@ public class ChapterRepositoryTest {
 
             ch2 = new Chapter("title2", 2);
             entityManager.persist(ch2);
-
-
         }
     }
 
     @Nested
-    @DisplayName("queryChapterUserDtos() Test")
+    @DisplayName("queryChapterUserDtos() 메서드는")
     public class queryChapterUserDtosTest {
 
         private Customer customer;
         private Chapter ch1,ch2;
+        @Nested
+        @DisplayName("모든 단원에 대해서 chapterProgress가 존재한다면")
+        public class existAllChapterProgress{
+            @BeforeEach
+            public void clear() {
+                chapterProgressRepository.deleteAllInBatch();
+                customerRepository.deleteAllInBatch();
+                chapterRepository.deleteAllInBatch();
+            }
 
-        @DisplayName("모든 단원에 대해서 chapterProgress가 존재하는 상황")
-        @Test
-        public void existAllChapterProgress(){
-            String ch1Progress = ProgressConst.TIME_FLOW_QUESTION;
-            String ch2Progress = ProgressConst.NOT_STARTED;
+            @Test
+            @DisplayName("전체 단원의 수만큼 {단원제목, 단원번호, progress} 객체를 리턴한다.")
+            public void existAllChapterProgress(){
+                String ch1Progress = ProgressConst.TIME_FLOW_QUESTION;
+                String ch2Progress = ProgressConst.NOT_STARTED;
 
-            //given
-            init();
-            ChapterProgress cp1 = new ChapterProgress(customer, ch1, ch1Progress);
-            ChapterProgress cp2 = new ChapterProgress(customer, ch2, ch2Progress);
-            entityManager.persist(cp1);
-            entityManager.persist(cp2);
+                //given
+                init();
+                ChapterProgress cp1 = new ChapterProgress(customer, ch1, ch1Progress);
+                ChapterProgress cp2 = new ChapterProgress(customer, ch2, ch2Progress);
+                entityManager.persist(cp1);
+                entityManager.persist(cp2);
 
-            //when
-            List<Tuple> tuples = chapterRepository.queryChapterUserDtos(customer.getId());
+                //when
+                List<Tuple> tuples = chapterRepository.queryChapterUserDtos(customer.getId());
 
-            //then
+                //then
 
-            //단원의 개수만큼 쿼리 결과가 생성되었는지 확인
-            assertThat(tuples.size()).isEqualTo(2);
-            Tuple ch1Tuple = tuples.get(0);
-            Tuple ch2Tuple = tuples.get(1);
+                //단원의 개수만큼 쿼리 결과가 생성되었는지 확인
+                assertEquals(tuples.size(),2, "전체 단원의 수만큼의 객체를 리턴한다.");
+                Tuple ch1Tuple = tuples.get(0);
+                Tuple ch2Tuple = tuples.get(1);
 
-            //1단원
-            assertThat(ch1Tuple.get(chapter.title)).isEqualTo(ch1.getTitle());
-            assertThat(ch1Tuple.get(chapter.number)).isEqualTo(ch1.getNumber());
-            assertThat(ch1Tuple.get(chapterProgress.progress)).isEqualTo(ch1Progress);
+                //1단원
+                assertEquals(ch1Tuple.get(chapter.title), ch1.getTitle());
+                assertEquals(ch1Tuple.get(chapter.number), ch1.getNumber());
+                assertEquals(ch1Tuple.get(chapterProgress.progress), ch1Progress);
 
-            //2단원
-            assertThat(ch2Tuple.get(chapter.title)).isEqualTo(ch2.getTitle());
-            assertThat(ch2Tuple.get(chapter.number)).isEqualTo(ch2.getNumber());
-            assertThat(ch2Tuple.get(chapterProgress.progress)).isEqualTo(ch2Progress);
+                //2단원
+                assertEquals(ch2Tuple.get(chapter.title), ch2.getTitle());
+                assertEquals(ch2Tuple.get(chapter.number), ch2.getNumber());
+                assertEquals(ch2Tuple.get(chapterProgress.progress), ch2Progress);
+            }
+
+            private void init(){
+                customer = new Customer("customer1", "customer1", Role.USER);
+                entityManager.persist(customer);
+
+                ch1 = new Chapter("title1", 1);
+                ch2 = new Chapter("title2", 2);
+                entityManager.persist(ch1);
+                entityManager.persist(ch2);
+            }
         }
 
-        @DisplayName("chapterProgress가 존재하지 않는 경우")
-        @Test
-        public void NotExistChapterProgress() {
-            //given
-            init();
+        @Nested
+        @DisplayName("특정 단원에 대해서 chapterProgress가 존재하지 않는다면")
+        public class notExistSomeChapterProgress{
+            @BeforeEach
+            public void clear() {
+                chapterProgressRepository.deleteAllInBatch();
+                customerRepository.deleteAllInBatch();
+                chapterRepository.deleteAllInBatch();
+            }
 
-            //when
-            List<Tuple> tuples = chapterRepository.queryChapterUserDtos(customer.getId());
+            @DisplayName("해당 단원의 progress는 null로 리턴한다.")
+            @Transactional
+            @Test
+            public void NotExistChapterProgress() {
+                //given
+                init();
 
-            //단원의 개수만큼 쿼리 결과가 생성되었는지 확인
-            assertThat(tuples.size()).isEqualTo(2);
-            Tuple ch1Tuple = tuples.get(0);
-            Tuple ch2Tuple = tuples.get(1);
+                //when
+                List<Tuple> tuples = chapterRepository.queryChapterUserDtos(customer.getId());
 
-            //1단원
-            assertThat(ch1Tuple.get(chapter.title)).isEqualTo(ch1.getTitle());
-            assertThat(ch1Tuple.get(chapter.number)).isEqualTo(ch1.getNumber());
-            assertThat(ch1Tuple.get(chapterProgress.progress)).isNull();
+                //단원의 개수만큼 쿼리 결과가 생성되었는지 확인
+                assertEquals(tuples.size(),2);
+                Tuple ch1Tuple = tuples.get(0);
+                Tuple ch2Tuple = tuples.get(1);
 
-            //2단원
-            assertThat(ch2Tuple.get(chapter.title)).isEqualTo(ch2.getTitle());
-            assertThat(ch2Tuple.get(chapter.number)).isEqualTo(ch2.getNumber());
-            assertThat(ch2Tuple.get(chapterProgress.progress)).isNull();
+                //1단원
+                assertEquals(ch1Tuple.get(chapter.title), ch1.getTitle());
+                assertEquals(ch1Tuple.get(chapter.number), ch1.getNumber());
+                assertNull(ch1Tuple.get(chapterProgress.progress));
+
+                //2단원
+                assertEquals(ch2Tuple.get(chapter.title), ch2.getTitle());
+                assertEquals(ch2Tuple.get(chapter.number), ch2.getNumber());
+                assertNull(ch2Tuple.get(chapterProgress.progress));
+            }
+
+            private void init(){
+                customer = new Customer("customer1", "customer1", Role.USER);
+                entityManager.persist(customer);
+
+                ch1 = new Chapter("title1", 1);
+                ch2 = new Chapter("title2", 2);
+                entityManager.persist(ch1);
+                entityManager.persist(ch2);
+            }
+
         }
 
 
-        private void init(){
-            customer = new Customer("customer1", "customer1", Role.USER);
-            entityManager.persist(customer);
 
-            ch1 = new Chapter("title1", 1);
-            ch2 = new Chapter("title2", 2);
-            entityManager.persist(ch1);
-            entityManager.persist(ch2);
-        }
     }
 
 }

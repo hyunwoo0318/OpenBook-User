@@ -28,7 +28,8 @@ public class CategoryService {
         return categoryRepository.findAll().stream().map(c -> new CategoryDto(c.getName())).collect(Collectors.toList());
     }
 
-    public Category createCategory(String categoryName) {
+    public Category createCategory(CategoryDto categoryDto) {
+        String categoryName = categoryDto.getName();
         checkDupCategoryName(categoryName);
 
         Category category = new Category(categoryName);

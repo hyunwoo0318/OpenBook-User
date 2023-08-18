@@ -5,12 +5,14 @@ import Project.OpenBook.Domain.Bookmark;
 import Project.OpenBook.Dto.AnswerNoteDto;
 import Project.OpenBook.Dto.BookmarkDto;
 import Project.OpenBook.Service.AnswerNoteService;
+import Project.OpenBook.Utils.CustomException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,3 +47,5 @@ public class AnswerNoteController {
         return new ResponseEntity(HttpStatus.OK);
     }
 }
+
+

@@ -24,11 +24,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity(errorMsgDtoList, ex.getErrorCode().getStatusCode());
     }
 
-    @ExceptionHandler({ Exception.class })
-    protected ResponseEntity handleServerException(Exception ex) {
-        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     @ExceptionHandler({BadCredentialsException.class})
     protected ResponseEntity handleBadCredentialException(BadCredentialsException e) {
         return new ResponseEntity(e.getMessage(), HttpStatus.UNAUTHORIZED);
@@ -40,5 +35,10 @@ public class GlobalExceptionHandler {
                 .map(err -> new ErrorMsgDto(err.getDefaultMessage()))
                 .collect(Collectors.toList());
         return new ResponseEntity(errorMsgDtoList, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({ Exception.class })
+    protected ResponseEntity handleServerException(Exception ex) {
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
