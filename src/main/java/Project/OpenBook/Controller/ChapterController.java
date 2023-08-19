@@ -1,10 +1,9 @@
 package Project.OpenBook.Controller;
 
 
-import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Dto.chapter.*;
-import Project.OpenBook.Dto.topic.AdminChapterDto;
+import Project.OpenBook.Dto.topic.ChapterAdminDto;
 import Project.OpenBook.Service.ChapterService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -111,9 +110,9 @@ public class ChapterController {
 
     @ApiOperation("해당 단원의 모든 topic 조회 - 관리자")
     @GetMapping("/admin/chapters/{num}/topics")
-    public ResponseEntity<List<AdminChapterDto>> queryChapterTopicsAdmin(@PathVariable("num") int num) {
-        List<AdminChapterDto> adminChapterDtoList = chapterService.queryTopicsInChapterAdmin(num);
-        return new ResponseEntity<List<AdminChapterDto>>(adminChapterDtoList, HttpStatus.OK);
+    public ResponseEntity<List<ChapterAdminDto>> queryChapterTopicsAdmin(@PathVariable("num") int num) {
+        List<ChapterAdminDto> chapterAdminDtoList = chapterService.queryTopicsInChapterAdmin(num);
+        return new ResponseEntity<List<ChapterAdminDto>>(chapterAdminDtoList, HttpStatus.OK);
     }
 
     @ApiOperation("해당 단원의 모든 topic 조회 - 사용자")

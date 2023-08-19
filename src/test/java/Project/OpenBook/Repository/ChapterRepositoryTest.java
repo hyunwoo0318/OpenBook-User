@@ -61,7 +61,6 @@ public class ChapterRepositoryTest {
         }
 
         @Test
-        @Transactional
         @DisplayName("chapterRepository에 chapter가 존재한다면")
         public void findAllSuccess() {
             //given

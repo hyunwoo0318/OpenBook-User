@@ -2,15 +2,14 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
-import Project.OpenBook.Dto.PrimaryDate.PrimaryDateUserDto;
-import Project.OpenBook.Dto.Sentence.SentenceDto;
+import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
+import Project.OpenBook.Dto.primaryDate.PrimaryDateUserDto;
+import Project.OpenBook.Dto.sentence.SentenceDto;
 import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
-import Project.OpenBook.Dto.keyword.KeywordNameCommentDto;
 import Project.OpenBook.Dto.keyword.KeywordUserDto;
 import Project.OpenBook.Dto.topic.TopicAdminDto;
 import Project.OpenBook.Dto.topic.TopicCustomerDto;
@@ -37,7 +36,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 

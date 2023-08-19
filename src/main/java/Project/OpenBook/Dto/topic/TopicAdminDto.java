@@ -1,6 +1,6 @@
 package Project.OpenBook.Dto.topic;
 
-import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
+import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
 import lombok.*;
 
 import javax.validation.constraints.Min;

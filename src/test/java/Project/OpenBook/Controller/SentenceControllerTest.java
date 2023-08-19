@@ -1,12 +1,8 @@
 package Project.OpenBook.Controller;
 
-import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.Sentence.SentenceCreateDto;
-import Project.OpenBook.Dto.Sentence.SentenceDto;
-import Project.OpenBook.Dto.Sentence.SentenceUpdateDto;
-import Project.OpenBook.Dto.description.DescriptionCreateDto;
-import Project.OpenBook.Dto.description.DescriptionUpdateDto;
+import Project.OpenBook.Dto.sentence.SentenceCreateDto;
+import Project.OpenBook.Dto.sentence.SentenceUpdateDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;

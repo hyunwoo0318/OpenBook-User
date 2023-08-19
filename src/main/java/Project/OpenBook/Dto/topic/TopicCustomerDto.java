@@ -1,6 +1,6 @@
 package Project.OpenBook.Dto.topic;
 
-import Project.OpenBook.Dto.PrimaryDate.PrimaryDateUserDto;
+import Project.OpenBook.Dto.primaryDate.PrimaryDateUserDto;
 import Project.OpenBook.Dto.keyword.KeywordUserDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

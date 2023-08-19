@@ -2,8 +2,8 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Domain.Sentence;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.Sentence.SentenceCreateDto;
-import Project.OpenBook.Dto.Sentence.SentenceUpdateDto;
+import Project.OpenBook.Dto.sentence.SentenceCreateDto;
+import Project.OpenBook.Dto.sentence.SentenceUpdateDto;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Utils.CustomException;

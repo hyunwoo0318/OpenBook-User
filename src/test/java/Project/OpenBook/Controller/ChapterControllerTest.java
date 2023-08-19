@@ -7,7 +7,7 @@ import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
-import Project.OpenBook.Dto.topic.AdminChapterDto;
+import Project.OpenBook.Dto.topic.ChapterAdminDto;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.category.CategoryRepository;
@@ -495,10 +495,10 @@ class ChapterControllerTest {
         @DisplayName("해당 단원의 모든 토픽 조회 성공")
         @Test
         public void queryChaptersTopicSuccess() {
-            ResponseEntity<List<AdminChapterDto>> response = restTemplate.exchange(URL + "1/topics", HttpMethod.GET, null, new ParameterizedTypeReference<List<AdminChapterDto>>() {
+            ResponseEntity<List<ChapterAdminDto>> response = restTemplate.exchange(URL + "1/topics", HttpMethod.GET, null, new ParameterizedTypeReference<List<ChapterAdminDto>>() {
             });
-            List<AdminChapterDto> body = response.getBody();;
-            AdminChapterDto expectBody = new AdminChapterDto("유물", "title1", 1234, 2314, 2L, 2L, 2L);
+            List<ChapterAdminDto> body = response.getBody();;
+            ChapterAdminDto expectBody = new ChapterAdminDto("유물", "title1", 1234, 2314, 2L, 2L, 2L);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(body).usingRecursiveComparison().isEqualTo(Arrays.asList(expectBody));

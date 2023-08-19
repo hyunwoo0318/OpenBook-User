@@ -1,7 +1,7 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Dto.PrimaryDate.PrimaryDateDto;
-import Project.OpenBook.Dto.PrimaryDate.PrimaryDateUserDto;
+import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
+import Project.OpenBook.Dto.primaryDate.PrimaryDateUserDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 
 import Project.OpenBook.Dto.keyword.KeywordUserDto;
@@ -25,7 +25,6 @@ import Project.OpenBook.Repository.topic.TopicRepository;
 import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,29 +48,34 @@ public class TopicService {
     private final TopicRepository topicRepository;
     private final CategoryRepository categoryRepository;
     private final ChapterRepository chapterRepository;
-
     private final DupDateRepository dupDateRepository;
-
     private final ChoiceRepository choiceRepository;
-
     private final DescriptionRepository descriptionRepository;
-
     private final KeywordRepository keywordRepository;
     private final CustomerRepository customerRepository;
-
     private final SentenceRepository  sentenceRepository;
-
     private final PrimaryDateRepository primaryDateRepository;
     private final TopicProgressRepository topicProgressRepository;
 
     public TopicAdminDto queryTopicAdmin(String topicTitle) {
         checkTopic(topicTitle);
-        TopicAdminDto topicAdminDto = topicRepository.queryTopicAdminDto(topicTitle);
-        return topicAdminDto;
-    }
+        Map<String, Group> m = topicRepository.queryTopicAdminDto(topicTitle);
+        Group group = m.get(topicTitle);
 
-    public TopicUserDto queryTopicUser(Integer chapterNum, Integer topicNum) {
-        return null;
+        Integer chapterNum = group.getOne(topic.chapter.number);
+        Integer topicNum = group.getOne(topic.number);
+        String categoryName = group.getOne(topic.category.name);
+        Integer startDate = group.getOne(topic.startDate);
+        Integer endDate = group.getOne(topic.endDate);
+        Boolean startDateCheck = group.getOne(topic.startDateCheck);
+        Boolean endDateCheck = group.getOne(topic.endDateCheck);
+        String detail = group.getOne(topic.detail);
+        List<PrimaryDateDto> extraDateDtoList = group.getList(primaryDate).stream()
+                .map(p -> new PrimaryDateDto(p.getExtraDate(), p.getExtraDateCheck(), p.getExtraDateComment()))
+                .collect(Collectors.toList());
+
+        return new TopicAdminDto(chapterNum, topicTitle, categoryName, startDate, startDateCheck, endDateCheck, endDate, detail, extraDateDtoList);
+
     }
 
     public Topic createTopic(TopicAdminDto topicAdminDto) {

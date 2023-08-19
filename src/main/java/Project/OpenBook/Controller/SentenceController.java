@@ -1,7 +1,7 @@
 package Project.OpenBook.Controller;
 
-import Project.OpenBook.Dto.Sentence.SentenceCreateDto;
-import Project.OpenBook.Dto.Sentence.SentenceUpdateDto;
+import Project.OpenBook.Dto.sentence.SentenceCreateDto;
+import Project.OpenBook.Dto.sentence.SentenceUpdateDto;
 import Project.OpenBook.Service.SentenceService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

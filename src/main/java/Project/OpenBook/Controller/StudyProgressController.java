@@ -1,9 +1,9 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Dto.ChapterProgressAddDto;
-import Project.OpenBook.Dto.ProgressDto;
-import Project.OpenBook.Dto.TopicProgressAddDtoList;
+import Project.OpenBook.Dto.studyProgress.ChapterProgressAddDto;
+import Project.OpenBook.Dto.studyProgress.ProgressDto;
+import Project.OpenBook.Dto.studyProgress.TopicProgressAddDtoList;
 import Project.OpenBook.Service.StudyProgressService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

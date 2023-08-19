@@ -1,4 +1,4 @@
-package Project.OpenBook.Dto.Sentence;
+package Project.OpenBook.Dto.sentence;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

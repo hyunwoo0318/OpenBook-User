@@ -1,4 +1,4 @@
-package Project.OpenBook.Dto.PrimaryDate;
+package Project.OpenBook.Dto.primaryDate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

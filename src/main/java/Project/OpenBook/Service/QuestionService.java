@@ -7,10 +7,7 @@ import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Repository.question.QuestionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -29,8 +26,6 @@ import static Project.OpenBook.Domain.QSentence.sentence;
 public class QuestionService {
 
     private final TopicRepository topicRepository;
-    private final QuestionRepository questionRepository;
-    private final CategoryRepository categoryRepository;
     private final ChapterRepository chapterRepository;
     private final KeywordRepository keywordRepository;
     private final SentenceRepository sentenceRepository;
@@ -51,22 +46,7 @@ public class QuestionService {
     public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Integer num) {
         Chapter chapter = checkChapter(num);
 
-        List<Tuple> tuples = topicRepository.queryTimeFlowQuestion(num);
-
-        /**
-         * <topic, List<PrimaryDate> map 생성 로직
-         * (topic과 primaryDate는 1:N관계)
-         */
-        Map<Topic, List<PrimaryDate>> m =new HashMap<>();
-        for (Tuple t : tuples) {
-            Topic topic = t.get(QTopic.topic);
-            PrimaryDate primaryDate = t.get(QPrimaryDate.primaryDate);
-            if (primaryDate != null) {
-                m.computeIfAbsent(topic, k -> new ArrayList<>()).add(primaryDate);
-            } else{
-                m.computeIfAbsent(topic, k -> new ArrayList<>());
-            }
-        }
+        Map<Topic, List<PrimaryDate>> m = topicRepository.queryTimeFlowQuestion(num);
 
         List<TimeFlowQuestionDto> timeFlowQuestionDtoList = new ArrayList<>();
         for (Topic topic  : m.keySet()) {
@@ -83,11 +63,10 @@ public class QuestionService {
                     timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(primaryDate.getExtraDate(), primaryDate.getExtraDateComment(), topicTitle));
                 }
             }
-
         }
 
         //연도 순으로 오름차순으로 정렬
-        Collections.sort(timeFlowQuestionDtoList, Comparator.comparing(dto -> dto.getDate()));
+        Collections.sort(timeFlowQuestionDtoList, Comparator.comparing(TimeFlowQuestionDto::getDate));
 
         return timeFlowQuestionDtoList;
     }
@@ -98,7 +77,6 @@ public class QuestionService {
         } else {
             return topicTitle + "의 종료연도입니다.";
         }
-
     }
 
     @Transactional
@@ -207,7 +185,7 @@ public class QuestionService {
 
         //return할 dto생성
         /**
-         * 충분한 keyword가 존재하는 경우 -> 각 문제마다 다른 오답 선지 제공
+         * 충분한 sentence가 존재하는 경우 -> 각 문제마다 다른 오답 선지 제공
          */
         if(wrongSentenceSize == answerSentenceSize * WRONG_KEYWORD_SENTENCE_NUM)  {
             int idx = 0;
@@ -226,7 +204,7 @@ public class QuestionService {
             }
         }
         /**
-         * 충분한 keyword가 존재하지 않는 경우 -> 존재하는 키워드중 랜덤하게 WRONG_ANSWER_NUM만큼 골라서 오답 선지로 제공
+         * 충분한 sentence가 존재하지 않는 경우 -> 존재하는 sentence중 랜덤하게 WRONG_ANSWER_NUM만큼 골라서 오답 선지로 제공
          */
         else{
             for (QuestionChoiceDto questionChoiceDto : answerChoiceList) {
@@ -249,7 +227,7 @@ public class QuestionService {
     }
 
     public List<QuestionDto> queryGetTopicsByKeywordQuestion(Integer num) {
-        Chapter chapter = checkChapter(num);
+        checkChapter(num);
 
         List<QuestionDto> questionDtoList = new ArrayList<>();
 
@@ -283,7 +261,7 @@ public class QuestionService {
     }
 
     public List<QuestionDto> queryGetTopicsBySentenceQuestion(Integer num) {
-        Chapter chapter = checkChapter(num);
+        checkChapter(num);
 
         List<QuestionDto> questionDtoList = new ArrayList<>();
 

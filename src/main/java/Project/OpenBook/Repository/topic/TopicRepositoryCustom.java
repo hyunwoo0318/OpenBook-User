@@ -1,5 +1,6 @@
 package Project.OpenBook.Repository.topic;
 
+import Project.OpenBook.Domain.PrimaryDate;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.topic.TopicAdminDto;
 import Project.OpenBook.Dto.topic.TopicCustomerDto;
@@ -21,11 +22,11 @@ public interface  TopicRepositoryCustom {
 
     public List<Tuple> queryAdminChapterDto(Integer chapterNum);
 
-    public TopicAdminDto queryTopicAdminDto(String topicTitle);
+    public Map<String, Group> queryTopicAdminDto(String topicTitle);
 
     public Map<String, Group> queryTopicCustomerDto(String topicTitle);
 
-    public List<Tuple> queryTimeFlowQuestion(Integer num);
+    public Map<Topic, List<PrimaryDate>>  queryTimeFlowQuestion(Integer num);
 
     public List<String> queryTopicTitleInChapter(Integer num);
 
