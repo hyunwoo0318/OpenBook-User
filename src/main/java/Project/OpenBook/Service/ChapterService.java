@@ -4,9 +4,8 @@ import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.*;
-import Project.OpenBook.Dto.topic.AdminChapterDto;
+import Project.OpenBook.Dto.topic.ChapterAdminDto;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
-import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
@@ -25,7 +24,6 @@ import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
 import static Project.OpenBook.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.QTopic.topic;
-import static com.querydsl.core.group.GroupBy.list;
 
 @Service
 @Transactional
@@ -34,11 +32,15 @@ public class ChapterService {
 
     private final ChapterRepository chapterRepository;
     private final TopicRepository topicRepository;
-    private final CustomerRepository customerRepository;
     private final ChapterProgressRepository chapterProgressRepository;
-    private final StudyProgressService studyProgressService;
 
-
+    /**
+     * 단원 저장
+     * @param title 단원 제목
+     * @param number 단원 번호
+     * @return 저장한 단원
+     * 중복된 단원 번호 -> throw CustomException(DUP_CHAPTER_NUM);
+     */
     public Chapter createChapter(String title, int number) {
         checkChapterNum(number);
 
@@ -48,29 +50,32 @@ public class ChapterService {
                 .build();
 
         chapterRepository.save(newChapter);
-        updateChapterProgress(newChapter);
 
         return newChapter;
     }
 
-    private void updateChapterProgress(Chapter newChapter) {
-        List<ChapterProgress> chapterProgressList = customerRepository.findAll().stream()
-                .map(c -> new ChapterProgress(c, newChapter))
-                .collect(Collectors.toList());
-        chapterProgressRepository.saveAll(chapterProgressList);
-    }
-
+    /**
+     * 단원 전체 정보를 가져와서 List<ChapterDto>로 변경해주는 메서드
+     * ChapterDto : {chapterTitle, chpaterNumber}
+     * @return List<ChapterDto>
+     */
     public List<ChapterDto> queryAllChapters() {
         return chapterRepository.findAll().stream()
                 .map(c -> new ChapterDto(c.getTitle(), c.getNumber()))
                 .collect(Collectors.toList());
     }
 
-    public List<AdminChapterDto> queryTopicsInChapterAdmin(int number) {
+    /**
+     * 단원에 존재하는 토픽들의 상세정보들 리턴하는 메서드
+     * @param number 단원번호
+     * @return List<ChapterAdminDto>
+     * chapterAdminDto{categoryName, topicTitle, startDate, endDate, descriptionCount, choiceCount, keywordCount}
+     */
+    public List<ChapterAdminDto> queryTopicsInChapterAdmin(int number) {
         checkChapter(number);
         List<Tuple> result = topicRepository.queryAdminChapterDto(number);
 
-        List<AdminChapterDto> adminChapterDtoList = new ArrayList<>();
+        List<ChapterAdminDto> chapterAdminDtoList = new ArrayList<>();
         for (Tuple t : result) {
             String category = t.get(topic.category.name);
             String title = t.get(topic.title);
@@ -82,13 +87,20 @@ public class ChapterService {
             if(choiceCount == null) choiceCount = 0L;
             Long keywordCount = t.get(keyword.countDistinct());
             if(keywordCount == null) keywordCount = 0L;
-            AdminChapterDto adminChapterDto = new AdminChapterDto(category, title, startDate, endDate, descriptionCount, choiceCount, keywordCount);
-            adminChapterDtoList.add(adminChapterDto);
+            ChapterAdminDto chapterAdminDto = new ChapterAdminDto(category, title, startDate, endDate, descriptionCount, choiceCount, keywordCount);
+            chapterAdminDtoList.add(chapterAdminDto);
         }
 
-        return adminChapterDtoList;
+        return chapterAdminDtoList;
     }
 
+    /**
+     * 단원 정보를 갱신하는 메서드  
+     * @param num 단원번호  
+     * @param inputTitle 변경할 단원제목
+     * @param inputNum 변경할 단원번호
+     * @return
+     */
     public Chapter updateChapter(int num, String inputTitle, int inputNum) {
         if(num != inputNum){
             checkChapterNum(inputNum);
@@ -206,5 +218,4 @@ public class ChapterService {
         checkChapter(num);
         return topicRepository.queryTopicTitleCustomer(num);
     }
-
 }
