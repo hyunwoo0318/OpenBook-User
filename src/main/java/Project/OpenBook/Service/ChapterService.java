@@ -1,15 +1,20 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.*;
+import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Dto.topic.ChapterAdminDto;
-import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
+import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +28,7 @@ import static Project.OpenBook.Domain.QChapterProgress.chapterProgress;
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
 import static Project.OpenBook.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.QSentence.sentence;
 import static Project.OpenBook.Domain.QTopic.topic;
 
 @Service
@@ -33,6 +39,8 @@ public class ChapterService {
     private final ChapterRepository chapterRepository;
     private final TopicRepository topicRepository;
     private final ChapterProgressRepository chapterProgressRepository;
+    private final ChapterSectionRepository chapterSectionRepository;
+    private final TopicProgressRepository topicProgressRepository;
 
     /**
      * 단원 저장
@@ -120,6 +128,9 @@ public class ChapterService {
             throw new CustomException(CHAPTER_HAS_TOPIC);
         }
 
+        List<ChapterSection> chapterSectionList = chapterSectionRepository.queryChapterSection(num);
+        chapterSectionRepository.deleteAllInBatch(chapterSectionList);
+
         List<ChapterProgress> chapterProgressList = chapterProgressRepository.queryChapterProgress(num);
         chapterProgressRepository.deleteAllInBatch(chapterProgressList);
         chapterRepository.delete(chapter);
@@ -171,39 +182,27 @@ public class ChapterService {
         Long customerId = customer.getId();
 
         List<ChapterUserDto> chapterUserDtoList = new ArrayList<>();
-        List<Tuple> ret = chapterRepository.queryChapterUserDtos(customerId);
-        for (Tuple tuple : ret) {
-            String chapterTitle = tuple.get(chapter.title);
-            Integer chapterNum = tuple.get(chapter.number);
-            String progress = tuple.get(chapterProgress.progress);
+        Map<Chapter, Group> map = chapterRepository.queryChapterUserDtos(customerId);
+        for (Chapter chapter : map.keySet()) {
+            Group group = map.get(chapter);
+            ChapterProgress findChapterProgress = group.getOne(QChapterProgress.chapterProgress);
+            List<ChapterSection> chapterSectionList = group.getList(QChapterSection.chapterSection);
 
-            if (progress == null) {
-                Chapter chapter = checkChapter(chapterNum);
-                ChapterProgress chapterProgress = new ChapterProgress(customer, chapter, ProgressConst.NOT_STARTED);
-                chapterProgressRepository.save(chapterProgress);
-                progress = ProgressConst.NOT_STARTED;
-            }
-
-            /**
-             * state 결정
-             * 1. 해당 단원을 진행한 바가 있으면 OPEN
-             * 2. 해당 단원을 진행하지 않았으나 이전 단원이 COMPLETE 상태이면 OPEN
-             * 3. 해당 단원을 진행하지 않고 이전 단원이 COMPLETE 상태가 아니면 CLOSED
-             */
-
-            String state;
-            if (!progress.equals(ProgressConst.NOT_STARTED) || chapterNum.equals(1)) {
-                state = StateConst.OPEN;
-            }else {
-                String prevProgress = chapterUserDtoList.get(chapterUserDtoList.size() - 1).getProgress();
-                if(prevProgress.equals(ProgressConst.COMPLETE)){
-                    state = StateConst.OPEN;
+            if (findChapterProgress == null) {
+                if(chapter.getNumber() == 1)
+                {
+                    findChapterProgress = new ChapterProgress(customer, chapter, 0, ContentConst.CHAPTER_INFO.getName());
                 }else{
-                    state = StateConst.LOCKED;
+                    findChapterProgress = new ChapterProgress(customer, chapter, 0, ContentConst.NOT_STARTED.getName());
                 }
+                chapterProgressRepository.save(findChapterProgress);
             }
-            ChapterUserDto dto = new ChapterUserDto(chapterTitle, chapterNum, state, progress);
-            chapterUserDtoList.add(dto);
+            String state = StateConst.LOCKED.getName();
+            if(!findChapterProgress.getProgress().equals(ContentConst.NOT_STARTED.getName())){
+                state = StateConst.OPEN.getName();
+            }
+            ChapterUserDto chapterUserDto = new ChapterUserDto(chapter.getTitle(), chapter.getNumber(), state, findChapterProgress.getProgress());
+            chapterUserDtoList.add(chapterUserDto);
         }
 
         List<ChapterUserDto> sortedChapterUserDtoList = chapterUserDtoList.stream()
@@ -217,5 +216,99 @@ public class ChapterService {
     public List<String> queryTopicsInChapterCustomer(int num) {
         checkChapter(num);
         return topicRepository.queryTopicTitleCustomer(num);
+    }
+
+    /**
+     * 단원별 목차 제공
+     * 단원 학습 -> 연표 학습 -> 연표 문제 -> { 주제학습 ->  키워드 보고 주제 맞추기 -> 문장 보고 주제맞추기 -> 키워드 보고 주제 맞추기 } -> 문장 보고 주제 맞추기
+     *
+     */
+    public List<ProgressDto> queryContentTable(Customer customer, Integer number) {
+        Chapter chapter = checkChapter(number);
+        String title = chapter.getTitle();
+        HashMap<String, ChapterSection> chapterMap = new HashMap<>();
+        HashMap<String, TopicProgress> topicMap = new HashMap<>();
+        List<ProgressDto> contentTableList = new ArrayList<>();
+        chapterSectionRepository.queryChapterSection(customer.getId(), number).stream()
+                .map(cp -> chapterMap.put(cp.getContent(), cp));
+        topicProgressRepository.queryTopicProgresses(customer.getId(), number).stream()
+                .map(tp -> topicMap.put(tp.getContent(), tp));
+
+        /**
+         * 1. 단원 학습
+         */
+        String chapterInfoName = ContentConst.CHAPTER_INFO.getName();
+        ChapterSection chapterInfoProgress = chapterMap.get(chapterInfoName);
+        if (chapterInfoProgress == null) {
+            chapterInfoProgress = new ChapterSection(customer, chapter, chapterInfoName, StateConst.OPEN.getName());
+            chapterSectionRepository.save(chapterInfoProgress);
+        }
+        contentTableList.add(new ProgressDto(chapterInfoName, title, chapterInfoProgress.getState()));
+
+        /**
+         * 2. 연표 학습
+         */
+        String timeFlowStudyName = ContentConst.TIME_FLOW_STUDY.getName();
+        ChapterSection timeFlowStudyProgress = chapterMap.get(timeFlowStudyName);
+        if (timeFlowStudyProgress == null) {
+            timeFlowStudyProgress = new ChapterSection(customer, chapter, timeFlowStudyName, StateConst.LOCKED.getName());
+            chapterSectionRepository.save(timeFlowStudyProgress);
+        }
+        contentTableList.add(new ProgressDto(timeFlowStudyName, title, timeFlowStudyProgress.getState()));
+
+        /**
+         * 3. 연표 문제
+         */
+        String timeFlowQuestionName = ContentConst.TIME_FLOW_QUESTION.getName();
+        ChapterSection timeFlowQuestionProgress = chapterMap.get(timeFlowQuestionName);
+        if (timeFlowQuestionProgress == null) {
+            timeFlowQuestionProgress = new ChapterSection(customer, chapter, timeFlowQuestionName, StateConst.LOCKED.getName());
+            chapterSectionRepository.save(timeFlowQuestionProgress);
+        }
+        contentTableList.add(new ProgressDto(timeFlowQuestionName, title, timeFlowQuestionProgress.getState()));
+
+        /**
+         * 주제
+         */
+        List<Tuple> tuples = topicRepository.queryTopicForTable(number);
+        for (Tuple tuple : tuples) {
+            String topicTitle = tuple.get(topic.title);
+            Long keywordNum = tuple.get(keyword.countDistinct());
+            Long sentenceNum = tuple.get(sentence.countDistinct());
+
+            //TODO : State값 찾아서 적용
+            contentTableList.add(new ProgressDto(ContentConst.TOPIC_STUDY.getName(), topicTitle, StateConst.OPEN.getName()));
+            if(keywordNum != null && keywordNum >= 1 ){
+                contentTableList.add(new ProgressDto(ContentConst.GET_KEYWORD_BY_TOPIC.getName(), topicTitle, StateConst.OPEN.getName()));
+            }
+            if(sentenceNum != null && sentenceNum >= 1 ){
+                contentTableList.add(new ProgressDto(ContentConst.GET_SENTENCE_BY_TOPIC.getName(), topicTitle, StateConst.OPEN.getName()));
+            }
+        }
+
+        /**
+         * 키워드 보고 주제 맞추기
+         */
+        String getTopicByKeywordName = ContentConst.GET_TOPIC_BY_KEYWORD.getName();
+        ChapterSection getTopicByKeywordProgress = chapterMap.get(getTopicByKeywordName);
+        if (getTopicByKeywordProgress == null) {
+            getTopicByKeywordProgress = new ChapterSection(customer, chapter, getTopicByKeywordName, StateConst.LOCKED.getName());
+            chapterSectionRepository.save(getTopicByKeywordProgress);
+        }
+        contentTableList.add(new ProgressDto(getTopicByKeywordName, title, getTopicByKeywordProgress.getState()));
+
+        /**
+         * 문장 보고 주제 맞추기
+         */
+        String getTopicBySentenceName = ContentConst.GET_TOPIC_BY_SENTENCE.getName();
+        ChapterSection getTopicBySentenceProgress = chapterMap.get(getTopicBySentenceName);
+        if (getTopicBySentenceProgress == null) {
+            getTopicBySentenceProgress = new ChapterSection(customer, chapter, getTopicBySentenceName, StateConst.LOCKED.getName());
+            chapterSectionRepository.save(getTopicBySentenceProgress);
+        }
+        contentTableList.add(new ProgressDto(getTopicBySentenceName, title, getTopicBySentenceProgress.getState()));
+
+
+        return contentTableList;
     }
 }

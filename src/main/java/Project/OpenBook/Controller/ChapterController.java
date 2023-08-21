@@ -3,6 +3,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Dto.chapter.*;
+import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Dto.topic.ChapterAdminDto;
 import Project.OpenBook.Service.ChapterService;
 import io.swagger.annotations.ApiOperation;
@@ -46,6 +47,16 @@ public class ChapterController {
     public ResponseEntity<List<ChapterUserDto>> queryChapterUser(@AuthenticationPrincipal Customer customer){
         List<ChapterUserDto> chapterUserDtoList = chapterService.queryChapterUserDtos(customer);
         return new ResponseEntity<List<ChapterUserDto>>(chapterUserDtoList, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "목차 제공 - 사용자")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "목차 제공 성공")
+    })
+    @GetMapping("/contents-table")
+    public ResponseEntity<List<ProgressDto>> queryContentTable(@AuthenticationPrincipal Customer customer, @RequestParam("num") Integer number) {
+        List<ProgressDto> contentTable = chapterService.queryContentTable(customer, number);
+        return new ResponseEntity<List<ProgressDto>>(contentTable, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 이름 조회", notes = "단원 번호를 넘기면 단원 이름을 알려주는 endPoint")

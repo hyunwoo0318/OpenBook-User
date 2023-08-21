@@ -11,7 +11,7 @@ import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
-import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
@@ -29,7 +29,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -57,7 +56,7 @@ class ChoiceControllerTest {
     ChoiceRepository choiceRepository;
 
     @Autowired
-    ChapterProgressRepository chapterProgressRepository;
+    ChapterSectionRepository chapterSectionRepository;
 
     @Autowired
     TopicProgressRepository topicProgressRepository;

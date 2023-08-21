@@ -171,4 +171,14 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .orderBy(topic.number.asc())
                 .fetch();
     }
+
+    @Override
+    public List<Tuple> queryTopicForTable(int num) {
+        return queryFactory.select(topic.title, keyword.countDistinct(), sentence.countDistinct())
+                .from(topic)
+                .leftJoin(keyword).on(keyword.topic.eq(topic))
+                .leftJoin(sentence).on(sentence.topic.eq(topic))
+                .where(topic.number.eq(num))
+                .fetch();
+    }
 }

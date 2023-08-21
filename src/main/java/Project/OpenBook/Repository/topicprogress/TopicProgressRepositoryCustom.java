@@ -9,7 +9,5 @@ public interface TopicProgressRepositoryCustom {
 
     public Optional<TopicProgress> queryTopicProgress(String topicTitle, Long customerId);
 
-    public List<TopicProgress> queryTopicProgress(Long customerId);
-
-    public List<TopicProgress> queryYTopicProgress(String topicTitle);
+    public List<TopicProgress> queryTopicProgresses(Long customerId, Integer chapterNum);
 }

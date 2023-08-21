@@ -1,9 +1,6 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.choice.ChoiceAddDto;
-import Project.OpenBook.Dto.choice.ChoiceDto;
-import Project.OpenBook.Dto.choice.ChoiceUpdateDto;
 import Project.OpenBook.Dto.description.DescriptionCreateDto;
 import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.description.DescriptionUpdateDto;
@@ -11,10 +8,9 @@ import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
-import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
-import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +26,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -48,7 +43,7 @@ class DescriptionControllerTest {
     @Autowired
     ChapterRepository chapterRepository;
     @Autowired
-    ChapterProgressRepository chapterProgressRepository;
+    ChapterSectionRepository chapterSectionRepository;
 
     @Autowired
     TopicProgressRepository topicProgressRepository;

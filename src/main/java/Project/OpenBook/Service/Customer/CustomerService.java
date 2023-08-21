@@ -2,7 +2,7 @@ package Project.OpenBook.Service.Customer;
 
 import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Domain.ChapterProgress;
+import Project.OpenBook.Domain.ChapterSection;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Domain.TopicProgress;
 import Project.OpenBook.Dto.customer.CustomerAddDetailDto;
@@ -11,7 +11,7 @@ import Project.OpenBook.Dto.customer.CustomerDetailDto;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
-import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
@@ -42,12 +42,10 @@ public class CustomerService implements UserDetailsService {
     private final ChapterRepository chapterRepository;
     private final TopicRepository topicRepository;
     private final TopicProgressRepository topicProgressRepository;
-    private final ChapterProgressRepository chapterProgressRepository;
+    private final ChapterSectionRepository chapterSectionRepository;
     private final AuthenticationManagerBuilder authenticationManager;
-
+    private final WebClient.Builder webClientBuilder;
     private final TokenManager tokenManager;
-    private final KakaoLogin kakaoLogin;
-    private final NaverLogin naverLogin;
 
     public Customer addDetails(Long customerId, CustomerAddDetailDto customerAddDetailDto) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomException(CUSTOMER_NOT_FOUND));
@@ -150,9 +148,9 @@ public class CustomerService implements UserDetailsService {
 
     private Oauth2Login getOauth2LoginStrategy(String providerName) {
         if(providerName.equals("kakao")){
-            return kakaoLogin;
+            return new KakaoLogin(webClientBuilder);
         }else if(providerName.equals("naver")){
-            return naverLogin;
+            return new NaverLogin(webClientBuilder);
         }else{
             throw new CustomException(WRONG_PROVIDER_NAME);
         }
@@ -166,10 +164,10 @@ public class CustomerService implements UserDetailsService {
     }
 
     private void updateChapterProgress(Customer customer) {
-        List<ChapterProgress> chapterProgressList = chapterRepository.findAll().stream()
-                .map(c -> new ChapterProgress(customer, c))
+        List<ChapterSection> chapterSectionList = chapterRepository.findAll().stream()
+                .map(c -> new ChapterSection(customer, c))
                 .collect(Collectors.toList());
-        chapterProgressRepository.saveAll(chapterProgressList);
+        chapterSectionRepository.saveAll(chapterSectionList);
     }
 
 

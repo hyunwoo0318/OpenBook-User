@@ -35,4 +35,6 @@ public interface  TopicRepositoryCustom {
     public Optional<Topic> queryTopicByNumber(Integer chapterNum, Integer topicNum);
 
     public List<String> queryTopicTitleCustomer(int num);
+
+    public List<Tuple> queryTopicForTable(int num);
 }

@@ -13,9 +13,12 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class ProgressDto {
 
-    @NotNull(message = "단원 번호를 입력해주세요.")
-    private Integer number;
+    @NotBlank(message = "content를 입력해주세요.")
+    private String content;
 
-    @NotBlank(message = "progress를 입력해주세요.")
-    private String progress;
+    @NotBlank(message = "title를 입력해주세요.")
+    private String title;
+
+    @NotBlank(message = "state를 입력해주세요.")
+    private String state;
 }

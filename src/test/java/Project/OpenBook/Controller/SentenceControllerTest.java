@@ -7,7 +7,7 @@ import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
-import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
@@ -53,7 +53,7 @@ public class SentenceControllerTest {
     SentenceRepository sentenceRepository;
 
     @Autowired
-    ChapterProgressRepository chapterProgressRepository;
+    ChapterSectionRepository chapterSectionRepository;
 
     @Autowired
     TopicProgressRepository topicProgressRepository;

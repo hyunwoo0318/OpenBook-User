@@ -6,26 +6,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Base64Utils;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
 import static Project.OpenBook.Constants.ErrorCode.LOGIN_FAIL;
 
-@Component
+@RequiredArgsConstructor
 public class KakaoLogin implements Oauth2Login{
     private final String redirectURL = KakaoConst.REDIRECT_URL_LOGIN;
-    private WebClient.Builder webClientBuilder;
-    private String kakaoKey;
+    private final WebClient.Builder webClientBuilder;
 
-    public KakaoLogin(@Value("${spring.security.oauth2.client.registration.kakao.client-id}") String kakaoKey, WebClient.Builder builder) {
-        this.kakaoKey = kakaoKey;
-        this.webClientBuilder = builder;
-    }
-
+    private String kakaoKey = "ca80f14a6e6b6c34ea821c46af0cc10c";
     @Override
     public String login(String code) throws JsonProcessingException {
         Map<String, String> map = webClientBuilder.build()

@@ -26,16 +26,10 @@ public class TopicProgressRepositoryCustomImpl implements TopicProgressRepositor
     }
 
     @Override
-    public List<TopicProgress> queryTopicProgress(Long customerId) {
+    public List<TopicProgress> queryTopicProgresses(Long customerId,Integer chapterNum) {
         return queryFactory.selectFrom(topicProgress)
                 .where(topicProgress.customer.id.eq(customerId))
-                .fetch();
-    }
-
-    @Override
-    public List<TopicProgress> queryYTopicProgress(String topicTitle) {
-        return queryFactory.selectFrom(topicProgress)
-                .where(topicProgress.topic.title.eq(topicTitle))
+                .where(topicProgress.topic.chapter.number.eq(chapterNum))
                 .fetch();
     }
 }

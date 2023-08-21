@@ -1,7 +1,17 @@
 package Project.OpenBook.Constants;
 
-public abstract class StateConst {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-    public static final String OPEN = "Open";
-    public static final String LOCKED = "Locked";
+@AllArgsConstructor
+@Getter
+public enum StateConst {
+
+    OPEN("Open"),
+    LOCKED("Locked"),
+    UPDATED("Updated")
+
+    ;
+    private final String name;
+
 }

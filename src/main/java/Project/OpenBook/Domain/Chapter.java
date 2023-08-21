@@ -33,7 +33,7 @@ public class Chapter extends BaseEntity {
     private String title;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
-    private List<ChapterProgress> chapterProgressList = new ArrayList<>();
+    private List<ChapterSection> chapterSectionList = new ArrayList<>();
 
     public Chapter updateChapter(String title, int number) {
         this.title = title;

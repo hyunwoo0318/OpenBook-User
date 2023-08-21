@@ -1,19 +1,20 @@
 package Project.OpenBook.Domain;
 
-import Project.OpenBook.Constants.ProgressConst;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "chapter_progress")
-public class ChapterProgress  extends BaseEntity{
+public class ChapterProgress {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -26,31 +27,31 @@ public class ChapterProgress  extends BaseEntity{
     @JoinColumn(name = "chapter_id")
     private Chapter chapter;
 
-    private String progress= ProgressConst.NOT_STARTED;
-
     private LocalDateTime lastStudyTime;
 
     private Integer wrongCount=0;
+
+    private String progress;
 
     public ChapterProgress(Customer customer, Chapter chapter) {
         this.customer = customer;
         this.chapter = chapter;
     }
 
-    public ChapterProgress(Customer customer, Chapter chapter, String progress){
+    public ChapterProgress(Customer customer, Chapter chapter, Integer wrongCount, String progress) {
         this.customer = customer;
         this.chapter = chapter;
+        this.wrongCount = wrongCount;
         this.progress = progress;
-    }
-
-    public ChapterProgress updateProgress(String progressConst) {
-        this.progress = progressConst;
-        this.lastStudyTime = LocalDateTime.now();
-        return this;
     }
 
     public ChapterProgress updateWrongCount(int wrongCount) {
         this.wrongCount += wrongCount;
+        return this;
+    }
+
+    public ChapterProgress updateProgress(String progress) {
+        this.progress = progress;
         return this;
     }
 }

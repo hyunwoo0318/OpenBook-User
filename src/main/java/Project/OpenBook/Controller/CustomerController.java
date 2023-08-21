@@ -21,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -69,15 +70,16 @@ public class CustomerController {
 
     @ApiOperation("소셜 로그인")
     @GetMapping("login/{providerName}")
-    public ResponseEntity<Long> socialLogin(@PathVariable("providerName") String providerName,@RequestParam("code") String code) throws Exception{
+    public ResponseEntity<Void> socialLogin(@PathVariable("providerName") String providerName,@RequestParam("code") String code) throws Exception{
         TokenDto tokenDto = customerService.loginOauth2(providerName, code);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
-        headers.set("Refresh-token", tokenDto.getRefreshToken());
+        headers.set("Refresh-Token", tokenDto.getRefreshToken());
+        headers.setAccessControlAllowHeaders(Arrays.asList("Authorization", "Refresh-Token"));
 
-        ResponseEntity<Long> responseEntity = ResponseEntity.ok()
+        ResponseEntity<Void> responseEntity = ResponseEntity.ok()
                 .headers(headers)
-                .body(tokenDto.getCustomerId());
+                .build();
         return responseEntity;
     }
 
