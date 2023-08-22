@@ -70,16 +70,17 @@ public class CustomerController {
 
     @ApiOperation("소셜 로그인")
     @GetMapping("login/{providerName}")
-    public ResponseEntity<Void> socialLogin(@PathVariable("providerName") String providerName,@RequestParam("code") String code) throws Exception{
+    public ResponseEntity<String> socialLogin(@PathVariable("providerName") String providerName,@RequestParam("code") String code) throws Exception{
         TokenDto tokenDto = customerService.loginOauth2(providerName, code);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
         headers.set("Refresh-Token", tokenDto.getRefreshToken());
         headers.setAccessControlAllowHeaders(Arrays.asList("Authorization", "Refresh-Token"));
 
-        ResponseEntity<Void> responseEntity = ResponseEntity.ok()
+        ResponseEntity<String> responseEntity = ResponseEntity.ok()
                 .headers(headers)
-                .build();
+                .body("전송 성공!");
+
         return responseEntity;
     }
 
