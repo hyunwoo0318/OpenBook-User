@@ -76,10 +76,13 @@ public class CustomerController {
         headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
         headers.set("Refresh-Token", tokenDto.getRefreshToken());
         headers.setAccessControlAllowHeaders(Arrays.asList("Authorization", "Refresh-Token"));
+        headers.setAccessControlExposeHeaders(Arrays.asList("Authorization", "Refresh-Token"));
 
+
+        //TODO : Refresh-token http-cookie로 하기
         ResponseEntity<String> responseEntity = ResponseEntity.ok()
                 .headers(headers)
-                .body("전송 성공!");
+                .body("asdasdasdasd!");
 
         return responseEntity;
     }
