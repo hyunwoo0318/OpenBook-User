@@ -176,9 +176,10 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
     public List<Tuple> queryTopicForTable(int num) {
         return queryFactory.select(topic.title, keyword.countDistinct(), sentence.countDistinct())
                 .from(topic)
-                .leftJoin(keyword).on(keyword.topic.eq(topic))
-                .leftJoin(sentence).on(sentence.topic.eq(topic))
-                .where(topic.number.eq(num))
+                .leftJoin(keyword).on(keyword.topic.id.eq(topic.id))
+                .leftJoin(sentence).on(sentence.topic.id.eq(topic.id))
+                .where(topic.chapter.number.eq(num))
+                .groupBy(topic.id)
                 .fetch();
     }
 }
