@@ -1,16 +1,14 @@
 package Project.OpenBook.Service.Customer;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Domain.ChapterSection;
-import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Domain.TopicProgress;
+import Project.OpenBook.Constants.*;
+import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.customer.CustomerAddDetailDto;
 import Project.OpenBook.Dto.customer.CustomerCodeList;
 import Project.OpenBook.Dto.customer.CustomerDetailDto;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
@@ -27,10 +25,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 
@@ -43,6 +40,10 @@ public class CustomerService implements UserDetailsService {
     private final TopicRepository topicRepository;
     private final TopicProgressRepository topicProgressRepository;
     private final ChapterSectionRepository chapterSectionRepository;
+    private final ChapterProgressRepository chapterProgressRepository;
+
+
+
     private final AuthenticationManagerBuilder authenticationManager;
     private final WebClient.Builder webClientBuilder;
     private final TokenManager tokenManager;
@@ -136,7 +137,8 @@ public class CustomerService implements UserDetailsService {
             customerRepository.save(customer);
 
             //단원학습, 주제학습 레코드 생성
-            updateChapterProgress(customer);
+            initChapterProgress(customer);
+            initChapterSection(customer);
             updateTopicProgress(customer);
         }else{
             customer = customerOptional.get();
@@ -156,6 +158,18 @@ public class CustomerService implements UserDetailsService {
         }
     }
 
+    private Customer registerCustomer(String oauthId, String providerName) {
+        Customer customer = Customer.builder()
+                .oAuthId(oauthId)
+                .provider(providerName)
+                .roles(Role.USER)
+                .nickName(UUID.randomUUID().toString())
+                .build();
+        customerRepository.save(customer);
+        return null;
+
+    }
+
     private void updateTopicProgress(Customer customer) {
         List<TopicProgress> topicProgressList = topicRepository.findAll().stream()
                 .map(t -> new TopicProgress(customer, t))
@@ -163,11 +177,39 @@ public class CustomerService implements UserDetailsService {
         topicProgressRepository.saveAll(topicProgressList);
     }
 
-    private void updateChapterProgress(Customer customer) {
-        List<ChapterSection> chapterSectionList = chapterRepository.findAll().stream()
-                .map(c -> new ChapterSection(customer, c))
-                .collect(Collectors.toList());
+    private void initChapterSection(Customer customer) {
+        List<Chapter> chapterList = chapterRepository.findAll();
+        List<ChapterSection> chapterSectionList = new ArrayList<>();
+        List<ContentConst> contentConstList = Arrays.asList(ContentConst.values());
+        for (Chapter chapter : chapterList) {
+            for (ContentConst contentConst : contentConstList) {
+                ChapterSection chapterSection;
+                if(chapter.getNumber() == 1 && contentConst.equals(ContentConst.CHAPTER_INFO)){
+                    chapterSection = new ChapterSection(customer, chapter, contentConst.getName(), StateConst.OPEN.getName());
+                }else{
+                    chapterSection = new ChapterSection(customer, chapter, contentConst.getName(), StateConst.LOCKED.getName());
+                }
+                chapterSectionList.add(chapterSection);
+            }
+        }
         chapterSectionRepository.saveAll(chapterSectionList);
+
+    }
+
+    private void initChapterProgress(Customer customer) {
+        List<Chapter> chapterList = chapterRepository.findAll();
+        List<ChapterProgress> chapterProgressList = new ArrayList<>();
+        for (Chapter chapter : chapterList) {
+            ChapterProgress chapterProgress;
+            if(chapter.getNumber() == 1){
+                chapterProgress = new ChapterProgress(customer, chapter, 0, ContentConst.CHAPTER_INFO.getName());
+            }else{
+                chapterProgress = new ChapterProgress(customer, chapter, 0, ContentConst.NOT_STARTED.getName());
+            }
+            chapterProgressList.add(chapterProgress);
+        }
+        chapterProgressRepository.saveAll(chapterProgressList);
+
     }
 
 

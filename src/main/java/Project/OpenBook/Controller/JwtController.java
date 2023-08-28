@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import java.util.Arrays;
+
 import static Project.OpenBook.Constants.ErrorCode.INVALID_PARAMETER;
 
 @RestController
@@ -40,6 +42,7 @@ public class JwtController {
         TokenDto tokenDto = tokenManager.generateToken(refreshToken);
         response.setHeader("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
         response.setHeader("refresh-token",tokenDto.getRefreshToken());
+
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 }
