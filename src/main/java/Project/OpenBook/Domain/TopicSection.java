@@ -1,20 +1,19 @@
 package Project.OpenBook.Domain;
 
 import Project.OpenBook.Constants.ContentConst;
-import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.StateConst;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "chapter_section")
-public class ChapterSection extends BaseEntity{
+@Table(name = "topic_section")
+public class TopicSection extends BaseEntity{
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,32 +23,26 @@ public class ChapterSection extends BaseEntity{
     private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "chapter_id")
-    private Chapter chapter;
+    @JoinColumn(name = "topic_id")
+    private Topic topic;
 
     private String content = ContentConst.NOT_STARTED.getName();
 
     private String state = StateConst.LOCKED.getName();
 
-    private LocalDateTime lastStudyTime;
-
-    public ChapterSection(Customer customer, Chapter chapter) {
+    public TopicSection(Customer customer, Topic topic) {
         this.customer = customer;
-        this.chapter = chapter;
+        this.topic = topic;
     }
 
-    public ChapterSection(Customer customer, Chapter chapter, String content, String state){
+    public TopicSection(Customer customer, Topic topic, String content, String state) {
         this.customer = customer;
-        this.chapter = chapter;
+        this.topic = topic;
         this.content = content;
         this.state = state;
     }
 
-    public ChapterSection updateState(String stateConst) {
-        this.state = stateConst;
-        this.lastStudyTime = LocalDateTime.now();
-        return this;
+    public void updateState(String state){
+        this.state = state;
     }
-
-
 }

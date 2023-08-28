@@ -26,40 +26,36 @@ public class TopicProgress  extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
-//
-//    private LocalDateTime lastStudyTime;
-//
-//    @ColumnDefault(value = "0")
-//    private Integer wrongCount = 0;
 
-    private String content = ContentConst.NOT_STARTED.getName();
+    private LocalDateTime lastStudyTime;
 
-    private String state = StateConst.LOCKED.getName();
+    @ColumnDefault(value = "0")
+    private Integer wrongCount = 0;
+
+    private String progress;
 
     public TopicProgress(Customer customer,Topic topic) {
         this.customer = customer;
         this.topic = topic;
     }
 
-    public TopicProgress(Customer customer, Topic topic,String content, String state) {
+    public TopicProgress(Customer customer, Topic topic,Integer wrongCount, String progress) {
         this.customer = customer;
         this.topic = topic;
-        this.content = content;
-        this.state = state;
+        this.wrongCount = wrongCount;
+        this.progress = progress;
     }
-
-    public TopicProgress updateState(String state) {
-        this.state = state;
+    public TopicProgress updateLastStudyTime() {
+        this.lastStudyTime = LocalDateTime.now();
         return this;
     }
 
-//    public TopicProgress updateLastStudyTime() {
-//        this.lastStudyTime = LocalDateTime.now();
-//        return this;
-//    }
-//
-//    public TopicProgress updateWrongCount(int wrongCount) {
-//        this.wrongCount += wrongCount;
-//        return this;
-//    }
+    public TopicProgress updateWrongCount(int wrongCount) {
+        this.wrongCount += wrongCount;
+        return this;
+    }
+
+    public void updateProgress(String progress) {
+        this.progress = progress;
+    }
 }

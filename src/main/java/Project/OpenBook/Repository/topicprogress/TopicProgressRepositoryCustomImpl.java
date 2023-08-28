@@ -17,7 +17,7 @@ public class TopicProgressRepositoryCustomImpl implements TopicProgressRepositor
 
     private final JPAQueryFactory queryFactory;
     @Override
-    public Optional<TopicProgress> queryTopicProgress(String topicTitle, Long customerId) {
+    public Optional<TopicProgress> queryTopicProgress(Long customerId, String topicTitle) {
         TopicProgress findTopicProgress = queryFactory.selectFrom(topicProgress)
                 .where(topicProgress.topic.title.eq(topicTitle))
                 .where(topicProgress.customer.id.eq(customerId))

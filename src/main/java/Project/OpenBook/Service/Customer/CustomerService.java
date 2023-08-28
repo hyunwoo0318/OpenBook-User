@@ -13,6 +13,7 @@ import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
+import Project.OpenBook.Repository.topicsection.TopicSectionRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +28,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 
@@ -41,6 +42,7 @@ public class CustomerService implements UserDetailsService {
     private final TopicProgressRepository topicProgressRepository;
     private final ChapterSectionRepository chapterSectionRepository;
     private final ChapterProgressRepository chapterProgressRepository;
+    private final TopicSectionRepository topicSectionRepository;
 
 
 
@@ -139,7 +141,8 @@ public class CustomerService implements UserDetailsService {
             //단원학습, 주제학습 레코드 생성
             initChapterProgress(customer);
             initChapterSection(customer);
-            updateTopicProgress(customer);
+            initTopicProgress(customer);
+            initTopicSection(customer);
         }else{
             customer = customerOptional.get();
         }
@@ -180,20 +183,36 @@ public class CustomerService implements UserDetailsService {
     private void initChapterSection(Customer customer) {
         List<Chapter> chapterList = chapterRepository.findAll();
         List<ChapterSection> chapterSectionList = new ArrayList<>();
-        List<ContentConst> contentConstList = Arrays.asList(ContentConst.values());
+        List<String> contentConstList = ContentConst.getChapterContent();
+
         for (Chapter chapter : chapterList) {
-            for (ContentConst contentConst : contentConstList) {
+            for (String content : contentConstList) {
                 ChapterSection chapterSection;
-                if(chapter.getNumber() == 1 && contentConst.equals(ContentConst.CHAPTER_INFO)){
-                    chapterSection = new ChapterSection(customer, chapter, contentConst.getName(), StateConst.OPEN.getName());
+                if(chapter.getNumber() == 1 && content.equals(ContentConst.CHAPTER_INFO.getName())){
+                    chapterSection = new ChapterSection(customer, chapter, content, StateConst.OPEN.getName());
                 }else{
-                    chapterSection = new ChapterSection(customer, chapter, contentConst.getName(), StateConst.LOCKED.getName());
+                    chapterSection = new ChapterSection(customer, chapter,content, StateConst.LOCKED.getName());
                 }
                 chapterSectionList.add(chapterSection);
             }
         }
         chapterSectionRepository.saveAll(chapterSectionList);
 
+    }
+
+    private void initTopicSection(Customer customer) {
+        List<Topic> topicList = topicRepository.findAll();
+        List<TopicSection> topicSectionList = new ArrayList<>();
+
+        List<String> contentConstList = ContentConst.getTopicContent();
+
+        for (Topic topic : topicList) {
+            for (String content : contentConstList) {
+                TopicSection topicSection = new TopicSection(customer, topic, content, StateConst.LOCKED.getName());
+                topicSectionList.add(topicSection);
+            }
+        }
+        topicSectionRepository.saveAll(topicSectionList);
     }
 
     private void initChapterProgress(Customer customer) {
@@ -209,7 +228,17 @@ public class CustomerService implements UserDetailsService {
             chapterProgressList.add(chapterProgress);
         }
         chapterProgressRepository.saveAll(chapterProgressList);
+    }
 
+    private void initTopicProgress(Customer customer) {
+        List<Topic> topicList = topicRepository.findAll();
+        List<TopicProgress> topicProgressList = new ArrayList<>();
+        for (Topic topic : topicList) {
+            TopicProgress topicProgress;
+            topicProgress = new TopicProgress(customer, topic, 0, ContentConst.NOT_STARTED.getName());
+            topicProgressList.add(topicProgress);
+        }
+        topicProgressRepository.saveAll(topicProgressList);
     }
 
 

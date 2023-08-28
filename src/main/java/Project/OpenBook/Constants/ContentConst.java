@@ -3,6 +3,9 @@ package Project.OpenBook.Constants;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 public enum ContentConst {
@@ -20,4 +23,13 @@ public enum ContentConst {
     ;
     private final String name;
     private final Integer order;
+
+    public static List<String> getChapterContent() {
+        return Arrays.asList(NOT_STARTED.getName(), CHAPTER_INFO.getName(),
+                TIME_FLOW_STUDY.getName(), TIME_FLOW_QUESTION.getName(), GET_TOPIC_BY_KEYWORD.getName(), GET_TOPIC_BY_SENTENCE.getName(), COMPLETE.getName());
+    }
+
+    public static List<String> getTopicContent() {
+        return Arrays.asList(TOPIC_STUDY.getName(), GET_KEYWORD_BY_TOPIC.getName(), GET_SENTENCE_BY_TOPIC.getName());
+    }
 }

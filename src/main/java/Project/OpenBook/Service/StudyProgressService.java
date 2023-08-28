@@ -5,6 +5,8 @@ import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.studyProgress.ChapterProgressAddDto;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
+import Project.OpenBook.Dto.studyProgress.TopicProgressAddDto;
+import Project.OpenBook.Dto.studyProgress.TopicProgressAddDtoList;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepositoryCustom;
@@ -12,6 +14,7 @@ import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
+import Project.OpenBook.Repository.topicsection.TopicSectionRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ import java.util.Optional;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static Project.OpenBook.Constants.ContentConst.*;
+import static Project.OpenBook.Domain.QTopicSection.topicSection;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +38,7 @@ public class StudyProgressService {
     private final CustomerRepository customerRepository;
     private final ChapterRepository chapterRepository;
     private final TopicRepository topicRepository;
+    private final TopicSectionRepository topicSectionRepository;
 
 
 
@@ -50,24 +55,24 @@ public class StudyProgressService {
                     newChapterProgress.updateWrongCount(chapterProgressAddDto.getCount());
                 });
     }
-//
-//    @Transactional
-//    public void addTopicProgressWrongCount(Customer customer, TopicProgressAddDtoList topicProgressAddDtoList) {
-//        for (TopicProgressAddDto topicProgressAddDto : topicProgressAddDtoList.getProgressAddDtoList()) {
-//            Topic topic = checkTopic(topicProgressAddDto.getTopicTitle());
-//
-//            topicProgressRepository.queryTopicProgress(topic.getTitle(), customer.getId())
-//                    .ifPresentOrElse(
-//                            t -> t.updateWrongCount(topicProgressAddDto.getCount()),
-//                            () -> {
-//                                TopicProgress newTopicProgress = new TopicProgress(customer, topic);
-//                                topicProgressRepository.save(newTopicProgress);
-//                                newTopicProgress.updateWrongCount(topicProgressAddDto.getCount());
-//                            }
-//                    );
-//        }
-//
-//    }
+
+    @Transactional
+    public void addTopicProgressWrongCount(Customer customer, TopicProgressAddDtoList topicProgressAddDtoList) {
+        for (TopicProgressAddDto topicProgressAddDto : topicProgressAddDtoList.getProgressAddDtoList()) {
+            Topic topic = checkTopic(topicProgressAddDto.getTopicTitle());
+
+            topicProgressRepository.queryTopicProgress(customer.getId(), topic.getTitle())
+                    .ifPresentOrElse(
+                            t -> t.updateWrongCount(topicProgressAddDto.getCount()),
+                            () -> {
+                                TopicProgress newTopicProgress = new TopicProgress(customer, topic);
+                                topicProgressRepository.save(newTopicProgress);
+                                newTopicProgress.updateWrongCount(topicProgressAddDto.getCount());
+                            }
+                    );
+        }
+
+    }
 
     private Customer checkCustomer(Long customerId) {
         return customerRepository.findById(customerId).orElseThrow(() -> {
@@ -86,13 +91,6 @@ public class StudyProgressService {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
     }
-
-//    private void checkContent(String content){
-//        if(!Arrays.stream(ContentConst.values())
-//                .anyMatch(c -> c.getName().equals(content))){
-//            throw new CustomException(CONTENT_NOT_FOUND);
-//        }
-//    }
 
     private void checkState(String state){
         if(!Arrays.stream(StateConst.values())
@@ -130,13 +128,25 @@ public class StudyProgressService {
                 chapterProgress.updateProgress(content);
             });
         }else if(topicContentList.contains(content)){
+            // 주제 관련 Content -> title = 주제 제목
             Topic topic = checkTopic(title);
-            topicProgressRepository.queryTopicProgress(title, customer.getId()).ifPresentOrElse(t ->{
-                t.updateState(state);
-            }, () ->{
-                TopicProgress topicProgress = new TopicProgress(customer, topic,content, state);
+            TopicProgress topicProgress;
+            Optional<TopicProgress> topicProgressOptional = topicProgressRepository.queryTopicProgress(customer.getId(), title);
+            if (topicProgressOptional.isEmpty()) {
+                topicProgress = new TopicProgress(customer, topic, 0, NOT_STARTED.getName());
                 topicProgressRepository.save(topicProgress);
+            }else{
+                topicProgress = topicProgressOptional.get();
+            }
+            topicSectionRepository.queryTopicSection(customer.getId(), title, content).ifPresentOrElse(t -> {
+                t.updateState(state);
+                topicProgress.updateProgress(content);
+            }, () -> {
+                TopicSection topicSection = new TopicSection(customer, topic, content, state);
+                topicSectionRepository.save(topicSection);
+                topicProgress.updateProgress(content);
             });
+
         }
     }
 }

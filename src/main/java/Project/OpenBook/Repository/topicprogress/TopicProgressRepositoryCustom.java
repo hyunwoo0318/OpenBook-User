@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface TopicProgressRepositoryCustom {
 
-    public Optional<TopicProgress> queryTopicProgress(String topicTitle, Long customerId);
+    public Optional<TopicProgress> queryTopicProgress(Long customerId, String topicTitle );
 
     public List<TopicProgress> queryTopicProgresses(Long customerId, Integer chapterNum);
 }

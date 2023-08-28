@@ -10,12 +10,15 @@ import Project.OpenBook.Dto.topic.ChapterAdminDto;
 import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
+import Project.OpenBook.Repository.topicsection.TopicSectionRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -41,6 +44,7 @@ public class ChapterService {
     private final ChapterProgressRepository chapterProgressRepository;
     private final ChapterSectionRepository chapterSectionRepository;
     private final TopicProgressRepository topicProgressRepository;
+    private final TopicSectionRepository topicSectionRepository;
 
     /**
      * 단원 저장
@@ -165,6 +169,12 @@ public class ChapterService {
         });
     }
 
+    private Topic checkTopic(String topicTitle) {
+        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        });
+    }
+
     public ChapterInfoDto updateChapterInfo(Integer num, String content) {
         Chapter chapter = checkChapter(num);
 
@@ -227,12 +237,9 @@ public class ChapterService {
         Chapter chapter = checkChapter(number);
         String title = chapter.getTitle();
         HashMap<String, ChapterSection> chapterMap = new HashMap<>();
-        HashMap<String, TopicProgress> topicMap = new HashMap<>();
         List<ProgressDto> contentTableList = new ArrayList<>();
         chapterSectionRepository.queryChapterSection(customer.getId(), number).stream()
-                .map(cp -> chapterMap.put(cp.getContent(), cp));
-        topicProgressRepository.queryTopicProgresses(customer.getId(), number).stream()
-                .map(tp -> topicMap.put(tp.getContent(), tp));
+                .map(cs -> chapterMap.put(cs.getContent(), cs));
 
         /**
          * 1. 단원 학습
@@ -273,16 +280,48 @@ public class ChapterService {
         List<Tuple> tuples = topicRepository.queryTopicForTable(number);
         for (Tuple tuple : tuples) {
             String topicTitle = tuple.get(topic.title);
+            Topic topic = checkTopic(topicTitle);
             Long keywordNum = tuple.get(keyword.countDistinct());
             Long sentenceNum = tuple.get(sentence.countDistinct());
 
-            //TODO : State값 찾아서 적용
-            contentTableList.add(new ProgressDto(ContentConst.TOPIC_STUDY.getName(), topicTitle, StateConst.OPEN.getName()));
-            if(keywordNum != null && keywordNum >= 1 ){
-                contentTableList.add(new ProgressDto(ContentConst.GET_KEYWORD_BY_TOPIC.getName(), topicTitle, StateConst.OPEN.getName()));
+            /**
+             * 주제 학습
+             */
+            String topicStudyName = ContentConst.TOPIC_STUDY.getName();
+            topicSectionRepository.queryTopicSection(customer.getId(), topicTitle, topicStudyName).ifPresentOrElse(ts ->{
+                contentTableList.add(new ProgressDto(topicStudyName, topicTitle, ts.getState()));
+            }, () ->{
+                TopicSection topicSection = new TopicSection(customer, topic, topicStudyName, StateConst.LOCKED.getName());
+                topicSectionRepository.save(topicSection);
+                contentTableList.add(new ProgressDto(topicStudyName, topicTitle, topicSection.getState()));
+            });
+
+            /**
+             * 주제 보고 키워드 맞추기
+             */
+            if (keywordNum >= 1L) {
+                String getKeywordByTopicName = ContentConst.GET_KEYWORD_BY_TOPIC.getName();
+                topicSectionRepository.queryTopicSection(customer.getId(), topicTitle, getKeywordByTopicName).ifPresentOrElse(ts ->{
+                    contentTableList.add(new ProgressDto(getKeywordByTopicName, topicTitle, ts.getState()));
+                }, () ->{
+                    TopicSection topicSection = new TopicSection(customer, topic, getKeywordByTopicName, StateConst.LOCKED.getName());
+                    topicSectionRepository.save(topicSection);
+                    contentTableList.add(new ProgressDto(getKeywordByTopicName, topicTitle, topicSection.getState()));
+                });
             }
-            if(sentenceNum != null && sentenceNum >= 1 ){
-                contentTableList.add(new ProgressDto(ContentConst.GET_SENTENCE_BY_TOPIC.getName(), topicTitle, StateConst.OPEN.getName()));
+
+            /**
+             * 주제 보고 문장 맞추기
+             */
+            if (sentenceNum >= 1L) {
+                String getSentenceByTopicName = ContentConst.GET_SENTENCE_BY_TOPIC.getName();
+                topicSectionRepository.queryTopicSection(customer.getId(), topicTitle, getSentenceByTopicName).ifPresentOrElse(ts ->{
+                    contentTableList.add(new ProgressDto(getSentenceByTopicName, topicTitle, ts.getState()));
+                }, () ->{
+                    TopicSection topicSection = new TopicSection(customer, topic, getSentenceByTopicName, StateConst.LOCKED.getName());
+                    topicSectionRepository.save(topicSection);
+                    contentTableList.add(new ProgressDto(getSentenceByTopicName, topicTitle, topicSection.getState()));
+                });
             }
         }
 

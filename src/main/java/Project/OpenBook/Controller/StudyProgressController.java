@@ -49,16 +49,16 @@ public class StudyProgressController {
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
-//    @ApiOperation("주제 학습 정보 입력")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "201", description = "주제 학습 정보 입력 성공"),
-//            @ApiResponse(responseCode = "400", description = "잘못된 입력"),
-//            @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 제목 혹은 회원아이디 입력")
-//    })
-//    @PostMapping("/study-progress/topic/wrong-count")
-//    public ResponseEntity<Void> addTopicProgress(@AuthenticationPrincipal Customer customer,
-//            @Validated @RequestBody TopicProgressAddDtoList topicProgressAddDtoList) {
-//        studyProgressService.addTopicProgressWrongCount(customer, topicProgressAddDtoList);
-//        return new ResponseEntity<Void>(HttpStatus.CREATED);
-//    }
+    @ApiOperation("주제 학습 정보 입력")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "주제 학습 정보 입력 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 제목 혹은 회원아이디 입력")
+    })
+    @PostMapping("/study-progress/topic/wrong-count")
+    public ResponseEntity<Void> addTopicProgress(@AuthenticationPrincipal Customer customer,
+            @Validated @RequestBody TopicProgressAddDtoList topicProgressAddDtoList) {
+        studyProgressService.addTopicProgressWrongCount(customer, topicProgressAddDtoList);
+        return new ResponseEntity<Void>(HttpStatus.CREATED);
+    }
 }
