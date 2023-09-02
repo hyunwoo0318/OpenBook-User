@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.QuestionConst;
 import Project.OpenBook.Dto.keyword.KeywordNameCommentDto;
 import Project.OpenBook.Dto.question.*;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
@@ -124,6 +125,7 @@ public class QuestionService {
                 choiceList.addAll(wrongChoiceList);
 
                 QuestionDto dto = QuestionDto.builder()
+                        .questionType(GET_KEYWORD_TYPE)
                         .answer(topicTitle)
                         .choiceList(choiceList)
                         .build();
@@ -143,6 +145,7 @@ public class QuestionService {
                 choiceList.addAll(wrongChoiceList);
 
                 QuestionDto dto = QuestionDto.builder()
+                        .questionType(GET_KEYWORD_TYPE)
                         .answer(topicTitle)
                         .choiceList(choiceList)
                         .build();
@@ -197,6 +200,7 @@ public class QuestionService {
                 choiceList.addAll(wrongChoiceList);
 
                 QuestionDto dto = QuestionDto.builder()
+                        .questionType(GET_SENTENCE_TYPE)
                         .answer(topicTitle)
                         .choiceList(choiceList)
                         .build();
@@ -216,6 +220,7 @@ public class QuestionService {
                 choiceList.addAll(wrongChoiceList);
 
                 QuestionDto dto = QuestionDto.builder()
+                        .questionType(GET_SENTENCE_TYPE)
                         .answer(topicTitle)
                         .choiceList(choiceList)
                         .build();
@@ -249,6 +254,7 @@ public class QuestionService {
                         .collect(Collectors.toList());
 
                 QuestionDto dto = QuestionDto.builder()
+                        .questionType(GET_TOPIC_BY_KEYWORD_TYPE)
                         .answer(topicTitle)
                         .choiceList(choiceList)
                         .descriptionKeyword(answerKeywordDtoList)
@@ -282,6 +288,7 @@ public class QuestionService {
                         .collect(Collectors.toList());
 
                 QuestionDto dto = QuestionDto.builder()
+                        .questionType(GET_TOPIC_BY_SENTENCE_TYPE)
                         .answer(topicTitle)
                         .choiceList(choiceList)
                         .descriptionSentence(answerSentence)

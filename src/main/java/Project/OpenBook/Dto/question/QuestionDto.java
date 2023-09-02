@@ -17,6 +17,7 @@ public class QuestionDto {
     /**
      * TODO : questionType 추가
      */
+    private String questionType;
 
     /**
      * 문제
@@ -32,7 +33,8 @@ public class QuestionDto {
     private List<QuestionChoiceDto> choiceList;
 
     @Builder
-    public QuestionDto(String answer, String questionSentence, String description, String descriptionSentence, List<KeywordNameCommentDto> descriptionKeyword, List<QuestionChoiceDto> choiceList) {
+    public QuestionDto(String questionType, String answer, String questionSentence, String description, String descriptionSentence, List<KeywordNameCommentDto> descriptionKeyword, List<QuestionChoiceDto> choiceList) {
+        this.questionType  = questionType;
         this.answer = answer;
         this.questionSentence = questionSentence;
         this.description = description;
