@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
@@ -9,12 +10,10 @@ import Project.OpenBook.Dto.studyProgress.TopicProgressAddDto;
 import Project.OpenBook.Dto.studyProgress.TopicProgressAddDtoList;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
-import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepositoryCustom;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
-import Project.OpenBook.Repository.topicsection.TopicSectionRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,6 @@ import java.util.Optional;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static Project.OpenBook.Constants.ContentConst.*;
-import static Project.OpenBook.Domain.QTopicSection.topicSection;
 
 @Service
 @RequiredArgsConstructor
@@ -38,7 +36,6 @@ public class StudyProgressService {
     private final CustomerRepository customerRepository;
     private final ChapterRepository chapterRepository;
     private final TopicRepository topicRepository;
-    private final TopicSectionRepository topicSectionRepository;
 
 
 
@@ -104,22 +101,23 @@ public class StudyProgressService {
         String content = progressDto.getContent();
         String state = progressDto.getState();
         String title = progressDto.getTitle();
+        Long customerId = customer.getId();
 
-        List<String> chapterContentList = Arrays.asList(CHAPTER_INFO.getName(), TIME_FLOW_STUDY.getName(), TIME_FLOW_QUESTION.getName(), GET_TOPIC_BY_KEYWORD.getName(), GET_TOPIC_BY_SENTENCE.getName());
-        List<String> topicContentList = Arrays.asList(TOPIC_STUDY.getName(), GET_KEYWORD_BY_TOPIC.getName(), GET_SENTENCE_BY_TOPIC.getName());
+        List<String> chapterContentList = ContentConst.getChapterContent();
+        String topicContent = TOPIC_STUDY.getName();
         if(chapterContentList.contains(content)){
             //단원 관련 Content -> title => 단원번호
             Integer chapterNum = Integer.valueOf(title);
             Chapter chapter = checkChapter(chapterNum);
             ChapterProgress chapterProgress;
-            Optional<ChapterProgress> chapterProgressOptional = chapterProgressRepository.queryChapterProgress(customer.getId(), chapterNum);
+            Optional<ChapterProgress> chapterProgressOptional = chapterProgressRepository.queryChapterProgress(customerId, chapterNum);
             if (chapterProgressOptional.isEmpty()) {
                 chapterProgress = new ChapterProgress(customer, chapter, 0, NOT_STARTED.getName());
                 chapterProgressRepository.save(chapterProgress);
             }else{
                 chapterProgress= chapterProgressOptional.get();
             }
-            chapterSectionRepository.queryChapterSection(customer.getId(), chapterNum, content).ifPresentOrElse(c -> {
+            chapterSectionRepository.queryChapterSection(customerId, chapterNum, content).ifPresentOrElse(c -> {
                 c.updateState(state);
                 chapterProgress.updateProgress(content);
             }, () ->{
@@ -127,26 +125,30 @@ public class StudyProgressService {
                 chapterSectionRepository.save(chapterSection);
                 chapterProgress.updateProgress(content);
             });
-        }else if(topicContentList.contains(content)){
+
+            //다음 단원 학습을 open할 경우 이전 단원을 complete로 설정
+            if (content.equals(CHAPTER_INFO.getName()) && chapterNum > 1) {
+                Integer prevChapterNum = chapterNum - 1;
+                Chapter prevChapter = checkChapter(prevChapterNum);
+                chapterProgressRepository.queryChapterProgress(customerId, prevChapterNum).ifPresentOrElse(cp -> {
+                    cp.updateProgress(COMPLETE.getName());
+                }, () -> {
+                    ChapterProgress prevChapterProgress = new ChapterProgress(customer, prevChapter, 0, COMPLETE.getName());
+                    chapterProgressRepository.save(prevChapterProgress);
+                } );
+            }
+        }else if(topicContent.equals(content)){
             // 주제 관련 Content -> title = 주제 제목
             Topic topic = checkTopic(title);
             TopicProgress topicProgress;
-            Optional<TopicProgress> topicProgressOptional = topicProgressRepository.queryTopicProgress(customer.getId(), title);
+            Optional<TopicProgress> topicProgressOptional = topicProgressRepository.queryTopicProgress(customerId, title);
             if (topicProgressOptional.isEmpty()) {
                 topicProgress = new TopicProgress(customer, topic, 0, NOT_STARTED.getName());
                 topicProgressRepository.save(topicProgress);
             }else{
                 topicProgress = topicProgressOptional.get();
             }
-            topicSectionRepository.queryTopicSection(customer.getId(), title, content).ifPresentOrElse(t -> {
-                t.updateState(state);
-                topicProgress.updateProgress(content);
-            }, () -> {
-                TopicSection topicSection = new TopicSection(customer, topic, content, state);
-                topicSectionRepository.save(topicSection);
-                topicProgress.updateProgress(content);
-            });
-
+            topicProgress.updateProgress(content);
         }
     }
 }

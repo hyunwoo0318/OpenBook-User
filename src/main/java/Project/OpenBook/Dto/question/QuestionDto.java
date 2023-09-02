@@ -15,6 +15,10 @@ public class QuestionDto {
     private String answer;
 
     /**
+     * TODO : questionType 추가
+     */
+
+    /**
      * 문제
      */
     private String questionSentence;

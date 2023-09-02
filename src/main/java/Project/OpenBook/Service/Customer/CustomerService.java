@@ -13,7 +13,6 @@ import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
-import Project.OpenBook.Repository.topicsection.TopicSectionRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,7 +41,6 @@ public class CustomerService implements UserDetailsService {
     private final TopicProgressRepository topicProgressRepository;
     private final ChapterSectionRepository chapterSectionRepository;
     private final ChapterProgressRepository chapterProgressRepository;
-    private final TopicSectionRepository topicSectionRepository;
 
 
 
@@ -142,7 +140,6 @@ public class CustomerService implements UserDetailsService {
             initChapterProgress(customer);
             initChapterSection(customer);
             initTopicProgress(customer);
-            initTopicSection(customer);
         }else{
             customer = customerOptional.get();
         }
@@ -173,13 +170,6 @@ public class CustomerService implements UserDetailsService {
 
     }
 
-    private void updateTopicProgress(Customer customer) {
-        List<TopicProgress> topicProgressList = topicRepository.findAll().stream()
-                .map(t -> new TopicProgress(customer, t))
-                .collect(Collectors.toList());
-        topicProgressRepository.saveAll(topicProgressList);
-    }
-
     private void initChapterSection(Customer customer) {
         List<Chapter> chapterList = chapterRepository.findAll();
         List<ChapterSection> chapterSectionList = new ArrayList<>();
@@ -197,23 +187,8 @@ public class CustomerService implements UserDetailsService {
             }
         }
         chapterSectionRepository.saveAll(chapterSectionList);
-
     }
 
-    private void initTopicSection(Customer customer) {
-        List<Topic> topicList = topicRepository.findAll();
-        List<TopicSection> topicSectionList = new ArrayList<>();
-
-        List<String> contentConstList = ContentConst.getTopicContent();
-
-        for (Topic topic : topicList) {
-            for (String content : contentConstList) {
-                TopicSection topicSection = new TopicSection(customer, topic, content, StateConst.LOCKED.getName());
-                topicSectionList.add(topicSection);
-            }
-        }
-        topicSectionRepository.saveAll(topicSectionList);
-    }
 
     private void initChapterProgress(Customer customer) {
         List<Chapter> chapterList = chapterRepository.findAll();
@@ -240,6 +215,4 @@ public class CustomerService implements UserDetailsService {
         }
         topicProgressRepository.saveAll(topicProgressList);
     }
-
-
 }

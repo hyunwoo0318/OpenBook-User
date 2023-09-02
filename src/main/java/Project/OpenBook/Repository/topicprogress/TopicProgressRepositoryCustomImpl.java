@@ -30,6 +30,7 @@ public class TopicProgressRepositoryCustomImpl implements TopicProgressRepositor
         return queryFactory.selectFrom(topicProgress)
                 .where(topicProgress.customer.id.eq(customerId))
                 .where(topicProgress.topic.chapter.number.eq(chapterNum))
+                .orderBy(topicProgress.topic.number.asc())
                 .fetch();
     }
 }

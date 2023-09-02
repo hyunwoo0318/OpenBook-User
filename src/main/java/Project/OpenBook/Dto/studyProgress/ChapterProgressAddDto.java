@@ -15,5 +15,4 @@ public class ChapterProgressAddDto {
     private Integer number;
 
     private Integer count;
-
 }

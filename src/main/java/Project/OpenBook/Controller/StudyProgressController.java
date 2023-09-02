@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,7 +30,7 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원번호 혹은 회원아이디 입력")
     })
-    @PostMapping("/study-progress/chapter/wrong-count")
+    @PatchMapping("/study-progress/chapter/wrong-count")
     public ResponseEntity<Void> addChapterProgressWrongCount(@AuthenticationPrincipal Customer customer,
             @Validated @RequestBody ChapterProgressAddDto chapterProgressAddDto) {
         studyProgressService.addChapterProgressWrongCount(customer, chapterProgressAddDto);
@@ -42,7 +43,7 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원번호 혹은 회원아이디 입력")
     })
-    @PostMapping("/study-progress/chapter/progress")
+    @PatchMapping("/study-progress/chapter/progress")
     public ResponseEntity<Void> addChapterProgressProgressUpdate(@AuthenticationPrincipal Customer customer,
                                                            @Validated @RequestBody ProgressDto progressDto) {
         studyProgressService.updateStudyProgress(customer, progressDto);
@@ -55,7 +56,7 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 제목 혹은 회원아이디 입력")
     })
-    @PostMapping("/study-progress/topic/wrong-count")
+    @PatchMapping("/study-progress/topic/wrong-count")
     public ResponseEntity<Void> addTopicProgress(@AuthenticationPrincipal Customer customer,
             @Validated @RequestBody TopicProgressAddDtoList topicProgressAddDtoList) {
         studyProgressService.addTopicProgressWrongCount(customer, topicProgressAddDtoList);
