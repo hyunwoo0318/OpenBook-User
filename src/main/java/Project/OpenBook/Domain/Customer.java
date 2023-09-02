@@ -52,6 +52,9 @@ public class Customer extends BaseEntity implements UserDetails {
     private List<ChapterSection> chapterSectionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
+    private List<ChapterProgress> chapterProgressList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
     private List<TopicProgress> topicProgressList = new ArrayList<>();
 
     @Builder

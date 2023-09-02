@@ -35,6 +35,9 @@ public class Chapter extends BaseEntity {
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
     private List<ChapterSection> chapterSectionList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
+    private List<ChapterProgress> chapterProgressList = new ArrayList<>();
+
     public Chapter updateChapter(String title, int number) {
         this.title = title;
         this.number = number;

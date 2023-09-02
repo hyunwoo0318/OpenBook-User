@@ -130,11 +130,6 @@ public class ChapterService {
             throw new CustomException(CHAPTER_HAS_TOPIC);
         }
 
-        List<ChapterSection> chapterSectionList = chapterSectionRepository.queryChapterSection(num);
-        chapterSectionRepository.deleteAllInBatch(chapterSectionList);
-
-        List<ChapterProgress> chapterProgressList = chapterProgressRepository.queryChapterProgress(num);
-        chapterProgressRepository.deleteAllInBatch(chapterProgressList);
         chapterRepository.delete(chapter);
         return true;
     }
