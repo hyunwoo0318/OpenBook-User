@@ -17,26 +17,26 @@ public class ChapterSectionRepositoryCustomImpl implements ChapterSectionReposit
 
     private final JPAQueryFactory queryFactory;
     @Override
-    public List<ChapterSection> queryChapterSection(Long customerId, Integer num) {
+    public List<ChapterSection> queryChapterSections(Long customerId, Integer num) {
         return queryFactory.selectFrom(chapterSection)
                 .where(chapterSection.chapter.number.eq(num))
                 .where(chapterSection.customer.id.eq(customerId))
                 .fetch();
     }
 
-    @Override
-    public List<ChapterSection> queryChapterSection(Integer num) {
-        return queryFactory.selectFrom(chapterSection)
-                .where(chapterSection.chapter.number.eq(num))
-                .fetch();
-    }
-
-    @Override
-    public List<ChapterSection> queryChapterSection(Long customerId) {
-        return queryFactory.selectFrom(chapterSection)
-                .where(chapterSection.customer.id.eq(customerId))
-                .fetch();
-    }
+//    @Override
+//    public List<ChapterSection> queryChapterSection(Integer num) {
+//        return queryFactory.selectFrom(chapterSection)
+//                .where(chapterSection.chapter.number.eq(num))
+//                .fetch();
+//    }
+//
+//    @Override
+//    public List<ChapterSection> queryChapterSection(Long customerId) {
+//        return queryFactory.selectFrom(chapterSection)
+//                .where(chapterSection.customer.id.eq(customerId))
+//                .fetch();
+//    }
 
     @Override
     public Optional<ChapterSection> queryChapterSection(Long customerId, Integer chapterNum, String content) {
