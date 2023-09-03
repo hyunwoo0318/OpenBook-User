@@ -115,6 +115,13 @@ public class ChapterService {
         return updateChapter;
     }
 
+    /**
+     * 단원을 삭제하는 메서드
+     * @param num 단원 번호
+     * @return Boolean값
+     * 존재하지 않는 단원 번호 -> CHAPTER_NOT_FOUND
+     * 해당 단원에 토픽이 존재하는 경우 -> CHAPTER_HAS_TOPIC
+     */
     public Boolean deleteChapter(int num) {
         Chapter chapter = checkChapter(num);
 
@@ -144,24 +151,19 @@ public class ChapterService {
     }
 
 
-    private void checkChapterNum(int number) {
-        chapterRepository.findOneByNumber(number).ifPresent(c -> {
-            throw new CustomException(DUP_CHAPTER_NUM);
-        });
+    public ChapterTitleInfoDto queryChapterTitleInfo(Integer num) {
+        Chapter chapter = checkChapter(num);
+
+        return new ChapterTitleInfoDto(chapter.getTitle(), chapter.getContent());
     }
 
-    private Chapter checkChapter(int num) {
-        return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
-            throw new CustomException(CHAPTER_NOT_FOUND);
-        });
-    }
 
-    private Topic checkTopic(String topicTitle) {
-        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
-    }
-
+    /**
+     * chapterInfo를 update하는 메서드
+     * @param num 단원 번호
+     * @param content 새로운 chapterInfo
+     * @return 변경된 chapterInfo를 가지는 chapterInfoDto
+     */
     public ChapterInfoDto updateChapterInfo(Integer num, String content) {
         Chapter chapter = checkChapter(num);
 
@@ -169,12 +171,13 @@ public class ChapterService {
         return new ChapterInfoDto(chapter.getContent());
     }
 
-    public ChapterTitleInfoDto queryChapterTitleInfo(Integer num) {
-        Chapter chapter = checkChapter(num);
-
-        return new ChapterTitleInfoDto(chapter.getTitle(), chapter.getContent());
-    }
-
+    /**
+     * 단원 전체 정보와 회원별 progress,state를 리턴하는 메서드
+     * @param customer 회원정보
+     * @return {chapter.title, chapter.number, state, progress}
+     * 1단원의 경우 default => state = Open, progress = ChapterInfo
+     * 2단원 이후의 경우 default => state = Locked, progress = NotStarted
+     */
     public List<ChapterUserDto> queryChapterUserDtos(Customer customer) {
         Long customerId = customer.getId();
 
@@ -214,9 +217,12 @@ public class ChapterService {
     }
 
     /**
-     * 단원별 목차 제공
-     * 단원 학습 -> 연표 학습 -> { 주제학습  } -> 단원 마무리 문제
-     *
+     * 목차 제공하는 메서드
+     * @param customer 회원정보
+     * @param chapterNum 단원번호
+     * @return {content, title(단원이면 단원제목, 주제면 주제제목), state}
+     * 특정 chapterSection이 존재하지 않는 경우 생성해서 제공
+     * 존재하지 않는 chapterNum 입력 -> CHAPTER_NOT_FOUND Exception
      */
     public List<ProgressDto> queryContentTable(Customer customer, Integer chapterNum) {
         Chapter chapter = checkChapter(chapterNum);
@@ -241,8 +247,13 @@ public class ChapterService {
         String chapterInfoName = ContentConst.CHAPTER_INFO.getName();
         ChapterSection chapterInfoProgress = chapterMap.get(chapterInfoName);
         if (chapterInfoProgress == null) {
-            chapterInfoProgress = new ChapterSection(customer, chapter, chapterInfoName, StateConst.LOCKED.getName());
+            if (chapterNum == 1) {
+                chapterInfoProgress = new ChapterSection(customer, chapter, chapterInfoName, StateConst.OPEN.getName());
+            }else{
+                chapterInfoProgress = new ChapterSection(customer, chapter, chapterInfoName, StateConst.LOCKED.getName());
+            }
             chapterSectionRepository.save(chapterInfoProgress);
+
         }
         contentTableList.add(new ProgressDto(chapterInfoName, title, chapterInfoProgress.getState()));
 
@@ -280,5 +291,23 @@ public class ChapterService {
 
 
         return contentTableList;
+    }
+
+    private void checkChapterNum(int number) {
+        chapterRepository.findOneByNumber(number).ifPresent(c -> {
+            throw new CustomException(DUP_CHAPTER_NUM);
+        });
+    }
+
+    private Chapter checkChapter(int num) {
+        return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
+            throw new CustomException(CHAPTER_NOT_FOUND);
+        });
+    }
+
+    private Topic checkTopic(String topicTitle) {
+        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        });
     }
 }

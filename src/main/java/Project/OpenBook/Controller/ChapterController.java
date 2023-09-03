@@ -173,7 +173,7 @@ public class ChapterController {
     })
     @DeleteMapping("/admin/chapters/{num}")
     public ResponseEntity<Void> deleteChapter(@PathVariable("num") int num) {
-        chapterService.deleteChapter(num);
+        Boolean ret = chapterService.deleteChapter(num);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
