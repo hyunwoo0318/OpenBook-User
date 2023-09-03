@@ -7,7 +7,6 @@ import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.keyword.KeywordUserDto;
 import Project.OpenBook.Dto.topic.TopicCustomerDto;
 import Project.OpenBook.Dto.topic.TopicNumberDto;
-import Project.OpenBook.Dto.topic.TopicUserDto;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
@@ -185,7 +184,7 @@ public class TopicService {
             throw new CustomException(TOPIC_HAS_DESCRIPTION);
         }
 
-        List<Keyword> keywordList = keywordRepository.queryKeywordsByTopic(topicTitle);
+        List<Keyword> keywordList = keywordRepository.queryKeywordsInTopic(topicTitle);
         if (!keywordList.isEmpty()) {
             throw new CustomException(TOPIC_HAS_KEYWORD);
         }
@@ -254,7 +253,7 @@ public class TopicService {
 
     public List<KeywordDto> queryTopicKeywords(String topicTitle) {
         checkTopic(topicTitle);
-        return keywordRepository.queryKeywordsByTopic(topicTitle).stream()
+        return keywordRepository.queryKeywordsInTopic(topicTitle).stream()
                 .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId()))
                 .collect(Collectors.toList());
     }

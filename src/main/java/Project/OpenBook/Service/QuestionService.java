@@ -86,7 +86,7 @@ public class QuestionService {
         List<QuestionDto> questionDtoList = new ArrayList<>();
 
         //정답 키워드조회
-        List<QuestionChoiceDto> answerChoiceList = keywordRepository.queryKeywordsByTopic(topicTitle)
+        List<QuestionChoiceDto> answerChoiceList = keywordRepository.queryKeywordsInTopic(topicTitle)
                 .stream()
                 .map(k -> QuestionChoiceDto.builder()
                         .choice(k.getName())
@@ -239,7 +239,7 @@ public class QuestionService {
         List<String> topicTitleList = topicRepository.queryTopicTitleInChapter(num);
         for (String topicTitle : topicTitleList) {
 
-            List<Keyword> answerKeywordList = keywordRepository.queryKeywordsByTopic(topicTitle, 2);
+            List<Keyword> answerKeywordList = keywordRepository.queryKeywordsInTopicWithLimit(topicTitle, 2);
 
             if (answerKeywordList.size() == 2) {
                 List<KeywordNameCommentDto> answerKeywordDtoList = answerKeywordList.stream().map(k -> new KeywordNameCommentDto(k.getName(), k.getComment()))
