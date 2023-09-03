@@ -28,6 +28,8 @@ public interface  TopicRepositoryCustom {
 
     public Map<Topic, List<PrimaryDate>>  queryTimeFlowQuestion(Integer num);
 
+    public Map<Topic, List<PrimaryDate>> queryTimeFlowQuestion();
+
     public List<String> queryTopicTitleInChapter(Integer num);
 
     public List<String> queryWrongTopicTitle(String topicTitle, int size);
@@ -35,6 +37,4 @@ public interface  TopicRepositoryCustom {
     public Optional<Topic> queryTopicByNumber(Integer chapterNum, Integer topicNum);
 
     public List<String> queryTopicTitleCustomer(int num);
-
-    public List<Tuple> queryTopicForTable(int num);
 }

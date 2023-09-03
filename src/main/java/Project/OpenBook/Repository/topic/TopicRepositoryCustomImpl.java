@@ -78,30 +78,6 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
 
     @Override
     public Map<String, Group> queryTopicAdminDto(String topicTitle) {
-//        Tuple r1 = queryFactory.select(topic.chapter.number, topic.number, topic.title, topic.category.name, topic.startDate,
-//                        topic.endDate, topic.detail, topic.startDateCheck, topic.endDateCheck)
-//                .from(topic)
-//                .where(topic.title.eq(topicTitle))
-//                .fetchOne();
-//
-//        List<PrimaryDate> dateList = queryFactory.selectFrom(primaryDate)
-//                .where(primaryDate.topic.title.eq(topicTitle))
-//                .fetch();
-//
-//        List<PrimaryDateDto> dateDtoList = dateList.stream().map(d -> new PrimaryDateDto(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment()))
-//                .collect(Collectors.toList());
-//
-//        Integer chapter = r1.get(topic.chapter.number);
-//        Integer number = r1.get(topic.number);
-//        String title = r1.get(topic.title);
-//        String category = r1.get(topic.category.name);
-//        Integer startDate = r1.get(topic.startDate);
-//        Integer endDate = r1.get(topic.endDate);
-//        String detail = r1.get(topic.detail);
-//        Boolean startDateCheck = r1.get(topic.startDateCheck);
-//        Boolean endDateCheck = r1.get(topic.endDateCheck);
-
-
         Map<String, Group> transform = queryFactory.from(topic)
                 .leftJoin(primaryDate).on(primaryDate.topic.eq(topic))
                 .where(topic.title.eq(topicTitle))
@@ -123,16 +99,17 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
 
     @Override
     public Map<Topic, List<PrimaryDate>> queryTimeFlowQuestion(Integer num) {
-//        return queryFactory.select(topic, primaryDate)
-//                .from(topic)
-//                .leftJoin(primaryDate)
-//                .on(topic.id.eq(primaryDate.topic.id))
-//                .where(topic.chapter.number.eq(num))
-//                .fetch();
-
         Map<Topic, List<PrimaryDate>> transform = queryFactory.from(topic)
                 .leftJoin(primaryDate).on(primaryDate.topic.eq(topic))
                 .where(topic.chapter.number.eq(num))
+                .transform(groupBy(topic).as(list(primaryDate)));
+        return transform;
+    }
+
+    @Override
+    public Map<Topic, List<PrimaryDate>> queryTimeFlowQuestion() {
+        Map<Topic, List<PrimaryDate>> transform = queryFactory.from(topic)
+                .leftJoin(primaryDate).on(primaryDate.topic.eq(topic))
                 .transform(groupBy(topic).as(list(primaryDate)));
         return transform;
     }
@@ -172,14 +149,4 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .fetch();
     }
 
-    @Override
-    public List<Tuple> queryTopicForTable(int num) {
-        return queryFactory.select(topic.title, keyword.countDistinct(), sentence.countDistinct())
-                .from(topic)
-                .leftJoin(keyword).on(keyword.topic.id.eq(topic.id))
-                .leftJoin(sentence).on(sentence.topic.id.eq(topic.id))
-                .where(topic.chapter.number.eq(num))
-                .groupBy(topic.id)
-                .fetch();
-    }
 }

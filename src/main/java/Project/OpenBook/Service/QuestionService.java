@@ -45,9 +45,12 @@ public class QuestionService {
 
 
     public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Integer num) {
-        Chapter chapter = checkChapter(num);
-
-        Map<Topic, List<PrimaryDate>> m = topicRepository.queryTimeFlowQuestion(num);
+        Map<Topic, List<PrimaryDate>> m = new HashMap<>();
+        if (num == 0) {
+            m = topicRepository.queryTimeFlowQuestion();
+        }else{
+            m = topicRepository.queryTimeFlowQuestion(num);
+        }
 
         List<TimeFlowQuestionDto> timeFlowQuestionDtoList = new ArrayList<>();
         for (Topic topic  : m.keySet()) {
