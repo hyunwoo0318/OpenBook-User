@@ -23,10 +23,10 @@ public class ChapterProgressRepositoryCustomImpl implements ChapterProgressRepos
         return Optional.ofNullable(chapterProgress);
     }
 
-    @Override
-    public List<ChapterProgress> queryChapterProgress(Integer chapterNum) {
-        return queryFactory.selectFrom(chapterProgress)
-                .where(chapterProgress.chapter.number.eq(chapterNum))
-                .fetch();
-    }
+//    @Override
+//    public List<ChapterProgress> queryChapterProgress(Integer chapterNum) {
+//        return queryFactory.selectFrom(chapterProgress)
+//                .where(chapterProgress.chapter.number.eq(chapterNum))
+//                .fetch();
+//    }
 }
