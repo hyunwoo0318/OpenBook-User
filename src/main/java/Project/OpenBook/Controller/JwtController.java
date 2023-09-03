@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -32,7 +33,7 @@ public class JwtController {
             @ApiResponse(responseCode = "400", description = "refresh token이 유효하지 않음")
     })
     @GetMapping("/refresh-token")
-    public ResponseEntity<Void> checkRefreshToken(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public ResponseEntity<String> checkRefreshToken(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String refreshToken = request.getHeader("refresh-token");
         if (refreshToken.isBlank()) {
             throw new CustomException(INVALID_PARAMETER);
@@ -40,9 +41,17 @@ public class JwtController {
 
         tokenManager.validateToken(refreshToken);
         TokenDto tokenDto = tokenManager.generateToken(refreshToken);
-        response.setHeader("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
-        response.setHeader("refresh-token",tokenDto.getRefreshToken());
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
+        headers.set("Refresh-Token", tokenDto.getRefreshToken());
+        headers.setAccessControlAllowHeaders(Arrays.asList("Authorization", "Refresh-Token"));
+        headers.setAccessControlExposeHeaders(Arrays.asList("Authorization", "Refresh-Token"));
 
-        return new ResponseEntity<Void>(HttpStatus.OK);
+
+        ResponseEntity<String> responseEntity = ResponseEntity.ok()
+                .headers(headers)
+                .body("Login Success!!");
+
+        return responseEntity;
     }
 }

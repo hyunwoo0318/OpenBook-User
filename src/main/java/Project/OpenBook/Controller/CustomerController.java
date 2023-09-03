@@ -79,10 +79,9 @@ public class CustomerController {
         headers.setAccessControlExposeHeaders(Arrays.asList("Authorization", "Refresh-Token"));
 
 
-        //TODO : Refresh-token http-cookie로 하기
         ResponseEntity<String> responseEntity = ResponseEntity.ok()
                 .headers(headers)
-                .body("asdasdasdasd!");
+                .body("Login Success!!");
 
         return responseEntity;
     }

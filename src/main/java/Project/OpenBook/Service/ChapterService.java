@@ -13,7 +13,6 @@ import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import com.querydsl.core.Tuple;
-import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -85,17 +84,18 @@ public class ChapterService {
             String title = t.get(topic.title);
             Integer startDate = t.get(topic.startDate);
             Integer endDate = t.get(topic.endDate);
-            Long descriptionCount = t.get(description.countDistinct());
-            if(descriptionCount == null) descriptionCount = 0L;
-            Long choiceCount = t.get(choice.countDistinct());
-            if(choiceCount == null) choiceCount = 0L;
-            Long keywordCount = t.get(keyword.countDistinct());
-            if(keywordCount == null) keywordCount = 0L;
+            Long descriptionCount = toDefaultCount(t.get(description.countDistinct()));
+            Long choiceCount = toDefaultCount(t.get(choice.countDistinct()));
+            Long keywordCount = toDefaultCount(t.get(keyword.countDistinct()));
             ChapterAdminDto chapterAdminDto = new ChapterAdminDto(category, title, startDate, endDate, descriptionCount, choiceCount, keywordCount);
             chapterAdminDtoList.add(chapterAdminDto);
         }
 
         return chapterAdminDtoList;
+    }
+
+    private Long toDefaultCount(Long count) {
+        return count != null ? count : 0L;
     }
 
     /**
@@ -225,7 +225,7 @@ public class ChapterService {
         HashMap<String, ChapterSection> chapterMap = new HashMap<>();
         HashMap<String, TopicProgress> topicMap = new HashMap<>();
         List<ProgressDto> contentTableList = new ArrayList<>();
-        List<ChapterSection> chapterSectionList = chapterSectionRepository.queryChapterSection(customerId, chapterNum);
+        List<ChapterSection> chapterSectionList = chapterSectionRepository.queryChapterSections(customerId, chapterNum);
         for (ChapterSection chapterSection : chapterSectionList) {
             chapterMap.put(chapterSection.getContent(), chapterSection);
         }
