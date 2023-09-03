@@ -1,7 +1,6 @@
 package Project.OpenBook.Service;
 
 import Project.OpenBook.Constants.ContentConst;
-import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.*;
@@ -16,8 +15,6 @@ import Project.OpenBook.Repository.topic.TopicRepository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,12 +22,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
-import static Project.OpenBook.Domain.QChapter.chapter;
-import static Project.OpenBook.Domain.QChapterProgress.chapterProgress;
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
 import static Project.OpenBook.Domain.QKeyword.keyword;
-import static Project.OpenBook.Domain.QSentence.sentence;
 import static Project.OpenBook.Domain.QTopic.topic;
 
 @Service
@@ -185,11 +179,9 @@ public class ChapterService {
         Long customerId = customer.getId();
 
         List<ChapterUserDto> chapterUserDtoList = new ArrayList<>();
-        Map<Chapter, Group> map = chapterRepository.queryChapterUserDtos(customerId);
+        Map<Chapter, ChapterProgress> map = chapterRepository.queryChapterWithProgress(customerId);
         for (Chapter chapter : map.keySet()) {
-            Group group = map.get(chapter);
-            ChapterProgress findChapterProgress = group.getOne(QChapterProgress.chapterProgress);
-            List<ChapterSection> chapterSectionList = group.getList(QChapterSection.chapterSection);
+            ChapterProgress findChapterProgress = map.get(chapter);
 
             if (findChapterProgress == null) {
                 if(chapter.getNumber() == 1)
