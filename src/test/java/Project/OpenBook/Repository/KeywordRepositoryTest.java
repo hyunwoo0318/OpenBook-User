@@ -54,6 +54,13 @@ public class KeywordRepositoryTest {
         topicRepository.save(t1);
     }
 
+    @AfterAll
+    public void baseClear(){
+        topicRepository.deleteAllInBatch();
+        chapterRepository.deleteAllInBatch();
+        categoryRepository.deleteAllInBatch();
+    }
+
     @Nested
     @DisplayName("queryByNameInTopic() 메서드는")
     public class queryByNameInTopicTest{

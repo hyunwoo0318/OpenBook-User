@@ -56,6 +56,12 @@ public class ChapterSectionRepositoryTest {
         customerRepository.save(c1);
     }
 
+    @AfterAll
+    public void baseClear(){
+        chapterRepository.deleteAllInBatch();
+        customerRepository.deleteAllInBatch();
+    }
+
     @Nested
     @DisplayName("queryChapterSections() 메서드는")
     public class queryChapterSectionsTest{

@@ -46,6 +46,12 @@ public class ChapterProgressRepositoryTest {
         chapterRepository.save(ch1);
         customerRepository.save(c1);
     }
+
+    @AfterAll
+    public void baseClear(){
+        chapterRepository.deleteAllInBatch();
+        customerRepository.deleteAllInBatch();
+    }
     @Nested
     @DisplayName("queryChapterProgress() 메서드는")
     public class queryChapterProgressTest{

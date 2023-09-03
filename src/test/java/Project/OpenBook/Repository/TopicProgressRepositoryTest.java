@@ -64,6 +64,14 @@ public class TopicProgressRepositoryTest {
         topicRepository.save(t2);
     }
 
+    @AfterAll
+    public void baseClear(){
+        topicRepository.deleteAllInBatch();
+        categoryRepository.deleteAllInBatch();
+        chapterRepository.deleteAllInBatch();
+        customerRepository.deleteAllInBatch();
+    }
+
     @Nested
     @DisplayName("queryTopicProgress() 메서드는")
     public class queryTopicProgressTest{
