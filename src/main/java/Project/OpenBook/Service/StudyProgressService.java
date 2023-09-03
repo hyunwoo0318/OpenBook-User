@@ -2,14 +2,13 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.studyProgress.ChapterProgressAddDto;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Dto.studyProgress.TopicProgressAddDto;
 import Project.OpenBook.Dto.studyProgress.TopicProgressAddDtoList;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
-import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
@@ -20,9 +19,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static Project.OpenBook.Constants.ContentConst.*;

@@ -6,9 +6,8 @@ import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.ChapterProgress;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
-import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
-import org.apache.catalina.util.CustomObjectInputStream;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -23,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DataJpaTest
 @Import(TestQueryDslConfig.class)
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
-@DisplayName("ChpaterProgressRepository class")
+@DisplayName("ChapterProgressRepository class")
 @TestInstance(value = TestInstance.Lifecycle.PER_CLASS)
 public class ChapterProgressRepositoryTest {
 

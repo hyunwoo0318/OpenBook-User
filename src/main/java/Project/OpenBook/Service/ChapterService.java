@@ -6,7 +6,7 @@ import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Dto.topic.ChapterAdminDto;
-import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import Project.OpenBook.Utils.CustomException;

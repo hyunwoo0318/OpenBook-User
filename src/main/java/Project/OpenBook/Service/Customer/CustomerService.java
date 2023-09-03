@@ -8,7 +8,7 @@ import Project.OpenBook.Dto.customer.CustomerDetailDto;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
-import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;

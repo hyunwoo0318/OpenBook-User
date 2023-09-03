@@ -1,14 +1,11 @@
-package Project.OpenBook.Repository.chapterProgress;
+package Project.OpenBook.Repository.chapterprogress;
 
 import Project.OpenBook.Domain.ChapterProgress;
 import Project.OpenBook.Domain.QChapterProgress;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
 import java.util.Optional;
-
-import static Project.OpenBook.Domain.QChapterProgress.chapterProgress;
 
 @RequiredArgsConstructor
 public class ChapterProgressRepositoryCustomImpl implements ChapterProgressRepositoryCustom {

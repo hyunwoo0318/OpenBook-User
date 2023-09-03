@@ -2,17 +2,14 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.ChapterDto;
 import Project.OpenBook.Dto.chapter.ChapterInfoDto;
 import Project.OpenBook.Dto.chapter.ChapterUserDto;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Dto.topic.ChapterAdminDto;
-import Project.OpenBook.Repository.TopicProgressRepositoryTest;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
-import Project.OpenBook.Repository.chapterProgress.ChapterProgressRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
@@ -24,7 +21,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.matchers.Any;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
@@ -44,7 +40,6 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.internal.matchers.Any.ANY;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ChpaterService Class")
