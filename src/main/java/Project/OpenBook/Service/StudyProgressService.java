@@ -43,14 +43,8 @@ public class StudyProgressService {
     public void addChapterProgressWrongCount(Customer customer, ChapterProgressAddDto chapterProgressAddDto) {
         Chapter chapter = checkChapter(chapterProgressAddDto.getNumber());
 
-        chapterProgressRepository.queryChapterProgress(customer.getId(), chapter.getNumber())
-                .ifPresentOrElse(
-                        c -> c.updateWrongCount(chapterProgressAddDto.getCount()),
-                () -> {
-                    ChapterProgress newChapterProgress = new ChapterProgress(customer, chapter);
-                    chapterProgressRepository.save(newChapterProgress);
-                    newChapterProgress.updateWrongCount(chapterProgressAddDto.getCount());
-                });
+        ChapterProgress chapterProgress = checkChapterProgress(customer, chapter);
+        chapterProgress.updateWrongCount(chapterProgressAddDto.getCount());
     }
 
     @Transactional
@@ -58,15 +52,8 @@ public class StudyProgressService {
         for (TopicProgressAddDto topicProgressAddDto : topicProgressAddDtoList.getProgressAddDtoList()) {
             Topic topic = checkTopic(topicProgressAddDto.getTopicTitle());
 
-            topicProgressRepository.queryTopicProgress(customer.getId(), topic.getTitle())
-                    .ifPresentOrElse(
-                            t -> t.updateWrongCount(topicProgressAddDto.getCount()),
-                            () -> {
-                                TopicProgress newTopicProgress = new TopicProgress(customer, topic);
-                                topicProgressRepository.save(newTopicProgress);
-                                newTopicProgress.updateWrongCount(topicProgressAddDto.getCount());
-                            }
-                    );
+            TopicProgress topicProgress = checkTopicProgress(customer, topic);
+            topicProgress.updateWrongCount(topicProgressAddDto.getCount());
         }
 
     }
@@ -89,11 +76,28 @@ public class StudyProgressService {
         });
     }
 
-    private void checkState(String state){
-        if(!Arrays.stream(StateConst.values())
-                .anyMatch(s -> s.getName().equals(state))){
-            throw new CustomException(STATE_NOT_FOUND);
-        }
+    private ChapterProgress checkChapterProgress(Customer customer, Chapter chapter) {
+        return chapterProgressRepository.queryChapterProgress(customer.getId(), chapter.getNumber()).orElseGet(() -> {
+            ChapterProgress chapterProgress = new ChapterProgress(customer, chapter, 0, NOT_STARTED.getName());
+            chapterProgressRepository.save(chapterProgress);
+            return chapterProgress;
+        });
+    }
+
+    private TopicProgress checkTopicProgress(Customer customer, Topic topic) {
+        return topicProgressRepository.queryTopicProgress(customer.getId(), topic.getTitle()).orElseGet(() -> {
+            TopicProgress topicProgress = new TopicProgress(customer, topic, 0, NOT_STARTED.getName());
+            topicProgressRepository.save(topicProgress);
+            return topicProgress;
+        });
+    }
+
+    private ChapterSection checkChapterSection(Customer customer, Chapter chapter, String state, String content) {
+        return chapterSectionRepository.queryChapterSection(customer.getId(), chapter.getNumber(), content).orElseGet(() -> {
+            ChapterSection chapterSection = new ChapterSection(customer, chapter, content, state);
+            chapterSectionRepository.save(chapterSection);
+            return chapterSection;
+        });
     }
 
     @Transactional
@@ -101,7 +105,6 @@ public class StudyProgressService {
         String content = progressDto.getContent();
         String state = progressDto.getState();
         String title = progressDto.getTitle();
-        Long customerId = customer.getId();
 
         List<String> chapterContentList = ContentConst.getChapterContent();
         String topicContent = TOPIC_STUDY.getName();
@@ -109,46 +112,31 @@ public class StudyProgressService {
             //단원 관련 Content -> title => 단원번호
             Integer chapterNum = Integer.valueOf(title);
             Chapter chapter = checkChapter(chapterNum);
-            ChapterProgress chapterProgress;
-            Optional<ChapterProgress> chapterProgressOptional = chapterProgressRepository.queryChapterProgress(customerId, chapterNum);
-            if (chapterProgressOptional.isEmpty()) {
-                chapterProgress = new ChapterProgress(customer, chapter, 0, NOT_STARTED.getName());
-                chapterProgressRepository.save(chapterProgress);
-            }else{
-                chapterProgress= chapterProgressOptional.get();
-            }
-            chapterSectionRepository.queryChapterSection(customerId, chapterNum, content).ifPresentOrElse(c -> {
-                c.updateState(state);
-                chapterProgress.updateProgress(content);
-            }, () ->{
-                ChapterSection chapterSection = new ChapterSection(customer, chapter, content, state);
-                chapterSectionRepository.save(chapterSection);
-                chapterProgress.updateProgress(content);
-            });
+
+            ChapterProgress chapterProgress = checkChapterProgress(customer, chapter);
+            ChapterSection chapterSection = checkChapterSection(customer, chapter, state, content);
+
+            chapterSection.updateState(state);
+            chapterProgress.updateProgress(content);
+
 
             //다음 단원 학습을 open할 경우 이전 단원을 complete로 설정
             if (content.equals(CHAPTER_INFO.getName()) && chapterNum > 1) {
                 Integer prevChapterNum = chapterNum - 1;
                 Chapter prevChapter = checkChapter(prevChapterNum);
-                chapterProgressRepository.queryChapterProgress(customerId, prevChapterNum).ifPresentOrElse(cp -> {
-                    cp.updateProgress(COMPLETE.getName());
-                }, () -> {
-                    ChapterProgress prevChapterProgress = new ChapterProgress(customer, prevChapter, 0, COMPLETE.getName());
-                    chapterProgressRepository.save(prevChapterProgress);
-                } );
+                ChapterProgress prevChapterProgress = checkChapterProgress(customer, prevChapter);
+                prevChapterProgress.updateProgress(COMPLETE.getName());
             }
+
         }else if(topicContent.equals(content)){
             // 주제 관련 Content -> title = 주제 제목
             Topic topic = checkTopic(title);
-            TopicProgress topicProgress;
-            Optional<TopicProgress> topicProgressOptional = topicProgressRepository.queryTopicProgress(customerId, title);
-            if (topicProgressOptional.isEmpty()) {
-                topicProgress = new TopicProgress(customer, topic, 0, NOT_STARTED.getName());
-                topicProgressRepository.save(topicProgress);
-            }else{
-                topicProgress = topicProgressOptional.get();
-            }
+            Chapter chapter = topic.getChapter();
+
+            TopicProgress topicProgress = checkTopicProgress(customer, topic);
+            ChapterProgress chapterProgress = checkChapterProgress(customer, chapter);
             topicProgress.updateProgress(content);
+            chapterProgress.updateProgress(title);
         }
     }
 }
