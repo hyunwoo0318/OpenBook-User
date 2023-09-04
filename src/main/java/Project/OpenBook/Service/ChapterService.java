@@ -40,18 +40,19 @@ public class ChapterService {
 
     /**
      * 단원 저장
-     * @param title 단원 제목
-     * @param number 단원 번호
+     * @param dto {title, number, startDate, endDate}
      * @return 저장한 단원
      * 중복된 단원 번호 -> throw CustomException(DUP_CHAPTER_NUM);
      */
-    public Chapter createChapter(String title, int number) {
+    public Chapter createChapter(ChapterAddUpdateDto dto) {
+        int number = dto.getNumber();
+        String title = dto.getTitle();
+        Integer startDate = dto.getStartDate();
+        Integer endDate = dto.getEndDate();
+
         checkChapterNum(number);
 
-        Chapter newChapter = Chapter.builder()
-                .number(number)
-                .title(title)
-                .build();
+        Chapter newChapter = new Chapter(number, title, startDate, endDate);
 
         chapterRepository.save(newChapter);
 
@@ -101,18 +102,19 @@ public class ChapterService {
 
     /**
      * 단원 정보를 갱신하는 메서드  
-     * @param num 단원번호  
-     * @param inputTitle 변경할 단원제목
-     * @param inputNum 변경할 단원번호
+     * @param num 기존 단원번호
+     * @param chapterAddUpdateDto {title, number, startDate, endDate}
      * @return
      */
-    public Chapter updateChapter(int num, String inputTitle, int inputNum) {
-        if(num != inputNum){
-            checkChapterNum(inputNum);
+    public Chapter updateChapter(int num, ChapterAddUpdateDto chapterAddUpdateDto) {
+        int inputNumber = chapterAddUpdateDto.getNumber();
+        if(num != inputNumber){
+            checkChapterNum(inputNumber);
         }
         Chapter chapter = checkChapter(num);
 
-        Chapter updateChapter = chapter.updateChapter(inputTitle, inputNum);
+        Chapter updateChapter = chapter.updateChapter(chapterAddUpdateDto.getTitle(), chapterAddUpdateDto.getNumber(),
+                chapterAddUpdateDto.getStartDate(), chapterAddUpdateDto.getEndDate());
         return updateChapter;
     }
 

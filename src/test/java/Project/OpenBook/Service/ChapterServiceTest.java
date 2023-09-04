@@ -3,6 +3,7 @@ package Project.OpenBook.Service;
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.*;
+import Project.OpenBook.Dto.chapter.ChapterAddUpdateDto;
 import Project.OpenBook.Dto.chapter.ChapterDto;
 import Project.OpenBook.Dto.chapter.ChapterInfoDto;
 import Project.OpenBook.Dto.chapter.ChapterUserDto;
@@ -75,29 +76,28 @@ public class ChapterServiceTest {
             @DisplayName("단원을 DB에 저장하고 해당 단원을 리턴한다.")
             public void saveChapterAndReturn() {
                 //given
-                Chapter chapter = new Chapter(chapterTitle, chapterNum);
+                Chapter chapter = new Chapter(chapterNum, chapterTitle, 10, 100);
                 given(chapterRepository.save(any()))
                         .willReturn(chapter);
 
                 //when
-                Chapter findChapter = chapterService.createChapter(chapterTitle, chapterNum);
+                Chapter findChapter = chapterService.createChapter(new ChapterAddUpdateDto(chapterTitle, chapterNum, 10, 100));
 
                 //then
-                assertEquals(findChapter.getNumber(), chapterNum);
-                assertEquals(findChapter.getTitle(), chapterTitle);
+                assertThat(findChapter).isEqualTo(chapter);
             }
 
             @Test
             @DisplayName("이미 존재하는 단원 번호를 입력하면 DUP_CHAPTER_NUM Exception을 날린다.")
             public void dupChapterNum() {
                 //given
-                Chapter chapter = new Chapter(chapterTitle, chapterNum);
+                Chapter chapter = new Chapter(chapterNum,chapterTitle,  10, 100);
                 given(chapterRepository.findOneByNumber(chapterNum))
                         .willReturn(Optional.of(chapter));
 
                 //when
                 CustomException customException = assertThrows(CustomException.class, () ->
-                        chapterService.createChapter(chapterTitle, chapterNum));
+                        chapterService.createChapter(new ChapterAddUpdateDto(chapterTitle, chapterNum, 10, 100)));
                 //then
                 assertEquals(customException.getErrorCode(), ErrorCode.DUP_CHAPTER_NUM);
             }
@@ -235,6 +235,7 @@ public class ChapterServiceTest {
                 String newChapterTitle = "newChapterTitle";
                 Integer newChapterNum = 2;
                 Chapter prevChapter = new Chapter("ch1", prevChapterNum);
+                Chapter newChapter = new Chapter(newChapterNum, newChapterTitle, 10, 100);
 
                 given(chapterRepository.findOneByNumber(prevChapterNum))
                         .willReturn(Optional.ofNullable(prevChapter));
@@ -243,11 +244,11 @@ public class ChapterServiceTest {
                         .willReturn(Optional.ofNullable(null));
 
                 //when
-                Chapter updatedChapter = chapterService.updateChapter(1, newChapterTitle, newChapterNum);
+                Chapter updatedChapter = chapterService.updateChapter(1, new ChapterAddUpdateDto(newChapterTitle, newChapterNum,
+                        10, 100));
 
                 //then
-                assertEquals(updatedChapter.getTitle(), newChapterTitle);
-                assertEquals(updatedChapter.getNumber(), newChapterNum);
+                assertThat(updatedChapter).isEqualTo(newChapter);
             }
 
             @Nested
@@ -260,14 +261,14 @@ public class ChapterServiceTest {
                     Integer prevChapterNum = 1;
                     String newChapterTitle = "newChapterTitle";
                     Integer newChapterNum = 2;
-                    Chapter chapter = new Chapter("tite2", newChapterNum);
+                    Chapter chapter = new Chapter("title2", newChapterNum);
 
                     given(chapterRepository.findOneByNumber(2))
                             .willReturn(Optional.ofNullable(chapter));
 
                     //when
                     CustomException customException = assertThrows(CustomException.class, () ->
-                            chapterService.updateChapter(prevChapterNum, newChapterTitle, newChapterNum));
+                            chapterService.updateChapter(prevChapterNum, new ChapterAddUpdateDto(newChapterTitle, newChapterNum, 10, 100)));
 
                     //then
                     assertEquals(customException.getErrorCode(), ErrorCode.DUP_CHAPTER_NUM);

@@ -146,8 +146,8 @@ public class ChapterController {
             @ApiResponse(responseCode = "409",  description = "중복된 단원 번호 입력")
     })
     @PostMapping("/admin/chapters")
-    public ResponseEntity<Void> addChapter(@Validated @RequestBody ChapterDto chapterDto) {
-        chapterService.createChapter(chapterDto.getTitle(), chapterDto.getNumber());
+    public ResponseEntity<Void> addChapter(@Validated @RequestBody ChapterAddUpdateDto chapterAddUpdateDto) {
+        chapterService.createChapter(chapterAddUpdateDto);
 
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
@@ -160,8 +160,8 @@ public class ChapterController {
             @ApiResponse(responseCode = "409",  description = "중복된 단원 번호 입력")
     })
     @PatchMapping("/admin/chapters/{num}")
-    public ResponseEntity<Void> updateChapter(@PathVariable("num") int num, @Validated @RequestBody ChapterDto chapterDto) {
-        chapterService.updateChapter(num, chapterDto.getTitle(), chapterDto.getNumber());
+    public ResponseEntity<Void> updateChapter(@PathVariable("num") int num, @Validated @RequestBody ChapterAddUpdateDto chapterAddUpdateDto) {
+        chapterService.updateChapter(num,chapterAddUpdateDto);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
