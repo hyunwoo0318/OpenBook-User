@@ -2,6 +2,7 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.studyProgress.ChapterProgressAddDto;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static Project.OpenBook.Constants.ContentConst.*;
+import static Project.OpenBook.Constants.StateConst.LOCKED;
 
 @Service
 @RequiredArgsConstructor
@@ -83,7 +85,7 @@ public class StudyProgressService {
 
     private TopicProgress checkTopicProgress(Customer customer, Topic topic) {
         return topicProgressRepository.queryTopicProgress(customer.getId(), topic.getTitle()).orElseGet(() -> {
-            TopicProgress topicProgress = new TopicProgress(customer, topic, 0, NOT_STARTED.getName());
+            TopicProgress topicProgress = new TopicProgress(customer, topic, 0, LOCKED.getName());
             topicProgressRepository.save(topicProgress);
             return topicProgress;
         });
@@ -132,7 +134,7 @@ public class StudyProgressService {
 
             TopicProgress topicProgress = checkTopicProgress(customer, topic);
             ChapterProgress chapterProgress = checkChapterProgress(customer, chapter);
-            topicProgress.updateProgress(content);
+            topicProgress.updateState(state);
             chapterProgress.updateProgress(title);
         }
     }

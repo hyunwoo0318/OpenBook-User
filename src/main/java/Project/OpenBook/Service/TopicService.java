@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
 import Project.OpenBook.Dto.primaryDate.PrimaryDateUserDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
@@ -115,7 +116,7 @@ public class TopicService {
 
     private void updateTopicProgress(Topic topic) {
         List<TopicProgress> topicProgressList = customerRepository.findAll().stream()
-                .map(c -> new TopicProgress(c, topic))
+                .map(c -> new TopicProgress(c, topic,0, StateConst.LOCKED.getName()))
                 .collect(Collectors.toList());
         topicProgressRepository.saveAll(topicProgressList);
     }

@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain;
 
-import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.StateConst;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -32,18 +31,18 @@ public class TopicProgress  extends BaseEntity{
     @ColumnDefault(value = "0")
     private Integer wrongCount = 0;
 
-    private String progress;
+    private String state = StateConst.LOCKED.getName();
 
     public TopicProgress(Customer customer,Topic topic) {
         this.customer = customer;
         this.topic = topic;
     }
 
-    public TopicProgress(Customer customer, Topic topic,Integer wrongCount, String progress) {
+    public TopicProgress(Customer customer, Topic topic,Integer wrongCount, String state) {
         this.customer = customer;
         this.topic = topic;
         this.wrongCount = wrongCount;
-        this.progress = progress;
+        this.state = state;
     }
     public TopicProgress updateLastStudyTime() {
         this.lastStudyTime = LocalDateTime.now();
@@ -55,7 +54,7 @@ public class TopicProgress  extends BaseEntity{
         return this;
     }
 
-    public void updateProgress(String progress) {
-        this.progress = progress;
+    public void updateState(String state) {
+        this.state = state;
     }
 }

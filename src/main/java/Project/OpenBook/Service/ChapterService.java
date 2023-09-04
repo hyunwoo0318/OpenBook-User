@@ -274,7 +274,7 @@ public class ChapterService {
          */
         String topicStudyName = ContentConst.TOPIC_STUDY.getName();
         for (TopicProgress topicProgress : topicProgressList) {
-            contentTableList.add(new ProgressDto(topicStudyName, topicProgress.getTopic().getTitle(), topicProgress.getProgress()));
+            contentTableList.add(new ProgressDto(topicStudyName, topicProgress.getTopic().getTitle(), topicProgress.getState()));
         }
 
 
