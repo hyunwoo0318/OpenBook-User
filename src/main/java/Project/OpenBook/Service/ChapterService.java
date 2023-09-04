@@ -200,8 +200,6 @@ public class ChapterService {
             }
             String state = StateConst.LOCKED.getName();
             if(!findChapterProgress.getProgress().equals(ContentConst.NOT_STARTED.getName())){
-                System.out.println(findChapterProgress.getProgress().toString());
-                System.out.println(ContentConst.NOT_STARTED.getName().toString());
                 state = StateConst.OPEN.getName();
             }
             ChapterUserDto chapterUserDto = new ChapterUserDto(chapter.getTitle(), chapter.getNumber(), state, findChapterProgress.getProgress());
@@ -227,9 +225,8 @@ public class ChapterService {
             Integer endDate = tuple.get(topic.endDate);
             dtoList.add(new TopicTempDto(title, category, startDate, endDate));
         }
+
         return dtoList;
-
-
     }
 
     /**
@@ -325,5 +322,16 @@ public class ChapterService {
         return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
+    }
+
+    public List<ChapterContentDto> queryChapters() {
+        Map<Chapter, Long> map = chapterRepository.queryChapterContentDto();
+        List<ChapterContentDto> dtoList = new ArrayList<>();
+        for (Chapter chapter : map.keySet()) {
+            Long topicCount = map.get(chapter);
+            ChapterContentDto dto = new ChapterContentDto(chapter.getTitle(), chapter.getNumber(), chapter.getStartDate(), chapter.getEndDate(), topicCount);
+            dtoList.add(dto);
+        }
+        return dtoList;
     }
 }

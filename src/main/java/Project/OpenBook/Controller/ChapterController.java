@@ -40,14 +40,24 @@ public class ChapterController {
         return new ResponseEntity<List<ChapterDto>>(chapterDtoList, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "모든 단원 정보 가져오기 - 사용자")
+    @ApiOperation(value = "모든 단원 정보 가져오기 - 정주행")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
+    })
+    @GetMapping("/jjh/chapters")
+    public ResponseEntity<List<ChapterUserDto>> queryChapterUserJJH(@AuthenticationPrincipal Customer customer){
+        List<ChapterUserDto> chapterUserDtoList = chapterService.queryChapterUserDtos(customer);
+        return new ResponseEntity<List<ChapterUserDto>>(chapterUserDtoList, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "모든 단원 정보 가져오기 - 학습자료 모음")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping("/chapters")
-    public ResponseEntity<List<ChapterUserDto>> queryChapterUser(@AuthenticationPrincipal Customer customer){
-        List<ChapterUserDto> chapterUserDtoList = chapterService.queryChapterUserDtos(customer);
-        return new ResponseEntity<List<ChapterUserDto>>(chapterUserDtoList, HttpStatus.OK);
+    public ResponseEntity<List<ChapterContentDto>> queryChapters() {
+        List<ChapterContentDto> dtoList = chapterService.queryChapters();
+        return new ResponseEntity<List<ChapterContentDto>>(dtoList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "목차 제공 - 사용자")
@@ -65,19 +75,19 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 이름 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
-    @GetMapping("/admin/chapters/chapter-title")
+    @GetMapping("/chapters/chapter-title")
     public ResponseEntity<ChapterTitleDto> queryChapterTitle(@RequestParam("num") Integer num){
         ChapterTitleDto chapterTitleDto = chapterService.queryChapterTitle(num);
 
         return new ResponseEntity<ChapterTitleDto>(chapterTitleDto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 학습 조회 - 관리자")
+    @ApiOperation(value = "단원 학습 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 학습 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
-    @GetMapping("/admin/chapters/{num}/info")
+    @GetMapping("/chapters/{num}/info")
     public ResponseEntity<ChapterInfoDto> queryChapterInfoAdmin(@PathVariable("num") Integer num){
         ChapterInfoDto chapterInfoDto = chapterService.queryChapterInfoAdmin(num);
 

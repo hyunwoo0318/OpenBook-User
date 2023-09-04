@@ -11,7 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChapterUserDto {
-
     private String title;
     private Integer number;
     private String state;

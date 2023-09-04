@@ -2,9 +2,11 @@ package Project.OpenBook.Repository.chapter;
 
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.ChapterProgress;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.group.Group;
 
 
+import java.util.List;
 import java.util.Map;
 
 public interface ChapterRepositoryCustom {
@@ -16,4 +18,8 @@ public interface ChapterRepositoryCustom {
      * 특정 chapter에 chapterProgress가 존재하지 않을 경우 value값에 null 리턴
      */
     public Map<Chapter, ChapterProgress> queryChapterWithProgress(Long customerId);
+
+    public Integer queryMaxChapterNum();
+
+    public Map<Chapter, Long> queryChapterContentDto();
 }
