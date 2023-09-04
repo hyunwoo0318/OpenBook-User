@@ -141,8 +141,8 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
     }
 
     @Override
-    public List<String> queryTopicTitleCustomer(int num) {
-        return queryFactory.select(topic.title)
+    public List<Tuple> queryTopicForTopicTempDto(int num) {
+        return queryFactory.select(topic.title,topic.category.name, topic.startDate, topic.endDate )
                 .from(topic)
                 .where(topic.chapter.number.eq(num))
                 .orderBy(topic.number.asc())

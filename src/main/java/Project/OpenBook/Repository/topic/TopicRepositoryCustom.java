@@ -2,8 +2,6 @@ package Project.OpenBook.Repository.topic;
 
 import Project.OpenBook.Domain.PrimaryDate;
 import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.topic.TopicAdminDto;
-import Project.OpenBook.Dto.topic.TopicCustomerDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.group.Group;
 
@@ -36,5 +34,5 @@ public interface  TopicRepositoryCustom {
 
     public Optional<Topic> queryTopicByNumber(Integer chapterNum, Integer topicNum);
 
-    public List<String> queryTopicTitleCustomer(int num);
+    public List<Tuple> queryTopicForTopicTempDto(int num);
 }

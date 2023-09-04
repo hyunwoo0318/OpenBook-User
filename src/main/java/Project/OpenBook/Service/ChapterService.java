@@ -6,6 +6,7 @@ import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Dto.topic.ChapterAdminDto;
+import Project.OpenBook.Dto.topic.TopicTempDto;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
@@ -197,6 +198,8 @@ public class ChapterService {
             }
             String state = StateConst.LOCKED.getName();
             if(!findChapterProgress.getProgress().equals(ContentConst.NOT_STARTED.getName())){
+                System.out.println(findChapterProgress.getProgress().toString());
+                System.out.println(ContentConst.NOT_STARTED.getName().toString());
                 state = StateConst.OPEN.getName();
             }
             ChapterUserDto chapterUserDto = new ChapterUserDto(chapter.getTitle(), chapter.getNumber(), state, findChapterProgress.getProgress());
@@ -211,9 +214,20 @@ public class ChapterService {
         return sortedChapterUserDtoList;
     }
 
-    public List<String> queryTopicsInChapterCustomer(int num) {
+    public List<TopicTempDto> queryTopicsInChapterCustomer(int num) {
         checkChapter(num);
-        return topicRepository.queryTopicTitleCustomer(num);
+        List<TopicTempDto> dtoList = new ArrayList<>();
+        List<Tuple> tupleList = topicRepository.queryTopicForTopicTempDto(num);
+        for (Tuple tuple : tupleList) {
+            String title = tuple.get(topic.title);
+            String category = tuple.get(topic.category.name);
+            Integer startDate = tuple.get(topic.startDate);
+            Integer endDate = tuple.get(topic.endDate);
+            dtoList.add(new TopicTempDto(title, category, startDate, endDate));
+        }
+        return dtoList;
+
+
     }
 
     /**

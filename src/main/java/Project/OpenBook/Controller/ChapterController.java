@@ -5,6 +5,7 @@ import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Dto.topic.ChapterAdminDto;
+import Project.OpenBook.Dto.topic.TopicTempDto;
 import Project.OpenBook.Service.ChapterService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -132,9 +133,9 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
     })
     @GetMapping("/chapters/{num}/topics")
-    public ResponseEntity<List<String>> queryChapterTopicsCustomer(@PathVariable("num") int num){
-        List<String> topicTitleList = chapterService.queryTopicsInChapterCustomer(num);
-        return new ResponseEntity<List<String>>(topicTitleList, HttpStatus.OK);
+    public ResponseEntity<List<TopicTempDto>> queryChapterTopicsCustomer(@PathVariable("num") int num){
+        List<TopicTempDto> dtoList = chapterService.queryTopicsInChapterCustomer(num);
+        return new ResponseEntity<List<TopicTempDto>>(dtoList, HttpStatus.OK);
     }
 
 
