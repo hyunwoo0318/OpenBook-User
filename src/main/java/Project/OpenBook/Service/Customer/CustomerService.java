@@ -137,9 +137,13 @@ public class CustomerService implements UserDetailsService {
             customerRepository.save(customer);
 
             //단원학습, 주제학습 레코드 생성
+            System.out.println("save customer success!!");
             initChapterProgress(customer);
+            System.out.println("init ChapterProgress success!!");
             initChapterSection(customer);
+            System.out.println("initChapterSection Success!");
             initTopicProgress(customer);
+            System.out.println("initTopicProgress Success!");
         }else{
             customer = customerOptional.get();
         }
@@ -210,7 +214,7 @@ public class CustomerService implements UserDetailsService {
         List<TopicProgress> topicProgressList = new ArrayList<>();
         for (Topic topic : topicList) {
             TopicProgress topicProgress;
-            topicProgress = new TopicProgress(customer, topic, 0, ContentConst.NOT_STARTED.getName());
+            topicProgress = new TopicProgress(customer, topic, 0, StateConst.LOCKED.getName());
             topicProgressList.add(topicProgress);
         }
         topicProgressRepository.saveAll(topicProgressList);
