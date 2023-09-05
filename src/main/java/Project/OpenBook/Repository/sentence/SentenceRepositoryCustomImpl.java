@@ -36,21 +36,21 @@ public class SentenceRepositoryCustomImpl implements SentenceRepositoryCustom{
     }
 
     @Override
-    public List<Sentence> queryByTopicTitle(String topicTitle, int size) {
+    public List<Sentence> queryByTopicTitle(String topicTitle, int limit) {
         return queryFactory.selectFrom(sentence)
                 .where(sentence.topic.title.eq(topicTitle))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                .limit(size)
+                .limit(limit)
                 .fetch();
     }
 
     @Override
-    public List<Tuple> queryWrongSentences(String answerTopicTitle, int size) {
+    public List<Tuple> queryWrongSentences(String answerTopicTitle, int limit) {
         return queryFactory.select(sentence.name,sentence.topic.title)
                 .from(sentence)
                 .where(sentence.topic.title.ne(answerTopicTitle))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                .limit(size)
+                .limit(limit)
                 .fetch();
     }
 }

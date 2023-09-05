@@ -1,5 +1,18 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Domain.Keyword;
+import Project.OpenBook.Dto.question.QuestionChoiceDto;
+import Project.OpenBook.Dto.question.QuestionDto;
+import Project.OpenBook.Utils.CustomException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static Project.OpenBook.Constants.ErrorCode.QUESTION_ERROR;
+import static Project.OpenBook.Constants.QuestionConst.GET_KEYWORD_TYPE;
+import static Project.OpenBook.Constants.QuestionConst.WRONG_KEYWORD_SENTENCE_NUM;
+
 public class TempQuestionService {
 
     /**
@@ -575,6 +588,72 @@ public class TempQuestionService {
 //
 //
 //}
+//
+//
+//    private List<QuestionDto> getQuestionByTopicTitle(String topicTitle, int questionNum) {
+//        List<QuestionDto> questionDtoList = new ArrayList<>();
+//
+//        //정답 키워드조회
+//        List<Keyword> answerKeywordList = getKeywordsByAnswerTopic(topicTitle, questionNum);
+//        List<QuestionChoiceDto> answerChoiceList = toQuestionChoiceDtoByKeyword(answerKeywordList);
+//        int answerKeywordSize = answerChoiceList.size();
+//
+//        //오답 키워드조회
+//        List<QuestionChoiceDto> wrongKeywordList = getWrongKeywordsByTopic(topicTitle, answerKeywordSize * WRONG_KEYWORD_SENTENCE_NUM);
+//
+//        int wrongKeywordSize = wrongKeywordList.size();
+//
+//        if(wrongKeywordSize < WRONG_KEYWORD_SENTENCE_NUM){
+//            throw new CustomException(QUESTION_ERROR);
+//        }
+//
+//        //return할 dto생성
+//        /**
+//         * 충분한 keyword가 존재하는 경우 -> 각 문제마다 다른 오답 선지 제공
+//         */
+//        if(wrongKeywordSize == answerKeywordSize * WRONG_KEYWORD_SENTENCE_NUM)  {
+//            int idx = 0;
+//            for (QuestionChoiceDto questionChoiceDto : answerChoiceList) {
+//                List<QuestionChoiceDto> choiceList = new ArrayList<>();
+//                choiceList.add(questionChoiceDto);
+//                List<QuestionChoiceDto> wrongChoiceList = wrongKeywordList.subList(idx, idx + WRONG_KEYWORD_SENTENCE_NUM);
+//                idx += WRONG_KEYWORD_SENTENCE_NUM;
+//                choiceList.addAll(wrongChoiceList);
+//
+//                QuestionDto dto = QuestionDto.builder()
+//                        .questionType(GET_KEYWORD_TYPE)
+//                        .descriptionSentence(topicTitle)
+//                        .answer(topicTitle)
+//                        .choiceList(choiceList)
+//                        .build();
+//                questionDtoList.add(dto);
+//            }
+//        }
+//        /**
+//         * 충분한 keyword가 존재하지 않는 경우 -> 존재하는 키워드중 랜덤하게 WRONG_ANSWER_NUM만큼 골라서 오답 선지로 제공
+//         */
+//        else{
+//            for (QuestionChoiceDto questionChoiceDto : answerChoiceList) {
+//                List<QuestionChoiceDto> choiceList = new ArrayList<>();
+//                choiceList.add(questionChoiceDto);
+//                Collections.shuffle(wrongKeywordList);
+//                List<QuestionChoiceDto> wrongChoiceList = wrongKeywordList.subList(0, WRONG_KEYWORD_SENTENCE_NUM);
+//
+//                choiceList.addAll(wrongChoiceList);
+//
+//                QuestionDto dto = QuestionDto.builder()
+//                        .questionType(GET_KEYWORD_TYPE)
+//                        .descriptionSentence(topicTitle)
+//                        .answer(topicTitle)
+//                        .choiceList(choiceList)
+//                        .build();
+//                questionDtoList.add(dto);
+//            }
+//        }
+//
+//
+//        return questionDtoList;
+//    }
 }
 
 

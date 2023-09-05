@@ -1,7 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Dto.question.*;
-import Project.OpenBook.Service.QuestionService;
+import Project.OpenBook.Service.Question.QuestionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -76,5 +76,16 @@ public class QuestionController {
         List<QuestionDto> questionDtoList = questionService.queryGetTopicsBySentenceQuestion(num);
 
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
+    }
+
+    @ApiOperation("랜덤 문제 제공")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "문제 제공 성공"),
+            @ApiResponse(responseCode = "400", description = "문제 제공 실패"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
+    })
+    @GetMapping("/questions/random")
+    public ResponseEntity<List<QuestionDto>> queryRandomQuestion(@RequestParam("num") Integer chapterNum, @RequestParam("count") Integer questionCount) {
+        questionService.queryRandomQuestion(chapterNum, questionCount);
     }
 }

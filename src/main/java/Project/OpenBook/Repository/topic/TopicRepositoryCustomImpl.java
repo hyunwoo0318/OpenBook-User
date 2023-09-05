@@ -123,6 +123,14 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
     }
 
     @Override
+    public Long queryTopicCountInChapter(Integer num) {
+        return queryFactory.select(topic.countDistinct())
+                .from(topic)
+                .where(topic.chapter.number.eq(num))
+                .fetchOne();
+    }
+
+    @Override
     public List<String> queryWrongTopicTitle(String topicTitle,int size) {
          return queryFactory.select(topic.title)
                  .from(topic)

@@ -12,7 +12,7 @@ public interface SentenceRepositoryCustom {
 
     public List<Sentence> queryByTopicTitle(String topicTitle);
 
-    public List<Sentence> queryByTopicTitle(String topicTitle, int size);
+    public List<Sentence> queryByTopicTitle(String topicTitle, int limit);
 
-    public List<Tuple> queryWrongSentences(String answerTopicTitle, int size);
+    public List<Tuple> queryWrongSentences(String answerTopicTitle, int limit);
 }
