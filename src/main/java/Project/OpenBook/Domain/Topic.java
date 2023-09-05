@@ -1,9 +1,6 @@
 package Project.OpenBook.Domain;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
@@ -42,15 +39,31 @@ public class Topic extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chapter_id")
+    @Setter
     private Chapter chapter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
+    @Setter
     private Category category;
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE)
     private List<TopicProgress> topicProgressList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "topic")
+    private List<Keyword> keywordList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "topic")
+    private List<Sentence> sentenceList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "topic")
+    private List<PrimaryDate> primaryDateList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "topic")
+    private List<Choice> choiceList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "topic")
+    private List<Description> descriptionList = new ArrayList<>();
 
     @Builder
     public Topic(String title, Integer startDate, Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
@@ -79,22 +92,6 @@ public class Topic extends BaseEntity{
         this.startDateCheck = startDateCheck;
         this.endDateCheck = endDateCheck;
         return this;
-    }
-
-    public void deleteChapter() {
-        this.chapter = null;
-    }
-
-    public void deleteCategory() {
-        this.category = null;
-    }
-
-    public void updateChapter(Chapter chapter) {
-        this.chapter = chapter;
-    }
-
-    public void updateCategory(Category category) {
-        this.category = category;
     }
 
     public void updateTopicNumber(Integer number){
