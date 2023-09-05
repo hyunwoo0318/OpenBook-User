@@ -98,6 +98,8 @@ public class TopicService {
                 .choiceNum(0)
                 .build();
         topicRepository.save(topic);
+//        chapter.addTopic(topic);
+//        category.addTopic(topic);
 
         //연표에 표시할 날짜 저장
         List<PrimaryDateDto> dateList = new ArrayList<>();

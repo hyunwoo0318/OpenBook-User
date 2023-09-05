@@ -17,6 +17,8 @@ public interface  TopicRepositoryCustom {
 
     public Topic queryTopicByChoice(Long choiceId);
 
+    public List<Topic> queryTopicByChapterNum(Integer chapterNum);
+
 
     public List<Tuple> queryAdminChapterDto(Integer chapterNum);
 

@@ -77,27 +77,25 @@ public class ChapterService {
      * chapterAdminDto{categoryName, topicTitle, startDate, endDate, descriptionCount, choiceCount, keywordCount}
      */
     public List<ChapterAdminDto> queryTopicsInChapterAdmin(int number) {
-        checkChapter(number);
-        List<Tuple> result = topicRepository.queryAdminChapterDto(number);
-
+        Chapter chapter = checkChapter(number);
+//
         List<ChapterAdminDto> chapterAdminDtoList = new ArrayList<>();
-        for (Tuple t : result) {
-            String category = t.get(topic.category.name);
-            String title = t.get(topic.title);
-            Integer startDate = t.get(topic.startDate);
-            Integer endDate = t.get(topic.endDate);
-            Long descriptionCount = toDefaultCount(t.get(description.countDistinct()));
-            Long choiceCount = toDefaultCount(t.get(choice.countDistinct()));
-            Long keywordCount = toDefaultCount(t.get(keyword.countDistinct()));
-            ChapterAdminDto chapterAdminDto = new ChapterAdminDto(category, title, startDate, endDate, descriptionCount, choiceCount, keywordCount);
-            chapterAdminDtoList.add(chapterAdminDto);
+
+        List<Topic> topicList = topicRepository.queryTopicByChapterNum(number);
+        for (Topic findTopic : topicList) {
+            String categoryName = findTopic.getCategory().getName();
+            String title = findTopic.getTitle();
+            Integer topicNumber = findTopic.getNumber();
+            Integer startDate = findTopic.getStartDate();
+            Integer endDate = findTopic.getEndDate();
+            int descriptionCount = findTopic.getDescriptionList().size();
+            int choiceCount = findTopic.getChoiceList().size();
+            int keywordCount = findTopic.getKeywordList().size();
+            ChapterAdminDto dto = new ChapterAdminDto(categoryName,topicNumber, title, startDate, endDate, descriptionCount, choiceCount, keywordCount);
+            chapterAdminDtoList.add(dto);
         }
 
         return chapterAdminDtoList;
-    }
-
-    private Long toDefaultCount(Long count) {
-        return count != null ? count : 0L;
     }
 
     /**
@@ -333,5 +331,10 @@ public class ChapterService {
             dtoList.add(dto);
         }
         return dtoList;
+    }
+
+    public ChapterDateDto queryChapterDate(Integer num) {
+        Chapter chapter = checkChapter(num);
+        return new ChapterDateDto(chapter.getStartDate(), chapter.getEndDate());
     }
 }

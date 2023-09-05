@@ -1,8 +1,6 @@
 package Project.OpenBook.Repository.topic;
 
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
-import Project.OpenBook.Dto.topic.TopicAdminDto;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.group.Group;
 import com.querydsl.core.types.dsl.Expressions;
@@ -15,6 +13,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static Project.OpenBook.Domain.QCategory.category;
+import static Project.OpenBook.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
 import static Project.OpenBook.Domain.QKeyword.keyword;
@@ -59,6 +59,14 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
                 .fetchOne();
     }
 
+    @Override
+    public List<Topic> queryTopicByChapterNum(Integer chapterNum) {
+        return queryFactory.selectFrom(topic)
+                .join(topic.category, category)
+                .fetchJoin()
+                .where(topic.chapter.number.eq(chapterNum))
+                .fetch();
+    }
 
     @Override
     public List<Tuple> queryAdminChapterDto(Integer chapterNum) {

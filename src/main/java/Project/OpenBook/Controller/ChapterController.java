@@ -82,6 +82,18 @@ public class ChapterController {
         return new ResponseEntity<ChapterTitleDto>(chapterTitleDto, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "단원 시작년도/종료년도 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
+    })
+    @GetMapping("/chapters/{num}/date")
+    public ResponseEntity queryChapterDate(@PathVariable("num") Integer num) {
+        ChapterDateDto dto = chapterService.queryChapterDate(num);
+        return new ResponseEntity<ChapterDateDto>(dto, HttpStatus.OK);
+    }
+
+
     @ApiOperation(value = "단원 학습 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 학습 조회 성공"),
@@ -99,24 +111,13 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 학습 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
-    @GetMapping("/chapters/{num}/info")
+    @GetMapping("/chapters/{num}/title-info")
     public ResponseEntity<ChapterTitleInfoDto> queryChapterInfoCustomer(@PathVariable("num") Integer num){
         ChapterTitleInfoDto chapterTitleInfoDto = chapterService.queryChapterInfoCustomer(num);
 
         return new ResponseEntity<ChapterTitleInfoDto>(chapterTitleInfoDto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 학습과 단원 이름 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "단원학습 단원이름 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
-    })
-    @GetMapping("/admin/chapters/title-info")
-    public ResponseEntity<ChapterTitleInfoDto> queryChapterTitleInfo(@RequestParam("num") Integer num) {
-        ChapterTitleInfoDto chapterTitleInfoDto = chapterService.queryChapterTitleInfo(num);
-
-        return new ResponseEntity<ChapterTitleInfoDto>(chapterTitleInfoDto, HttpStatus.OK);
-    }
 
     @ApiOperation(value = "단원 학습 수정")
     @ApiResponses(value = {

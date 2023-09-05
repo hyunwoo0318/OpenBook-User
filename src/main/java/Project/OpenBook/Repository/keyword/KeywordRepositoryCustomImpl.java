@@ -2,6 +2,7 @@ package Project.OpenBook.Repository.keyword;
 
 import Project.OpenBook.Domain.Keyword;
 
+import Project.OpenBook.Domain.QTopic;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.QTopic.topic;
 
 @Repository
 @RequiredArgsConstructor

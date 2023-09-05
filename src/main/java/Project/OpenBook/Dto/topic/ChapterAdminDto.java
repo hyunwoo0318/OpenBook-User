@@ -13,17 +13,19 @@ public class ChapterAdminDto {
 
     private String category;
 
+    private Integer number;
+
     private String title;
 
     private Integer startDate;
 
     private Integer endDate;
 
-    private Long descriptionCount;
+    private int descriptionCount;
 
-    private Long choiceCount;
+    private int choiceCount;
 
-    private Long keywordCount;
+    private int keywordCount;
 
     @Override
     public boolean equals(Object o) {
@@ -42,15 +44,4 @@ public class ChapterAdminDto {
         return Objects.equals(keywordCount, that.keywordCount);
     }
 
-    @Override
-    public int hashCode() {
-        int result = category != null ? category.hashCode() : 0;
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
-        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
-        result = 31 * result + (descriptionCount != null ? descriptionCount.hashCode() : 0);
-        result = 31 * result + (choiceCount != null ? choiceCount.hashCode() : 0);
-        result = 31 * result + (keywordCount != null ? keywordCount.hashCode() : 0);
-        return result;
-    }
 }
