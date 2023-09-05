@@ -22,19 +22,30 @@ import static Project.OpenBook.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.QSentence.sentence;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class QuestionService {
 
-    private final TopicRepository topicRepository;
-    private final ChapterRepository chapterRepository;
-    private final KeywordRepository keywordRepository;
-    private final SentenceRepository sentenceRepository;
+    private TopicRepository topicRepository;
+    private ChapterRepository chapterRepository;
+    private KeywordRepository keywordRepository;
+    private SentenceRepository sentenceRepository;
 
-    private GetKeywordByTopicQuestion type1 = new GetKeywordByTopicQuestion(topicRepository, keywordRepository, sentenceRepository);
-    private GetSentenceByTopicQuestion type2 = new GetSentenceByTopicQuestion(topicRepository, keywordRepository, sentenceRepository);
+    private GetKeywordByTopicQuestion type1 ;
+    private GetSentenceByTopicQuestion type2;
+    private GetTopicByKeywordQuestion type3;
+    private GetTopicBySentenceQuestion type4;
 
-    private GetTopicByKeywordQuestion type3 = new GetTopicByKeywordQuestion(topicRepository, keywordRepository, sentenceRepository);
-    private GetTopicBySentenceQuestion type4 = new GetTopicBySentenceQuestion(topicRepository, keywordRepository, sentenceRepository);
+    public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository, SentenceRepository sentenceRepository) {
+        this.topicRepository = topicRepository;
+        this.chapterRepository = chapterRepository;
+        this.keywordRepository = keywordRepository;
+        this.sentenceRepository = sentenceRepository;
+
+        this.type1 = new GetKeywordByTopicQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
+        this.type2 = new GetSentenceByTopicQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
+        this.type3 = new GetTopicByKeywordQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
+        this.type4 = new GetTopicBySentenceQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
+    }
 
     private Topic checkTopic(String topicTitle) {
         return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {

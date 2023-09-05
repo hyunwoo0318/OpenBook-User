@@ -86,6 +86,8 @@ public class QuestionController {
     })
     @GetMapping("/questions/random")
     public ResponseEntity<List<QuestionDto>> queryRandomQuestion(@RequestParam("num") Integer chapterNum, @RequestParam("count") Integer questionCount) {
-        questionService.queryRandomQuestion(chapterNum, questionCount);
+        List<QuestionDto> questionDtoList = questionService.queryRandomQuestion(chapterNum, questionCount);
+        return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }
+
 }
