@@ -1,6 +1,7 @@
 package Project.OpenBook.Round;
 
 import Project.OpenBook.Round.dto.RoundDto;
+import Project.OpenBook.Round.dto.RoundInfoDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,6 +28,27 @@ public class RoundController {
         List<RoundDto> dtoList = roundService.queryRounds();
         return new ResponseEntity<List<RoundDto>>(dtoList, HttpStatus.OK);
     }
+
+    @ApiOperation("특정 회차 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "특정 회차 조회 성공")
+    })
+    @GetMapping("/rounds/{number}")
+    public ResponseEntity<RoundInfoDto> getRoundQuestion(@PathVariable("number") Integer number) {
+        RoundInfoDto dto = roundService.queryRound(number);
+        return new ResponseEntity<RoundInfoDto>(dto, HttpStatus.OK);
+    }
+
+    @ApiOperation("회차 내 전체 문제 번호 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "특정 회차 조회 성공")
+    })
+    @GetMapping("/rounds/{number}/questions")
+    public ResponseEntity<List<Integer>> getRounds(@PathVariable("number") Integer number) {
+        List<Integer> dtoList = roundService.queryRoundQuestions(number);
+        return new ResponseEntity<List<Integer>>(dtoList, HttpStatus.OK);
+    }
+
 
     @ApiOperation("회차 생성")
     @ApiResponses(value = {

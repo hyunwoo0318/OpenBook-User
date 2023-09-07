@@ -1,7 +1,11 @@
 package Project.OpenBook.Round;
 
 import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.ExamQuestion.ExamQuestion;
+import Project.OpenBook.ExamQuestion.ExamQuestionService;
+import Project.OpenBook.ExamQuestion.Repo.General.ExamQuestionRepository;
 import Project.OpenBook.Round.dto.RoundDto;
+import Project.OpenBook.Round.dto.RoundInfoDto;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,7 @@ import static Project.OpenBook.Constants.ErrorCode.ROUND_NOT_FOUND;
 public class RoundService {
 
     private final RoundRepository roundRepository;
+    private final ExamQuestionRepository examQuestionRepository;
 
 
     public List<RoundDto> queryRounds() {
@@ -70,5 +75,17 @@ public class RoundService {
         return roundRepository.findRoundByNumber(number).orElseThrow(() -> {
             throw new CustomException(ROUND_NOT_FOUND);
         });
+    }
+
+    public RoundInfoDto queryRound(Integer number) {
+        Round round = checkRound(number);
+        return new RoundInfoDto(round.getDate());
+    }
+
+    public List<Integer> queryRoundQuestions(Integer number) {
+        List<ExamQuestion> examQuestionList = examQuestionRepository.queryExamQuestions(number);
+        return examQuestionList.stream()
+                .map(ExamQuestion::getNumber)
+                .collect(Collectors.toList());
     }
 }
