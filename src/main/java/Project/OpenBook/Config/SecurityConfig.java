@@ -32,12 +32,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-
-    private final AuthenticationSuccessCustomHandler authenticationSuccessCustomHandler;
-
     private final JwtCustomFilter jwtCustomFilter;
-
-    private final CustomerService customerService;
 
     private final String[] permitAllList = {
             "/","/admin/login", "/oauth2/**", "/login/**","/error/*",
@@ -60,7 +55,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable().cors().and()
-                .userDetailsService(customerService)
                 .formLogin().disable()
                 .authorizeRequests()
                 .antMatchers("**").permitAll()
@@ -75,11 +69,6 @@ public class SecurityConfig {
                 .frameOptions().sameOrigin().xssProtection().block(false).and().and()
                .addFilterBefore(jwtCustomFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-    }
-
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customerService);
     }
 
 

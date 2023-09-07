@@ -17,6 +17,7 @@ import static Project.OpenBook.Constants.ErrorCode.LOGIN_FAIL;
 public class KakaoLogin implements Oauth2Login{
     private final String redirectURL = KakaoConst.REDIRECT_URL_LOGIN;
     private final WebClient.Builder webClientBuilder;
+    private final ObjectMapper objectMapper;
 
     private String kakaoKey = "ca80f14a6e6b6c34ea821c46af0cc10c";
     @Override
@@ -59,7 +60,6 @@ public class KakaoLogin implements Oauth2Login{
         //body검증
         String decodedBody = new String(Base64Utils.decode(body.getBytes()));
 
-        ObjectMapper objectMapper = new ObjectMapper();
         Map<String, String> bodyMap = objectMapper.readValue(decodedBody, Map.class);
 
         return bodyMap.get("sub");

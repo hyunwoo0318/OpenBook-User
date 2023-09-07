@@ -10,6 +10,8 @@ import Project.OpenBook.Dto.topic.TopicTempDto;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
+import Project.OpenBook.Round.Round;
+import Project.OpenBook.Round.RoundValidator;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
@@ -34,6 +36,7 @@ public class ChapterService {
     private final ChapterProgressRepository chapterProgressRepository;
     private final ChapterSectionRepository chapterSectionRepository;
     private final TopicProgressRepository topicProgressRepository;
+    private final RoundValidator roundValidator;
 
     /**
      * 단원 저장
@@ -323,8 +326,12 @@ public class ChapterService {
         List<Chapter> chapterList = chapterRepository.queryChapterListWithTopic();
         List<ChapterContentDto> dtoList = new ArrayList<>();
         for (Chapter chapter : chapterList) {
-            ChapterContentDto dto = new ChapterContentDto(chapter.getTitle(), chapter.getNumber(), chapter.getStartDate(), chapter.getEndDate(),
-                    chapter.getTopicList().size());
+//            ChapterContentDto dto = new ChapterContentDto(chapter.getTitle(), chapter.getNumber(), chapter.getStartDate(), chapter.getEndDate(),
+//                    chapter.getTopicList().size());
+            ChapterContentDto dto = ChapterContentDto.builder()
+                    .title(chapter.getTitle())
+                    .number(chapter.getNumber())
+                    .build();
             dtoList.add(dto);
         }
         return dtoList;

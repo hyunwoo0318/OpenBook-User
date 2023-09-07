@@ -18,6 +18,7 @@ import static Project.OpenBook.Constants.ErrorCode.LOGIN_FAIL;
 public class NaverLogin implements Oauth2Login {
 
     private final WebClient.Builder webClientBuilder;
+    private final ObjectMapper objectMapper;
 
     @Value("${spring.security.oauth2.client.registration.naver.client-id}")
     private String naverClientId;
@@ -73,7 +74,7 @@ public class NaverLogin implements Oauth2Login {
                 })
                 .block();
 
-        ObjectMapper objectMapper = new ObjectMapper();
+
         String message = objectMapper.readTree("message").toString();
         if(!message.equals("success")){
             throw new CustomException(LOGIN_FAIL);

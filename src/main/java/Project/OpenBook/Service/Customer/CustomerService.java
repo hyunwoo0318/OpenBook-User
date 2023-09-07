@@ -14,6 +14,7 @@ import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import Project.OpenBook.Utils.CustomException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -47,6 +48,7 @@ public class CustomerService implements UserDetailsService {
     private final AuthenticationManagerBuilder authenticationManager;
     private final WebClient.Builder webClientBuilder;
     private final TokenManager tokenManager;
+    private final ObjectMapper objectMapper;
 
     public Customer addDetails(Long customerId, CustomerAddDetailDto customerAddDetailDto) {
         Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomException(CUSTOMER_NOT_FOUND));
@@ -154,9 +156,9 @@ public class CustomerService implements UserDetailsService {
 
     private Oauth2Login getOauth2LoginStrategy(String providerName) {
         if(providerName.equals("kakao")){
-            return new KakaoLogin(webClientBuilder);
+            return new KakaoLogin(webClientBuilder, objectMapper);
         }else if(providerName.equals("naver")){
-            return new NaverLogin(webClientBuilder);
+            return new NaverLogin(webClientBuilder, objectMapper);
         }else{
             throw new CustomException(WRONG_PROVIDER_NAME);
         }
