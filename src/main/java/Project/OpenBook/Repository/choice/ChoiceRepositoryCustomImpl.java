@@ -32,6 +32,7 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     @Override
     public List<Choice> queryChoicesById(List<Long> choiceIdList) {
         return queryFactory.selectFrom(choice)
+                .leftJoin(topic).on(choice.topic.eq(topic)).fetchJoin()
                 .where(choice.id.in(choiceIdList))
                 .fetch();
     }

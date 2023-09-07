@@ -30,13 +30,11 @@ public interface  TopicRepositoryCustom {
 
     public Map<Topic, List<PrimaryDate>> queryTimeFlowQuestion();
 
-    public List<String> queryTopicTitleInChapter(Integer num);
-
-    public Long queryTopicCountInChapter(Integer num);
-
     public List<String> queryWrongTopicTitle(String topicTitle, int size);
 
     public Optional<Topic> queryTopicByNumber(Integer chapterNum, Integer topicNum);
 
     public List<Tuple> queryTopicForTopicTempDto(int num);
+
+    public List<Topic> queryTopicsByTopicTitleList(List<String> topicTitleList);
 }

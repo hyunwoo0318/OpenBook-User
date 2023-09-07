@@ -47,34 +47,34 @@ public class ChoiceService {
         }
         return new ChoiceDto(choice);
     }
-    public void addChoices(ChoiceAddDto choiceAddDto) {
-
-        Topic topic = topicRepository.findTopicByTitle(choiceAddDto.getTopicTitle()).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
-
-        String[] contentArr = choiceAddDto.getChoiceArr();
-        dupChoice(contentArr);
-        List<Choice> choiceList = Arrays.stream(contentArr).map(c -> new Choice(c, topic)).collect(Collectors.toList());
-        choiceRepository.saveAll(choiceList);
-    }
-
-    @Transactional
-    public Choice updateChoice(ChoiceUpdateDto choiceUpdateDto, Long choiceId) {
-        Choice choice = checkChoice(choiceId);
-        String[] choiceContentArr = {choiceUpdateDto.getContent()};
-        dupChoice(choiceContentArr);
-        Choice updatedChoice = choice.updateContent(choiceUpdateDto.getContent());
-        return updatedChoice;
-    }
-
-
-    @Transactional
-    public Boolean deleteChoice(Long choiceId) {
-        checkChoice(choiceId);
-        choiceRepository.deleteById(choiceId);
-        return true;
-    }
+//    public void addChoices(ChoiceAddDto choiceAddDto) {
+//
+//        Topic topic = topicRepository.findTopicByTitle(choiceAddDto.getTopicTitle()).orElseThrow(() -> {
+//            throw new CustomException(TOPIC_NOT_FOUND);
+//        });
+//
+//        String[] contentArr = choiceAddDto.getChoiceArr();
+//        dupChoice(contentArr);
+//        List<Choice> choiceList = Arrays.stream(contentArr).map(c -> new Choice(c, topic)).collect(Collectors.toList());
+//        choiceRepository.saveAll(choiceList);
+//    }
+//
+//    @Transactional
+//    public Choice updateChoice(ChoiceUpdateDto choiceUpdateDto, Long choiceId) {
+//        Choice choice = checkChoice(choiceId);
+//        String[] choiceContentArr = {choiceUpdateDto.getContent()};
+//        dupChoice(choiceContentArr);
+//        Choice updatedChoice = choice.updateContent(choiceUpdateDto.getContent());
+//        return updatedChoice;
+//    }
+//
+//
+//    @Transactional
+//    public Boolean deleteChoice(Long choiceId) {
+//        checkChoice(choiceId);
+//        choiceRepository.deleteById(choiceId);
+//        return true;
+//    }
 
     private Choice checkChoice(Long choiceId) {
         return choiceRepository.findById(choiceId).orElseThrow(() ->{

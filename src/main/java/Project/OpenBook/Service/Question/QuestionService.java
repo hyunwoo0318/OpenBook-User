@@ -122,11 +122,16 @@ public class QuestionService {
     }
 
     public List<QuestionDto> queryGetTopicsByKeywordQuestion(Integer num) {
-        checkChapter(num);
         List<QuestionDto> questionList = new ArrayList<>();
 
 
-        List<String> topicTitleList = topicRepository.queryTopicTitleInChapter(num);
+        Chapter chapter = chapterRepository.queryChapterWithTopic(num).orElseThrow(() -> {
+            throw new CustomException(CHAPTER_NOT_FOUND);
+        });
+
+        List<String> topicTitleList = chapter.getTopicList().stream()
+                .map(Topic::getTitle)
+                .collect(Collectors.toList());
         for (String topicTitle : topicTitleList) {
             QuestionDto dto = type3.getQuestion(topicTitle);
             //TODO : 문제가 만들어지지 않았을때 예외처리
@@ -137,11 +142,15 @@ public class QuestionService {
     }
 
     public List<QuestionDto> queryGetTopicsBySentenceQuestion(Integer num) {
-        checkChapter(num);
-
         List<QuestionDto> questionList = new ArrayList<>();
 
-        List<String> topicTitleList = topicRepository.queryTopicTitleInChapter(num);
+        Chapter chapter = chapterRepository.queryChapterWithTopic(num).orElseThrow(() -> {
+            throw new CustomException(CHAPTER_NOT_FOUND);
+        });
+
+        List<String> topicTitleList = chapter.getTopicList().stream()
+                .map(Topic::getTitle)
+                .collect(Collectors.toList());
         for (String topicTitle : topicTitleList) {
             QuestionDto dto = type4.getQuestion(topicTitle);
             //TODO : 문제가 만들어지지 않았을때 예외처리
@@ -158,8 +167,13 @@ public class QuestionService {
                     .map(Topic::getTitle)
                     .collect(Collectors.toList());
         } else {
-            checkChapter(chapterNum);
-            topicTitleList = topicRepository.queryTopicTitleInChapter(chapterNum);
+            Chapter chapter = chapterRepository.queryChapterWithTopic(chapterNum).orElseThrow(() -> {
+                throw new CustomException(CHAPTER_NOT_FOUND);
+            });
+
+            topicTitleList = chapter.getTopicList().stream()
+                    .map(Topic::getTitle)
+                    .collect(Collectors.toList());
         }
         int totalSize = topicTitleList.size();
 

@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static Project.OpenBook.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.QChapterProgress.chapterProgress;
@@ -39,10 +40,20 @@ public class ChapterRepositoryCustomImpl implements ChapterRepositoryCustom{
     }
 
     @Override
-    public Map<Chapter, Long> queryChapterContentDto() {
-        Map<Chapter, Long> map = queryFactory.from(chapter)
-                .leftJoin(topic).on(topic.chapter.eq(chapter))
-                .transform(groupBy(chapter).as(topic.countDistinct()));
-        return map;
+    public Optional<Chapter> queryChapterWithTopic(int num) {
+        Chapter findChapter = queryFactory.select(chapter).distinct()
+                .from(chapter)
+                .leftJoin(topic).on(topic.chapter.eq(chapter)).fetchJoin()
+                .where(chapter.number.eq(num))
+                .fetchOne();
+        return Optional.ofNullable(findChapter);
+    }
+
+    @Override
+    public List<Chapter> queryChapterListWithTopic() {
+        return queryFactory.select(chapter).distinct()
+                .from(chapter)
+                .leftJoin(topic).on(topic.chapter.eq(chapter)).fetchJoin()
+                .fetch();
     }
 }

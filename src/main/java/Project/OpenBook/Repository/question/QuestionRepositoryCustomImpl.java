@@ -11,10 +11,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Project.OpenBook.Domain.QChoice.choice;
-import static Project.OpenBook.Domain.QQuestionChoice.questionChoice;
-import static Project.OpenBook.Domain.QQuestionDescription.questionDescription;
-
 @Repository
 @RequiredArgsConstructor
 public class QuestionRepositoryCustomImpl implements QuestionRepositoryCustom{

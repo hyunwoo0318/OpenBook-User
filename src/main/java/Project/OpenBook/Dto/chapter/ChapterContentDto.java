@@ -13,5 +13,5 @@ public class ChapterContentDto {
     private Integer number;
     private Integer startDate;
     private Integer endDate;
-    private Long topicCount;
+    private int topicCount;
 }

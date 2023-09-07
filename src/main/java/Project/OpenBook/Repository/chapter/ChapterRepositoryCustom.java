@@ -2,12 +2,11 @@ package Project.OpenBook.Repository.chapter;
 
 import Project.OpenBook.Domain.Chapter;
 import Project.OpenBook.Domain.ChapterProgress;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.group.Group;
 
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public interface ChapterRepositoryCustom {
 
@@ -21,5 +20,7 @@ public interface ChapterRepositoryCustom {
 
     public Integer queryMaxChapterNum();
 
-    public Map<Chapter, Long> queryChapterContentDto();
+    public Optional<Chapter> queryChapterWithTopic(int num);
+
+    public List<Chapter> queryChapterListWithTopic();
 }

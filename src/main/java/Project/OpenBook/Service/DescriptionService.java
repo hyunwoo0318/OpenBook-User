@@ -51,35 +51,35 @@ public class DescriptionService {
         return descriptionRepository.findDescriptionsByTopic(topicTitle);
     }
 
-    @Transactional
-    public List<Description> addDescription(DescriptionCreateDto descriptionCreateDto) {
-        String topicTitle = descriptionCreateDto.getTopicTitle();
-        String[] contentList = descriptionCreateDto.getContentList();
-        dupDescription(contentList);
-        Topic topic = checkTopic(topicTitle);
-        List<Description> descriptionList = Arrays.stream(contentList).map(c -> new Description(c, topic)).collect(Collectors.toList());
-        descriptionRepository.saveAll(descriptionList);
-        return descriptionList;
-    }
-
-
-    @Transactional
-    public Description updateDescription(Long descriptionId, DescriptionUpdateDto descriptionUpdateDto) {
-
-        Description description = checkDescription(descriptionId);
-        String[] descriptionContentList = {descriptionUpdateDto.getContent()};
-        dupDescription(descriptionContentList);
-
-        Description updateDescription = description.updateContent(descriptionUpdateDto.getContent());
-        return updateDescription;
-    }
-
-    @Transactional
-    public boolean deleteDescription(Long descriptionId) {
-        checkDescription(descriptionId);
-        descriptionRepository.deleteById(descriptionId);
-        return true;
-    }
+//    @Transactional
+//    public List<Description> addDescription(DescriptionCreateDto descriptionCreateDto) {
+//        String topicTitle = descriptionCreateDto.getTopicTitle();
+//        String[] contentList = descriptionCreateDto.getContentList();
+//        dupDescription(contentList);
+//        Topic topic = checkTopic(topicTitle);
+//        List<Description> descriptionList = Arrays.stream(contentList).map(c -> new Description(c, topic)).collect(Collectors.toList());
+//        descriptionRepository.saveAll(descriptionList);
+//        return descriptionList;
+//    }
+//
+//
+//    @Transactional
+//    public Description updateDescription(Long descriptionId, DescriptionUpdateDto descriptionUpdateDto) {
+//
+//        Description description = checkDescription(descriptionId);
+//        String[] descriptionContentList = {descriptionUpdateDto.getContent()};
+//        dupDescription(descriptionContentList);
+//
+//        Description updateDescription = description.updateContent(descriptionUpdateDto.getContent());
+//        return updateDescription;
+//    }
+//
+//    @Transactional
+//    public boolean deleteDescription(Long descriptionId) {
+//        checkDescription(descriptionId);
+//        descriptionRepository.deleteById(descriptionId);
+//        return true;
+//    }
 
     private Description checkDescription(Long descriptionId) {
         return descriptionRepository.findById(descriptionId).orElseThrow(() ->{

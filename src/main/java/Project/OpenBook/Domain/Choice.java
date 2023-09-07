@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain;
 
+import Project.OpenBook.ExamQuestion.ExamQuestion;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,25 +20,29 @@ public class Choice extends BaseEntity{
     @Column(nullable = false,unique = true)
     private String content;
 
+    private String comment;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exam_question_id")
+    private ExamQuestion examQuestion;
+
     @OneToMany(mappedBy = "choice", cascade = CascadeType.ALL)
     private List<DupContent> dupContentList = new ArrayList<>();
 
-    public Choice(String content, Topic topic) {
+    public Choice(String content,String comment, Topic topic, ExamQuestion examQuestion) {
         this.content = content;
+        this.comment = comment;
         this.topic = topic;
+        this.examQuestion = examQuestion;
     }
 
-    public Choice updateContent(String content) {
+    public Choice updateChoice(String content,String comment, Topic topic) {
         this.content = content;
-        return this;
-    }
-
-    public Choice updateChoice(String content,Topic topic) {
-        this.content = content;
+        this.comment = comment;
         this.topic = topic;
         return this;
     }

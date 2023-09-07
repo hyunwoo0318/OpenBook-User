@@ -13,10 +13,6 @@ import java.util.List;
 public class QuestionDto {
 
     private String answer;
-
-    /**
-     * TODO : questionType 추가
-     */
     private String questionType;
 
     /**

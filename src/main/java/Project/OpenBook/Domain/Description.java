@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain;
 
+import Project.OpenBook.ExamQuestion.ExamQuestion;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,26 +21,25 @@ public class Description extends BaseEntity{
     @Lob
     private String content;
 
+    private String comment;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    @OneToMany(mappedBy = "description", cascade = CascadeType.ALL)
-    private List<DupContent> dupContentList = new ArrayList<>();
+    @OneToOne
+    private ExamQuestion examQuestion;
 
-    public Description(String content, Topic topic) {
+    public Description(String content,String comment,  Topic topic, ExamQuestion examQuestion) {
+        this.comment = comment;
         this.content = content;
         this.topic = topic;
+        this.examQuestion = examQuestion;
     }
 
-    public Description updateContent(String content){
+    public Description updateContent(String content, String comment){
         this.content  = content;
-        return this;
-    }
-
-    public Description updateDescription(String content, Topic topic) {
-        this.content = content;
-        this.topic = topic;
+        this.comment = comment;
         return this;
     }
 }

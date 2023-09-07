@@ -27,10 +27,19 @@ public class QuestionChoiceDto {
      */
     private String key;
 
+    private Long id;
+
     @Builder
     public QuestionChoiceDto(String choice, String comment, String key) {
         this.choice = choice;
         this.comment = comment;
         this.key = key;
+    }
+
+    public QuestionChoiceDto(String choice, String comment, String key, Long id) {
+        this.choice = choice;
+        this.comment = comment;
+        this.key = key;
+        this.id = id;
     }
 }

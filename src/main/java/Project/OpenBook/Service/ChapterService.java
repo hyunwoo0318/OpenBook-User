@@ -22,9 +22,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
-import static Project.OpenBook.Domain.QChoice.choice;
-import static Project.OpenBook.Domain.QDescription.description;
-import static Project.OpenBook.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.QTopic.topic;
 
 @Service
@@ -323,11 +320,11 @@ public class ChapterService {
     }
 
     public List<ChapterContentDto> queryChapters() {
-        Map<Chapter, Long> map = chapterRepository.queryChapterContentDto();
+        List<Chapter> chapterList = chapterRepository.queryChapterListWithTopic();
         List<ChapterContentDto> dtoList = new ArrayList<>();
-        for (Chapter chapter : map.keySet()) {
-            Long topicCount = map.get(chapter);
-            ChapterContentDto dto = new ChapterContentDto(chapter.getTitle(), chapter.getNumber(), chapter.getStartDate(), chapter.getEndDate(), topicCount);
+        for (Chapter chapter : chapterList) {
+            ChapterContentDto dto = new ChapterContentDto(chapter.getTitle(), chapter.getNumber(), chapter.getStartDate(), chapter.getEndDate(),
+                    chapter.getTopicList().size());
             dtoList.add(dto);
         }
         return dtoList;
