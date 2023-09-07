@@ -25,6 +25,7 @@ public class RoundService {
 
     private final RoundRepository roundRepository;
     private final ExamQuestionRepository examQuestionRepository;
+    private final RoundValidator roundValidator;
 
 
     public List<RoundDto> queryRounds() {
@@ -39,7 +40,7 @@ public class RoundService {
         Integer date = roundDto.getDate();
 
         //회차 번호 중복 확인
-        checkDupRoundNumber(number);
+        roundValidator.checkDupRoundNumber(number);
 
         Round round = new Round(date, number);
         roundRepository.save(round);
@@ -49,10 +50,10 @@ public class RoundService {
     public void updateRound(Integer prevNumber, RoundDto roundDto) {
         Integer newNumber = roundDto.getNumber();
         Integer date = roundDto.getDate();
-        Round round = checkRound(prevNumber);
+        Round round = roundValidator.checkRound(prevNumber);
 
         if (!prevNumber.equals(newNumber)) {
-            checkDupRoundNumber(newNumber);
+            roundValidator.checkDupRoundNumber(newNumber);
         }
 
 
@@ -60,25 +61,13 @@ public class RoundService {
     }
 
     public void deleteRound(Integer number) {
-        Round round = checkRound(number);
+        Round round = roundValidator.checkRound(number);
 
         roundRepository.delete(round);
     }
 
-    private void checkDupRoundNumber(Integer number) {
-        roundRepository.findRoundByNumber(number).ifPresent(r -> {
-            throw new CustomException(DUP_ROUND_NUMBER);
-        });
-    }
-
-    private Round checkRound(Integer number) {
-        return roundRepository.findRoundByNumber(number).orElseThrow(() -> {
-            throw new CustomException(ROUND_NOT_FOUND);
-        });
-    }
-
     public RoundInfoDto queryRound(Integer number) {
-        Round round = checkRound(number);
+        Round round = roundValidator.checkRound(number);
         return new RoundInfoDto(round.getDate());
     }
 
