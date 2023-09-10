@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDescription.description;
-import static Project.OpenBook.ExamQuestion.QExamQuestion.examQuestion;
+import static Project.OpenBook.ExamQuestion.Domain.QExamQuestion.examQuestion;
 
 @Repository
 @RequiredArgsConstructor
