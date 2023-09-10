@@ -1,11 +1,11 @@
 package Project.OpenBook.Service;
 
 import Project.OpenBook.Domain.Keyword;
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Dto.keyword.KeywordCreateDto;
 import Project.OpenBook.Dto.keyword.KeywordUserDto;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
 import Project.OpenBook.Utils.CustomException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.RequiredArgsConstructor;

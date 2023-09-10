@@ -1,13 +1,12 @@
 package Project.OpenBook.Domain;
 
-import Project.OpenBook.ExamQuestion.ExamQuestion;
+import Project.OpenBook.ExamQuestion.Domain.ExamQuestion;
+import Project.OpenBook.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter

@@ -1,5 +1,6 @@
-package Project.OpenBook.Round;
+package Project.OpenBook.Round.Repo;
 
+import Project.OpenBook.Round.Domain.Round;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

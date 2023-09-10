@@ -1,4 +1,4 @@
-package Project.OpenBook.ExamQuestion.dto;
+package Project.OpenBook.ExamQuestion.Controller.dto;
 
 import Project.OpenBook.Dto.question.QuestionChoiceDto;
 import lombok.AllArgsConstructor;

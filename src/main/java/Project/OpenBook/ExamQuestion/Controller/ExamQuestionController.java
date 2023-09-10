@@ -1,6 +1,7 @@
-package Project.OpenBook.ExamQuestion;
+package Project.OpenBook.ExamQuestion.Controller;
 
-import Project.OpenBook.ExamQuestion.dto.ExamQuestionDto;
+import Project.OpenBook.ExamQuestion.ExamQuestionService;
+import Project.OpenBook.ExamQuestion.Controller.dto.ExamQuestionDto;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

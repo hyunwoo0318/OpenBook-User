@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain;
 
-import Project.OpenBook.ExamQuestion.ExamQuestion;
+import Project.OpenBook.ExamQuestion.Domain.ExamQuestion;
+import Project.OpenBook.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,7 +34,7 @@ public class Choice extends BaseEntity{
     @OneToMany(mappedBy = "choice", cascade = CascadeType.ALL)
     private List<DupContent> dupContentList = new ArrayList<>();
 
-    public Choice(String content,String comment, Topic topic, ExamQuestion examQuestion) {
+    public Choice(String content, String comment, Topic topic, ExamQuestion examQuestion) {
         this.content = content;
         this.comment = comment;
         this.topic = topic;

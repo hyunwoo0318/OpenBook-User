@@ -1,6 +1,6 @@
 package Project.OpenBook.Chapter.Controller.dto;
 
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Topic.Domain.Topic;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

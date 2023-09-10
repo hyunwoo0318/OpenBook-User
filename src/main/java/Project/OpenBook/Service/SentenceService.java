@@ -1,11 +1,11 @@
 package Project.OpenBook.Service;
 
 import Project.OpenBook.Domain.Sentence;
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Dto.sentence.SentenceCreateDto;
 import Project.OpenBook.Dto.sentence.SentenceUpdateDto;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

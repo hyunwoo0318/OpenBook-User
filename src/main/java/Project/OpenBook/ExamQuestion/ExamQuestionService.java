@@ -2,22 +2,21 @@ package Project.OpenBook.ExamQuestion;
 
 import Project.OpenBook.Domain.Choice;
 import Project.OpenBook.Domain.Description;
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.ExamQuestion.Domain.ExamQuestion;
+import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Dto.question.QuestionChoiceDto;
 import Project.OpenBook.ExamQuestion.Repo.General.ExamQuestionRepository;
-import Project.OpenBook.ExamQuestion.dto.ExamQuestionDto;
+import Project.OpenBook.ExamQuestion.Controller.dto.ExamQuestionDto;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
-import Project.OpenBook.Round.Round;
-import Project.OpenBook.Round.RoundRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
+import Project.OpenBook.Round.Domain.Round;
+import Project.OpenBook.Round.Repo.RoundRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

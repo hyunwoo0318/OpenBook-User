@@ -1,10 +1,9 @@
-package Project.OpenBook.ExamQuestion;
+package Project.OpenBook.ExamQuestion.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Choice;
 import Project.OpenBook.Domain.Description;
-import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Round.Round;
+import Project.OpenBook.Round.Domain.Round;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

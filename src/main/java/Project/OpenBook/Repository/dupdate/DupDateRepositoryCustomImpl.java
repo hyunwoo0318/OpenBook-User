@@ -1,9 +1,7 @@
 package Project.OpenBook.Repository.dupdate;
 
 import Project.OpenBook.Domain.DupDate;
-import Project.OpenBook.Domain.QDupDate;
-import Project.OpenBook.Domain.QTopic;
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Topic.Domain.Topic;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static Project.OpenBook.Domain.QDupDate.dupDate;
-import static Project.OpenBook.Domain.QTopic.topic;
+import static Project.OpenBook.Topic.Domain.QTopic.topic;
 
 @Repository
 @RequiredArgsConstructor

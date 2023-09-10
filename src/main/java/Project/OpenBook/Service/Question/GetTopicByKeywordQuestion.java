@@ -1,13 +1,12 @@
 package Project.OpenBook.Service.Question;
 
 import Project.OpenBook.Constants.QuestionConst;
-import Project.OpenBook.Domain.Keyword;
 import Project.OpenBook.Dto.keyword.KeywordNameCommentDto;
 import Project.OpenBook.Dto.question.QuestionChoiceDto;
 import Project.OpenBook.Dto.question.QuestionDto;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;

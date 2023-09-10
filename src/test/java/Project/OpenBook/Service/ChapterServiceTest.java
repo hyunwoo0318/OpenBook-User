@@ -1,15 +1,14 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Chapter.ChapterValidator;
 import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Chapter.Service.ChapterService;
 import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Domain.*;
 import Project.OpenBook.Chapter.Controller.dto.ChapterAddUpdateDto;
 import Project.OpenBook.Chapter.Controller.dto.ChapterInfoDto;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
-import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
+import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -21,11 +20,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
 
+import static Project.OpenBook.Constants.ErrorCode.CHAPTER_NOT_FOUND;
+import static Project.OpenBook.Constants.ErrorCode.DUP_CHAPTER_NUM;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ChpaterService Class")
@@ -39,6 +40,8 @@ public class ChapterServiceTest {
 
     @Mock
     private TopicRepository topicRepository;
+
+    @Mock private ChapterValidator chapterValidator;
 
     @Nested
     @DisplayName("createChapter() 메서드는")
@@ -70,14 +73,13 @@ public class ChapterServiceTest {
             public void dupChapterNum() {
                 //given
                 Chapter chapter = new Chapter(chapterNum,chapterTitle,  10, 100);
-                given(chapterRepository.findOneByNumber(chapterNum))
-                        .willReturn(Optional.of(chapter));
+                doThrow(new CustomException(DUP_CHAPTER_NUM)).when(chapterValidator).checkDupChapterNum(chapterNum);
 
                 //when
                 CustomException customException = assertThrows(CustomException.class, () ->
                         chapterService.createChapter(new ChapterAddUpdateDto(chapterTitle, chapterNum, 10, 100)));
                 //then
-                assertEquals(customException.getErrorCode(), ErrorCode.DUP_CHAPTER_NUM);
+                assertEquals(customException.getErrorCode(), DUP_CHAPTER_NUM);
             }
         }
     }
@@ -100,11 +102,9 @@ public class ChapterServiceTest {
                 Chapter prevChapter = new Chapter("ch1", prevChapterNum);
                 Chapter newChapter = new Chapter(newChapterNum, newChapterTitle, 10, 100);
 
-                given(chapterRepository.findOneByNumber(prevChapterNum))
-                        .willReturn(Optional.ofNullable(prevChapter));
+                given(chapterValidator.checkChapter(prevChapterNum)).willReturn(prevChapter);
                 //변경할 단원번호를 가진 단원이 없는 경우
-                given(chapterRepository.findOneByNumber(newChapterNum))
-                        .willReturn(Optional.ofNullable(null));
+                doNothing().when(chapterValidator).checkDupChapterNum(newChapterNum);
 
                 //when
                 Chapter updatedChapter = chapterService.updateChapter(1, new ChapterAddUpdateDto(newChapterTitle, newChapterNum,
@@ -124,17 +124,15 @@ public class ChapterServiceTest {
                     Integer prevChapterNum = 1;
                     String newChapterTitle = "newChapterTitle";
                     Integer newChapterNum = 2;
-                    Chapter chapter = new Chapter("title2", newChapterNum);
 
-                    given(chapterRepository.findOneByNumber(2))
-                            .willReturn(Optional.ofNullable(chapter));
+                    doThrow(new CustomException(DUP_CHAPTER_NUM)).when(chapterValidator).checkDupChapterNum(newChapterNum);
 
                     //when
                     CustomException customException = assertThrows(CustomException.class, () ->
                             chapterService.updateChapter(prevChapterNum, new ChapterAddUpdateDto(newChapterTitle, newChapterNum, 10, 100)));
 
                     //then
-                    assertEquals(customException.getErrorCode(), ErrorCode.DUP_CHAPTER_NUM);
+                    assertEquals(customException.getErrorCode(), DUP_CHAPTER_NUM);
                 }
             }
         }
@@ -158,9 +156,9 @@ public class ChapterServiceTest {
                 public void deleteChapterSuccess(){
                     //given
                     int num = 1;
-                    Chapter ch1 = new Chapter("ch1", num);
-                    given(chapterRepository.findOneByNumber(1)).willReturn(Optional.ofNullable(ch1));
-                    given(topicRepository.findAllByChapter(ch1)).willReturn(new ArrayList<>());
+                    Chapter mockChapter = mock(Chapter.class);
+                    given(chapterValidator.checkChapter(num)).willReturn(mockChapter);
+                    given(mockChapter.getTopicList()).willReturn(new ArrayList<>());
 
                     //when
                     Boolean ret = chapterService.deleteChapter(num);
@@ -180,10 +178,9 @@ public class ChapterServiceTest {
                 public void throwChapterHasTopicException(){
                     //given
                     int num = 1;
-                    Chapter ch1 = new Chapter("ch1", num);
-                    given(chapterRepository.findOneByNumber(1)).willReturn(Optional.ofNullable(ch1));
-                    Topic topic = new Topic("t1", 0, 0, false, false, 0, 0, "detail1", ch1, null);
-                    given(topicRepository.findAllByChapter(ch1)).willReturn(Arrays.asList(topic));
+                    Chapter mockChapter = mock(Chapter.class);
+                    given(chapterValidator.checkChapter(num)).willReturn(mockChapter);
+                    when(mockChapter.getTopicList()).thenReturn(Arrays.asList(new Topic()));
 
                     //when
                     CustomException customException = assertThrows(CustomException.class, () -> {
@@ -205,7 +202,7 @@ public class ChapterServiceTest {
             public void throwChapterNotFoundException(){
                 //given
                 int num = 1;
-                given(chapterRepository.findOneByNumber(num)).willReturn(Optional.empty());
+                given(chapterValidator.checkChapter(num)).willThrow(new CustomException(CHAPTER_NOT_FOUND));
 
                 //when
                 CustomException customException = assertThrows(CustomException.class, () -> {
@@ -233,7 +230,7 @@ public class ChapterServiceTest {
                 String inputContent = "new Content";
                 int num = 1;
                 Chapter ch1 = new Chapter("ch1", 1);
-                given(chapterRepository.findOneByNumber(num)).willReturn(Optional.ofNullable(ch1));
+                given(chapterValidator.checkChapter(num)).willReturn(ch1);
 
                 //when
                 ChapterInfoDto chapterInfoDto = chapterService.updateChapterInfo(num, inputContent);
@@ -252,7 +249,7 @@ public class ChapterServiceTest {
             public void throwChapterNotFoundException(){
                 //given
                 int num = 1;
-                given(chapterRepository.findOneByNumber(num)).willReturn(Optional.empty());
+                given(chapterValidator.checkChapter(num)).willThrow(new CustomException(CHAPTER_NOT_FOUND));
 
                 //when
                 CustomException customException = assertThrows(CustomException.class, () -> {

@@ -3,9 +3,9 @@ package Project.OpenBook.Service;
 import Project.OpenBook.Dto.category.CategoryDto;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Category;
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

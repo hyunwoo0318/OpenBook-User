@@ -1,26 +1,20 @@
 package Project.OpenBook.Repository.choice;
 
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.choice.DupChoiceDto;
+import Project.OpenBook.Topic.Domain.Topic;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static Project.OpenBook.Domain.QCategory.category;
 import static Project.OpenBook.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.QDupContent.dupContent;
-import static Project.OpenBook.Domain.QDupDate.dupDate;
-import static Project.OpenBook.Domain.QTopic.topic;
+import static Project.OpenBook.Topic.Domain.QTopic.topic;
 
 @Repository
 @RequiredArgsConstructor

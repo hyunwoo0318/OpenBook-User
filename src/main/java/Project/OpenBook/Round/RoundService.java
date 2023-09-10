@@ -1,23 +1,18 @@
 package Project.OpenBook.Round;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.ExamQuestion.ExamQuestion;
-import Project.OpenBook.ExamQuestion.ExamQuestionService;
+import Project.OpenBook.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.ExamQuestion.Repo.General.ExamQuestionRepository;
+import Project.OpenBook.Round.Domain.Round;
+import Project.OpenBook.Round.Repo.RoundRepository;
 import Project.OpenBook.Round.dto.RoundDto;
 import Project.OpenBook.Round.dto.RoundInfoDto;
-import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static Project.OpenBook.Constants.ErrorCode.DUP_ROUND_NUMBER;
-import static Project.OpenBook.Constants.ErrorCode.ROUND_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor

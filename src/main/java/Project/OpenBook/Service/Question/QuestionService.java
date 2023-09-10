@@ -5,9 +5,11 @@ import Project.OpenBook.Dto.question.*;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
+import Project.OpenBook.Topic.Controller.dto.TopicTitleListDto;
+import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
 
 import org.springframework.stereotype.Service;
 
@@ -62,18 +64,21 @@ public class QuestionService {
     }
 
     public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Integer num) {
-        Map<Topic, List<PrimaryDate>> m = new HashMap<>();
+        List<Topic> topicList = new ArrayList<>();
         if (num == 0) {
-            m = topicRepository.queryTimeFlowQuestion();
-        } else {
+            topicList = topicRepository.findAll();
+        }else{
             if (num == -1) {
                 num = queryRandChapterNum();
             }
-            m = topicRepository.queryTimeFlowQuestion(num);
+            Chapter chapter = chapterRepository.findOneByNumber(num).orElseThrow(() -> {
+                throw new CustomException(CHAPTER_NOT_FOUND);
+            });
+            topicList = chapter.getTopicList();
         }
 
         List<TimeFlowQuestionDto> timeFlowQuestionDtoList = new ArrayList<>();
-        for (Topic topic : m.keySet()) {
+        for (Topic topic : topicList) {
             String topicTitle = topic.getTitle();
             if (topic.getStartDateCheck()) {
                 timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topic.getStartDate(), makeComment(topicTitle, "startDate"), topicTitle));
@@ -81,7 +86,7 @@ public class QuestionService {
             if (topic.getEndDateCheck()) {
                 timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topic.getEndDate(), makeComment(topicTitle, "endDate"), topicTitle));
             }
-            List<PrimaryDate> primaryDateList = m.get(topic);
+            List<PrimaryDate> primaryDateList = topic.getPrimaryDateList();
             for (PrimaryDate primaryDate : primaryDateList) {
                 if (primaryDate.getExtraDateCheck()) {
                     timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(primaryDate.getExtraDate(), primaryDate.getExtraDateComment(), topicTitle));

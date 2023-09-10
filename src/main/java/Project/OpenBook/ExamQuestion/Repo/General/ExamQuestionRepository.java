@@ -1,6 +1,6 @@
 package Project.OpenBook.ExamQuestion.Repo.General;
 
-import Project.OpenBook.ExamQuestion.ExamQuestion;
+import Project.OpenBook.ExamQuestion.Domain.ExamQuestion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

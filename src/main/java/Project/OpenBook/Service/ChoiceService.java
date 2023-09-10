@@ -2,16 +2,12 @@ package Project.OpenBook.Service;
 
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.Choice;
-import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.choice.ChoiceDto;
-import Project.OpenBook.Dto.choice.ChoiceAddDto;
-import Project.OpenBook.Dto.choice.ChoiceUpdateDto;
-import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 

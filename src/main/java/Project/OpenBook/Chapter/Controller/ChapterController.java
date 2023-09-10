@@ -6,9 +6,9 @@ import Project.OpenBook.Chapter.Service.ChapterService;
 import Project.OpenBook.Chapter.Service.ChapterWithProgressService;
 import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
 
+import Project.OpenBook.Topic.Domain.Topic;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

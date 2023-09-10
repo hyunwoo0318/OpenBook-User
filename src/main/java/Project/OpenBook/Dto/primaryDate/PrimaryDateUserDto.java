@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PrimaryDateUserDto {
     private Integer extraDate;
+    private String extraDateComment;
 
     @Override
     public boolean equals(Object o) {
@@ -30,6 +31,4 @@ public class PrimaryDateUserDto {
         result = 31 * result + (extraDateComment != null ? extraDateComment.hashCode() : 0);
         return result;
     }
-
-    private String extraDateComment;
 }

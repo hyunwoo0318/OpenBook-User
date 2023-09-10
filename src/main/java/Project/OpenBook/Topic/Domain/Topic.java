@@ -1,6 +1,7 @@
-package Project.OpenBook.Domain;
+package Project.OpenBook.Topic.Domain;
 
 import Project.OpenBook.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -12,8 +13,8 @@ import java.util.List;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Topic extends BaseEntity{
+@NoArgsConstructor
+public class Topic extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -40,12 +41,10 @@ public class Topic extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chapter_id")
-    @Setter
     private Chapter chapter;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    @Setter
     private Category category;
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE)

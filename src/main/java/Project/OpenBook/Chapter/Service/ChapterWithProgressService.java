@@ -11,6 +11,7 @@ import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
+import Project.OpenBook.Topic.Domain.Topic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

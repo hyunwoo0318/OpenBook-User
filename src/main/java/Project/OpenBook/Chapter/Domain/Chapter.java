@@ -3,7 +3,7 @@ package Project.OpenBook.Chapter.Domain;
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.ChapterProgress;
 import Project.OpenBook.Domain.ChapterSection;
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

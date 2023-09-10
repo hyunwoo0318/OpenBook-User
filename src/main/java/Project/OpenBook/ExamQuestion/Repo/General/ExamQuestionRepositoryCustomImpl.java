@@ -1,7 +1,6 @@
 package Project.OpenBook.ExamQuestion.Repo.General;
 
-import Project.OpenBook.Domain.QDescription;
-import Project.OpenBook.ExamQuestion.ExamQuestion;
+import Project.OpenBook.ExamQuestion.Domain.ExamQuestion;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

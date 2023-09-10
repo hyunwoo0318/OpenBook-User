@@ -1,4 +1,4 @@
-package Project.OpenBook.Dto.topic;
+package Project.OpenBook.Topic.Controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

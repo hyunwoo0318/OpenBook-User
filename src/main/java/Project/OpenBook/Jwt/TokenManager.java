@@ -72,11 +72,6 @@ public class TokenManager {
         long id = Long.parseLong(claims.getSubject());
 
         Customer customer = checkCustomer(id);
-
-        Authentication authentication = (Authentication) customer;
-        String authorities = customer.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
         return generateToken(customer);
     }
 
@@ -118,11 +113,6 @@ public class TokenManager {
             return null;
         }
         return token.substring(7);
-    }
-
-    public void invalidateToken(String refreshToken) {
-        Claims claims = parseClaim(refreshToken);
-        claims.setExpiration(null);
     }
 
     private Customer checkCustomer(Long customerId) {

@@ -4,10 +4,10 @@ import Project.OpenBook.Chapter.ChapterValidator;
 import Project.OpenBook.Chapter.Controller.dto.ChapterAddUpdateDto;
 import Project.OpenBook.Chapter.Controller.dto.ChapterInfoDto;
 import Project.OpenBook.Chapter.Domain.Chapter;
-import Project.OpenBook.Domain.*;
+import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +17,10 @@ import java.util.*;
 import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ChapterService {
 
     private final ChapterRepository chapterRepository;
-    private final TopicRepository topicRepository;
     private final ChapterValidator chapterValidator;
 
     /**
@@ -96,7 +94,7 @@ public class ChapterService {
         Chapter chapter = chapterValidator.checkChapter(num);
 
         //해당 단원에 토픽이 존재하는 경우 단원 삭제 불가능
-        List<Topic> topicList = topicRepository.findAllByChapter(chapter);
+        List<Topic> topicList = chapter.getTopicList();
         if(!topicList.isEmpty()){
             throw new CustomException(CHAPTER_HAS_TOPIC);
         }

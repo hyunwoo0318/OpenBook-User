@@ -5,7 +5,7 @@ import Project.OpenBook.Dto.question.QuestionChoiceDto;
 import Project.OpenBook.Dto.question.QuestionDto;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
+import Project.OpenBook.Topic.Repo.TopicRepository;
 
 import java.util.ArrayList;
 import java.util.List;

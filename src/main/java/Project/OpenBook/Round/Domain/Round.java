@@ -1,4 +1,4 @@
-package Project.OpenBook.Round;
+package Project.OpenBook.Round.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import lombok.AccessLevel;

@@ -1,7 +1,7 @@
 package Project.OpenBook.Repository.dupdate;
 
 import Project.OpenBook.Domain.DupDate;
-import Project.OpenBook.Domain.Topic;
+import Project.OpenBook.Topic.Domain.Topic;
 
 import java.util.List;
 

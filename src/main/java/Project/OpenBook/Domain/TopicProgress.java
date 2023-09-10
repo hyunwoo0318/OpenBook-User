@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain;
 
 import Project.OpenBook.Constants.StateConst;
+import Project.OpenBook.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

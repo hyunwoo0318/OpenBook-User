@@ -2,11 +2,9 @@ package Project.OpenBook.Repository.choice;
 
 import Project.OpenBook.Domain.Category;
 import Project.OpenBook.Domain.Choice;
-import Project.OpenBook.Domain.Topic;
-import Project.OpenBook.Dto.choice.DupChoiceDto;
+import Project.OpenBook.Topic.Domain.Topic;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.List;
 
 public interface ChoiceRepositoryCustom {

@@ -1,5 +1,7 @@
 package Project.OpenBook.Round;
 
+import Project.OpenBook.Round.Domain.Round;
+import Project.OpenBook.Round.Repo.RoundRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
