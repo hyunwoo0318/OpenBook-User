@@ -90,12 +90,12 @@ class ChoiceControllerTest {
          * choice1,2,3 -> topic1
          * choice4,5 -> topic2
          */
-        choice1 = new Choice("choice1", topic1);
-        choice2 = new Choice("choice2", topic1);
-        choice3 = new Choice("choice3", topic1);
-
-        choice4 = new Choice("choice4", topic2);
-        choice5 = new Choice("choice5", topic2);
+//        choice1 = new Choice("choice1", topic1);
+//        choice2 = new Choice("choice2", topic1);
+//        choice3 = new Choice("choice3", topic1);
+//
+//        choice4 = new Choice("choice4", topic2);
+//        choice5 = new Choice("choice5", topic2);
 
         choiceRepository.saveAllAndFlush(Arrays.asList(choice1, choice2, choice3, choice4, choice5));
     }

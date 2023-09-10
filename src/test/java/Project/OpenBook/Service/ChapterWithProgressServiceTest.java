@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Chapter.ChapterValidator;
 import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Chapter.Service.ChapterWithProgressService;
 import Project.OpenBook.Chapter.Controller.dto.ChapterUserDto;
@@ -8,6 +9,7 @@ import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
+import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import Project.OpenBook.Utils.CustomException;
@@ -23,6 +25,7 @@ import java.util.*;
 
 import static Project.OpenBook.Constants.ContentConst.*;
 import static Project.OpenBook.Constants.ContentConst.CHAPTER_COMPLETE_QUESTION;
+import static Project.OpenBook.Constants.ErrorCode.CHAPTER_NOT_FOUND;
 import static Project.OpenBook.Constants.StateConst.LOCKED;
 import static Project.OpenBook.Constants.StateConst.OPEN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,6 +45,8 @@ public class ChapterWithProgressServiceTest {
     private ChapterRepository chapterRepository;
     @Mock
     private ChapterSectionRepository chapterSectionRepository;
+    @Mock private ChapterProgressRepository chapterProgressRepository;
+    @Mock private ChapterValidator chapterValidator;
 
     @Mock private TopicProgressRepository topicProgressRepository;
 
@@ -144,7 +149,7 @@ public class ChapterWithProgressServiceTest {
                     Chapter ch1 = new Chapter(chapterTitle, 1);
                     Customer mockCustomer = mock(Customer.class);
                     when(mockCustomer.getId()).thenReturn(1L);
-                    given(chapterRepository.findOneByNumber(1)).willReturn(Optional.ofNullable(ch1));
+                    given(chapterValidator.checkChapter(1)).willReturn(ch1);
                     ChapterSection cs1 = new ChapterSection(mockCustomer, ch1, CHAPTER_INFO.getName(), OPEN.getName());
                     ChapterSection cs2 = new ChapterSection(mockCustomer, ch1, TIME_FLOW_STUDY.getName(), OPEN.getName());
                     ChapterSection cs3 = new ChapterSection(mockCustomer, ch1, CHAPTER_COMPLETE_QUESTION.getName(), LOCKED.getName());
@@ -181,7 +186,8 @@ public class ChapterWithProgressServiceTest {
                     Chapter ch1 = new Chapter(chapterTitle, 1);
                     Customer mockCustomer = mock(Customer.class);
                     when(mockCustomer.getId()).thenReturn(1L);
-                    given(chapterRepository.findOneByNumber(1)).willReturn(Optional.ofNullable(ch1));
+                    given(chapterValidator.checkChapter(1)).willReturn(ch1);
+
                     ChapterSection cs1 = new ChapterSection(mockCustomer, ch1, CHAPTER_INFO.getName(), OPEN.getName());
                     ChapterSection cs2 = new ChapterSection(mockCustomer, ch1, TIME_FLOW_STUDY.getName(), OPEN.getName());
                     ChapterSection cs3 = new ChapterSection(mockCustomer, ch1, CHAPTER_COMPLETE_QUESTION.getName(), LOCKED.getName());
@@ -220,7 +226,8 @@ public class ChapterWithProgressServiceTest {
                     Chapter ch1 = new Chapter(chapterTitle, 1);
                     Customer mockCustomer = mock(Customer.class);
                     when(mockCustomer.getId()).thenReturn(1L);
-                    given(chapterRepository.findOneByNumber(1)).willReturn(Optional.ofNullable(ch1));
+                    given(chapterValidator.checkChapter(1)).willReturn(ch1);
+
                     given(chapterSectionRepository.queryChapterSections(1L, 1))
                             .willReturn(new ArrayList<>());
 
@@ -253,7 +260,8 @@ public class ChapterWithProgressServiceTest {
                     Chapter ch1 = new Chapter(chapterTitle, 2);
                     Customer mockCustomer = mock(Customer.class);
                     when(mockCustomer.getId()).thenReturn(1L);
-                    given(chapterRepository.findOneByNumber(2)).willReturn(Optional.ofNullable(ch1));
+                    given(chapterValidator.checkChapter(2)).willReturn(ch1);
+
                     given(chapterSectionRepository.queryChapterSections(1L, 2))
                             .willReturn(new ArrayList<>());
 
@@ -282,7 +290,7 @@ public class ChapterWithProgressServiceTest {
             public void throwChapterNotFoundException(){
                 //given
                 int num = 1;
-                given(chapterRepository.findOneByNumber(num)).willReturn(Optional.empty());
+                given(chapterValidator.checkChapter(num)).willThrow(new CustomException(CHAPTER_NOT_FOUND));
                 Customer mockCustomer = mock(Customer.class);
 
                 //when
@@ -291,7 +299,7 @@ public class ChapterWithProgressServiceTest {
                 });
 
                 //then
-                assertThat(customException.getErrorCode()).isEqualTo(ErrorCode.CHAPTER_NOT_FOUND);
+                assertThat(customException.getErrorCode()).isEqualTo(CHAPTER_NOT_FOUND);
             }
         }
     }

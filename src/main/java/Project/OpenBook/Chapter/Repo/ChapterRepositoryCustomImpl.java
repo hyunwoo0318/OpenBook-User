@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
-import static Project.OpenBook.Domain.QChapter.chapter;
+import static Project.OpenBook.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.QChapterProgress.chapterProgress;
 import static com.querydsl.core.group.GroupBy.*;
 

@@ -87,12 +87,12 @@ class DescriptionControllerTest {
          * desc1,2,3 -> topic1
          * desc4,5 -> topic2
          */
-        desc1 = new Description("desc1", topic1);
-        desc2 = new Description("desc2", topic1);
-        desc3 = new Description("desc3", topic1);
-
-        desc4 = new Description("desc4", topic2);
-        desc5 = new Description("desc5", topic2);
+//        desc1 = new Description("desc1", topic1);
+//        desc2 = new Description("desc2", topic1);
+//        desc3 = new Description("desc3", topic1);
+//
+//        desc4 = new Description("desc4", topic2);
+//        desc5 = new Description("desc5", topic2);
 
         descriptionRepository.saveAllAndFlush(Arrays.asList(desc1, desc2, desc3, desc4, desc5));
     }

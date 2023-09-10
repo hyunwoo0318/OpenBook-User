@@ -125,8 +125,15 @@ public class ChapterWithProgressService {
          * 3. 주제 학습
          */
         String topicStudyName = ContentConst.TOPIC_STUDY.getName();
-        for (TopicProgress topicProgress : topicProgressList) {
-            contentTableList.add(new ProgressDto(topicStudyName, topicProgress.getTopic().getTitle(), topicProgress.getState()));
+        List<Topic> topicList = chapterValidator.checkChapter(chapterNum).getTopicList();
+        for (Topic topic : topicList) {
+            TopicProgress tp = topicMap.get(topic);
+            if (tp == null) {
+                tp = new TopicProgress(customer, topic, 0, StateConst.LOCKED.getName());
+                topicProgressRepository.save(tp);
+            }
+            contentTableList.add(new ProgressDto(topicStudyName, topic.getTitle(), tp.getState()));
+
         }
 
 

@@ -124,20 +124,6 @@ public class ChapterController {
         return new ResponseEntity<ChapterInfoDto>(dto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 제목/학습 조회 - 사용자")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "단원 학습 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
-    })
-    @GetMapping("/chapters/{num}/title-info")
-    public ResponseEntity<ChapterTitleInfoDto> queryChapterInfoCustomer(@PathVariable("num") Integer num){
-        Chapter chapter = chapterService.queryChapter(num);
-        ChapterTitleInfoDto dto = new ChapterTitleInfoDto(chapter.getTitle(), chapter.getContent());
-
-        return new ResponseEntity<ChapterTitleInfoDto>(dto, HttpStatus.OK);
-    }
-
-
     @ApiOperation(value = "단원 학습 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 설명 수정 성공"),
