@@ -1,5 +1,6 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
 import Project.OpenBook.Dto.primaryDate.PrimaryDateUserDto;
@@ -17,7 +18,7 @@ import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.topic.TopicAdminDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.dupdate.DupDateRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.description.DescriptionRepository;

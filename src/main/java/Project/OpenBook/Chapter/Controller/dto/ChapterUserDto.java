@@ -1,11 +1,8 @@
-package Project.OpenBook.Dto.chapter;
+package Project.OpenBook.Chapter.Controller.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor

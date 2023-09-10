@@ -4,7 +4,7 @@
 //import Project.OpenBook.Dto.error.ErrorMsgDto;
 //import Project.OpenBook.Dto.keyword.KeywordCreateDto;
 //import Project.OpenBook.Repository.category.CategoryRepository;
-//import Project.OpenBook.Repository.chapter.ChapterRepository;
+//import Project.OpenBook.Chapter.Repo.ChapterRepository;
 //import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 //import Project.OpenBook.Repository.keyword.KeywordRepository;
 //import Project.OpenBook.Repository.topic.TopicRepository;

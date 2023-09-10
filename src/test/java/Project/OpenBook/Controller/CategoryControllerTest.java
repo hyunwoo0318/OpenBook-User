@@ -1,13 +1,12 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Category;
-import Project.OpenBook.Domain.Chapter;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.category.CategoryDto;
-import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import org.junit.jupiter.api.*;
@@ -23,8 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.context.TestPropertySource;
 
-import javax.transaction.Transactional;
-import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

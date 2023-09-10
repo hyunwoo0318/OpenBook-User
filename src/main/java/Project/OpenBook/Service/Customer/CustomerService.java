@@ -1,5 +1,6 @@
 package Project.OpenBook.Service.Customer;
 
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.*;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.customer.CustomerAddDetailDto;
@@ -7,7 +8,7 @@ import Project.OpenBook.Dto.customer.CustomerCodeList;
 import Project.OpenBook.Dto.customer.CustomerDetailDto;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;

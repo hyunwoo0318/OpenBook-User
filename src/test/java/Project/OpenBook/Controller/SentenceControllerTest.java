@@ -1,12 +1,13 @@
 package Project.OpenBook.Controller;
 
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.sentence.SentenceCreateDto;
 import Project.OpenBook.Dto.sentence.SentenceUpdateDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;

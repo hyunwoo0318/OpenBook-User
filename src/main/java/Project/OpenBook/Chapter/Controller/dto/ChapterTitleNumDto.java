@@ -1,4 +1,4 @@
-package Project.OpenBook.Dto.chapter;
+package Project.OpenBook.Chapter.Controller.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChapterDto {
+public class ChapterTitleNumDto {
 
     @NotBlank(message = "단원제목을 입력해주세요.")
     private String title;

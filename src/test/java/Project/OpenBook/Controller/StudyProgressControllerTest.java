@@ -1,41 +1,9 @@
 package Project.OpenBook.Controller;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Constants.ContentConst;
-import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.studyProgress.ChapterProgressAddDto;
-import Project.OpenBook.Dto.studyProgress.ProgressDto;
-import Project.OpenBook.Dto.studyProgress.TopicProgressAddDto;
-import Project.OpenBook.Dto.studyProgress.TopicProgressAddDtoList;
-import Project.OpenBook.Dto.error.ErrorDto;
-import Project.OpenBook.Dto.error.ErrorMsgDto;
-import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
-import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
-import Project.OpenBook.Repository.customer.CustomerRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
-import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestPropertySource(properties = { "spring.config.location=classpath:application-test.yml" })

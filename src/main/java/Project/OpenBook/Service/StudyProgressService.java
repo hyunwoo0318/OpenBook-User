@@ -1,14 +1,14 @@
 package Project.OpenBook.Service;
 
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.studyProgress.ChapterProgressAddDto;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Dto.studyProgress.TopicProgressAddDto;
 import Project.OpenBook.Dto.studyProgress.TopicProgressAddDtoList;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;

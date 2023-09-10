@@ -1,15 +1,12 @@
-package Project.OpenBook.Dto.chapter;
+package Project.OpenBook.Chapter.Controller.dto;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ChapterContentDto {
+public class ChapterDetailDto {
     private String title;
     private Integer number;
     private Integer startDate;
@@ -17,7 +14,7 @@ public class ChapterContentDto {
     private int topicCount;
 
     @Builder
-    public ChapterContentDto(String title, Integer number, Integer startDate, Integer endDate, int topicCount) {
+    public ChapterDetailDto(String title, Integer number, Integer startDate, Integer endDate, int topicCount) {
         this.title = title;
         this.number = number;
         this.startDate = startDate;

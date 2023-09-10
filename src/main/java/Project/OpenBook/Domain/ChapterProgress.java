@@ -1,12 +1,11 @@
 package Project.OpenBook.Domain;
 
+import Project.OpenBook.Chapter.Domain.Chapter;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity

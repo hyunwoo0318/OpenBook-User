@@ -1,6 +1,6 @@
-package Project.OpenBook.Repository.chapter;
+package Project.OpenBook.Chapter.Repo;
 
-import Project.OpenBook.Domain.Chapter;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,8 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface ChapterRepository extends JpaRepository<Chapter, Long>, ChapterRepositoryCustom {
-
-    public List<Chapter> findAll();
 
     public Optional<Chapter> findOneByNumber(int number);
 }

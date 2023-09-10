@@ -2,21 +2,16 @@ package Project.OpenBook.Service.Question;
 
 import Project.OpenBook.Domain.Keyword;
 import Project.OpenBook.Domain.Sentence;
-import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.Dto.question.QuestionChoiceDto;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Project.OpenBook.Constants.QuestionConst.WRONG_KEYWORD_SENTENCE_NUM;
 import static Project.OpenBook.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.QSentence.sentence;
 

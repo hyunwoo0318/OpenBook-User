@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain;
 
+import Project.OpenBook.Chapter.Domain.Chapter;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -81,7 +82,7 @@ public class Topic extends BaseEntity{
         this.endDateCheck = endDateCheck;
     }
 
-    public Topic updateTopic(String title,Integer startDate,Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
+    public Topic updateTopic(String title, Integer startDate, Integer endDate, Boolean startDateCheck, Boolean endDateCheck,
                              String detail, Chapter chapter, Category category) {
         this.title = title;
         this.startDate = startDate;

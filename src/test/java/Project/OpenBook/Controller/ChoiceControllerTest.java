@@ -1,7 +1,7 @@
 package Project.OpenBook.Controller;
 
 import Project.OpenBook.Domain.Category;
-import Project.OpenBook.Domain.Chapter;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Choice;
 import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.choice.ChoiceAddDto;
@@ -10,7 +10,7 @@ import Project.OpenBook.Dto.choice.ChoiceUpdateDto;
 import Project.OpenBook.Dto.error.ErrorDto;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;

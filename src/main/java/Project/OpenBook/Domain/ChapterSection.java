@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain;
 
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.ContentConst;
-import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.StateConst;
 import lombok.AccessLevel;
 import lombok.Getter;

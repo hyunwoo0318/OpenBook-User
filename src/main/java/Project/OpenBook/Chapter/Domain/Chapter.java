@@ -1,8 +1,10 @@
-package Project.OpenBook.Domain;
+package Project.OpenBook.Chapter.Domain;
 
-import io.swagger.models.auth.In;
+import Project.OpenBook.Domain.BaseEntity;
+import Project.OpenBook.Domain.ChapterProgress;
+import Project.OpenBook.Domain.ChapterSection;
+import Project.OpenBook.Domain.Topic;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

@@ -2,10 +2,10 @@ package Project.OpenBook.Repository;
 
 import Project.OpenBook.Config.TestQueryDslConfig;
 import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Domain.Chapter;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.ChapterProgress;
 import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import org.junit.jupiter.api.*;

@@ -1,14 +1,13 @@
 package Project.OpenBook.Service.Question;
 
-import Project.OpenBook.Dto.keyword.KeywordNameCommentDto;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Dto.question.*;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Repository.topic.TopicRepository;
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
@@ -17,9 +16,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
-import static Project.OpenBook.Constants.QuestionConst.*;
-import static Project.OpenBook.Domain.QKeyword.keyword;
-import static Project.OpenBook.Domain.QSentence.sentence;
 
 @Service
 //@RequiredArgsConstructor
@@ -125,7 +121,7 @@ public class QuestionService {
         List<QuestionDto> questionList = new ArrayList<>();
 
 
-        Chapter chapter = chapterRepository.queryChapterWithTopic(num).orElseThrow(() -> {
+        Chapter chapter = chapterRepository.findOneByNumber(num).orElseThrow(() -> {
             throw new CustomException(CHAPTER_NOT_FOUND);
         });
 
@@ -144,7 +140,7 @@ public class QuestionService {
     public List<QuestionDto> queryGetTopicsBySentenceQuestion(Integer num) {
         List<QuestionDto> questionList = new ArrayList<>();
 
-        Chapter chapter = chapterRepository.queryChapterWithTopic(num).orElseThrow(() -> {
+        Chapter chapter = chapterRepository.findOneByNumber(num).orElseThrow(() -> {
             throw new CustomException(CHAPTER_NOT_FOUND);
         });
 
@@ -167,7 +163,7 @@ public class QuestionService {
                     .map(Topic::getTitle)
                     .collect(Collectors.toList());
         } else {
-            Chapter chapter = chapterRepository.queryChapterWithTopic(chapterNum).orElseThrow(() -> {
+            Chapter chapter = chapterRepository.findOneByNumber(chapterNum).orElseThrow(() -> {
                 throw new CustomException(CHAPTER_NOT_FOUND);
             });
 

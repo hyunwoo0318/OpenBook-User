@@ -7,7 +7,7 @@
 //import Project.OpenBook.Dto.keyword.KeywordNameCommentDto;
 //import Project.OpenBook.Dto.question.*;
 //import Project.OpenBook.Repository.category.CategoryRepository;
-//import Project.OpenBook.Repository.chapter.ChapterRepository;
+//import Project.OpenBook.Chapter.Repo.ChapterRepository;
 //import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 //import Project.OpenBook.Repository.customer.CustomerRepository;
 //import Project.OpenBook.Repository.keyword.KeywordRepository;

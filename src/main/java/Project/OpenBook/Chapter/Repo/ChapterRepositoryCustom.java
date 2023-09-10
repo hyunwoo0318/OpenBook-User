@@ -1,12 +1,10 @@
-package Project.OpenBook.Repository.chapter;
+package Project.OpenBook.Chapter.Repo;
 
-import Project.OpenBook.Domain.Chapter;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.ChapterProgress;
 
 
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public interface ChapterRepositoryCustom {
 
@@ -19,8 +17,4 @@ public interface ChapterRepositoryCustom {
     public Map<Chapter, ChapterProgress> queryChapterWithProgress(Long customerId);
 
     public Integer queryMaxChapterNum();
-
-    public Optional<Chapter> queryChapterWithTopic(int num);
-
-    public List<Chapter> queryChapterListWithTopic();
 }

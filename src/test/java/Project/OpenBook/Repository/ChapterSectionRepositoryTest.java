@@ -1,17 +1,13 @@
 package Project.OpenBook.Repository;
 
 import Project.OpenBook.Config.TestQueryDslConfig;
-import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Constants.StateConst;
-import Project.OpenBook.Domain.Chapter;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.ChapterSection;
 import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
-import Project.OpenBook.Repository.topic.TopicRepository;
-import Project.OpenBook.Service.ChapterService;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;

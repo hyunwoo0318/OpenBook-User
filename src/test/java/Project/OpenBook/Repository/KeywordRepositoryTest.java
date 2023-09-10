@@ -1,9 +1,10 @@
 package Project.OpenBook.Repository;
 
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Config.TestQueryDslConfig;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topic.TopicRepository;
 import com.querydsl.core.Tuple;

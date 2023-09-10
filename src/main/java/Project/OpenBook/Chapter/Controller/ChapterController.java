@@ -1,12 +1,14 @@
-package Project.OpenBook.Controller;
+package Project.OpenBook.Chapter.Controller;
 
 
+import Project.OpenBook.Chapter.Controller.dto.*;
+import Project.OpenBook.Chapter.Service.ChapterService;
+import Project.OpenBook.Chapter.Service.ChapterWithProgressService;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Dto.chapter.*;
+import Project.OpenBook.Domain.Topic;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
-import Project.OpenBook.Dto.topic.ChapterAdminDto;
-import Project.OpenBook.Dto.topic.TopicTempDto;
-import Project.OpenBook.Service.ChapterService;
+
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -19,6 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -27,6 +30,7 @@ import java.util.List;
 public class ChapterController {
 
     private final ChapterService chapterService;
+    private final ChapterWithProgressService chapterWithProgressService;
 
 
     @ApiOperation(value= "모든 단원 정보 가져오기 - 관리자")
@@ -34,10 +38,13 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping("/admin/chapters")
-    public ResponseEntity<List<ChapterDto>> queryChapterAdmin(){
-        List<ChapterDto> chapterDtoList = chapterService.queryAllChapters();
+    public ResponseEntity<List<ChapterTitleNumDto>> queryChapterAdmin(){
 
-        return new ResponseEntity<List<ChapterDto>>(chapterDtoList, HttpStatus.OK);
+        List<ChapterTitleNumDto> dtoList = chapterService.queryChapters().stream()
+                .map(c -> new ChapterTitleNumDto(c.getTitle(), c.getNumber()))
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<List<ChapterTitleNumDto>>(dtoList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "모든 단원 정보 가져오기 - 정주행")
@@ -46,7 +53,7 @@ public class ChapterController {
     })
     @GetMapping("/jjh/chapters")
     public ResponseEntity<List<ChapterUserDto>> queryChapterUserJJH(@AuthenticationPrincipal Customer customer){
-        List<ChapterUserDto> chapterUserDtoList = chapterService.queryChapterUserDtos(customer);
+        List<ChapterUserDto> chapterUserDtoList = chapterWithProgressService.queryChapterUserDtos(customer);
         return new ResponseEntity<List<ChapterUserDto>>(chapterUserDtoList, HttpStatus.OK);
     }
 
@@ -55,9 +62,17 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping("/chapters")
-    public ResponseEntity<List<ChapterContentDto>> queryChapters() {
-        List<ChapterContentDto> dtoList = chapterService.queryChapters();
-        return new ResponseEntity<List<ChapterContentDto>>(dtoList, HttpStatus.OK);
+    public ResponseEntity<List<ChapterDetailDto>> queryChapters() {
+        List<ChapterDetailDto> dtoList = chapterService.queryChapters().stream()
+                .map(c -> {
+                    return new ChapterDetailDto(c.getTitle(),
+                            c.getNumber(),
+                            c.getStartDate(),
+                            c.getStartDate(),
+                            c.getTopicList().size());
+                })
+                .collect(Collectors.toList());
+        return new ResponseEntity<List<ChapterDetailDto>>(dtoList, HttpStatus.OK);
     }
 
     @ApiOperation(value = "목차 제공 - 사용자")
@@ -66,7 +81,7 @@ public class ChapterController {
     })
     @GetMapping("/contents-table")
     public ResponseEntity<List<ProgressDto>> queryContentTable(@AuthenticationPrincipal Customer customer, @RequestParam("num") Integer number) {
-        List<ProgressDto> contentTable = chapterService.queryContentTable(customer, number);
+        List<ProgressDto> contentTable = chapterWithProgressService.queryContentTable(customer, number);
         return new ResponseEntity<List<ProgressDto>>(contentTable, HttpStatus.OK);
     }
 
@@ -77,9 +92,10 @@ public class ChapterController {
     })
     @GetMapping("/chapters/chapter-title")
     public ResponseEntity<ChapterTitleDto> queryChapterTitle(@RequestParam("num") Integer num){
-        ChapterTitleDto chapterTitleDto = chapterService.queryChapterTitle(num);
+        Chapter chapter = chapterService.queryChapter(num);
+        ChapterTitleDto dto = new ChapterTitleDto(chapter.getTitle());
 
-        return new ResponseEntity<ChapterTitleDto>(chapterTitleDto, HttpStatus.OK);
+        return new ResponseEntity<ChapterTitleDto>(dto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 시작년도/종료년도 조회")
@@ -88,8 +104,9 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/chapters/{num}/date")
-    public ResponseEntity queryChapterDate(@PathVariable("num") Integer num) {
-        ChapterDateDto dto = chapterService.queryChapterDate(num);
+    public ResponseEntity<ChapterDateDto> queryChapterDate(@PathVariable("num") Integer num) {
+        Chapter chapter = chapterService.queryChapter(num);
+        ChapterDateDto dto = new ChapterDateDto(chapter.getStartDate(), chapter.getEndDate());
         return new ResponseEntity<ChapterDateDto>(dto, HttpStatus.OK);
     }
 
@@ -101,9 +118,10 @@ public class ChapterController {
     })
     @GetMapping("/chapters/{num}/info")
     public ResponseEntity<ChapterInfoDto> queryChapterInfoAdmin(@PathVariable("num") Integer num){
-        ChapterInfoDto chapterInfoDto = chapterService.queryChapterInfoAdmin(num);
+        Chapter chapter = chapterService.queryChapter(num);
+        ChapterInfoDto dto = new ChapterInfoDto(chapter.getContent());
 
-        return new ResponseEntity<ChapterInfoDto>(chapterInfoDto, HttpStatus.OK);
+        return new ResponseEntity<ChapterInfoDto>(dto, HttpStatus.OK);
     }
 
     @ApiOperation(value = "단원 제목/학습 조회 - 사용자")
@@ -113,9 +131,10 @@ public class ChapterController {
     })
     @GetMapping("/chapters/{num}/title-info")
     public ResponseEntity<ChapterTitleInfoDto> queryChapterInfoCustomer(@PathVariable("num") Integer num){
-        ChapterTitleInfoDto chapterTitleInfoDto = chapterService.queryChapterInfoCustomer(num);
+        Chapter chapter = chapterService.queryChapter(num);
+        ChapterTitleInfoDto dto = new ChapterTitleInfoDto(chapter.getTitle(), chapter.getContent());
 
-        return new ResponseEntity<ChapterTitleInfoDto>(chapterTitleInfoDto, HttpStatus.OK);
+        return new ResponseEntity<ChapterTitleInfoDto>(dto, HttpStatus.OK);
     }
 
 
@@ -133,9 +152,12 @@ public class ChapterController {
 
     @ApiOperation("해당 단원의 모든 topic 조회 - 관리자")
     @GetMapping("/admin/chapters/{num}/topics")
-    public ResponseEntity<List<ChapterAdminDto>> queryChapterTopicsAdmin(@PathVariable("num") int num) {
-        List<ChapterAdminDto> chapterAdminDtoList = chapterService.queryTopicsInChapterAdmin(num);
-        return new ResponseEntity<List<ChapterAdminDto>>(chapterAdminDtoList, HttpStatus.OK);
+    public ResponseEntity<List<ChapterTopicWithCountDto>> queryChapterTopicsAdmin(@PathVariable("num") int num) {
+        List<Topic> topicList = chapterService.queryChapter(num).getTopicList();
+        List<ChapterTopicWithCountDto> dtoList = topicList.stream()
+                .map(t -> new ChapterTopicWithCountDto(t))
+                .collect(Collectors.toList());
+        return new ResponseEntity<List<ChapterTopicWithCountDto>>(dtoList, HttpStatus.OK);
     }
 
     @ApiOperation("해당 단원의 모든 topic 조회 - 사용자")
@@ -144,9 +166,12 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
     })
     @GetMapping("/chapters/{num}/topics")
-    public ResponseEntity<List<TopicTempDto>> queryChapterTopicsCustomer(@PathVariable("num") int num){
-        List<TopicTempDto> dtoList = chapterService.queryTopicsInChapterCustomer(num);
-        return new ResponseEntity<List<TopicTempDto>>(dtoList, HttpStatus.OK);
+    public ResponseEntity<List<ChapterTopicUserDto>> queryChapterTopicsCustomer(@PathVariable("num") int num){
+        List<Topic> topicList = chapterService.queryChapter(num).getTopicList();
+        List<ChapterTopicUserDto> dtoList = topicList.stream()
+                .map(t -> new ChapterTopicUserDto(t))
+                .collect(Collectors.toList());
+        return new ResponseEntity<List<ChapterTopicUserDto>>(dtoList, HttpStatus.OK);
     }
 
 

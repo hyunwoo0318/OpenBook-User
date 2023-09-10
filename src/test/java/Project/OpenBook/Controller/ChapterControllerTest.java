@@ -1,17 +1,17 @@
 package Project.OpenBook.Controller;
 
 
-import Project.OpenBook.Constants.ContentConst;
+import Project.OpenBook.Chapter.Controller.dto.ChapterTitleNumDto;
+import Project.OpenBook.Chapter.Controller.dto.ChapterInfoDto;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.chapter.*;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
-import Project.OpenBook.Dto.topic.ChapterAdminDto;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.choice.ChoiceRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
@@ -36,8 +36,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.test.context.support.TestExecutionEvent;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
@@ -607,8 +605,8 @@ class ChapterControllerTest {
         @DisplayName("새로운 단원 저장 성공")
         @Test
         public void createNewChapterSuccess() {
-            ChapterDto inputChapterDto = new ChapterDto("ch2", 2);
-            ResponseEntity<Void> response = restTemplate.postForEntity(URL, inputChapterDto,Void.class);
+            ChapterTitleNumDto inputChapterTitleNumDto = new ChapterTitleNumDto("ch2", 2);
+            ResponseEntity<Void> response = restTemplate.postForEntity(URL, inputChapterTitleNumDto,Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             assertThat(chapterRepository.findOneByNumber(2).isPresent()).isTrue();
@@ -637,7 +635,7 @@ class ChapterControllerTest {
         @Test
         public void createChapterFailDupNum() {
              //중복된 단원번호를 입력한 경우
-            ChapterDto wrongDto = new ChapterDto("title123", 1);
+            ChapterTitleNumDto wrongDto = new ChapterTitleNumDto("title123", 1);
 
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL,HttpMethod.POST,
                     new HttpEntity<>(wrongDto),new ParameterizedTypeReference<List<ErrorMsgDto>>(){});
@@ -680,7 +678,7 @@ class ChapterControllerTest {
         @DisplayName("단원 수정 성공")
         @Test
         public void updateChapterSuccess() {
-            ChapterDto inputDto = new ChapterDto("titleAfterUpdate", 3);
+            ChapterTitleNumDto inputDto = new ChapterTitleNumDto("titleAfterUpdate", 3);
 
             ResponseEntity<Void> response = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH, new HttpEntity<>(inputDto), Void.class);
 
@@ -712,7 +710,7 @@ class ChapterControllerTest {
         @DisplayName("단원 수정 실패 - 존재하지 않는 단원 번호 입력")
         @Test
         public void updateChapterFailNotFoundNum(){
-            ChapterDto dto = new ChapterDto("title123", 5);
+            ChapterTitleNumDto dto = new ChapterTitleNumDto("title123", 5);
 
             //존재하지 않는 단원 수정 요청
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/-1", HttpMethod.PATCH,
@@ -729,7 +727,7 @@ class ChapterControllerTest {
         @DisplayName("단원 수정 실패 - 이미 존재하는 단원 번호로 수정 요청")
         @Test
         public void updateChapterFailDupNum(){
-            ChapterDto dto = new ChapterDto("title123", 2);
+            ChapterTitleNumDto dto = new ChapterTitleNumDto("title123", 2);
 
             //존재하지 않는 단원 수정 요청
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH,

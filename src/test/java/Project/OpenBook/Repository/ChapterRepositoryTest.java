@@ -1,14 +1,13 @@
 package Project.OpenBook.Repository;
 
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Config.TestQueryDslConfig;
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Repository.chapter.ChapterRepository;
+import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
 import Project.OpenBook.Repository.customer.CustomerRepository;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.group.Group;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -37,57 +36,6 @@ public class ChapterRepositoryTest {
     ChapterSectionRepository chapterSectionRepository;
     @Autowired
     TestEntityManager entityManager;
-
-    @Nested
-    @DisplayName("findAll() 메서드는")
-    public class findAllTest{
-
-        @Nested
-        @DisplayName("chapterRepository가 비어있다면")
-        public class emptyRepo{
-            @AfterEach
-            public void clear(){
-                chapterRepository.deleteAllInBatch();
-            }
-
-            @Test
-            @DisplayName("빈 리스트를 리턴한다.")
-            public void findAllNoInstance() {
-                //given
-
-                //when
-                List<Chapter> chapterList = chapterRepository.findAll();
-
-                //then
-                assertThat(chapterList.isEmpty()).isTrue();
-            }
-        }
-
-        @Nested
-        @DisplayName("chapterRepository에 chapter가 존재한다면")
-        public class instanceExistInRepo{
-            @AfterEach
-            public void clear(){
-                chapterRepository.deleteAllInBatch();
-            }
-            @Test
-            @DisplayName("전체 chapter를 가진 리스트를 리턴한다.")
-            public void findAllSuccess() {
-                //given
-                Chapter ch1 = new Chapter("ch1", 1);
-                entityManager.persist(ch1);
-                Chapter ch2 = new Chapter("ch2", 2);
-                entityManager.persist(ch2);
-
-                //when
-                List<Chapter> chapterList = chapterRepository.findAll();
-
-                //then
-                assertThat(chapterList.size()).isEqualTo(2);
-                assertThat(chapterList.containsAll(Arrays.asList(ch1, ch2))).isTrue();
-            }
-        }
-    }
 
     @Nested
     @Transactional

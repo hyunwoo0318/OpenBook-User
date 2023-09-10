@@ -1,7 +1,7 @@
 package Project.OpenBook.Repository.topic;
 
 import Project.OpenBook.Domain.Category;
-import Project.OpenBook.Domain.Chapter;
+import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Topic;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
