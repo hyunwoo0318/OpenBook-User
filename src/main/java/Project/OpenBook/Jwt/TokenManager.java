@@ -40,6 +40,7 @@ public class TokenManager {
         String authorities = getAuthorities(customer);
         long now = new Date().getTime();
         tokenExpire = new Date(now + JwtConst.TOKEN_EXPIRED_TIME);
+        Date refreshTokenExpire = new Date(now + JwtConst.TOKEN_EXPIRED_TIME * 10000);
 
         String accessToken = Jwts.builder()
                 .setSubject(String.valueOf(customerId))
@@ -51,7 +52,7 @@ public class TokenManager {
 
         String refreshToken = Jwts.builder()
                 .setSubject(String.valueOf(customerId))
-                .setExpiration(tokenExpire) // 표준에서 refresh token과 access token을 유효기간을 같이 설정하도록 권고
+                .setExpiration(refreshTokenExpire)
                 .signWith(key,SignatureAlgorithm.HS256)
                 .compact();
 
@@ -59,6 +60,7 @@ public class TokenManager {
                 .type("Bearer")
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .nickname(customer.getNickName())
                 .build();
     }
 

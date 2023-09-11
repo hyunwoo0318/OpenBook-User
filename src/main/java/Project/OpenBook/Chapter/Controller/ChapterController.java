@@ -20,6 +20,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,7 +54,7 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping("/jjh/chapters")
-    public ResponseEntity<List<ChapterUserDto>> queryChapterUserJJH(@AuthenticationPrincipal Customer customer){
+    public ResponseEntity<List<ChapterUserDto>> queryChapterUserJJH(@AuthenticationPrincipal Customer customer, HttpServletRequest request){
         List<ChapterUserDto> chapterUserDtoList = chapterWithProgressService.queryChapterUserDtos(customer);
         return new ResponseEntity<List<ChapterUserDto>>(chapterUserDtoList, HttpStatus.OK);
     }
@@ -63,7 +64,6 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping("/chapters")
-    @Transactional
     public ResponseEntity<List<ChapterDetailDto>> queryChapters() {
         List<ChapterDetailDto> dtoList = chapterService.queryChapters().stream()
                 .map(c -> {
@@ -140,7 +140,6 @@ public class ChapterController {
 
     @ApiOperation("해당 단원의 모든 topic 조회 - 관리자")
     @GetMapping("/admin/chapters/{num}/topics")
-    @Transactional
     public ResponseEntity<List<ChapterTopicWithCountDto>> queryChapterTopicsAdmin(@PathVariable("num") int num) {
         List<Topic> topicList = chapterService.queryChapter(num).getTopicList();
         List<ChapterTopicWithCountDto> dtoList = topicList.stream()
@@ -155,7 +154,6 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
     })
     @GetMapping("/chapters/{num}/topics")
-    @Transactional
     public ResponseEntity<List<ChapterTopicUserDto>> queryChapterTopicsCustomer(@PathVariable("num") int num){
         List<Topic> topicList = chapterService.queryChapter(num).getTopicList();
         List<ChapterTopicUserDto> dtoList = topicList.stream()

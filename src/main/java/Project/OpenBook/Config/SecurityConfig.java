@@ -9,12 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
 import org.springframework.web.cors.CorsConfiguration;
@@ -35,7 +37,7 @@ public class SecurityConfig {
     private final JwtCustomFilter jwtCustomFilter;
 
     private final String[] permitAllList = {
-            "/","/admin/login", "/oauth2/**", "/login/**","/error/*",
+            "/","/admin/login", "/oauth2/**", "/login/**","/error/*","login/**","/refresh-token",
             "/v2/api-docs",
             "/swagger-resources",
             "/swagger-resources/**",
@@ -57,15 +59,17 @@ public class SecurityConfig {
         return http.csrf().disable().cors().and()
                 .formLogin().disable()
                 .authorizeRequests()
-                .antMatchers("**").permitAll()
-//                .antMatchers(permitAllList).permitAll()
-//                .antMatchers("/admin/**").hasAnyRole("ADMIN", "USER")
-//                .antMatchers("/**").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("**").permitAll()
+                .antMatchers(permitAllList).permitAll()
+//                .antMatchers("/admin/**").hasAnyRole("ADMIN")
+                .antMatchers("/admin/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers("/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and().httpBasic().and().
                 formLogin().disable().
-                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and()
-                .headers()
+                exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)).and().
+//                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().
+                headers()
                 .frameOptions().sameOrigin().xssProtection().block(false).and().and()
                .addFilterBefore(jwtCustomFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

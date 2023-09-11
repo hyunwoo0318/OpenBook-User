@@ -24,7 +24,7 @@ public class StudyProgressController {
 
     private final StudyProgressService studyProgressService;
 
-    @ApiOperation("단원 학습 정보 입력 - 오답")
+    @ApiOperation("연표 문제 풀이 정보 입력 - 오답")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "단원 학습 정보 입력 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),

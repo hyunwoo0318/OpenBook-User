@@ -39,7 +39,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
         registry.addMapping("/**")
                 .allowedOrigins("**")
                 .allowedMethods("OPTIONS", "GET", "POST", "DELETE", "PUT", "PATCH")
-                .allowedHeaders("*");
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
 
     /**

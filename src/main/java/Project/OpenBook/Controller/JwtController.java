@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,10 +35,12 @@ public class JwtController {
     })
     @GetMapping("/refresh-token")
     public ResponseEntity<String> checkRefreshToken(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        String refreshToken = request.getHeader("refresh-token");
+        String refreshToken = request.getHeader("Refresh-Token");
         if (refreshToken.isBlank()) {
             throw new CustomException(INVALID_PARAMETER);
         }
+
+        Cookie[] cookies = request.getCookies();
 
         tokenManager.validateToken(refreshToken);
         TokenDto tokenDto = tokenManager.generateToken(refreshToken);

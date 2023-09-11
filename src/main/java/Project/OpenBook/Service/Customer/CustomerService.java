@@ -16,6 +16,7 @@ import Project.OpenBook.Topic.Repo.TopicRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
 import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
+import antlr.Token;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -97,7 +98,7 @@ public class CustomerService implements UserDetailsService {
     /**
      * 관리자
      */
-    public void loginAdmin(String loginId, String password){
+    public TokenDto loginAdmin(String loginId, String password){
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(loginId, password);
         Authentication authentication = authenticationManager.getObject().authenticate(upToken);
 
@@ -107,6 +108,10 @@ public class CustomerService implements UserDetailsService {
 
         SecurityContext securityContext = SecurityContextHolder.getContext();
         securityContext.setAuthentication(authentication);
+
+        Customer customer = (Customer) authentication.getPrincipal();
+        TokenDto tokenDto = tokenManager.generateToken(customer);
+        return tokenDto;
     }
 
     @Override

@@ -28,6 +28,8 @@ public class QuestionDto {
 
     private List<QuestionChoiceDto> choiceList;
 
+    private String choiceType;
+
     @Builder
     public QuestionDto(String questionType, String answer, String questionSentence, String description, String descriptionSentence, List<KeywordNameCommentDto> descriptionKeyword, List<QuestionChoiceDto> choiceList) {
         this.questionType  = questionType;

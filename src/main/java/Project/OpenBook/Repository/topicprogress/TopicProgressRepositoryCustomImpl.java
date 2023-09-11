@@ -21,7 +21,7 @@ public class TopicProgressRepositoryCustomImpl implements TopicProgressRepositor
         TopicProgress findTopicProgress = queryFactory.selectFrom(topicProgress)
                 .where(topicProgress.topic.title.eq(topicTitle))
                 .where(topicProgress.customer.id.eq(customerId))
-                .fetchOne();
+                .fetchFirst();
         return Optional.ofNullable(findTopicProgress);
     }
 

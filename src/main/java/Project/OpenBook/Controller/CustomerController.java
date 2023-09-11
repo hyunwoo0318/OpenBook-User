@@ -5,6 +5,7 @@ import Project.OpenBook.Dto.admin.AdminDto;
 import Project.OpenBook.Dto.customer.CustomerAddDetailDto;
 import Project.OpenBook.Dto.customer.CustomerCodeList;
 import Project.OpenBook.Dto.customer.CustomerDetailDto;
+import Project.OpenBook.Dto.customer.CustomerNicknameDto;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Service.AnswerNoteService;
 import Project.OpenBook.Service.BookmarkService;
@@ -15,12 +16,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,7 +74,8 @@ public class CustomerController {
 
     @ApiOperation("소셜 로그인")
     @GetMapping("login/{providerName}")
-    public ResponseEntity<String> socialLogin(@PathVariable("providerName") String providerName,@RequestParam("code") String code) throws Exception{
+    public ResponseEntity<CustomerNicknameDto> socialLogin(@PathVariable("providerName") String providerName, @RequestParam("code") String code,
+                                              HttpServletResponse response) throws Exception{
         TokenDto tokenDto = customerService.loginOauth2(providerName, code);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
@@ -78,10 +83,21 @@ public class CustomerController {
         headers.setAccessControlAllowHeaders(Arrays.asList("Authorization", "Refresh-Token"));
         headers.setAccessControlExposeHeaders(Arrays.asList("Authorization", "Refresh-Token"));
 
+//        Cookie cookie = new Cookie("Refesh-Token", tokenDto.getRefreshToken());
+//        cookie.setHttpOnly(true);
+//        response.addCookie(cookie);
+//
+//        ResponseCookie cookie = ResponseCookie.from("Refresh-Token", tokenDto.getRefreshToken())
+//                .secure(true)
+//                .httpOnly(true)
+//                .sameSite("None")
+//                .build();
+//
+//        response.setHeader("Set-Cookie", cookie.toString());
 
-        ResponseEntity<String> responseEntity = ResponseEntity.ok()
+        ResponseEntity<CustomerNicknameDto> responseEntity = ResponseEntity.ok()
                 .headers(headers)
-                .body("Login Success!!");
+                .body(new CustomerNicknameDto(tokenDto.getNickname()));
 
         return responseEntity;
     }
@@ -139,10 +155,33 @@ public class CustomerController {
             @ApiResponse(responseCode = "401", description = "로그인 실패")
     })
     @PostMapping("/admin/login")
-    public ResponseEntity adminLogin(@Validated @RequestBody AdminDto adminDto) {
-        customerService.loginAdmin(adminDto.getLoginId(), adminDto.getPassword());
+    public ResponseEntity<CustomerNicknameDto> adminLogin(@Validated @RequestBody AdminDto adminDto) {
+        TokenDto tokenDto = customerService.loginAdmin(adminDto.getLoginId(), adminDto.getPassword());
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
+        headers.set("Refresh-Token", tokenDto.getRefreshToken());
+        headers.setAccessControlAllowHeaders(Arrays.asList("Authorization", "Refresh-Token"));
+        headers.setAccessControlExposeHeaders(Arrays.asList("Authorization", "Refresh-Token"));
 
-        return new ResponseEntity(HttpStatus.OK);
+//        Cookie cookie = new Cookie("Refesh-Token", tokenDto.getRefreshToken());
+//        cookie.setHttpOnly(true);
+//        response.addCookie(cookie);
+//
+//        ResponseCookie cookie = ResponseCookie.from("Refresh-Token", tokenDto.getRefreshToken())
+//                .secure(true)
+//                .httpOnly(true)
+//                .sameSite("None")
+//                .build();
+//
+//        response.setHeader("Set-Cookie", cookie.toString());
+
+        ResponseEntity<CustomerNicknameDto> responseEntity = ResponseEntity.ok()
+                .headers(headers)
+                .body(new CustomerNicknameDto(tokenDto.getNickname()));
+
+        return responseEntity;
+//
+//        return new ResponseEntity(HttpStatus.OK);
     }
 
 }
