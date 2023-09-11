@@ -15,6 +15,7 @@ import Project.OpenBook.Topic.Domain.Topic;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,7 @@ public class ChapterWithProgressService {
      * 1단원의 경우 default => state = Open, progress = ChapterInfo
      * 2단원 이후의 경우 default => state = Locked, progress = NotStarted
      */
+    @Transactional
     public List<ChapterUserDto> queryChapterUserDtos(Customer customer) {
         Long customerId = customer.getId();
 
@@ -77,6 +79,7 @@ public class ChapterWithProgressService {
      * 특정 chapterSection이 존재하지 않는 경우 생성해서 제공
      * 존재하지 않는 chapterNum 입력 -> CHAPTER_NOT_FOUND Exception
      */
+    @Transactional
     public List<ProgressDto> queryContentTable(Customer customer, Integer chapterNum) {
         Chapter chapter = chapterValidator.checkChapter(chapterNum);
         Long customerId = customer.getId();

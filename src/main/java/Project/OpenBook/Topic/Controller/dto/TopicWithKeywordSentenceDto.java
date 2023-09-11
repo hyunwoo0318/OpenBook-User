@@ -1,7 +1,6 @@
 package Project.OpenBook.Topic.Controller.dto;
 
 import Project.OpenBook.Domain.Sentence;
-import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
 import Project.OpenBook.Dto.primaryDate.PrimaryDateUserDto;
 import Project.OpenBook.Dto.keyword.KeywordUserDto;
 import Project.OpenBook.Topic.Domain.Topic;

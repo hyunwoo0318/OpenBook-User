@@ -39,6 +39,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({ Exception.class })
     protected ResponseEntity handleServerException(Exception ex) {
-        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        System.out.println(ex.toString());
+        System.out.println("tracking : "  + ex.getStackTrace().toString());
+        return new ResponseEntity(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

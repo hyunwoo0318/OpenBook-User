@@ -3,20 +3,12 @@ package Project.OpenBook.Config;
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Repository.customer.CustomerRepository;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.codec.cbor.Jackson2CborDecoder;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
+import org.springframework.security.web.method.annotation.AuthenticationPrincipalArgumentResolver;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.servlet.config.annotation.*;
 
@@ -72,6 +64,11 @@ public class WebConfig extends WebMvcConfigurationSupport {
     @Bean
     public WebClient webClient(WebClient.Builder builder) {
         return builder.build();
+    }
+
+    @Override
+    protected void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new AuthenticationPrincipalArgumentResolver());
     }
 
 

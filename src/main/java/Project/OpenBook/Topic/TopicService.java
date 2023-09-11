@@ -2,30 +2,19 @@ package Project.OpenBook.Topic;
 
 import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.StateConst;
-import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
-import Project.OpenBook.Dto.primaryDate.PrimaryDateUserDto;
-import Project.OpenBook.Dto.keyword.KeywordDto;
 
-import Project.OpenBook.Dto.keyword.KeywordUserDto;
-import Project.OpenBook.Topic.Controller.dto.TopicWithKeywordSentenceDto;
+import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
 import Project.OpenBook.Topic.Controller.dto.TopicNumberDto;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
-import Project.OpenBook.Repository.sentence.SentenceRepository;
-import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
-import Project.OpenBook.Topic.Domain.QTopic;
 import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Topic.Controller.dto.TopicDetailDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Repository.dupdate.DupDateRepository;
-import Project.OpenBook.Repository.choice.ChoiceRepository;
-import Project.OpenBook.Repository.description.DescriptionRepository;
 import Project.OpenBook.Topic.Repo.TopicRepository;
-import com.querydsl.core.group.Group;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
@@ -34,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 

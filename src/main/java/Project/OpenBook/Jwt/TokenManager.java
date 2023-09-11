@@ -82,6 +82,7 @@ public class TokenManager {
 
         long id = Long.parseLong(claim.getSubject());
         Customer findCustomer = checkCustomer(id);
+        System.out.println("findCustomerID ==== " + findCustomer.getId() + " ---------------------------- ");
         if(claim.get("auth") == null){
             throw new CustomException(NOT_AUTHORIZED);
         }

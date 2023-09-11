@@ -1,7 +1,5 @@
 package Project.OpenBook.Jwt;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,9 +7,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.rmi.server.SocketSecurityException;
 
 @RequiredArgsConstructor
 @Component
@@ -30,6 +26,7 @@ public class JwtCustomFilter implements Filter {
             try{
                 tokenManager.validateToken(token);
                 authentication = tokenManager.getAuthorities(token);
+                System.out.println("authentication is ====" + authentication.toString() + " ------------------------------");
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }catch(Exception e){
 

@@ -116,6 +116,7 @@ public class CustomerService implements UserDetailsService {
 
     @Override
     public Customer loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("IN LOAD BY USERNAME!!!!!!!!!!!!! +++++++++++++++");
         return customerRepository.findByNickName(username).orElseThrow(() -> {
             throw new CustomException(LOGIN_FAIL);
         });

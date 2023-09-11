@@ -35,6 +35,7 @@ import java.util.*;
 public class SecurityConfig {
 
     private final JwtCustomFilter jwtCustomFilter;
+    private final CustomerService customerService;
 
     private final String[] permitAllList = {
             "/","/admin/login", "/oauth2/**", "/login/**","/error/*","login/**","/refresh-token",
@@ -58,6 +59,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable().cors().and()
                 .formLogin().disable()
+                .userDetailsService(customerService)
                 .authorizeRequests()
 //                .antMatchers("**").permitAll()
                 .antMatchers(permitAllList).permitAll()
@@ -66,9 +68,8 @@ public class SecurityConfig {
                 .antMatchers("/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and().httpBasic().and().
-                formLogin().disable().
                 exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)).and().
-//                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().
+                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().
                 headers()
                 .frameOptions().sameOrigin().xssProtection().block(false).and().and()
                .addFilterBefore(jwtCustomFilter, UsernamePasswordAuthenticationFilter.class)
