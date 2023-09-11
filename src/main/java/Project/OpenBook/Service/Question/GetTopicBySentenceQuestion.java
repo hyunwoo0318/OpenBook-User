@@ -7,6 +7,7 @@ import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
 import Project.OpenBook.Topic.Repo.TopicRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static Project.OpenBook.Constants.QuestionConst.GET_TOPIC_BY_SENTENCE_TYPE;
@@ -21,6 +22,9 @@ public class GetTopicBySentenceQuestion extends BaseQuestionComponentFactory imp
     public QuestionDto getQuestion(String topicTitle) {
         //정답 문장 조회
         List<Sentence> answerSentence = getSentencesByAnswerTopic(topicTitle, 1);
+        if (answerSentence.isEmpty()) {
+            return toQuestionDto(topicTitle, "", new ArrayList<>());
+        }
         String answerSentenceName = answerSentence.get(0).getName();
 
         //오답 선지 조회
