@@ -63,6 +63,7 @@ public class QuestionService {
         return random.nextInt(maxNum) + 1;
     }
 
+    @Transactional
     public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Integer num) {
         List<Topic> topicList = new ArrayList<>();
         if (num == 0) {
@@ -122,6 +123,7 @@ public class QuestionService {
         return type2.getJJHQuestion(topicTitle);
     }
 
+    @Transactional
     public List<QuestionDto> queryGetTopicsByKeywordQuestion(Integer num) {
         List<QuestionDto> questionList = new ArrayList<>();
 
@@ -142,6 +144,7 @@ public class QuestionService {
         return questionList;
     }
 
+    @Transactional
     public List<QuestionDto> queryGetTopicsBySentenceQuestion(Integer num) {
         List<QuestionDto> questionList = new ArrayList<>();
 
@@ -160,6 +163,7 @@ public class QuestionService {
         return questionList;
     }
 
+    @Transactional
     public List<QuestionDto> queryRandomQuestion(Integer chapterNum, Integer questionCount) {
         List<String> topicTitleList = new ArrayList<>();
         List<QuestionDto> questionList = new ArrayList<>();
