@@ -21,9 +21,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RequiredArgsConstructor
 @RestController
@@ -37,8 +37,7 @@ public class TopicController {
     })
     @GetMapping("admin/topics/{topicTitle}")
     public ResponseEntity<TopicDetailDto> queryTopicsAdmin(@PathVariable("topicTitle") String topicTitle) {
-        Topic findTopic = topicService.queryTopicWithCategoryChapter(topicTitle);
-        TopicDetailDto dto = new TopicDetailDto(findTopic);
+        TopicDetailDto dto = topicService.queryTopicsAdmin(topicTitle);
 
         return new ResponseEntity<TopicDetailDto>(dto, HttpStatus.OK);
     }
@@ -48,9 +47,9 @@ public class TopicController {
             @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
     })
     @GetMapping("/topics/{topicTitle}")
-    public ResponseEntity<TopicWithKeywordSentenceDto> queryTopicsUser(@PathVariable("topicTitle") String topicTitle) {
-        Topic findTopic = topicService.queryTopicWithCategory(topicTitle);
-        TopicWithKeywordSentenceDto dto = new TopicWithKeywordSentenceDto(findTopic);
+    @Transactional
+    public ResponseEntity<TopicWithKeywordSentenceDto> queryTopicsTitle(@PathVariable("topicTitle") String topicTitle) {
+        TopicWithKeywordSentenceDto dto = topicService.queryTopicsCustomer(topicTitle);
 
         return new ResponseEntity<TopicWithKeywordSentenceDto>(dto, HttpStatus.OK);
     }
@@ -62,10 +61,7 @@ public class TopicController {
     })
     @GetMapping("/topics/{topicTitle}/keywords")
     public ResponseEntity<List<KeywordDto>> queryTopicKeywords(@PathVariable("topicTitle") String topicTitle) {
-        Topic topic = topicService.queryTopic(topicTitle);
-        List<KeywordDto> dtoList = topic.getKeywordList().stream()
-                .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId()))
-                .collect(Collectors.toList());
+        List<KeywordDto> dtoList = topicService.queryTopicKeywords(topicTitle);
 
         return new ResponseEntity<List<KeywordDto>>(dtoList, HttpStatus.OK);
     }
@@ -77,9 +73,7 @@ public class TopicController {
     })
     @GetMapping("/topics/{topicTitle}/sentences")
     public ResponseEntity<List<SentenceDto>> queryTopicSentence(@PathVariable("topicTitle") String topicTitle) {
-        List<SentenceDto> dtoList = topicService.queryTopic(topicTitle).getSentenceList().stream()
-                                            .map(s -> new SentenceDto(s.getName(), s.getId()))
-                                            .collect(Collectors.toList());
+        List<SentenceDto> dtoList = topicService.queryTopicSentences(topicTitle);
         return new ResponseEntity<List<SentenceDto>>(dtoList, HttpStatus.OK);
     }
 
@@ -90,9 +84,8 @@ public class TopicController {
     })
     @GetMapping("/topics/{topicTitle}/descriptions")
     public ResponseEntity<List<DescriptionDto>> getDescriptionsInTopic(@PathVariable String topicTitle){
-        List<DescriptionDto> dtoList = topicService.queryTopic(topicTitle).getDescriptionList().stream()
-                .map(d -> new DescriptionDto(d.getId(), d.getContent()))
-                .collect(Collectors.toList());
+        List<DescriptionDto> dtoList = topicService.queryTopicDescriptions(topicTitle);
+
         return new ResponseEntity<List<DescriptionDto>>(dtoList, HttpStatus.OK);
     }
 
@@ -102,9 +95,7 @@ public class TopicController {
     })
     @GetMapping("/admin/topics/{topicTitle}/choices/")
     public ResponseEntity<List<ChoiceDto>> getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
-        List<ChoiceDto> dtoList = topicService.queryTopic(topicTitle).getChoiceList().stream()
-                .map(c -> new ChoiceDto(c.getContent(), c.getId()))
-                .collect(Collectors.toList());
+        List<ChoiceDto> dtoList = topicService.queryTopicChoices(topicTitle);
         return new ResponseEntity<List<ChoiceDto>>(dtoList,HttpStatus.OK);
     }
 

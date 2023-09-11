@@ -3,11 +3,16 @@ package Project.OpenBook.Topic;
 import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.StateConst;
 
+import Project.OpenBook.Dto.choice.ChoiceDto;
+import Project.OpenBook.Dto.description.DescriptionDto;
+import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
+import Project.OpenBook.Dto.sentence.SentenceDto;
 import Project.OpenBook.Topic.Controller.dto.TopicNumberDto;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
+import Project.OpenBook.Topic.Controller.dto.TopicWithKeywordSentenceDto;
 import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
@@ -55,6 +60,7 @@ public class TopicService {
         });
     }
 
+    @Transactional
     public Topic createTopic(TopicDetailDto topicDetailDto) {
 
         Category category = checkCategory(topicDetailDto.getCategory());
@@ -99,6 +105,7 @@ public class TopicService {
     }
 
 
+    @Transactional
     public Topic updateTopic(String topicTitle, TopicDetailDto topicDetailDto) {
         Topic topic = topicValidator.checkTopic(topicTitle);
         String inputTitle = topicDetailDto.getTitle();
@@ -129,6 +136,7 @@ public class TopicService {
         return topic;
     }
 
+    @Transactional
     public boolean deleteTopic(String topicTitle) {
         Topic findTopic = queryTopicWithCategoryChapter(topicTitle);
 
@@ -178,4 +186,41 @@ public class TopicService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public TopicDetailDto queryTopicsAdmin(String topicTitle) {
+        return new TopicDetailDto(queryTopicWithCategoryChapter(topicTitle));
+    }
+
+    @Transactional(readOnly = true)
+    public TopicWithKeywordSentenceDto queryTopicsCustomer(String topicTitle) {
+        return new TopicWithKeywordSentenceDto(queryTopicWithCategory(topicTitle));
+    }
+
+    @Transactional(readOnly = true)
+    public List<KeywordDto> queryTopicKeywords(String topicTitle) {
+        return queryTopic(topicTitle).getKeywordList().stream()
+                .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<SentenceDto> queryTopicSentences(String topicTitle) {
+        return queryTopic(topicTitle).getSentenceList().stream()
+                .map(s -> new SentenceDto(s.getName(), s.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<DescriptionDto> queryTopicDescriptions(String topicTitle) {
+        return  queryTopic(topicTitle).getDescriptionList().stream()
+                .map(d -> new DescriptionDto(d.getId(), d.getContent()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<ChoiceDto> queryTopicChoices(String topicTitle) {
+        return queryTopic(topicTitle).getChoiceList().stream()
+                .map(c -> new ChoiceDto(c.getContent(), c.getId()))
+                .collect(Collectors.toList());
+    }
 }
