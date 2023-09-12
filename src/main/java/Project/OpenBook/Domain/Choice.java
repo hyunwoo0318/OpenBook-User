@@ -23,6 +23,8 @@ public class Choice extends BaseEntity{
 
     private String comment;
 
+    private String type;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
@@ -34,7 +36,8 @@ public class Choice extends BaseEntity{
     @OneToMany(mappedBy = "choice", cascade = CascadeType.ALL)
     private List<DupContent> dupContentList = new ArrayList<>();
 
-    public Choice(String content, String comment, Topic topic, ExamQuestion examQuestion) {
+    public Choice(String type,String content, String comment, Topic topic, ExamQuestion examQuestion) {
+        this.type = type;
         this.content = content;
         this.comment = comment;
         this.topic = topic;

@@ -25,6 +25,8 @@ public enum ErrorCode {
     KEYWORD_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 키워드를 가지는 토픽이 존재합니다."),
     NOT_SAVED_CHOICE(HttpStatus.BAD_REQUEST, "해당 보기와 내용이 겹친 선지가 아닙니다."),
     WRONG_PROVIDER_NAME(HttpStatus.BAD_REQUEST, "잘못된 소셜 로그인 provider name입니다."),
+    NOT_VALIDATE_IMAGE(HttpStatus.BAD_REQUEST, "잘못된 이미지 파일입니다."),
+    NOT_VALIDATE_CHOICE_TYPE(HttpStatus.BAD_REQUEST, "잘못된 choiceType입니다."),
 
     /**
      * 401 - UNAUTHORIZED

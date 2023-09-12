@@ -1,8 +1,11 @@
 package Project.OpenBook.ExamQuestion;
 
+import Project.OpenBook.Constants.ChoiceConst;
 import Project.OpenBook.Domain.Choice;
 import Project.OpenBook.Domain.Description;
+import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.ExamQuestion.Domain.ExamQuestion;
+import Project.OpenBook.Image.ImageService;
 import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Dto.question.QuestionChoiceDto;
 import Project.OpenBook.ExamQuestion.Repo.General.ExamQuestionRepository;
@@ -15,8 +18,10 @@ import Project.OpenBook.Round.Repo.RoundRepository;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +37,8 @@ public class ExamQuestionService {
     private final DescriptionRepository descriptionRepository;
     private final ChoiceRepository choiceRepository;
 
+    private final ImageService imageService;
+
     public ExamQuestionDto getExamQuestion(Integer roundNumber, Integer questionNumber) {
 
         ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescription(roundNumber, questionNumber).orElseThrow(() -> {
@@ -40,22 +47,28 @@ public class ExamQuestionService {
 
         Description description = examQuestion.getDescription();
         List<Choice> choiceList = examQuestion.getChoiceList();
+        String type = null;
 
         List<QuestionChoiceDto> choiceDtoList = choiceList.stream()
                 .map(c -> new QuestionChoiceDto(c.getContent(), c.getComment(), c.getTopic().getTitle(), c.getId()))
                 .collect(Collectors.toList());
 
-        return new ExamQuestionDto(examQuestion.getNumber(), description.getContent(), description.getComment(), description.getTopic().getTitle(),
+        if (!choiceList.isEmpty()) {
+            type = choiceList.get(0).getType();
+        }
+
+        return new ExamQuestionDto(examQuestion.getNumber(), description.getContent(), description.getComment(), description.getTopic().getTitle(),type,
                 choiceDtoList, examQuestion.getScore());
     }
 
     @Transactional
-    public void saveExamQuestion(Integer roundNumber, ExamQuestionDto examQuestionDto) {
+    public void saveExamQuestion(Integer roundNumber, ExamQuestionDto examQuestionDto) throws IOException {
         Round round = checkRound(roundNumber);
 
         String answer = examQuestionDto.getAnswer();
         Integer questionNumber = examQuestionDto.getNumber();
-        
+        String choiceType = examQuestionDto.getChoiceType();
+
         //해당 회차에 해당 번호를 가진 문제가 존재하는 경우
         checkDupQuestionNumber(roundNumber, questionNumber);
         
@@ -71,7 +84,11 @@ public class ExamQuestionService {
                         Topic::getTitle,
                         t -> t));
         
-        //TODO : 해당 주제들이 DB에 존재하는지 확인
+        for (String topicTitle : topicTitleList) {
+            if (topicMap.get(topicTitle) == null) {
+                throw new CustomException(TOPIC_NOT_FOUND);
+            }
+        }
 
         //문제 저장
         ExamQuestion examQuestion = new ExamQuestion(round, examQuestionDto.getNumber(), examQuestionDto.getScore());
@@ -82,12 +99,28 @@ public class ExamQuestionService {
                 topicMap.get(examQuestionDto.getAnswer()), examQuestion);
         descriptionRepository.save(description);
 
-        //선지 전체 저장
-        List<Choice> choiceList = choiceDtoList.stream()
-                .map(choiceDto -> new Choice(choiceDto.getChoice(), choiceDto.getComment(),
-                        topicMap.get(choiceDto.getKey()), examQuestion))
-                .collect(Collectors.toList());
+        //선지 전체 저장(일반 선지)
+        List<Choice> choiceList = new ArrayList<>();
+        if(choiceType.equals(ChoiceConst.CHOICE_STRING)){
+            choiceList = choiceDtoList.stream()
+                    .map(choiceDto -> new Choice(choiceType,choiceDto.getChoice(), choiceDto.getComment(),
+                            topicMap.get(choiceDto.getKey()), examQuestion))
+                    .collect(Collectors.toList());
+        }
+        //선지 전체 저장(이미지)
+        else if(choiceType.equals(ChoiceConst.CHOICE_IMAGE)){
+            for (QuestionChoiceDto choiceDto : choiceDtoList) {
+                String encodedFile = choiceDto.getChoice();
+                imageService.checkBase64(encodedFile);
+                imageService.storeFile(encodedFile);
+                choiceList.add(new Choice(choiceType,choiceDto.getChoice(), choiceDto.getComment(),
+                        topicMap.get(choiceDto.getKey()), examQuestion));
+            }
+        }else{
+            throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
+        }
         choiceRepository.saveAll(choiceList);
+
     }
 
     private Round checkRound(Integer roundNumber) {
@@ -97,9 +130,10 @@ public class ExamQuestionService {
     }
 
     @Transactional
-    public void updateExamQuestion(Integer roundNumber, Integer questionNumber, ExamQuestionDto examQuestionDto) {
+    public void updateExamQuestion(Integer roundNumber, Integer questionNumber, ExamQuestionDto examQuestionDto) throws IOException {
         checkRound(roundNumber);
         Integer newQuestionNumber = examQuestionDto.getNumber();
+        String newChoiceType = examQuestionDto.getChoiceType();
 
         ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescription(roundNumber, questionNumber).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
@@ -124,20 +158,47 @@ public class ExamQuestionService {
         Map<Long, Choice> choiceMap = choiceRepository.queryChoicesById(choiceIdList).stream()
                 .collect(Collectors.toMap(Choice::getId, choice -> choice));
 
-        for (QuestionChoiceDto dto : choiceDtoList) {
-            Long choiceId = dto.getId();
-            Topic topic = checkTopic(dto.getKey());
-            if (choiceId != null) {
-                //기존에 존재하는 선지
-                Choice choice = choiceMap.get(choiceId);
+        //선지 변경 -> 일반 선지
+        if (newChoiceType.equals(ChoiceConst.CHOICE_STRING)) {
+            for (QuestionChoiceDto dto : choiceDtoList) {
+                Long choiceId = dto.getId();
+                Topic topic = checkTopic(dto.getKey());
+                if (choiceId != null) {
+                    //기존에 존재하는 선지
+                    Choice choice = choiceMap.get(choiceId);
 
-                choice.updateChoice(dto.getChoice(), dto.getComment(), topic);
-            }else{
-                //새로 추가된 선지
-                Choice choice = new Choice(dto.getChoice(), dto.getComment(), topic, examQuestion);
-                choiceRepository.save(choice);
+                    choice.updateChoice(dto.getChoice(), dto.getComment(), topic);
+                }else{
+                    //새로 추가된 선지
+                    Choice choice = new Choice(newChoiceType, dto.getChoice(), dto.getComment(), topic, examQuestion);
+                    choiceRepository.save(choice);
+                }
             }
         }
+        //선지 변경 -> 이미지
+        else if (newChoiceType.equals(ChoiceConst.CHOICE_IMAGE)) {
+            for (QuestionChoiceDto dto : choiceDtoList) {
+                Long choiceId = dto.getId();
+                Topic topic = checkTopic(dto.getKey());
+                if (choiceId != null) {
+                    //기존에 존재하는 선지
+                    Choice choice = choiceMap.get(choiceId);
+
+                    choice.updateChoice(dto.getChoice(), dto.getComment(), topic);
+                }else{
+                    //새로 추가된 선지
+                    String encodedFile = dto.getChoice();
+                    imageService.checkBase64(encodedFile);
+                    imageService.storeFile(encodedFile);
+                    Choice choice = new Choice(newChoiceType, dto.getChoice(), dto.getComment(), topic, examQuestion);
+                    choiceRepository.save(choice);
+                }
+            }
+        }else{
+            throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
+        }
+
+
 
 
     }

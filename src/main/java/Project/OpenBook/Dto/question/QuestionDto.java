@@ -31,8 +31,9 @@ public class QuestionDto {
     private String choiceType;
 
     @Builder
-    public QuestionDto(String questionType, String answer, String questionSentence, String description, String descriptionSentence, List<KeywordNameCommentDto> descriptionKeyword, List<QuestionChoiceDto> choiceList) {
-        this.questionType  = questionType;
+    public QuestionDto(String choiceType, String questionType, String answer, String questionSentence, String description, String descriptionSentence, List<KeywordNameCommentDto> descriptionKeyword, List<QuestionChoiceDto> choiceList) {
+        this.choiceType = choiceType;
+        this.questionType = questionType;
         this.answer = answer;
         this.questionSentence = questionSentence;
         this.description = description;

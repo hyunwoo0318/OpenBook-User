@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
 
 import static Project.OpenBook.Constants.ErrorCode.INVALID_PARAMETER;
+import static Project.OpenBook.Constants.ErrorCode.LOGIN_FAIL;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,11 +37,9 @@ public class JwtController {
     @GetMapping("/refresh-token")
     public ResponseEntity<String> checkRefreshToken(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         String refreshToken = request.getHeader("Refresh-Token");
-        if (refreshToken.isBlank()) {
-            throw new CustomException(INVALID_PARAMETER);
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new CustomException(LOGIN_FAIL);
         }
-
-        Cookie[] cookies = request.getCookies();
 
         tokenManager.validateToken(refreshToken);
         TokenDto tokenDto = tokenManager.generateToken(refreshToken);

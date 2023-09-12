@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 public class ExamQuestionController {
@@ -37,7 +39,7 @@ public class ExamQuestionController {
     })
     @PostMapping("/admin/rounds/{roundNumber}/questions")
     public ResponseEntity<Void> saveExamQuestion(@PathVariable("roundNumber") Integer roundNumber,
-                                                 @Validated @RequestBody ExamQuestionDto examQuestionDto){
+                                                 @Validated @RequestBody ExamQuestionDto examQuestionDto) throws IOException {
         examQuestionService.saveExamQuestion(roundNumber, examQuestionDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
@@ -50,7 +52,7 @@ public class ExamQuestionController {
     @PatchMapping("/admin/rounds/{roundNumber}/questions/{questionNumber}")
     public ResponseEntity<Void> updateExamQuestion(@PathVariable("roundNumber") Integer roundNumber,
                                                  @PathVariable("questionNumber") Integer questionNumber,
-                                                 @Validated @RequestBody ExamQuestionDto examQuestionDto){
+                                                 @Validated @RequestBody ExamQuestionDto examQuestionDto) throws IOException {
         examQuestionService.updateExamQuestion(roundNumber, questionNumber, examQuestionDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
