@@ -4,10 +4,7 @@ import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Dto.studyProgress.ChapterProgressAddDto;
-import Project.OpenBook.Dto.studyProgress.ProgressDto;
-import Project.OpenBook.Dto.studyProgress.TopicProgressAddDto;
-import Project.OpenBook.Dto.studyProgress.TopicProgressAddDtoList;
+import Project.OpenBook.Dto.studyProgress.*;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.chapterprogress.ChapterProgressRepository;
 import Project.OpenBook.Repository.chaptersection.ChapterSectionRepository;
@@ -18,14 +15,15 @@ import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 
 import java.util.List;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static Project.OpenBook.Constants.ContentConst.*;
 import static Project.OpenBook.Constants.StateConst.LOCKED;
+import static Project.OpenBook.Constants.StateConst.OPEN;
 
 @Service
 @RequiredArgsConstructor
@@ -138,5 +136,22 @@ public class StudyProgressService {
             topicProgress.updateState(state);
             chapterProgress.updateProgress(title);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public TotalProgressDto queryTotalProgress(Customer customer) {
+        List<ChapterSection> chapterSectionList = customer.getChapterSectionList();
+        int openCount =(int) chapterSectionList.stream()
+                .filter(cs -> cs.getState().equals(OPEN.getName()))
+                .count();
+
+        List<TopicProgress> topicProgressList = customer.getTopicProgressList();
+        int topicCount = (int)topicProgressList.stream()
+                .filter(tp -> tp.getState().equals(OPEN.getName()))
+                .count();
+
+
+        int ret =(openCount + topicCount) / (chapterSectionList.size() + topicProgressList.size());
+        return new TotalProgressDto(ret);
     }
 }

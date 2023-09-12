@@ -4,6 +4,7 @@ import Project.OpenBook.Domain.Customer;
 import Project.OpenBook.Dto.studyProgress.ChapterProgressAddDto;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;
 import Project.OpenBook.Dto.studyProgress.TopicProgressAddDtoList;
+import Project.OpenBook.Dto.studyProgress.TotalProgressDto;
 import Project.OpenBook.Service.StudyProgressService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,10 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class StudyProgressController {
     })
     @PatchMapping("/study-progress/chapter/wrong-count")
     public ResponseEntity<Void> addChapterProgressWrongCount(@AuthenticationPrincipal Customer customer,
-            @Validated @RequestBody ChapterProgressAddDto chapterProgressAddDto) {
+                                                             @Validated @RequestBody ChapterProgressAddDto chapterProgressAddDto) {
         studyProgressService.addChapterProgressWrongCount(customer, chapterProgressAddDto);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
@@ -45,7 +43,7 @@ public class StudyProgressController {
     })
     @PatchMapping("/study-progress/chapter/progress")
     public ResponseEntity<Void> addChapterProgressProgressUpdate(@AuthenticationPrincipal Customer customer,
-                                                           @Validated @RequestBody ProgressDto progressDto) {
+                                                                 @Validated @RequestBody ProgressDto progressDto) {
         studyProgressService.updateStudyProgress(customer, progressDto);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
@@ -58,8 +56,18 @@ public class StudyProgressController {
     })
     @PatchMapping("/study-progress/topic/wrong-count")
     public ResponseEntity<Void> addTopicProgress(@AuthenticationPrincipal Customer customer,
-            @Validated @RequestBody TopicProgressAddDtoList topicProgressAddDtoList) {
+                                                 @Validated @RequestBody TopicProgressAddDtoList topicProgressAddDtoList) {
         studyProgressService.addTopicProgressWrongCount(customer, topicProgressAddDtoList);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
+    }
+
+    @ApiOperation("전체 진도율 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "성공적인 조회")
+    })
+    @GetMapping("/total-progress")
+    public ResponseEntity<TotalProgressDto> queryTotalProgress(@AuthenticationPrincipal Customer customer) {
+        TotalProgressDto dto = studyProgressService.queryTotalProgress(customer);
+        return new ResponseEntity<TotalProgressDto>(dto, HttpStatus.OK);
     }
 }
