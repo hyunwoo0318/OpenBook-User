@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
+import java.util.Optional;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static Project.OpenBook.Constants.ContentConst.*;
@@ -138,20 +139,21 @@ public class StudyProgressService {
         }
     }
 
-    @Transactional(readOnly = true)
+
     public TotalProgressDto queryTotalProgress(Customer customer) {
-        List<ChapterSection> chapterSectionList = customer.getChapterSectionList();
+        Customer findCustomer = checkCustomer(customer.getId());
+        List<ChapterSection> chapterSectionList = findCustomer.getChapterSectionList();
         int openCount =(int) chapterSectionList.stream()
                 .filter(cs -> cs.getState().equals(OPEN.getName()))
                 .count();
 
-        List<TopicProgress> topicProgressList = customer.getTopicProgressList();
+        List<TopicProgress> topicProgressList = findCustomer.getTopicProgressList();
         int topicCount = (int)topicProgressList.stream()
                 .filter(tp -> tp.getState().equals(OPEN.getName()))
                 .count();
 
 
-        int ret =(openCount + topicCount) / (chapterSectionList.size() + topicProgressList.size());
+        int ret =(openCount + topicCount) * 100 / (chapterSectionList.size() + topicProgressList.size()) ;
         return new TotalProgressDto(ret);
     }
 }

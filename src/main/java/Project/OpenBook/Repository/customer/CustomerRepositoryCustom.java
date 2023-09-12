@@ -9,4 +9,5 @@ public interface CustomerRepositoryCustom {
     public Optional<Customer> queryCustomer(String oAuthId, String provider);
 
     public Optional<Customer> queryCustomer(String code);
+
 }
