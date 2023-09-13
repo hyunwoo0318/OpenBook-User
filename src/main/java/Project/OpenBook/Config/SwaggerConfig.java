@@ -16,6 +16,7 @@ public class SwaggerConfig{
     public OpenAPI openAPI() {
 
         Info info = new Info()
+
                 .version("v1.0.0")
                 .title("OpenBook Project")
                 .description("OpenBook Api 명세서입니다.");

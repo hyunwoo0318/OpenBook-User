@@ -4,6 +4,7 @@ import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Bookmark.Domain.Bookmark;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class BookmarkController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @PostMapping
-    public ResponseEntity<Void> addBookmark(@AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> addBookmark(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
                                       @RequestBody String topicTitle) {
         Bookmark bookmark = bookmarkService.addBookmark(customer, topicTitle);
 
@@ -38,7 +39,7 @@ public class BookmarkController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @DeleteMapping
-    public ResponseEntity<Void> deleteBookmark(@AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> deleteBookmark(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
                                          @RequestBody String topicTitle) {
         bookmarkService.deleteBookmark(customer, topicTitle);
 

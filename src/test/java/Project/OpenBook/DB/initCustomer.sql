@@ -1,0 +1,2 @@
+insert into customer (nick_name, role, password,is_new, is_subscribed) values ('customer1', 'ROLE_USER','customer1',false,false);
+insert into customer (nick_name, role, password, is_new, is_subscribed) values ('customer2', 'ROLE_USER','customer1',false,false);

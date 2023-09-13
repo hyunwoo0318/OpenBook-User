@@ -7,6 +7,7 @@ import Project.OpenBook.Domain.Jwt.TokenDto;
 import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
     })
     @GetMapping("/customer-infos/bookmarks")
-    public ResponseEntity<List<String>> queryBookmarks(@AuthenticationPrincipal Customer customer){
+    public ResponseEntity<List<String>> queryBookmarks(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer){
         List<String> titleList = bookmarkService.queryBookmarks(customer);
 
         return new ResponseEntity<List<String>>(titleList, HttpStatus.OK);
@@ -93,7 +94,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
     })
     @DeleteMapping("/customers")
-    public ResponseEntity<Void> deleteCustomer(@AuthenticationPrincipal Customer customer){
+    public ResponseEntity<Void> deleteCustomer(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer){
 
         customerService.deleteCustomer(customer);
         return new ResponseEntity<Void>(HttpStatus.OK);

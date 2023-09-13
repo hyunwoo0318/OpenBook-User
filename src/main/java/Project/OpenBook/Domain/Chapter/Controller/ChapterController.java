@@ -9,6 +9,7 @@ import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.StudyProgress.Dto.ProgressDto;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -49,7 +50,7 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping("/jjh/chapters")
-    public ResponseEntity<List<ChapterUserDto>> queryChapterUserJJH(@AuthenticationPrincipal Customer customer, HttpServletRequest request){
+    public ResponseEntity<List<ChapterUserDto>> queryChapterUserJJH(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer, HttpServletRequest request){
         List<ChapterUserDto> chapterUserDtoList = chapterWithProgressService.queryChapterUserDtos(customer);
         return new ResponseEntity<List<ChapterUserDto>>(chapterUserDtoList, HttpStatus.OK);
     }
@@ -69,7 +70,7 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "목차 제공 성공")
     })
     @GetMapping("/contents-table")
-    public ResponseEntity<List<ProgressDto>> queryContentTable(@AuthenticationPrincipal Customer customer, @RequestParam("num") Integer number) {
+    public ResponseEntity<List<ProgressDto>> queryContentTable(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer, @RequestParam("num") Integer number) {
         List<ProgressDto> contentTable = chapterWithProgressService.queryContentTable(customer, number);
         return new ResponseEntity<List<ProgressDto>>(contentTable, HttpStatus.OK);
     }
