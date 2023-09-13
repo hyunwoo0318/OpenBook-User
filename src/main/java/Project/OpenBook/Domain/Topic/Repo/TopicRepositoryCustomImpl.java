@@ -38,8 +38,8 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
     @Override
     public Optional<Topic> queryTopicWithCategoryChapter(String topicTitle) {
         Topic findTopic = queryFactory.selectFrom(topic)
-                .join(topic.category, category)
-                .join(topic.chapter, chapter)
+                .join(topic.category, category).fetchJoin()
+                .join(topic.chapter, chapter).fetchJoin()
                 .where(topic.title.eq(topicTitle))
                 .fetchOne();
         return Optional.ofNullable(findTopic);
@@ -48,7 +48,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
     @Override
     public Optional<Topic> queryTopicWithCategory(String topicTitle) {
         Topic findTopic = queryFactory.selectFrom(topic)
-                .join(topic.category, category)
+                .join(topic.category, category).fetchJoin()
                 .where(topic.title.eq(topicTitle))
                 .fetchOne();
         return Optional.ofNullable(findTopic);

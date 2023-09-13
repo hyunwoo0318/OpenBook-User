@@ -12,5 +12,4 @@ import java.util.Optional;
 public interface TopicRepository extends JpaRepository<Topic, Long>, TopicRepositoryCustom {
 
     public Optional<Topic> findTopicByTitle(String title);
-    public List<Topic> findAllByCategory(Category category);
 }

@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.StudyProgress.ChapterProgress.Repository;
 
 import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ChapterProgressRepositoryCustom {
@@ -13,6 +14,7 @@ public interface ChapterProgressRepositoryCustom {
      * @return Optional<ChapterProgress>
      */
     public Optional<ChapterProgress> queryChapterProgress(Long customerId, Integer chapterNum);
-//
-//    public List<ChapterProgress> queryChapterProgress(Integer chapterNum);
+
+    public List<ChapterProgress> queryChapterProgressesWithChapter(Long customerId);
+
 }

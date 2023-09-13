@@ -1,9 +1,11 @@
 package Project.OpenBook.Domain.Chapter.Service;
 
+import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterUserDto;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
 import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
@@ -14,12 +16,16 @@ import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Repository.ChapterP
 import Project.OpenBook.Domain.StudyProgress.ChapterSection.Repository.ChapterSectionRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
+import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static Project.OpenBook.Constants.ErrorCode.CUSTOMER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +35,7 @@ public class ChapterWithProgressService {
     private final ChapterProgressRepository chapterProgressRepository;
     private final ChapterSectionRepository chapterSectionRepository;
     private final TopicProgressRepository topicProgressRepository;
+    private final CustomerRepository customerRepository;
     private final ChapterValidator chapterValidator;
 
     /**
@@ -43,12 +50,20 @@ public class ChapterWithProgressService {
         Long customerId = customer.getId();
 
         List<ChapterUserDto> chapterUserDtoList = new ArrayList<>();
-        Map<Chapter, ChapterProgress> map = chapterRepository.queryChapterWithProgress(customerId);
-        for (Chapter chapter : map.keySet()) {
-            ChapterProgress findChapterProgress = map.get(chapter);
+
+        Map<Integer, ChapterProgress> chapterProgressMap = new HashMap<>();
+        List<Chapter> chapterList = chapterRepository.findAllByOrderByNumberAsc();
+        List<ChapterProgress> chapterProgressList = chapterProgressRepository.queryChapterProgressesWithChapter(customerId);
+        for (ChapterProgress chapterProgress : chapterProgressList) {
+            chapterProgressMap.put(chapterProgress.getChapter().getNumber(), chapterProgress);
+        }
+
+        for (Chapter chapter : chapterList) {
+            int chapterNumber = chapter.getNumber();
+            ChapterProgress findChapterProgress = chapterProgressMap.get(chapterNumber);
 
             if (findChapterProgress == null) {
-                if(chapter.getNumber() == 1)
+                if(chapterNumber == 1)
                 {
                     findChapterProgress = new ChapterProgress(customer, chapter, 0, ContentConst.CHAPTER_INFO.getName());
                 }else{
@@ -64,12 +79,7 @@ public class ChapterWithProgressService {
             chapterUserDtoList.add(chapterUserDto);
         }
 
-        List<ChapterUserDto> sortedChapterUserDtoList = chapterUserDtoList.stream()
-                .sorted(Comparator.comparing(ChapterUserDto::getNumber))
-                .collect(Collectors.toList());
-
-
-        return sortedChapterUserDtoList;
+        return chapterUserDtoList;
     }
 
 
