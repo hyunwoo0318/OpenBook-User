@@ -3,7 +3,7 @@ package Project.OpenBook.Domain.Question.Controller;
 import Project.OpenBook.Domain.Question.Service.QuestionService;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
-    @ApiOperation("단원 내 연표 문제 제공")
+    @Operation(summary = "단원 내 연표 문제 제공")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "연표문제 제공 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
@@ -31,7 +31,7 @@ public class QuestionController {
         return new ResponseEntity<List<TimeFlowQuestionDto>>(timeFlowQuestionDtoList, HttpStatus.OK);
     }
 
-    @ApiOperation("주제보고 키워드 맞추기 문제 제공")
+    @Operation(summary = "주제보고 키워드 맞추기 문제 제공")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "주제보고 문장 맞추기 문제 제공 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
@@ -43,7 +43,7 @@ public class QuestionController {
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }
 
-    @ApiOperation("주제보고 문장 맞추기 문제 제공")
+    @Operation(summary = "주제보고 문장 맞추기 문제 제공")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "주제보고 문장 맞추기 문제 제공 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
@@ -55,7 +55,7 @@ public class QuestionController {
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }
 
-    @ApiOperation("키워드 보고 주제 맞추기 문제 제공")
+    @Operation(summary = "키워드 보고 주제 맞추기 문제 제공")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "키워드 보고 주제 맞추기 문제 제공 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
@@ -67,7 +67,7 @@ public class QuestionController {
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }
 
-    @ApiOperation("문장 보고 주제 맞추기 문제 제공")
+    @Operation(summary = "문장 보고 주제 맞추기 문제 제공")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "키워드/문장 보고 주제 맞추기 문제 제공 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
@@ -79,7 +79,7 @@ public class QuestionController {
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }
 
-    @ApiOperation("랜덤 문제 제공")
+    @Operation(summary = "랜덤 문제 제공")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "문제 제공 성공"),
             @ApiResponse(responseCode = "400", description = "문제 제공 실패"),

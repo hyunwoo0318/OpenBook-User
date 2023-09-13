@@ -3,7 +3,7 @@ package Project.OpenBook.Domain.Round.Controller;
 import Project.OpenBook.Domain.Round.Service.RoundService;
 import Project.OpenBook.Domain.Round.dto.RoundDto;
 import Project.OpenBook.Domain.Round.dto.RoundInfoDto;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class RoundController {
 
     private final RoundService roundService;
 
-    @ApiOperation("전체 회차 조회")
+    @Operation(summary = "전체 회차 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 회차 조회 성공")
     })
@@ -30,7 +30,7 @@ public class RoundController {
         return new ResponseEntity<List<RoundDto>>(dtoList, HttpStatus.OK);
     }
 
-    @ApiOperation("특정 회차 조회")
+    @Operation(summary = "특정 회차 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 회차 조회 성공")
     })
@@ -40,7 +40,7 @@ public class RoundController {
         return new ResponseEntity<RoundInfoDto>(dto, HttpStatus.OK);
     }
 
-    @ApiOperation("회차 내 전체 문제 번호 조회")
+    @Operation(summary = "회차 내 전체 문제 번호 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 회차 조회 성공")
     })
@@ -51,7 +51,7 @@ public class RoundController {
     }
 
 
-    @ApiOperation("회차 생성")
+    @Operation(summary = "회차 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "회차 생성 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력")
@@ -62,7 +62,7 @@ public class RoundController {
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
-    @ApiOperation("회차 수정")
+    @Operation(summary = "회차 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회차 수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
@@ -74,7 +74,7 @@ public class RoundController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @ApiOperation("회차 삭제")
+    @Operation(summary = "회차 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "회차 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회차 번호 입력")

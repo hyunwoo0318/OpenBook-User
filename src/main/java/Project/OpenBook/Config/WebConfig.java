@@ -17,7 +17,8 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-public class WebConfig extends WebMvcConfigurationSupport {
+@EnableWebMvc
+public class WebConfig extends WebMvcConfigurationSupport{
 
     private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;

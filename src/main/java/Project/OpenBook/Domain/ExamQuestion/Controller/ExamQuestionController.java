@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.ExamQuestion.Controller;
 
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
 import Project.OpenBook.Domain.ExamQuestion.Service.ExamQuestionService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class ExamQuestionController {
     private final ExamQuestionService examQuestionService;
 
 
-    @ApiOperation("모의고사 문제 조회")
+    @Operation(summary = "모의고사 문제 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회차 번호나 문제 번호 입력")
@@ -32,7 +32,7 @@ public class ExamQuestionController {
         return new ResponseEntity<ExamQuestionDto>(examQuestion, HttpStatus.OK);
     }
 
-    @ApiOperation("모의고사 문제 저장")
+    @Operation(summary = "모의고사 문제 저장")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "모의고사 문제 저장 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회차 번호 입력")
@@ -44,7 +44,7 @@ public class ExamQuestionController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @ApiOperation("모의고사 문제 수정")
+    @Operation(summary = "모의고사 문제 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "모의고사 문제 수정 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회차 번호나 문제 번호 입력")
@@ -57,7 +57,7 @@ public class ExamQuestionController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @ApiOperation("모의고사 문제 삭제")
+    @Operation(summary = "모의고사 문제 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "모의고사 문제 삭제 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회차 번호 입력")

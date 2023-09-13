@@ -3,7 +3,7 @@ package Project.OpenBook.Domain.Sentence.Controller;
 import Project.OpenBook.Domain.Sentence.Service.SentenceService;
 import Project.OpenBook.Domain.Sentence.Dto.SentenceCreateDto;
 import Project.OpenBook.Domain.Sentence.Dto.SentenceUpdateDto;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class SentenceController {
     private final SentenceService sentenceService;
 
 
-    @ApiOperation("문장 생성")
+    @Operation(summary = "문장 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201" , description = "생성 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
@@ -31,7 +31,7 @@ public class SentenceController {
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
-    @ApiOperation("문장 수정")
+    @Operation(summary = "문장 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
@@ -43,7 +43,7 @@ public class SentenceController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @ApiOperation("문장 삭제")
+    @Operation(summary = "문장 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200" , description = "삭제 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 문장 아이디 입력")

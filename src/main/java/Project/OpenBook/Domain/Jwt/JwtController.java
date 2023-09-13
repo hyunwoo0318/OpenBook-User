@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.Jwt;
 
 import Project.OpenBook.Handler.Exception.CustomException;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class JwtController {
 
     private final TokenManager tokenManager;
 
-    @ApiOperation(value = "refresh-token을 받아 유효한지 체크해서 유효하면 access token 재발급", notes = "request header에 'refresh-token'이라는 필드에 refreshToken값을 넣어서 호출")
+    @Operation(summary = "refresh-token을 받아 유효한지 체크해서 유효하면 access token 재발급", description = "request header에 'refresh-token'이라는 필드에 refreshToken값을 넣어서 호출")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "access token 발급"),
             @ApiResponse(responseCode = "400", description = "refresh token이 유효하지 않음")

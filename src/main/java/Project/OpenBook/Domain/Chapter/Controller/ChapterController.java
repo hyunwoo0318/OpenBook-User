@@ -8,7 +8,7 @@ import Project.OpenBook.Domain.Chapter.Service.dto.*;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.StudyProgress.Dto.ProgressDto;
 
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class ChapterController {
     private final ChapterSimpleQueryService chapterSimpleQueryService;
 
 
-    @ApiOperation(value= "모든 단원 정보 가져오기 - 관리자")
+    @Operation(summary= "모든 단원 정보 가져오기 - 관리자")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
@@ -44,7 +44,7 @@ public class ChapterController {
         return new ResponseEntity<List<ChapterTitleNumDto>>(dtoList, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "모든 단원 정보 가져오기 - 정주행")
+    @Operation(summary = "모든 단원 정보 가져오기 - 정주행")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
@@ -54,7 +54,7 @@ public class ChapterController {
         return new ResponseEntity<List<ChapterUserDto>>(chapterUserDtoList, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "모든 단원 정보 가져오기 - 학습자료 모음")
+    @Operation(summary = "모든 단원 정보 가져오기 - 학습자료 모음")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
@@ -64,7 +64,7 @@ public class ChapterController {
         return new ResponseEntity<List<ChapterDetailDto>>(dtoList, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "목차 제공 - 사용자")
+    @Operation(summary = "목차 제공 - 사용자")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "목차 제공 성공")
     })
@@ -74,7 +74,7 @@ public class ChapterController {
         return new ResponseEntity<List<ProgressDto>>(contentTable, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 이름 조회", notes = "단원 번호를 넘기면 단원 이름을 알려주는 endPoint")
+    @Operation(summary = "단원 이름 조회", description = "단원 번호를 넘기면 단원 이름을 알려주는 endPoint")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 이름 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
@@ -86,7 +86,7 @@ public class ChapterController {
         return new ResponseEntity<ChapterTitleDto>(dto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 시작년도/종료년도 조회")
+    @Operation(summary = "단원 시작년도/종료년도 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
@@ -98,7 +98,7 @@ public class ChapterController {
     }
 
 
-    @ApiOperation(value = "단원 학습 조회")
+    @Operation(summary = "단원 학습 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 학습 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
@@ -110,7 +110,7 @@ public class ChapterController {
         return new ResponseEntity<ChapterInfoDto>(dto, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 학습 수정")
+    @Operation(summary = "단원 학습 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 설명 수정 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
@@ -122,7 +122,7 @@ public class ChapterController {
         return new ResponseEntity<ChapterInfoDto>(chapterInfoDto, HttpStatus.OK);
     }
 
-    @ApiOperation("해당 단원의 모든 topic 조회 - 관리자")
+    @Operation(summary = "해당 단원의 모든 topic 조회 - 관리자")
     @GetMapping("/admin/chapters/{num}/topics")
     public ResponseEntity<List<ChapterTopicWithCountDto>> queryChapterTopicsAdmin(@PathVariable("num") int num) {
         List<ChapterTopicWithCountDto> dtoList = chapterSimpleQueryService.queryChapterTopicsAdmin(num);
@@ -130,7 +130,7 @@ public class ChapterController {
         return new ResponseEntity<List<ChapterTopicWithCountDto>>(dtoList, HttpStatus.OK);
     }
 
-    @ApiOperation("해당 단원의 모든 topic 조회 - 사용자")
+    @Operation(summary = "해당 단원의 모든 topic 조회 - 사용자")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 topic 조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
@@ -143,7 +143,7 @@ public class ChapterController {
     }
 
 
-    @ApiOperation(value = "단원 추가", notes = "단원제목과 단원번호를 입력해서 새로운 단원 추가")
+    @Operation(summary = "단원 추가", description = "단원제목과 단원번호를 입력해서 새로운 단원 추가")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "단원 추가 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인한 단원 추가 실패"),
@@ -156,7 +156,7 @@ public class ChapterController {
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "단원 수정")
+    @Operation(summary = "단원 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
@@ -170,7 +170,7 @@ public class ChapterController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @ApiOperation(value = "단원 삭제")
+    @Operation(summary = "단원 삭제")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "단원 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "토픽이 존재하는 단원을 삭제 시도하는 경우"),

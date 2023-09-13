@@ -2,14 +2,11 @@ package Project.OpenBook.Domain.Customer.Controller;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Dto.AdminDto;
-import Project.OpenBook.Domain.Customer.Dto.CustomerAddDetailDto;
-import Project.OpenBook.Domain.Customer.Dto.CustomerCodeList;
-import Project.OpenBook.Domain.Customer.Dto.CustomerDetailDto;
 import Project.OpenBook.Domain.Customer.Dto.CustomerNicknameDto;
 import Project.OpenBook.Domain.Jwt.TokenDto;
 import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +14,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +43,7 @@ public class CustomerController {
 //        return new ResponseEntity<Void>(HttpStatus.OK);
 //    }
 
-    @ApiOperation("특정 회원의 북마크 리스트 조회")
+    @Operation(summary = "특정 회원의 북마크 리스트 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적인 조회"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
@@ -70,7 +66,7 @@ public class CustomerController {
 //        return new ResponseEntity(questionIdList, HttpStatus.OK);
 //    }
 
-    @ApiOperation("소셜 로그인")
+    @Operation(summary = "소셜 로그인")
     @GetMapping("login/{providerName}")
     public ResponseEntity<CustomerNicknameDto> socialLogin(@PathVariable("providerName") String providerName, @RequestParam("code") String code,
                                               HttpServletResponse response) throws Exception{
@@ -91,7 +87,7 @@ public class CustomerController {
     /**
      * 회원 탈퇴
      */
-    @ApiOperation("회원 탈퇴")
+    @Operation(summary = "회원 탈퇴")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적인 회원 탈퇴"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
@@ -134,7 +130,7 @@ public class CustomerController {
      * @return
      */
 
-    @ApiOperation(value = "관리자 로그인", notes = "아이디와 비밀번호를 입력받아 관리자 로그인")
+    @Operation(summary = "관리자 로그인", description = "아이디와 비밀번호를 입력받아 관리자 로그인")
     @ApiResponses(value={
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),

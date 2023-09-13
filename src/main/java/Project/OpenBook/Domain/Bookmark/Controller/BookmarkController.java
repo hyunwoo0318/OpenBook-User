@@ -3,7 +3,7 @@ package Project.OpenBook.Domain.Bookmark.Controller;
 import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Bookmark.Domain.Bookmark;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class BookmarkController {
 
     private final BookmarkService bookmarkService;
 
-    @ApiOperation("해당 토픽을 북마크 추가")
+    @Operation(summary = "해당 토픽을 북마크 추가")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "북마크 추가 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
@@ -32,7 +32,7 @@ public class BookmarkController {
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
-    @ApiOperation("해당 토픽에 대한 북마크 제거")
+    @Operation(summary = "해당 토픽에 대한 북마크 제거")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "북마크 제거 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")

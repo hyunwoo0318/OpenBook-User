@@ -3,7 +3,7 @@ package Project.OpenBook.Domain.StudyProgress.Controller;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.StudyProgress.Dto.*;
 import Project.OpenBook.Domain.StudyProgress.Service.StudyProgressService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class StudyProgressController {
 
     private final StudyProgressService studyProgressService;
 
-    @ApiOperation("연표 문제 풀이 정보 입력 - 오답")
+    @Operation(summary = "연표 문제 풀이 정보 입력 - 오답")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "단원 학습 정보 입력 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
@@ -34,7 +34,7 @@ public class StudyProgressController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @ApiOperation("단원/주제 학습 정보 입력 - progress 갱신")
+    @Operation(summary = "단원/주제 학습 정보 입력 - progress 갱신")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "단원 학습 정보 입력 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
@@ -47,7 +47,7 @@ public class StudyProgressController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @ApiOperation("주제 학습 정보 입력")
+    @Operation(summary = "주제 학습 정보 입력")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "주제 학습 정보 입력 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력"),
@@ -60,7 +60,7 @@ public class StudyProgressController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @ApiOperation("전체 진도율 조회")
+    @Operation(summary = "전체 진도율 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적인 조회")
     })

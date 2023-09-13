@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.Category.Controller;
 
 import Project.OpenBook.Domain.Category.Service.CategoryService;
 import Project.OpenBook.Domain.Category.Service.Dto.CategoryDto;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class CategoryController {
 
     private final CategoryService categoryService;
 
-    @ApiOperation(value = "전체 카테고리 조회")
+    @Operation(summary = "전체 카테고리 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 카테고리 조회 성공")
     })
@@ -30,7 +30,7 @@ public class CategoryController {
         return new ResponseEntity<List<CategoryDto>>(categoryList, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "카테고리 생성")
+    @Operation(summary = "카테고리 생성")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "카테고리 생성 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 카테고리 생성 실패"),
@@ -44,7 +44,7 @@ public class CategoryController {
     }
 
 
-    @ApiOperation(value = "카테고리 수정")
+    @Operation(summary = "카테고리 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "카테고리 수정 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인하여 카테고리 수정 실패"),
@@ -58,7 +58,7 @@ public class CategoryController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @ApiOperation(value = "카테고리 삭제", notes = "해당 카테고리에 속하던 상세정보의 카테고리 정보는 null")
+    @Operation(summary = "카테고리 삭제", description = "해당 카테고리에 속하던 상세정보의 카테고리 정보는 null")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "카테고리 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "해당 카테고리에 토픽이 존재하는경우"),
