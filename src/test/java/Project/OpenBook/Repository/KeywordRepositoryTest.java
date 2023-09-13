@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static Project.OpenBook.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest

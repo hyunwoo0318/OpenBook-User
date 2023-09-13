@@ -1,6 +1,7 @@
 package Project.OpenBook.Controller;
 
 
+import Project.OpenBook.Constants.ChoiceConst;
 import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Service.dto.*;
@@ -574,8 +575,8 @@ class ChapterControllerTest {
             keywordRepository.save(k1);
             keywordRepository.save(k2);
 
-            Choice choice1 = new Choice("choice1", "comment1", t1,eq );
-            Choice choice2 = new Choice("choice2", "comment2", t1, eq);
+            Choice choice1 = new Choice(ChoiceConst.CHOICE_STRING,"choice1", "comment1", t1,eq );
+            Choice choice2 = new Choice(ChoiceConst.CHOICE_STRING,"choice2", "comment2", t1, eq);
             choiceRepository.save(choice1);
             choiceRepository.save(choice2);
 

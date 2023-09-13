@@ -1,4 +1,4 @@
-package Project.OpenBook.Service;
+package Project.OpenBook.Chapter;
 
 import Project.OpenBook.Domain.Chapter.Service.ChapterValidator;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
