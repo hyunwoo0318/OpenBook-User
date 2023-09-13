@@ -10,6 +10,7 @@ import Project.OpenBook.Image.ImageService;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.List;
@@ -26,10 +27,7 @@ public class KeywordService {
     private final ImageService imageService;
 
 
-    public List<String> queryKeywords() {
-        return keywordRepository.findAll().stream().map(k -> k.getName()).collect(Collectors.toList());
-    }
-
+    @Transactional
     public Keyword createKeyword(KeywordCreateDto keywordCreateDto) throws IOException {
 
         String name = keywordCreateDto.getName();
@@ -47,8 +45,10 @@ public class KeywordService {
         checkDupKeyword(name, topicTitle);
 
         //이미지 저장
-        imageService.checkBase64(encodedFile);
-        imageUrl = imageService.storeFile(encodedFile);
+        if(!encodedFile.isBlank()){
+            imageService.checkBase64(encodedFile);
+            imageUrl = imageService.storeFile(encodedFile);
+        }
 
 
         //키워드 저장
@@ -59,6 +59,7 @@ public class KeywordService {
     }
 
 
+    @Transactional
     public Keyword updateKeyword(Long keywordId, KeywordUserDto keywordUserDto) throws IOException {
 
         String name = keywordUserDto.getName();
@@ -98,6 +99,7 @@ public class KeywordService {
         });
     }
 
+    @Transactional
     public void deleteKeyword(Long keywordId) {
         checkKeyword(keywordId);
 

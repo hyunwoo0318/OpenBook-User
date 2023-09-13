@@ -1,11 +1,12 @@
 package Project.OpenBook.Domain.StudyProgress.ChapterProgress.Repository;
 
 import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
-import Project.OpenBook.Domain.QChapterProgress;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
+
+import static Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.QChapterProgress.*;
 
 @RequiredArgsConstructor
 public class ChapterProgressRepositoryCustomImpl implements ChapterProgressRepositoryCustom {
@@ -13,11 +14,11 @@ public class ChapterProgressRepositoryCustomImpl implements ChapterProgressRepos
 
     @Override
     public Optional<ChapterProgress> queryChapterProgress(Long customerId, Integer chapterNum) {
-        ChapterProgress chapterProgress = queryFactory.selectFrom(QChapterProgress.chapterProgress)
-                .where(QChapterProgress.chapterProgress.customer.id.eq(customerId))
-                .where(QChapterProgress.chapterProgress.chapter.number.eq(chapterNum))
+        ChapterProgress findChapterProgress = queryFactory.selectFrom(chapterProgress)
+                .where(chapterProgress.customer.id.eq(customerId))
+                .where(chapterProgress.chapter.number.eq(chapterNum))
                 .fetchOne();
-        return Optional.ofNullable(chapterProgress);
+        return Optional.ofNullable(findChapterProgress);
     }
 
 //    @Override

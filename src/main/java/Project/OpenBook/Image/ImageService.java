@@ -74,10 +74,9 @@ public class ImageService {
 
             String encodedImage = parts[1]; // "data:image/png;base64," 부분을 제외한 이미지 인코딩 값
             byte[] decode = Base64.getDecoder().decode(encodedImage);
-            if (decode != null) {
+            if (decode == null) {
                 throw new CustomException(IMAGE_NOT_FOUND);
             }
-            throw new CustomException(IMAGE_NOT_FOUND);
         } catch (Exception e) {
             throw new CustomException(IMAGE_NOT_FOUND);
         }

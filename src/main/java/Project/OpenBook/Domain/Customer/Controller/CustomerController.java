@@ -31,27 +31,28 @@ public class CustomerController {
 
     private final CustomerService customerService;
     private final BookmarkService bookmarkService;
-    @ApiOperation("회원 추가정보 입력")
-    @ApiResponses(value={
-            @ApiResponse(responseCode = "200", description = "셩공적인 추가정보 입력"),
-            @ApiResponse(responseCode = "400", description = "잘못된 정보 입력"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원에 대한 정보 입력"),
-            @ApiResponse(responseCode = "409", description = "중복된 닉네임 입력")
-    })
-    @PostMapping("customers/{customerId}/details")
-    public ResponseEntity<Void> addDetails(@PathVariable("customerId") Long customerId,
-                                     @Validated @RequestBody CustomerAddDetailDto customerAddDetailDto){
-        Customer customer = customerService.addDetails(customerId, customerAddDetailDto);
 
-        return new ResponseEntity<Void>(HttpStatus.OK);
-    }
+//    @ApiOperation("회원 추가정보 입력")
+//    @ApiResponses(value={
+//            @ApiResponse(responseCode = "200", description = "셩공적인 추가정보 입력"),
+//            @ApiResponse(responseCode = "400", description = "잘못된 정보 입력"),
+//            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원에 대한 정보 입력"),
+//            @ApiResponse(responseCode = "409", description = "중복된 닉네임 입력")
+//    })
+//    @PostMapping("customers/{customerId}/details")
+//    public ResponseEntity<Void> addDetails(@PathVariable("customerId") Long customerId,
+//                                     @Validated @RequestBody CustomerAddDetailDto customerAddDetailDto){
+//        Customer customer = customerService.addDetails(customerId, customerAddDetailDto);
+//
+//        return new ResponseEntity<Void>(HttpStatus.OK);
+//    }
 
     @ApiOperation("특정 회원의 북마크 리스트 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "성공적인 조회"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
     })
-    @GetMapping("customer-infos/bookmarks")
+    @GetMapping("/customer-infos/bookmarks")
     public ResponseEntity<List<String>> queryBookmarks(@AuthenticationPrincipal Customer customer){
         List<String> titleList = bookmarkService.queryBookmarks(customer);
 
@@ -80,18 +81,6 @@ public class CustomerController {
         headers.setAccessControlAllowHeaders(Arrays.asList("Authorization", "Refresh-Token"));
         headers.setAccessControlExposeHeaders(Arrays.asList("Authorization", "Refresh-Token"));
 
-//        Cookie cookie = new Cookie("Refesh-Token", tokenDto.getRefreshToken());
-//        cookie.setHttpOnly(true);
-//        response.addCookie(cookie);
-//
-//        ResponseCookie cookie = ResponseCookie.from("Refresh-Token", tokenDto.getRefreshToken())
-//                .secure(true)
-//                .httpOnly(true)
-//                .sameSite("None")
-//                .build();
-//
-//        response.setHeader("Set-Cookie", cookie.toString());
-
         ResponseEntity<CustomerNicknameDto> responseEntity = ResponseEntity.ok()
                 .headers(headers)
                 .body(new CustomerNicknameDto(tokenDto.getNickname()));
@@ -108,36 +97,36 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
     })
     @DeleteMapping("/customers")
-    public ResponseEntity<Void> deleteCustomer(){
-        long customerId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getName());
-        customerService.deleteCustomer(customerId);
+    public ResponseEntity<Void> deleteCustomer(@AuthenticationPrincipal Customer customer){
+
+        customerService.deleteCustomer(customer);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    /**
-     * 관리자 페이지에서 회원 정보 관리
-     */
+//    /**
+//     * 관리자 페이지에서 회원 정보 관리
+//     */
+//
+//    @ApiOperation("모든 회원의 식별코드 조회")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "모든 회원의 식별코드 조회 성공")
+//    })
+//    @GetMapping("/admin/customers")
+//    public ResponseEntity<CustomerCodeList> queryCustomers(){
+//        CustomerCodeList customerCodeList = customerService.queryCustomers();
+//        return new ResponseEntity<CustomerCodeList>(customerCodeList, HttpStatus.OK);
+//    }
 
-    @ApiOperation("모든 회원의 식별코드 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "모든 회원의 식별코드 조회 성공")
-    })
-    @GetMapping("/admin/customers")
-    public ResponseEntity<CustomerCodeList> queryCustomers(){
-        CustomerCodeList customerCodeList = customerService.queryCustomers();
-        return new ResponseEntity<CustomerCodeList>(customerCodeList, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "특정 회원의 정보 조회", notes = "[닉네임, 최초 학습 수준, 나이, 유저 로그, 유저 구독 정보] 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "회원의 정보 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 식별코드 입력")
-    })
-    @GetMapping("/admin/customers/{code}")
-    public ResponseEntity<CustomerDetailDto> queryCustomerDetail(@PathVariable("code") String code) {
-        CustomerDetailDto customerDetailDto = customerService.queryCustomerDetail(code);
-        return new ResponseEntity<CustomerDetailDto>(customerDetailDto, HttpStatus.OK);
-    }
+//    @ApiOperation(value = "특정 회원의 정보 조회", notes = "[닉네임, 최초 학습 수준, 나이, 유저 로그, 유저 구독 정보] 조회")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "회원의 정보 조회 성공"),
+//            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 식별코드 입력")
+//    })
+//    @GetMapping("/admin/customers/{code}")
+//    public ResponseEntity<CustomerDetailDto> queryCustomerDetail(@PathVariable("code") String code) {
+//        CustomerDetailDto customerDetailDto = customerService.queryCustomerDetail(code);
+//        return new ResponseEntity<CustomerDetailDto>(customerDetailDto, HttpStatus.OK);
+//    }
 
     /**
      * 관리자 로그인
@@ -160,25 +149,12 @@ public class CustomerController {
         headers.setAccessControlAllowHeaders(Arrays.asList("Authorization", "Refresh-Token"));
         headers.setAccessControlExposeHeaders(Arrays.asList("Authorization", "Refresh-Token"));
 
-//        Cookie cookie = new Cookie("Refesh-Token", tokenDto.getRefreshToken());
-//        cookie.setHttpOnly(true);
-//        response.addCookie(cookie);
-//
-//        ResponseCookie cookie = ResponseCookie.from("Refresh-Token", tokenDto.getRefreshToken())
-//                .secure(true)
-//                .httpOnly(true)
-//                .sameSite("None")
-//                .build();
-//
-//        response.setHeader("Set-Cookie", cookie.toString());
 
         ResponseEntity<CustomerNicknameDto> responseEntity = ResponseEntity.ok()
                 .headers(headers)
                 .body(new CustomerNicknameDto(tokenDto.getNickname()));
 
         return responseEntity;
-//
-//        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

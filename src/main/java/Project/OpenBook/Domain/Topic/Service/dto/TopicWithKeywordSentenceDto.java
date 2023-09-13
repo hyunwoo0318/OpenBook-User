@@ -1,7 +1,6 @@
 package Project.OpenBook.Domain.Topic.Service.dto;
 
 import Project.OpenBook.Domain.Sentence.Domain.Sentence;
-import Project.OpenBook.Domain.PrimaryDate.Dto.PrimaryDateUserDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AllArgsConstructor;

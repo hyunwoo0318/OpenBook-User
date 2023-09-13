@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.ExamQuestion.Controller;
 
-import Project.OpenBook.Domain.ExamQuestion.Controller.dto.ExamQuestionDto;
-import Project.OpenBook.Domain.ExamQuestion.ExamQuestionService;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
+import Project.OpenBook.Domain.ExamQuestion.Service.ExamQuestionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;

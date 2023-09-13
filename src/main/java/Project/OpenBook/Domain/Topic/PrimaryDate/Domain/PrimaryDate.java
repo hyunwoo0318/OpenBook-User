@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.PrimaryDate.Domain;
+package Project.OpenBook.Domain.Topic.PrimaryDate.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Topic.Domain.Topic;

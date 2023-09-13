@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.Topic.Service.dto;
 
-import Project.OpenBook.Domain.PrimaryDate.Dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.*;
 

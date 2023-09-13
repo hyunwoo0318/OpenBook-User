@@ -6,9 +6,9 @@ import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Constants.StateConst;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.PrimaryDate.Domain.PrimaryDate;
-import Project.OpenBook.Domain.PrimaryDate.Dto.PrimaryDateDto;
-import Project.OpenBook.Domain.PrimaryDate.Repository.PrimaryDateRepository;
+import Project.OpenBook.Domain.Topic.PrimaryDate.Domain.PrimaryDate;
+import Project.OpenBook.Domain.Topic.PrimaryDate.Repository.PrimaryDateRepository;
+import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;

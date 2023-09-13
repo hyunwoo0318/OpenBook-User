@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static Project.OpenBook.Domain.QChapterSection.*;
+import static Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.QChapterSection.chapterSection;
 
 @RequiredArgsConstructor
 @Repository

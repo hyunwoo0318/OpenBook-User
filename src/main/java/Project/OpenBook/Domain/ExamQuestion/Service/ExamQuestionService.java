@@ -1,11 +1,11 @@
-package Project.OpenBook.Domain.ExamQuestion;
+package Project.OpenBook.Domain.ExamQuestion.Service;
 
 import Project.OpenBook.Constants.ChoiceConst;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.ExamQuestion.Controller.dto.ExamQuestionDto;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
-import Project.OpenBook.Domain.ExamQuestion.Repo.General.ExamQuestionRepository;
+import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -38,6 +38,7 @@ public class ExamQuestionService {
 
     private final ImageService imageService;
 
+    @Transactional(readOnly = true)
     public ExamQuestionDto getExamQuestion(Integer roundNumber, Integer questionNumber) {
 
         ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescription(roundNumber, questionNumber).orElseThrow(() -> {
@@ -122,11 +123,7 @@ public class ExamQuestionService {
 
     }
 
-    private Round checkRound(Integer roundNumber) {
-        return roundRepository.findRoundByNumber(roundNumber).orElseThrow(() -> {
-            throw new CustomException(ROUND_NOT_FOUND);
-        });
-    }
+
 
     @Transactional
     public void updateExamQuestion(Integer roundNumber, Integer questionNumber, ExamQuestionDto examQuestionDto) throws IOException {
@@ -196,10 +193,6 @@ public class ExamQuestionService {
         }else{
             throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
         }
-
-
-
-
     }
 
     @Transactional
@@ -228,6 +221,12 @@ public class ExamQuestionService {
     private Topic checkTopic(String topicTitle) {
         return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
+        });
+    }
+
+    private Round checkRound(Integer roundNumber) {
+        return roundRepository.findRoundByNumber(roundNumber).orElseThrow(() -> {
+            throw new CustomException(ROUND_NOT_FOUND);
         });
     }
 }

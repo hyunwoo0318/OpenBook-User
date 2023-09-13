@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.Chapter.Service;
 
-import Project.OpenBook.Chapter.Controller.dto.*;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterAddUpdateDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterInfoDto;

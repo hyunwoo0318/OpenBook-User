@@ -1,7 +1,8 @@
 package Project.OpenBook.Domain.AnswerNote.Repository;
 
 import Project.OpenBook.Domain.AnswerNote.Domain.AnswerNote;
-import Project.OpenBook.Domain.QAnswerNote;
+
+import Project.OpenBook.Domain.AnswerNote.Domain.QAnswerNote;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static Project.OpenBook.Domain.QAnswerNote.answerNote;
+import static Project.OpenBook.Domain.AnswerNote.Domain.QAnswerNote.answerNote;
 
 @Repository
 @RequiredArgsConstructor

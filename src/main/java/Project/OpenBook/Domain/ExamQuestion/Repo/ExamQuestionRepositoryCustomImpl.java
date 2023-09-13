@@ -1,6 +1,8 @@
-package Project.OpenBook.Domain.ExamQuestion.Repo.General;
+package Project.OpenBook.Domain.ExamQuestion.Repo;
 
+import Project.OpenBook.Domain.Description.Domain.QDescription;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
+import Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -8,8 +10,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static Project.OpenBook.Domain.QDescription.description;
-import static Project.OpenBook.ExamQuestion.Domain.QExamQuestion.examQuestion;
+import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
+import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
+
 
 @Repository
 @RequiredArgsConstructor

@@ -17,7 +17,7 @@ public interface ChoiceRepositoryCustom {
 
     public List<Choice> queryChoicesById(List<Long> choiceIdList);
 
-    public Choice queryRandChoiceByTopic(Long topicId, Long descriptionId);
+//    public Choice queryRandChoiceByTopic(Long topicId, Long descriptionId);
 
     public List<Choice> queryRandChoicesByCategory(String exceptTopicTitle, String categoryName, int num);
 

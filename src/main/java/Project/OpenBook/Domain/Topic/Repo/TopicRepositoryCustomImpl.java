@@ -8,11 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static Project.OpenBook.Chapter.Domain.QChapter.chapter;
-import static Project.OpenBook.Domain.QCategory.category;
-import static Project.OpenBook.Topic.Domain.QTopic.topic;
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
+import static Project.OpenBook.Domain.Category.Domain.QCategory.category;
+import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
+import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 
 @Repository

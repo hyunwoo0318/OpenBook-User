@@ -2,8 +2,8 @@ package Project.OpenBook.Domain.Description.Repository;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.QDescription;
 import Project.OpenBook.Domain.Choice.Dto.DupChoiceDto;
+import Project.OpenBook.Domain.Description.Domain.QDescription;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static Project.OpenBook.Domain.QChoice.choice;
-import static Project.OpenBook.Domain.QDescription.description;
-import static Project.OpenBook.Domain.QDupContent.dupContent;
+import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
 
 @Repository
 @RequiredArgsConstructor
@@ -52,30 +50,30 @@ public class DescriptionRepositoryCustomImpl implements DescriptionRepositoryCus
                 .fetch();
     }
 
-    @Override
-    public List<DupChoiceDto> queryDupChoices(Long descriptionId, String topicTitle) {
-        List<Choice> topicChoiceList = queryFactory.select(choice)
-                .from(choice)
-                .where(choice.topic.title.eq(topicTitle))
-                .fetch();
-        Set<Long> dupChoiceIdSet = queryFactory.select(dupContent.choice.id)
-                .from(dupContent)
-                .where(dupContent.description.id.eq(descriptionId))
-                .fetch().stream().collect(Collectors.toSet());
-
-        List<DupChoiceDto> dupChoiceDtoList = new ArrayList<>();
-
-        for (Choice ch1 : topicChoiceList) {
-            //보기와 내용이 중복되었다고 선정된 경우
-            if(dupChoiceIdSet.contains(ch1.getId())){
-                dupChoiceDtoList.add(new DupChoiceDto(ch1.getContent(), ch1.getId(), true));
-            }else{
-                //보기와 내용이 중복되었다고 선정되지 않은 경우
-                dupChoiceDtoList.add(new DupChoiceDto(ch1.getContent(), ch1.getId(), false));
-            }
-        }
-        return dupChoiceDtoList;
-    }
+//    @Override
+//    public List<DupChoiceDto> queryDupChoices(Long descriptionId, String topicTitle) {
+//        List<Choice> topicChoiceList = queryFactory.select(choice)
+//                .from(choice)
+//                .where(choice.topic.title.eq(topicTitle))
+//                .fetch();
+//        Set<Long> dupChoiceIdSet = queryFactory.select(dupContent.choice.id)
+//                .from(dupContent)
+//                .where(dupContent.description.id.eq(descriptionId))
+//                .fetch().stream().collect(Collectors.toSet());
+//
+//        List<DupChoiceDto> dupChoiceDtoList = new ArrayList<>();
+//
+//        for (Choice ch1 : topicChoiceList) {
+//            //보기와 내용이 중복되었다고 선정된 경우
+//            if(dupChoiceIdSet.contains(ch1.getId())){
+//                dupChoiceDtoList.add(new DupChoiceDto(ch1.getContent(), ch1.getId(), true));
+//            }else{
+//                //보기와 내용이 중복되었다고 선정되지 않은 경우
+//                dupChoiceDtoList.add(new DupChoiceDto(ch1.getContent(), ch1.getId(), false));
+//            }
+//        }
+//        return dupChoiceDtoList;
+//    }
 
     @Override
     public Description queryDescriptionByContent(String content) {

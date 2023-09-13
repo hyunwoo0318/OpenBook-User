@@ -13,7 +13,7 @@ import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Handler.Exception.error.ErrorMsgDto;
 import Project.OpenBook.Domain.StudyProgress.Dto.ProgressDto;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
-import Project.OpenBook.Domain.ExamQuestion.Repo.General.ExamQuestionRepository;
+import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.Jwt.TokenManager;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Category.Repository.CategoryRepository;

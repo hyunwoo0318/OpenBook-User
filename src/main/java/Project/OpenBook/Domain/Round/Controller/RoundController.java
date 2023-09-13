@@ -1,6 +1,6 @@
 package Project.OpenBook.Domain.Round.Controller;
 
-import Project.OpenBook.Domain.Round.RoundService;
+import Project.OpenBook.Domain.Round.Service.RoundService;
 import Project.OpenBook.Domain.Round.dto.RoundDto;
 import Project.OpenBook.Domain.Round.dto.RoundInfoDto;
 import io.swagger.annotations.ApiOperation;

@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.Bookmark.Repository;
 
 import Project.OpenBook.Domain.Bookmark.Domain.Bookmark;
-import Project.OpenBook.Domain.QBookmark;
+import Project.OpenBook.Domain.Bookmark.Domain.QBookmark;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static Project.OpenBook.Domain.QBookmark.bookmark;
+import static Project.OpenBook.Domain.Bookmark.Domain.QBookmark.*;
+
 
 @Repository
 @RequiredArgsConstructor

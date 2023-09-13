@@ -5,7 +5,7 @@ import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Domain.PrimaryDate.Domain.PrimaryDate;
+import Project.OpenBook.Domain.Topic.PrimaryDate.Domain.PrimaryDate;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Sentence.Domain.Sentence;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;

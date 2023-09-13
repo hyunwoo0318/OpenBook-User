@@ -13,8 +13,6 @@ import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Dto.studyProgress.*;
-import Project.OpenBook.StudyProgress.studyProgress.*;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
 import Project.OpenBook.Handler.Exception.CustomException;

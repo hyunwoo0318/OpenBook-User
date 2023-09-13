@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static Project.OpenBook.Domain.QCustomer.customer;
+import static Project.OpenBook.Domain.Customer.Domain.QCustomer.customer;
+
 
 @Repository
 @RequiredArgsConstructor

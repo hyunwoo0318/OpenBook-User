@@ -12,8 +12,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Project.OpenBook.Domain.QKeyword.keyword;
-import static Project.OpenBook.Domain.QSentence.sentence;
+import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.Sentence.Domain.QSentence.sentence;
+
 
 @Component
 @RequiredArgsConstructor

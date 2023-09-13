@@ -3,6 +3,7 @@ package Project.OpenBook.Domain.Choice.Repository;
 import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.*;
+import Project.OpenBook.Domain.Choice.Domain.QChoice;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -13,10 +14,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static Project.OpenBook.Domain.QCategory.category;
-import static Project.OpenBook.Domain.QChoice.choice;
-import static Project.OpenBook.Domain.QDupContent.dupContent;
-import static Project.OpenBook.Topic.Domain.QTopic.topic;
+import static Project.OpenBook.Domain.Category.Domain.QCategory.category;
+import static Project.OpenBook.Domain.Choice.Domain.QChoice.choice;
+import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 @Repository
 @RequiredArgsConstructor
@@ -52,19 +52,19 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
                 .fetchOne();
     }
 
-    @Override
-    public Choice queryRandChoiceByTopic(Long topicId, Long descriptionId) {
-        return queryFactory.selectFrom(choice)
-                .where(choice.topic.id.eq(topicId))
-                .where(choice.id.notIn(
-                        JPAExpressions.select(dupContent.choice.id)
-                                .from(dupContent)
-                                .where(dupContent.description.id.eq(descriptionId))
-                ))
-                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
-                .limit(1)
-                .fetchOne();
-    }
+//    @Override
+//    public Choice queryRandChoiceByTopic(Long topicId, Long descriptionId) {
+//        return queryFactory.selectFrom(choice)
+//                .where(choice.topic.id.eq(topicId))
+//                .where(choice.id.notIn(
+//                        JPAExpressions.select(dupContent.choice.id)
+//                                .from(dupContent)
+//                                .where(dupContent.description.id.eq(descriptionId))
+//                ))
+//                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+//                .limit(1)
+//                .fetchOne();
+//    }
 
     @Override
     public List<Choice> queryRandChoicesByCategory(String exceptTopicTitle, String categoryName, int num) {

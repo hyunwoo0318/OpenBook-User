@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.PrimaryDate.Dto;
+package Project.OpenBook.Domain.Topic.Service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

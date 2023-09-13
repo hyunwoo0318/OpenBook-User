@@ -1,7 +1,6 @@
 package Project.OpenBook.Domain.Question.Controller;
 
 import Project.OpenBook.Domain.Question.Service.QuestionService;
-import Project.OpenBook.Dto.question.*;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
 import io.swagger.annotations.ApiOperation;

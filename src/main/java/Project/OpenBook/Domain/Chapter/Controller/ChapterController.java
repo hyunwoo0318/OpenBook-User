@@ -4,7 +4,6 @@ package Project.OpenBook.Domain.Chapter.Controller;
 import Project.OpenBook.Domain.Chapter.Service.ChapterService;
 import Project.OpenBook.Domain.Chapter.Service.ChapterSimpleQueryService;
 import Project.OpenBook.Domain.Chapter.Service.ChapterWithProgressService;
-import Project.OpenBook.Chapter.Service.dto.*;
 import Project.OpenBook.Domain.Chapter.Service.dto.*;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.StudyProgress.Dto.ProgressDto;

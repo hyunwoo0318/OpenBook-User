@@ -1,7 +1,6 @@
 package Project.OpenBook.Domain.Choice.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
-import Project.OpenBook.Deprecated.DupContent;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
@@ -9,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -34,9 +31,6 @@ public class Choice extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_question_id")
     private ExamQuestion examQuestion;
-
-    @OneToMany(mappedBy = "choice", cascade = CascadeType.ALL)
-    private List<DupContent> dupContentList = new ArrayList<>();
 
     public Choice(String type,String content, String comment, Topic topic, ExamQuestion examQuestion) {
         this.type = type;

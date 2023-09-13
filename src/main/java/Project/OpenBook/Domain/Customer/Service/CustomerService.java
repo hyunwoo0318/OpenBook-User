@@ -29,6 +29,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
@@ -55,51 +56,50 @@ public class CustomerService implements UserDetailsService {
     private final TokenManager tokenManager;
     private final ObjectMapper objectMapper;
 
-    public Customer addDetails(Long customerId, CustomerAddDetailDto customerAddDetailDto) {
-        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomException(CUSTOMER_NOT_FOUND));
-        String nickname = customerAddDetailDto.getNickname();
-        checkDupNickname(nickname);
+//    public Customer addDetails(Long customerId, CustomerAddDetailDto customerAddDetailDto) {
+//        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomException(CUSTOMER_NOT_FOUND));
+//        String nickname = customerAddDetailDto.getNickname();
+//        checkDupNickname(nickname);
+//
+//        customer.addDetails(nickname, customerAddDetailDto.getAge(), customerAddDetailDto.getExpertise());
+//        return customer;
+//    }
 
-        customer.addDetails(nickname, customerAddDetailDto.getAge(), customerAddDetailDto.getExpertise());
-        return customer;
+//    private void checkDupNickname(String nickname) {
+//        customerRepository.findByNickName(nickname).ifPresent(c ->{
+//           throw new CustomException(DUP_NICKNAME);
+//        });
+//    }
+//
+//    public CustomerCodeList queryCustomers() {
+//        List<String> codeList = customerRepository.findAll().stream().map(c -> c.getCode()).collect(Collectors.toList());
+//        return new CustomerCodeList(codeList);
+//    }
+//
+//    public CustomerDetailDto queryCustomerDetail(String code) {
+//        Customer customer = customerRepository.queryCustomer(code)
+//                .orElseThrow(() -> {
+//                    throw new CustomException(CUSTOMER_NOT_FOUND);
+//                });
+//        return CustomerDetailDto.builder()
+//                .age(customer.getAge())
+//                .log(null)
+//                .expertise(customer.getExpertise())
+//                .isSubscribed(customer.isSubscribed())
+//                .nickName(customer.getNickName())
+//                .build();
+//    }
+
+    @Transactional
+    public void deleteCustomer(Customer customer) {
+        customerRepository.delete(customer);
     }
 
-    private void checkDupNickname(String nickname) {
-        customerRepository.findByNickName(nickname).ifPresent(c ->{
-           throw new CustomException(DUP_NICKNAME);
-        });
-    }
-
-    public CustomerCodeList queryCustomers() {
-        List<String> codeList = customerRepository.findAll().stream().map(c -> c.getCode()).collect(Collectors.toList());
-        return new CustomerCodeList(codeList);
-    }
-
-    public CustomerDetailDto queryCustomerDetail(String code) {
-        Customer customer = customerRepository.queryCustomer(code)
-                .orElseThrow(() -> {
-                    throw new CustomException(CUSTOMER_NOT_FOUND);
-                });
-        return CustomerDetailDto.builder()
-                .age(customer.getAge())
-                .log(null)
-                .expertise(customer.getExpertise())
-                .isSubscribed(customer.isSubscribed())
-                .nickName(customer.getNickName())
-                .build();
-    }
-
-    public void deleteCustomer(long customerId) {
-        customerRepository.deleteById(customerId);
-    }
-
-    public Optional<Customer> queryCustomer(String nickName){
-        return customerRepository.findByNickName(nickName);
-    }
 
     /**
      * 관리자
      */
+    @Transactional
     public TokenDto loginAdmin(String loginId, String password){
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(loginId, password);
         Authentication authentication = authenticationManager.getObject().authenticate(upToken);
@@ -128,6 +128,7 @@ public class CustomerService implements UserDetailsService {
     /**
      * Oauth2
      */
+    @Transactional
     public TokenDto loginOauth2(String providerName, String code) throws Exception{
 
         Oauth2Login oauth2LoginStrategy;
@@ -148,14 +149,10 @@ public class CustomerService implements UserDetailsService {
                     .build();
             customerRepository.save(customer);
 
-            //단원학습, 주제학습 레코드 생성
-            System.out.println("save customer success!!");
+            //단원전체진도, 단원섹션별 진도, 주제학습 레코드 생성
             initChapterProgress(customer);
-            System.out.println("init ChapterProgress success!!");
             initChapterSection(customer);
-            System.out.println("initChapterSection Success!");
             initTopicProgress(customer);
-            System.out.println("initTopicProgress Success!");
         }else{
             customer = customerOptional.get();
         }
@@ -174,17 +171,6 @@ public class CustomerService implements UserDetailsService {
         }
     }
 
-    private Customer registerCustomer(String oauthId, String providerName) {
-        Customer customer = Customer.builder()
-                .oAuthId(oauthId)
-                .provider(providerName)
-                .roles(Role.USER)
-                .nickName(UUID.randomUUID().toString())
-                .build();
-        customerRepository.save(customer);
-        return null;
-
-    }
 
     private void initChapterSection(Customer customer) {
         List<Chapter> chapterList = chapterRepository.findAll();

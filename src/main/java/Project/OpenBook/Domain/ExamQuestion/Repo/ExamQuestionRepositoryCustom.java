@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.ExamQuestion.Repo.General;
+package Project.OpenBook.Domain.ExamQuestion.Repo;
 
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 

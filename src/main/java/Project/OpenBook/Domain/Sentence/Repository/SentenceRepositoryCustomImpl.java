@@ -1,6 +1,6 @@
 package Project.OpenBook.Domain.Sentence.Repository;
 
-import Project.OpenBook.Domain.QSentence;
+import Project.OpenBook.Domain.Sentence.Domain.QSentence;
 import Project.OpenBook.Domain.Sentence.Domain.Sentence;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
@@ -11,7 +11,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static Project.OpenBook.Domain.QSentence.sentence;
+import static Project.OpenBook.Domain.Sentence.Domain.QSentence.*;
+
 
 @Repository
 @RequiredArgsConstructor

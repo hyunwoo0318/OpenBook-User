@@ -1,9 +1,10 @@
-package Project.OpenBook.Domain.Round;
+package Project.OpenBook.Domain.Round.Service;
 
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
-import Project.OpenBook.Domain.ExamQuestion.Repo.General.ExamQuestionRepository;
+import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.Round.Domain.Round;
+import Project.OpenBook.Domain.Round.RoundValidator;
 import Project.OpenBook.Domain.Round.dto.RoundDto;
 import Project.OpenBook.Domain.Round.dto.RoundInfoDto;
 import lombok.RequiredArgsConstructor;
