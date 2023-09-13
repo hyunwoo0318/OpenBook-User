@@ -1,11 +1,11 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Chapter.ChapterValidator;
+import Project.OpenBook.Chapter.Service.ChapterValidator;
 import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Chapter.Service.ChapterService;
 import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Chapter.Controller.dto.ChapterAddUpdateDto;
-import Project.OpenBook.Chapter.Controller.dto.ChapterInfoDto;
+import Project.OpenBook.Chapter.Service.dto.ChapterAddUpdateDto;
+import Project.OpenBook.Chapter.Service.dto.ChapterInfoDto;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Topic.Repo.TopicRepository;
 import Project.OpenBook.Topic.Domain.Topic;

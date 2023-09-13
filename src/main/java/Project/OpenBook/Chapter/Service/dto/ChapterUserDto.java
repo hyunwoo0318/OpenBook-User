@@ -1,4 +1,4 @@
-package Project.OpenBook.Chapter.Controller.dto;
+package Project.OpenBook.Chapter.Service.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChapterTitleInfoDto {
-
+public class ChapterUserDto {
     private String title;
-    private String content;
+    private Integer number;
+    private String state;
+    private String progress;
 }

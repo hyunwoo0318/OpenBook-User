@@ -1,7 +1,6 @@
 package Project.OpenBook.Chapter.Service;
 
-import Project.OpenBook.Chapter.ChapterValidator;
-import Project.OpenBook.Chapter.Controller.dto.ChapterUserDto;
+import Project.OpenBook.Chapter.Service.dto.ChapterUserDto;
 import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.StateConst;

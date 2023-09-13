@@ -1,4 +1,4 @@
-package Project.OpenBook.Chapter.Controller.dto;
+package Project.OpenBook.Chapter.Service.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;

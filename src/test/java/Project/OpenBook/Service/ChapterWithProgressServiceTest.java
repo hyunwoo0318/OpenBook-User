@@ -1,9 +1,9 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Chapter.ChapterValidator;
+import Project.OpenBook.Chapter.Service.ChapterValidator;
 import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Chapter.Service.ChapterWithProgressService;
-import Project.OpenBook.Chapter.Controller.dto.ChapterUserDto;
+import Project.OpenBook.Chapter.Service.dto.ChapterUserDto;
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.studyProgress.ProgressDto;

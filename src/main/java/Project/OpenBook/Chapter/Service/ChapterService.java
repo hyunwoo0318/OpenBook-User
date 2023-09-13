@@ -1,18 +1,17 @@
 package Project.OpenBook.Chapter.Service;
 
-import Project.OpenBook.Chapter.ChapterValidator;
 import Project.OpenBook.Chapter.Controller.dto.*;
 import Project.OpenBook.Chapter.Domain.Chapter;
+import Project.OpenBook.Chapter.Service.dto.ChapterAddUpdateDto;
+import Project.OpenBook.Chapter.Service.dto.ChapterInfoDto;
 import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Topic.Repo.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 
@@ -22,6 +21,7 @@ public class ChapterService {
 
     private final ChapterRepository chapterRepository;
     private final ChapterValidator chapterValidator;
+
 
     /**
      * 단원 저장
@@ -44,24 +44,6 @@ public class ChapterService {
         chapterRepository.save(newChapter);
 
         return newChapter;
-    }
-
-    /**
-     * 단원 전체를 조회하는 메서드
-     * @return List<Chapter>
-     */
-    public List<Chapter> queryChapters() {
-        return chapterRepository.findAll();
-    }
-
-    /**
-     * 특정 단원을 조회하는 메서드
-     * @param num 단원 번호
-     * @return Chapter
-     * 해당 단원 번호를 가진 단원이 존재하지 않는다면 -> CHAPTER_NOT_FOUND
-     */
-    public Chapter queryChapter(Integer num) {
-        return chapterValidator.checkChapter(num);
     }
 
 
@@ -121,53 +103,5 @@ public class ChapterService {
     }
 
 
-    @Transactional(readOnly = true)
-    public List<ChapterTitleNumDto> queryChaptersAdmin() {
-        return queryChapters().stream()
-                .map(c -> new ChapterTitleNumDto(c.getTitle(), c.getNumber()))
-                .collect(Collectors.toList());
-    }
 
-    @Transactional(readOnly = true)
-    public List<ChapterDetailDto> queryChaptersTotalInfo() {
-        return queryChapters().stream()
-                .map(c -> {
-                    return new ChapterDetailDto(c.getTitle(),
-                            c.getNumber(),
-                            c.getStartDate(),
-                            c.getStartDate(),
-                            c.getTopicList().size());
-                })
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public ChapterTitleDto queryChapterTitle(Integer num) {
-        return new ChapterTitleDto(queryChapter(num).getTitle());
-    }
-
-    @Transactional(readOnly = true)
-    public ChapterDateDto queryChapterDate(Integer num) {
-        Chapter chapter = queryChapter(num);
-        return new ChapterDateDto(chapter.getStartDate(), chapter.getEndDate());
-    }
-
-    @Transactional(readOnly = true)
-    public ChapterInfoDto queryChapterInfo(Integer num) {
-        return new ChapterInfoDto(queryChapter(num).getContent());
-    }
-
-    @Transactional(readOnly = true)
-    public List<ChapterTopicWithCountDto> queryChapterTopicsAdmin(int num) {
-        return queryChapter(num).getTopicList().stream()
-                .map(t -> new ChapterTopicWithCountDto(t))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<ChapterTopicUserDto> queryChapterTopicsCustomer(int num) {
-        return queryChapter(num).getTopicList().stream()
-                .map(t -> new ChapterTopicUserDto(t))
-                .collect(Collectors.toList());
-    }
 }

@@ -1,4 +1,4 @@
-package Project.OpenBook.Chapter.Controller.dto;
+package Project.OpenBook.Chapter.Service.dto;
 
 import Project.OpenBook.Topic.Domain.Topic;
 import lombok.AllArgsConstructor;

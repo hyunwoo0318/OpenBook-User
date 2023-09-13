@@ -3,6 +3,7 @@ package Project.OpenBook.Controller;
 
 import Project.OpenBook.Chapter.Controller.dto.*;
 import Project.OpenBook.Chapter.Domain.Chapter;
+import Project.OpenBook.Chapter.Service.dto.*;
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Dto.error.ErrorMsgDto;
