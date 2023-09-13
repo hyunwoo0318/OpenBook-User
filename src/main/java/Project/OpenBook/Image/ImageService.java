@@ -1,6 +1,6 @@
 package Project.OpenBook.Image;
 
-import Project.OpenBook.Utils.CustomException;
+import Project.OpenBook.Handler.Exception.CustomException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

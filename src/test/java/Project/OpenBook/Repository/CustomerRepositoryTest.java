@@ -1,19 +1,12 @@
 package Project.OpenBook.Repository;
 
 import Project.OpenBook.Config.TestQueryDslConfig;
-import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Repository.customer.CustomerRepository;
-import Project.OpenBook.Repository.customer.CustomerRepositoryCustom;
+import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
-
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

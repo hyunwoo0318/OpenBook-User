@@ -1,13 +1,14 @@
 package Project.OpenBook.Repository;
 
-import Project.OpenBook.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.Category.Domain.Category;
+import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Config.TestQueryDslConfig;
-import Project.OpenBook.Domain.*;
-import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Repository.keyword.KeywordRepository;
-import Project.OpenBook.Topic.Repo.TopicRepository;
-import Project.OpenBook.Topic.Domain.Topic;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
+import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
+import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.core.Tuple;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

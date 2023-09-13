@@ -1,8 +1,8 @@
 package Project.OpenBook.Repository;
 
 import Project.OpenBook.Config.TestQueryDslConfig;
-import Project.OpenBook.Domain.Category;
-import Project.OpenBook.Repository.category.CategoryRepository;
+import Project.OpenBook.Domain.Category.Domain.Category;
+import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

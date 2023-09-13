@@ -1,8 +1,8 @@
 //package Project.OpenBook.Controller;
 //
-//import Project.OpenBook.Domain.Category;
+//import Project.OpenBook.Category.Domain.Category;
 //import Project.OpenBook.Chapter.Domain.Chapter;
-//import Project.OpenBook.Domain.Choice;
+//import Project.OpenBook.Choice.Choice;
 //import Project.OpenBook.Topic.Domain.Topic;
 //import Project.OpenBook.Dto.choice.ChoiceAddDto;
 //import Project.OpenBook.Dto.choice.ChoiceDto;

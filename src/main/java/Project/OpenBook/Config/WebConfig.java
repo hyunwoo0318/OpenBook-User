@@ -1,8 +1,8 @@
 package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Domain.Customer;
-import Project.OpenBook.Repository.customer.CustomerRepository;
+import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

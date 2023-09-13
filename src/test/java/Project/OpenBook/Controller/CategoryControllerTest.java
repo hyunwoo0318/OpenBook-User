@@ -1,14 +1,14 @@
 package Project.OpenBook.Controller;
 
-import Project.OpenBook.Domain.Category;
-import Project.OpenBook.Chapter.Domain.Chapter;
-import Project.OpenBook.Topic.Domain.Topic;
-import Project.OpenBook.Dto.category.CategoryDto;
-import Project.OpenBook.Dto.error.ErrorMsgDto;
-import Project.OpenBook.Repository.category.CategoryRepository;
-import Project.OpenBook.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Repository.choice.ChoiceRepository;
-import Project.OpenBook.Topic.Repo.TopicRepository;
+import Project.OpenBook.Domain.Category.Domain.Category;
+import Project.OpenBook.Domain.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
+import Project.OpenBook.Domain.Category.Service.Dto.CategoryDto;
+import Project.OpenBook.Handler.Exception.error.ErrorMsgDto;
+import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
+import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
+import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
+import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

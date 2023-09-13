@@ -1,15 +1,15 @@
 package Project.OpenBook.Service;
 
-import Project.OpenBook.Chapter.Service.ChapterValidator;
-import Project.OpenBook.Chapter.Domain.Chapter;
-import Project.OpenBook.Chapter.Service.ChapterService;
+import Project.OpenBook.Domain.Chapter.Service.ChapterValidator;
+import Project.OpenBook.Domain.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.Chapter.Service.ChapterService;
 import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Chapter.Service.dto.ChapterAddUpdateDto;
-import Project.OpenBook.Chapter.Service.dto.ChapterInfoDto;
-import Project.OpenBook.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Topic.Repo.TopicRepository;
-import Project.OpenBook.Topic.Domain.Topic;
-import Project.OpenBook.Utils.CustomException;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterAddUpdateDto;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterInfoDto;
+import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
+import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
+import Project.OpenBook.Handler.Exception.CustomException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
