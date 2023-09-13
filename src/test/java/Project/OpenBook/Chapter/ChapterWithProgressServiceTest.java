@@ -71,18 +71,14 @@ public class ChapterWithProgressServiceTest {
                 Chapter ch1 = new Chapter("ch1", 1);
                 Chapter ch2 = new Chapter("ch2", 2);
                 Chapter ch3 = new Chapter("ch3", 3);
+                given(chapterRepository.findAllByOrderByNumberAsc()).willReturn(Arrays.asList(ch1, ch2, ch2));
 
                 ChapterProgress cp1 = new ChapterProgress(mockCustomer, ch1, 0, COMPLETE.getName());
                 ChapterProgress cp2 = new ChapterProgress(mockCustomer, ch2, 0, ContentConst.CHAPTER_INFO.getName());
                 ChapterProgress cp3 = new ChapterProgress(mockCustomer, ch3, 0, ContentConst.NOT_STARTED.getName());
 
-                Map<Chapter, ChapterProgress> map = new HashMap<>();
-                map.put(ch1, cp1);
-                map.put(ch2, cp2);
-                map.put(ch3, cp3);
-
-
-                given(chapterRepository.queryChapterWithProgress(1L)).willReturn(map);
+                given(chapterProgressRepository.queryChapterProgressesWithChapter(1L))
+                        .willReturn(Arrays.asList(cp1, cp2, cp3));
 
                 //when
                 List<ChapterUserDto> chapterUserDtoList = chapterWithProgressService.queryChapterUserDtos(mockCustomer);

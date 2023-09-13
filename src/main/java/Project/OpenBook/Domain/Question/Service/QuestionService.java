@@ -51,12 +51,6 @@ public class QuestionService {
         });
     }
 
-    private Chapter checkChapter(Integer num) {
-        return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
-            throw new CustomException(CHAPTER_NOT_FOUND);
-        });
-    }
-
     private Integer queryRandChapterNum() {
         Integer maxNum = chapterRepository.queryMaxChapterNum();
         Random random = new Random();
@@ -137,8 +131,9 @@ public class QuestionService {
                 .collect(Collectors.toList());
         for (String topicTitle : topicTitleList) {
             QuestionDto dto = type3.getQuestion(topicTitle);
-            //TODO : 문제가 만들어지지 않았을때 예외처리
-            questionList.add(dto);
+            if (dto != null) {
+                questionList.add(dto);
+            }
         }
 
         return questionList;
@@ -157,8 +152,9 @@ public class QuestionService {
                 .collect(Collectors.toList());
         for (String topicTitle : topicTitleList) {
             QuestionDto dto = type4.getQuestion(topicTitle);
-            //TODO : 문제가 만들어지지 않았을때 예외처리
-            questionList.add(dto);
+            if (dto != null) {
+                questionList.add(dto);
+            }
         }
         return questionList;
     }

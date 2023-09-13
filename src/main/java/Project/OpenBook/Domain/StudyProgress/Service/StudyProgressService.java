@@ -38,8 +38,6 @@ public class StudyProgressService {
     private final ChapterRepository chapterRepository;
     private final TopicRepository topicRepository;
 
-
-
     @Transactional
     public void addChapterProgressWrongCount(Customer customer, ChapterProgressAddDto chapterProgressAddDto) {
         Chapter chapter = checkChapter(chapterProgressAddDto.getNumber());
@@ -49,56 +47,14 @@ public class StudyProgressService {
     }
 
     @Transactional
-    public void addTopicProgressWrongCount(Customer customer, TopicProgressAddDtoList topicProgressAddDtoList) {
-        for (TopicProgressAddDto topicProgressAddDto : topicProgressAddDtoList.getProgressAddDtoList()) {
+    public void addTopicProgressWrongCount(Customer customer, List<TopicProgressAddDto> topicProgressAddDtoList) {
+        for (TopicProgressAddDto topicProgressAddDto : topicProgressAddDtoList) {
             Topic topic = checkTopic(topicProgressAddDto.getTopicTitle());
 
             TopicProgress topicProgress = checkTopicProgress(customer, topic);
             topicProgress.updateWrongCount(topicProgressAddDto.getCount());
         }
 
-    }
-
-    private Customer checkCustomer(Long customerId) {
-        return customerRepository.findById(customerId).orElseThrow(() -> {
-            throw new CustomException(ErrorCode.CUSTOMER_NOT_FOUND);
-        });
-    }
-
-    private Chapter checkChapter(int num) {
-        return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
-            throw new CustomException(CHAPTER_NOT_FOUND);
-        });
-    }
-
-    private Topic checkTopic(String topicTitle) {
-        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
-    }
-
-    private ChapterProgress checkChapterProgress(Customer customer, Chapter chapter) {
-        return chapterProgressRepository.queryChapterProgress(customer.getId(), chapter.getNumber()).orElseGet(() -> {
-            ChapterProgress chapterProgress = new ChapterProgress(customer, chapter, 0, NOT_STARTED.getName());
-            chapterProgressRepository.save(chapterProgress);
-            return chapterProgress;
-        });
-    }
-
-    private TopicProgress checkTopicProgress(Customer customer, Topic topic) {
-        return topicProgressRepository.queryTopicProgress(customer.getId(), topic.getTitle()).orElseGet(() -> {
-            TopicProgress topicProgress = new TopicProgress(customer, topic, 0, LOCKED.getName());
-            topicProgressRepository.save(topicProgress);
-            return topicProgress;
-        });
-    }
-
-    private ChapterSection checkChapterSection(Customer customer, Chapter chapter, String state, String content) {
-        return chapterSectionRepository.queryChapterSection(customer.getId(), chapter.getNumber(), content).orElseGet(() -> {
-            ChapterSection chapterSection = new ChapterSection(customer, chapter, content, state);
-            chapterSectionRepository.save(chapterSection);
-            return chapterSection;
-        });
     }
 
     @Transactional
@@ -142,6 +98,7 @@ public class StudyProgressService {
     }
 
 
+    @Transactional(readOnly = true)
     public TotalProgressDto queryTotalProgress(Customer customer) {
         Customer findCustomer = checkCustomer(customer.getId());
         List<ChapterSection> chapterSectionList = findCustomer.getChapterSectionList();
@@ -157,5 +114,49 @@ public class StudyProgressService {
 
         int ret =(openCount + topicCount) * 100 / (chapterSectionList.size() + topicProgressList.size()) ;
         return new TotalProgressDto(ret);
+    }
+
+
+
+    private Customer checkCustomer(Long customerId) {
+        return customerRepository.findById(customerId).orElseThrow(() -> {
+            throw new CustomException(ErrorCode.CUSTOMER_NOT_FOUND);
+        });
+    }
+
+    private Chapter checkChapter(int num) {
+        return chapterRepository.findOneByNumber(num).orElseThrow(() -> {
+            throw new CustomException(CHAPTER_NOT_FOUND);
+        });
+    }
+
+    private Topic checkTopic(String topicTitle) {
+        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        });
+    }
+
+    private ChapterProgress checkChapterProgress(Customer customer, Chapter chapter) {
+        return chapterProgressRepository.queryChapterProgress(customer.getId(), chapter.getNumber()).orElseGet(() -> {
+            ChapterProgress chapterProgress = new ChapterProgress(customer, chapter, 0, NOT_STARTED.getName());
+            chapterProgressRepository.save(chapterProgress);
+            return chapterProgress;
+        });
+    }
+
+    private TopicProgress checkTopicProgress(Customer customer, Topic topic) {
+        return topicProgressRepository.queryTopicProgress(customer.getId(), topic.getTitle()).orElseGet(() -> {
+            TopicProgress topicProgress = new TopicProgress(customer, topic, 0, LOCKED.getName());
+            topicProgressRepository.save(topicProgress);
+            return topicProgress;
+        });
+    }
+
+    private ChapterSection checkChapterSection(Customer customer, Chapter chapter, String state, String content) {
+        return chapterSectionRepository.queryChapterSection(customer.getId(), chapter.getNumber(), content).orElseGet(() -> {
+            ChapterSection chapterSection = new ChapterSection(customer, chapter, content, state);
+            chapterSectionRepository.save(chapterSection);
+            return chapterSection;
+        });
     }
 }

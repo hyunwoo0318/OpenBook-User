@@ -18,12 +18,19 @@ public class GetTopicBySentenceQuestion extends BaseQuestionComponentFactory imp
         super(topicRepository, keywordRepository, sentenceRepository);
     }
 
+    /**
+     * 해당 토픽에서 문장 1개를 보여주고 토픽 제목을 맞추는 문제
+     * 고려해야할 예외상황
+     *      1. 정답 문장이 존재하지 않는 경우 -> return null
+     * @param topicTitle
+     * @return
+     */
     @Override
     public QuestionDto getQuestion(String topicTitle) {
         //정답 문장 조회
         List<Sentence> answerSentence = getSentencesByAnswerTopic(topicTitle, 1);
         if (answerSentence.isEmpty()) {
-            return toQuestionDto(topicTitle, "", new ArrayList<>());
+            return null;
         }
         String answerSentenceName = answerSentence.get(0).getName();
 

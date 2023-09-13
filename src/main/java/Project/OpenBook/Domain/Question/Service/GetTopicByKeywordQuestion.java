@@ -18,12 +18,23 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
         super(topicRepository, keywordRepository, sentenceRepository);
     }
 
+    /**
+     * 해당 토픽에서 키워드 2개를 보여주고 토픽 제목을 맞추는 문제
+     * 고려해야할 예외상황
+     *      1. 정답 키워드가 2개이상 존재하지 않는 경우 -> return null
+     * @param topicTitle
+     * @return
+     */
     @Override
     public QuestionDto getQuestion(String topicTitle) {
         //정답 키워드 2개 조회
         List<KeywordNameCommentDto> descriptionKeywordList = getKeywordsByAnswerTopic(topicTitle, 2).stream()
                 .map(k -> new KeywordNameCommentDto(k.getName(), k.getComment()))
                 .collect(Collectors.toList());
+
+        if (descriptionKeywordList.size() != 2) {
+            return null;
+        }
 
         //오답 주제 조회
         List<QuestionChoiceDto> choiceList = getWrongTopic(topicTitle, QuestionConst.GET_TOPIC_WRONG_ANSWER_NUM);

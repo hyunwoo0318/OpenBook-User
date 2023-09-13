@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface AnswerNoteRepositoryCustom {
 
-    public Optional<AnswerNote> queryAnswerNote(Long customerId, Long questionId);
-
-    public List<AnswerNote> queryAnswerNotes(Long customerId);
+//    public Optional<AnswerNote> queryAnswerNote(Long customerId, Long questionId);
+//
+//    public List<AnswerNote> queryAnswerNotes(Long customerId);
 }
