@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Round.Service;
 
+import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
@@ -7,13 +8,16 @@ import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.RoundValidator;
 import Project.OpenBook.Domain.Round.dto.RoundDto;
 import Project.OpenBook.Domain.Round.dto.RoundInfoDto;
+import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static Project.OpenBook.Constants.ErrorCode.ROUND_HAS_QUESTION;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class RoundService {
     private final RoundValidator roundValidator;
 
 
+    @Transactional(readOnly = true)
     public List<RoundDto> queryRounds() {
         return roundRepository.findAll().stream()
                 .sorted(Comparator.comparing(Round::getNumber))
@@ -31,7 +36,8 @@ public class RoundService {
                 .collect(Collectors.toList());
     }
 
-    public void createRound(RoundDto roundDto) {
+    @Transactional
+    public Round createRound(RoundDto roundDto) {
         Integer number = roundDto.getNumber();
         Integer date = roundDto.getDate();
 
@@ -40,10 +46,12 @@ public class RoundService {
 
         Round round = new Round(date, number);
         roundRepository.save(round);
+
+        return round;
     }
 
     @Transactional
-    public void updateRound(Integer prevNumber, RoundDto roundDto) {
+    public Round updateRound(Integer prevNumber, RoundDto roundDto) {
         Integer newNumber = roundDto.getNumber();
         Integer date = roundDto.getDate();
         Round round = roundValidator.checkRound(prevNumber);
@@ -52,24 +60,33 @@ public class RoundService {
             roundValidator.checkDupRoundNumber(newNumber);
         }
 
-
         round.updateRound(date, newNumber);
+        return round;
     }
 
-    public void deleteRound(Integer number) {
+    @Transactional
+    public Boolean deleteRound(Integer number) {
         Round round = roundValidator.checkRound(number);
 
+        List<ExamQuestion> examQuestionList = round.getExamQuestionList();
+        if (!examQuestionList.isEmpty()) {
+            throw new CustomException(ROUND_HAS_QUESTION);
+        }
+
         roundRepository.delete(round);
+        return true;
     }
 
+    @Transactional(readOnly = true)
     public RoundInfoDto queryRound(Integer number) {
         Round round = roundValidator.checkRound(number);
         return new RoundInfoDto(round.getDate());
     }
 
+    @Transactional(readOnly = true)
     public List<Integer> queryRoundQuestions(Integer number) {
-        List<ExamQuestion> examQuestionList = examQuestionRepository.queryExamQuestions(number);
-        return examQuestionList.stream()
+        Round round = roundValidator.checkRound(number);
+        return round.getExamQuestionList().stream()
                 .map(ExamQuestion::getNumber)
                 .collect(Collectors.toList());
     }

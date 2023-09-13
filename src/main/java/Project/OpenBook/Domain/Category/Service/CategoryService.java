@@ -20,7 +20,6 @@ import static Project.OpenBook.Constants.ErrorCode.*;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-    private final TopicRepository topicRepository;
 
 
     @Transactional(readOnly = true)
@@ -52,7 +51,7 @@ public class CategoryService {
     }
 
     @Transactional
-    public void deleteCategory(String categoryName) {
+    public boolean deleteCategory(String categoryName) {
         Category category = checkCategory(categoryName);
 
         List<Topic> topicList = category.getTopicList();
@@ -61,6 +60,7 @@ public class CategoryService {
         }
 
         categoryRepository.delete(category);
+        return true;
     }
 
 

@@ -20,6 +20,7 @@ public enum ErrorCode {
     TOPIC_HAS_DESCRIPTION(HttpStatus.BAD_REQUEST, "해당 토픽에 보기가 존재합니다."),
     TOPIC_HAS_KEYWORD(HttpStatus.BAD_REQUEST, "해당 토픽에 키워드가 존재합니다."),
     TOPIC_HAS_SENTENCE(HttpStatus.BAD_REQUEST, "해당 토픽에 문장이 존재합니다."),
+    ROUND_HAS_QUESTION(HttpStatus.BAD_REQUEST, "해당 회차에 문제가 존재합니다."),
     NOT_ENOUGH_CHOICE(HttpStatus.BAD_REQUEST, "문제를 만들기 위한 선지의 수가 부족합니다."),
     QUESTION_ERROR(HttpStatus.BAD_REQUEST, "해당 유형의 문제를 생성할수 없습니다."),
     KEYWORD_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 키워드를 가지는 토픽이 존재합니다."),

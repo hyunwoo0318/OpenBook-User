@@ -1,4 +1,4 @@
-package Project.OpenBook.Controller;
+package Project.OpenBook.Chapter;
 
 
 import Project.OpenBook.Constants.ChoiceConst;
@@ -190,7 +190,9 @@ class ChapterControllerTest {
             chapterRepository.saveAllAndFlush(chapterList);
 
 
-            ResponseEntity<List<ChapterTitleNumDto>> response = restTemplate.exchange(URL, HttpMethod.GET, null,
+            ResponseEntity<List<ChapterTitleNumDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL, HttpMethod.GET, null,
                     new ParameterizedTypeReference<List<ChapterTitleNumDto>>() {
             });
 
@@ -396,7 +398,9 @@ class ChapterControllerTest {
         @DisplayName("목차 조회 실패 - 존재하지 않는 단원번호 입력")
         @Test
         public void queryContentsTableFail() {
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?num=-1", HttpMethod.GET,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "?num=-1", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -430,7 +434,9 @@ class ChapterControllerTest {
         @DisplayName("단원 이름 조회 성공")
         @Test
         public void queryChaptersSuccess() {
-            ResponseEntity<ChapterTitleDto> response = restTemplate.getForEntity(URL + "?num=1", ChapterTitleDto.class);
+            ResponseEntity<ChapterTitleDto> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .getForEntity(URL + "?num=1", ChapterTitleDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody().getTitle()).isEqualTo("ch1");
@@ -440,7 +446,9 @@ class ChapterControllerTest {
         @DisplayName("단원 이름 조회 실패 - 존재하지 않는 단원번호 입력")
         @Test
         public void queryChaptersFail() {
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "?num=-1", HttpMethod.GET,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "?num=-1", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -475,7 +483,9 @@ class ChapterControllerTest {
         @DisplayName("단원 학습 조회 성공")
         @Test
         public void queryChapterInfoSuccess() {
-            ResponseEntity<ChapterInfoDto> response = restTemplate.getForEntity(URL + ch1.getNumber() + "/info", ChapterInfoDto.class);
+            ResponseEntity<ChapterInfoDto> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .getForEntity(URL + ch1.getNumber() + "/info", ChapterInfoDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody().getContent()).isEqualTo(ch1.getContent());
@@ -484,7 +494,9 @@ class ChapterControllerTest {
         @DisplayName("단원 학습 조회 실패 - 존재하지 않는 단원번호 입력")
         @Test
         public void queryChapterInfoFail() {
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-111/info", HttpMethod.GET,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "-111/info", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -518,7 +530,9 @@ class ChapterControllerTest {
         @DisplayName("시작년도/종료년도 조회 성공")
         @Test
         public void queryChapterDateSuccess() {
-            ResponseEntity<ChapterDateDto> response = restTemplate.getForEntity(URL + ch1.getNumber() + "/date", ChapterDateDto.class);
+            ResponseEntity<ChapterDateDto> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .getForEntity(URL + ch1.getNumber() + "/date", ChapterDateDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody()).usingRecursiveComparison()
@@ -528,7 +542,9 @@ class ChapterControllerTest {
         @DisplayName("시작년도/종료년도 조회 실패 - 존재하지 않는 단원번호 입력")
         @Test
         public void queryChapterDateFail() {
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-111/date", HttpMethod.GET,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "-111/date", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -590,7 +606,9 @@ class ChapterControllerTest {
         @DisplayName("해당 단원의 모든 토픽 조회 성공")
         @Test
         public void queryChapterTopicsAdminSuccess() {
-            ResponseEntity<List<ChapterTopicWithCountDto>> response = restTemplate.exchange(URL + "1/topics", HttpMethod.GET, null,
+            ResponseEntity<List<ChapterTopicWithCountDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "1/topics", HttpMethod.GET, null,
                     new ParameterizedTypeReference<List<ChapterTopicWithCountDto>>() {
             });
             List<ChapterTopicWithCountDto> body = response.getBody();
@@ -603,7 +621,9 @@ class ChapterControllerTest {
         @DisplayName("해당 단원의 모든 토픽 조회 실패 - 존재하지 않는 단원번호 입력")
         @Test
         public void queryChapterTopicsAdminFail() {
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-1/topics", HttpMethod.GET,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "-1/topics", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -642,7 +662,9 @@ class ChapterControllerTest {
         @DisplayName("해당 단원의 모든 토픽 조회 성공")
         @Test
         public void queryChapterTopicsCustomerSuccess() {
-            ResponseEntity<List<ChapterTopicUserDto>> response = restTemplate.exchange(URL + "1/topics", HttpMethod.GET, null,
+            ResponseEntity<List<ChapterTopicUserDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "1/topics", HttpMethod.GET, null,
                     new ParameterizedTypeReference<List<ChapterTopicUserDto>>() {
                     });
             List<ChapterTopicUserDto> body = response.getBody();
@@ -656,7 +678,9 @@ class ChapterControllerTest {
         @DisplayName("해당 단원의 모든 토픽 조회 실패 - 존재하지 않는 단원번호 입력")
         @Test
         public void queryChapterTopicsCustomerFail() {
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-1/topics", HttpMethod.GET,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "-1/topics", HttpMethod.GET,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -695,7 +719,9 @@ class ChapterControllerTest {
         @Test
         public void updateChapterInfoSuccess() {
             ChapterInfoDto dto = new ChapterInfoDto("new Info");
-            ResponseEntity<Void> response = restTemplate.exchange(URL + chapterNum + "/info", HttpMethod.PATCH,
+            ResponseEntity<Void> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + chapterNum + "/info", HttpMethod.PATCH,
                     new HttpEntity<>(dto), Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -709,7 +735,9 @@ class ChapterControllerTest {
             //내용을 입력하지 않은 경우
             ChapterInfoDto wrongDto = new ChapterInfoDto();
 
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + chapterNum + "/info", HttpMethod.PATCH,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + chapterNum + "/info", HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             List<ErrorMsgDto> body = response.getBody();
@@ -722,7 +750,9 @@ class ChapterControllerTest {
         public void updateChapterFailNotFoundNum(){
             ChapterInfoDto dto = new ChapterInfoDto("new Content");
             //존재하지 않는 단원 수정 요청
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "-1/info", HttpMethod.PATCH,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "-1/info", HttpMethod.PATCH,
                     new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             List<ErrorMsgDto> body = response.getBody();
@@ -761,7 +791,9 @@ class ChapterControllerTest {
         @Test
         public void createNewChapterSuccess() {
             ChapterAddUpdateDto dto = new ChapterAddUpdateDto("ch2", 2, 123, 456);
-            ResponseEntity<Void> response = restTemplate.postForEntity(URL, dto,Void.class);
+            ResponseEntity<Void> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .postForEntity(URL, dto,Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             Chapter chapter = chapterRepository.findOneByNumber(2).get();
@@ -778,7 +810,9 @@ class ChapterControllerTest {
             //제목, 번호를 입력하지 않은 경우
             ChapterAddUpdateDto wrongDto = new ChapterAddUpdateDto();
 
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL, HttpMethod.POST,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             List<ErrorMsgDto> body = response.getBody();
@@ -795,7 +829,9 @@ class ChapterControllerTest {
              //중복된 단원번호를 입력한 경우
             ChapterAddUpdateDto wrongDto = new ChapterAddUpdateDto("title123", 1, 123, 456);
 
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL,HttpMethod.POST,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL,HttpMethod.POST,
                     new HttpEntity<>(wrongDto),new ParameterizedTypeReference<List<ErrorMsgDto>>(){});
 
             List<ErrorMsgDto> body = response.getBody();
@@ -838,7 +874,9 @@ class ChapterControllerTest {
         public void updateChapterSuccess() {
             ChapterAddUpdateDto inputDto = new ChapterAddUpdateDto("titleAfterUpdate", 3, 123,456);
 
-            ResponseEntity<Void> response = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH, new HttpEntity<>(inputDto), Void.class);
+            ResponseEntity<Void> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/" + chapterNum, HttpMethod.PATCH, new HttpEntity<>(inputDto), Void.class);
 
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -858,7 +896,9 @@ class ChapterControllerTest {
             //단원번호, 제목을 입력하지않음
             ChapterAddUpdateDto wrongDto = new ChapterAddUpdateDto();
 
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/" + chapterNum, HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             List<ErrorMsgDto> body = response.getBody();
@@ -875,7 +915,9 @@ class ChapterControllerTest {
             ChapterAddUpdateDto dto = new ChapterAddUpdateDto("title123", 5, 123,456);
 
             //존재하지 않는 단원 수정 요청
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/-1", HttpMethod.PATCH,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/-1", HttpMethod.PATCH,
                     new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             List<ErrorMsgDto> body = response.getBody();
@@ -892,7 +934,9 @@ class ChapterControllerTest {
             ChapterAddUpdateDto dto = new ChapterAddUpdateDto("title123", 2, 132, 456);
 
             //존재하지 않는 단원 수정 요청
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.PATCH,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/" + chapterNum, HttpMethod.PATCH,
                     new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             List<ErrorMsgDto> body = response.getBody();
@@ -933,7 +977,9 @@ class ChapterControllerTest {
         @Test
         public void deleteChapterSuccess() {
             topicRepository.deleteAllInBatch();
-            ResponseEntity<Void> response = restTemplate.exchange(URL + "/"+ chapterNum, HttpMethod.DELETE, null, Void.class);
+            ResponseEntity<Void> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/"+ chapterNum, HttpMethod.DELETE, null, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(chapterRepository.findOneByNumber(chapterNum).isEmpty()).isTrue();
@@ -945,7 +991,9 @@ class ChapterControllerTest {
         @Test
         public void deleteChapterFailNotFoundNum() {
             //존재하지 않는 단원번호 입력
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/-1", HttpMethod.DELETE,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/-1", HttpMethod.DELETE,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -959,7 +1007,9 @@ class ChapterControllerTest {
         @Test
         public void deleteChapterFailHasTopic() {
             //토픽이 존재하는 단원 삭제 시도
-            ResponseEntity<List<ErrorMsgDto>> response = restTemplate.exchange(URL + "/" + chapterNum, HttpMethod.DELETE,
+            ResponseEntity<List<ErrorMsgDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/" + chapterNum, HttpMethod.DELETE,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

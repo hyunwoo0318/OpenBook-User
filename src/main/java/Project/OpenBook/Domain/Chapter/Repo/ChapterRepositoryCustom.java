@@ -5,8 +5,9 @@ import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgr
 
 
 import java.util.Map;
+import java.util.Optional;
 
 public interface ChapterRepositoryCustom {
 
-    public Integer queryMaxChapterNum();
+    public Optional<Integer> queryMaxChapterNum();
 }

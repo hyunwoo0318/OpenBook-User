@@ -70,34 +70,4 @@ public class Chapter extends BaseEntity {
         return this;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Chapter)) return false;
-
-        Chapter chapter = (Chapter) o;
-
-        if (number != chapter.number) return false;
-        if (!Objects.equals(id, chapter.id)) return false;
-        if (!Objects.equals(content, chapter.content)) return false;
-        if (!Objects.equals(startDate, chapter.startDate)) return false;
-        if (!Objects.equals(endDate, chapter.endDate)) return false;
-        if (!Objects.equals(title, chapter.title)) return false;
-        if (!Objects.equals(chapterSectionList, chapter.chapterSectionList))
-            return false;
-        return Objects.equals(chapterProgressList, chapter.chapterProgressList);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (content != null ? content.hashCode() : 0);
-        result = 31 * result + number;
-        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
-        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
-        result = 31 * result + (title != null ? title.hashCode() : 0);
-        result = 31 * result + (chapterSectionList != null ? chapterSectionList.hashCode() : 0);
-        result = 31 * result + (chapterProgressList != null ? chapterProgressList.hashCode() : 0);
-        return result;
-    }
 }

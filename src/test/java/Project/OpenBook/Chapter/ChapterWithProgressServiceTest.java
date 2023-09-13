@@ -71,7 +71,7 @@ public class ChapterWithProgressServiceTest {
                 Chapter ch1 = new Chapter("ch1", 1);
                 Chapter ch2 = new Chapter("ch2", 2);
                 Chapter ch3 = new Chapter("ch3", 3);
-                given(chapterRepository.findAllByOrderByNumberAsc()).willReturn(Arrays.asList(ch1, ch2, ch2));
+                given(chapterRepository.findAllByOrderByNumberAsc()).willReturn(Arrays.asList(ch1, ch2, ch3));
 
                 ChapterProgress cp1 = new ChapterProgress(mockCustomer, ch1, 0, COMPLETE.getName());
                 ChapterProgress cp2 = new ChapterProgress(mockCustomer, ch2, 0, ContentConst.CHAPTER_INFO.getName());
@@ -106,12 +106,14 @@ public class ChapterWithProgressServiceTest {
 
                 Chapter ch1 = new Chapter("ch1", 1);
                 Chapter ch2 = new Chapter("ch2", 2);
+                given(chapterRepository.findAllByOrderByNumberAsc()).willReturn(Arrays.asList(ch1, ch2));
 
                 Map<Chapter, ChapterProgress> map = new HashMap<>();
                 map.put(ch1, null);
                 map.put(ch2, null);
 
-                given(chapterRepository.queryChapterWithProgress(1L)).willReturn(map);
+                given(chapterProgressRepository.queryChapterProgressesWithChapter(1L))
+                        .willReturn(new ArrayList<>());
 
 
                 //when
@@ -145,17 +147,24 @@ public class ChapterWithProgressServiceTest {
                 public void returnContentTable(){
                     //given
                     String chapterTitle = "ch1";
-                    Chapter ch1 = new Chapter(chapterTitle, 1);
                     Customer mockCustomer = mock(Customer.class);
+                    Chapter mockChapter = mock(Chapter.class);
+
+                    Chapter ch1 = new Chapter(chapterTitle, 1);
+                    Topic topic1 = new Topic("t1", 0, 0, false, false, 0, 0, "1", ch1, null);
+
                     when(mockCustomer.getId()).thenReturn(1L);
-                    given(chapterValidator.checkChapter(1)).willReturn(ch1);
+                    when(mockChapter.getTopicList()).thenReturn(Arrays.asList(topic1));
+                    when(mockChapter.getTitle()).thenReturn(chapterTitle);
+
+                    given(chapterValidator.checkChapter(1)).willReturn(mockChapter);
                     ChapterSection cs1 = new ChapterSection(mockCustomer, ch1, CHAPTER_INFO.getName(), OPEN.getName());
                     ChapterSection cs2 = new ChapterSection(mockCustomer, ch1, TIME_FLOW_STUDY.getName(), OPEN.getName());
                     ChapterSection cs3 = new ChapterSection(mockCustomer, ch1, CHAPTER_COMPLETE_QUESTION.getName(), LOCKED.getName());
                     given(chapterSectionRepository.queryChapterSections(1L, 1))
                             .willReturn(Arrays.asList(cs1, cs2, cs3));
 
-                    Topic topic1 = new Topic("t1", 0, 0, false, false, 0, 0, "1", ch1, null);
+
                     TopicProgress topicProgress = new TopicProgress(mockCustomer, topic1, 0, OPEN.getName());
                     given(topicProgressRepository.queryTopicProgresses(1L, 1))
                             .willReturn(Arrays.asList(topicProgress));

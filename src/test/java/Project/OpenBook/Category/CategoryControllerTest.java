@@ -1,7 +1,10 @@
 package Project.OpenBook.Controller;
 
+import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Category.Service.Dto.CategoryDto;
 import Project.OpenBook.Handler.Exception.error.ErrorMsgDto;
@@ -20,6 +23,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 
 import java.util.ArrayList;
@@ -50,6 +54,12 @@ class CategoryControllerTest {
     ChoiceRepository choiceRepository;
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    CustomerRepository customerRepository;
+
+    @Autowired
     TestRestTemplate restTemplate;
 
 
@@ -58,6 +68,7 @@ class CategoryControllerTest {
 
     private final String categoryName = "유물";
     private Category c1;
+    private Customer customer1;
 
     String URL;
 
@@ -67,8 +78,16 @@ class CategoryControllerTest {
     }
 
     private void baseSetting() {
+        customer1 = new Customer("customer1", passwordEncoder.encode("customer1"), Role.USER);
+        customerRepository.save(customer1);
+
         c1 = new Category(categoryName);
         categoryRepository.saveAndFlush(c1);
+    }
+
+    private void baseClear(){
+        customerRepository.deleteAllInBatch();
+        categoryRepository.deleteAllInBatch();
     }
 
     @Nested
@@ -83,23 +102,34 @@ class CategoryControllerTest {
 
         @AfterEach
         public void clear() {
-            categoryRepository.deleteAllInBatch();
+            baseClear();
+        }
+
+        @BeforeEach
+        public void setting(){
+            baseSetting();
         }
 
         @DisplayName("카테고리 전체 조회 성공")
         @Test
         public void queryCategoriesSuccess() {
             List<Category> categoryList = new ArrayList<>();
+            categoryList.add(c1);
             for (int i = 1; i <= 5; i++) {
                 categoryList.add(new Category("title" + i));
             }
             categoryRepository.saveAll(categoryList);
-            ResponseEntity<List<CategoryDto>> response = restTemplate.exchange(URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<CategoryDto>>() {
+            ResponseEntity<List<CategoryDto>> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL, HttpMethod.GET, null, new ParameterizedTypeReference<List<CategoryDto>>() {
             });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            assertThat(response.getBody().stream().map(c -> c.getName()).collect(Collectors.toList()))
-                    .isEqualTo(Arrays.asList("title1", "title2", "title3", "title4", "title5"));
+            assertThat(response.getBody()).usingRecursiveComparison()
+                    .isEqualTo(categoryRepository.findAll().stream()
+                    .map(c -> new CategoryDto(c.getName()))
+                    .collect(Collectors.toList()));
+
         }
     }
 
@@ -110,14 +140,13 @@ class CategoryControllerTest {
 
         @BeforeAll
         public void init(){
-            categoryRepository.deleteAllInBatch();
             suffix = "/admin/categories";
             initConfig();
         }
 
         @AfterEach
         public void clear() {
-            categoryRepository.deleteAllInBatch();
+            baseClear();
         }
 
         @BeforeEach
@@ -131,7 +160,9 @@ class CategoryControllerTest {
         public void createNewCategorySuccess(){
             CategoryDto categoryDto = new CategoryDto("인물");
 
-            ResponseEntity<Void> response = restTemplate.postForEntity(URL, categoryDto, Void.class);
+            ResponseEntity<Void> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .postForEntity(URL, categoryDto, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
             assertThat(categoryRepository.findCategoryByName(categoryName).isPresent()).isTrue();
@@ -145,9 +176,13 @@ class CategoryControllerTest {
             //이미 존재하는 카테고리
             CategoryDto wrongDto2 = new CategoryDto(categoryName);
 
-            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL, HttpMethod.POST,
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
-            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL, HttpMethod.POST,
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL, HttpMethod.POST,
                     new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
             List<ErrorMsgDto> body1 = response1.getBody();
             List<ErrorMsgDto> body2 = response2.getBody();
@@ -174,7 +209,7 @@ class CategoryControllerTest {
 
         @AfterEach
         public void clear() {
-            categoryRepository.deleteAllInBatch();
+            baseClear();
         }
 
         @BeforeEach
@@ -190,7 +225,9 @@ class CategoryControllerTest {
             String afterName = "전쟁";
             CategoryDto categoryDto = new CategoryDto(afterName);
 
-            ResponseEntity<Void> response = restTemplate.exchange(URL + "/" + categoryName, HttpMethod.PATCH, new HttpEntity<>(categoryDto), Void.class);
+            ResponseEntity<Void> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/" + categoryName, HttpMethod.PATCH, new HttpEntity<>(categoryDto), Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(categoryRepository.findCategoryByName(categoryName).isEmpty()).isTrue();
@@ -208,15 +245,21 @@ class CategoryControllerTest {
             //이미 존재하는 이름인 경우
             CategoryDto wrongDto2 = new CategoryDto("c2");
 
-            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL + "/인물", HttpMethod.PATCH,
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/인물", HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto1), new ParameterizedTypeReference<List<ErrorMsgDto>>() {
             });
 
-            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL +"/" + categoryName, HttpMethod.PATCH,
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL +"/" + categoryName, HttpMethod.PATCH,
                     new HttpEntity<>(wrongDto2), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             //존재하지 않는 카테고리를 변경하려 시도하는 경우
-            ResponseEntity<List<ErrorMsgDto>> response3 = restTemplate.exchange(URL + "/wrongName", HttpMethod.PATCH,
+            ResponseEntity<List<ErrorMsgDto>> response3 = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/wrongName", HttpMethod.PATCH,
                     new HttpEntity<>(dto), new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             List<ErrorMsgDto> body1 = response1.getBody();
@@ -253,8 +296,7 @@ class CategoryControllerTest {
         @AfterEach
         public void clear() {
             topicRepository.deleteAllInBatch();
-            chapterRepository.deleteAllInBatch();
-            categoryRepository.deleteAllInBatch();
+            baseClear();
         }
 
         @BeforeEach
@@ -265,7 +307,9 @@ class CategoryControllerTest {
         @DisplayName("카테고리 삭제 성공")
         @Test
         public void deleteCategorySuccess() {
-            ResponseEntity<Void> response = restTemplate.exchange(URL + "/" + categoryName, HttpMethod.DELETE, null, Void.class);
+            ResponseEntity<Void> response = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/" + categoryName, HttpMethod.DELETE, null, Void.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(categoryRepository.findCategoryByName(categoryName).isEmpty()).isTrue();
@@ -281,11 +325,15 @@ class CategoryControllerTest {
             topicRepository.saveAndFlush(topic);
 
             //존재하지 않는 카테고리 삭제 시도
-            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate.exchange(URL + "/wrongName", HttpMethod.DELETE,
+            ResponseEntity<List<ErrorMsgDto>> response1 = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/wrongName", HttpMethod.DELETE,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             //토픽이 존재하는 카테고리 삭제 시도
-            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate.exchange(URL + "/" + categoryName, HttpMethod.DELETE,
+            ResponseEntity<List<ErrorMsgDto>> response2 = restTemplate
+                    .withBasicAuth("customer1", "customer1")
+                    .exchange(URL + "/" + categoryName, HttpMethod.DELETE,
                     null, new ParameterizedTypeReference<List<ErrorMsgDto>>() {});
 
             assertThat(response1.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);

@@ -52,7 +52,7 @@ public class QuestionService {
     }
 
     private Integer queryRandChapterNum() {
-        Integer maxNum = chapterRepository.queryMaxChapterNum();
+        Integer maxNum = chapterRepository.queryMaxChapterNum().orElseGet( () -> 0);
         Random random = new Random();
         return random.nextInt(maxNum) + 1;
     }

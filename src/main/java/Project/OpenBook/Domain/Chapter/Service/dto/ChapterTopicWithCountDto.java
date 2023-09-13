@@ -21,22 +21,6 @@ public class ChapterTopicWithCountDto {
     private int choiceCount;
     private int keywordCount;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ChapterTopicWithCountDto)) return false;
-
-        ChapterTopicWithCountDto that = (ChapterTopicWithCountDto) o;
-
-        if (!Objects.equals(category, that.category)) return false;
-        if (!Objects.equals(title, that.title)) return false;
-        if (!Objects.equals(startDate, that.startDate)) return false;
-        if (!Objects.equals(endDate, that.endDate)) return false;
-        if (!Objects.equals(descriptionCount, that.descriptionCount))
-            return false;
-        if (!Objects.equals(choiceCount, that.choiceCount)) return false;
-        return Objects.equals(keywordCount, that.keywordCount);
-    }
 
     public ChapterTopicWithCountDto(Topic topic){
         this.category = topic.getCategory().getName();

@@ -96,9 +96,11 @@ public class ChapterWithProgressService {
         Chapter chapter = chapterValidator.checkChapter(chapterNum);
         Long customerId = customer.getId();
         String title = chapter.getTitle();
+
         HashMap<String, ChapterSection> chapterMap = new HashMap<>();
         HashMap<String, TopicProgress> topicMap = new HashMap<>();
         List<ProgressDto> contentTableList = new ArrayList<>();
+
         List<ChapterSection> chapterSectionList = chapterSectionRepository.queryChapterSections(customerId, chapterNum);
         for (ChapterSection chapterSection : chapterSectionList) {
             chapterMap.put(chapterSection.getContent(), chapterSection);
@@ -141,7 +143,7 @@ public class ChapterWithProgressService {
          * 3. 주제 학습
          */
         String topicStudyName = ContentConst.TOPIC_STUDY.getName();
-        List<Topic> topicList = chapterValidator.checkChapter(chapterNum).getTopicList().stream()
+        List<Topic> topicList = chapter.getTopicList().stream()
                 .sorted(Comparator.comparing(Topic::getNumber))
                 .collect(Collectors.toList());
         for (Topic topic : topicList) {
