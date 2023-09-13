@@ -5,7 +5,6 @@ import Project.OpenBook.Dto.question.*;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Repository.keyword.KeywordRepository;
 import Project.OpenBook.Repository.sentence.SentenceRepository;
-import Project.OpenBook.Topic.Controller.dto.TopicTitleListDto;
 import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;

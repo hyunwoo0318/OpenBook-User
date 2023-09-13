@@ -1,17 +1,15 @@
 package Project.OpenBook.Topic.Controller;
 
-import Project.OpenBook.Domain.Description;
 import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Dto.sentence.SentenceDto;
 import Project.OpenBook.Dto.choice.ChoiceDto;
 import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
-import Project.OpenBook.Topic.Controller.dto.TopicDetailDto;
-import Project.OpenBook.Topic.Controller.dto.TopicWithKeywordSentenceDto;
-import Project.OpenBook.Topic.Controller.dto.TopicNumberDto;
-import Project.OpenBook.Service.ChoiceService;
-import Project.OpenBook.Service.DescriptionService;
-import Project.OpenBook.Topic.TopicService;
+import Project.OpenBook.Topic.Service.TopicSimpleQueryService;
+import Project.OpenBook.Topic.Service.dto.TopicDetailDto;
+import Project.OpenBook.Topic.Service.dto.TopicWithKeywordSentenceDto;
+import Project.OpenBook.Topic.Service.dto.TopicNumberDto;
+import Project.OpenBook.Topic.Service.TopicService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,13 +21,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @RestController
 public class TopicController {
 
     private final TopicService topicService;
+    private final TopicSimpleQueryService topicSimpleQueryService;
 
     @ApiOperation(value = "각 토픽에 대한 상세정보 조회 - 관리자")
     @ApiResponses(value = {
@@ -37,7 +35,7 @@ public class TopicController {
     })
     @GetMapping("admin/topics/{topicTitle}")
     public ResponseEntity<TopicDetailDto> queryTopicsAdmin(@PathVariable("topicTitle") String topicTitle) {
-        TopicDetailDto dto = topicService.queryTopicsAdmin(topicTitle);
+        TopicDetailDto dto = topicSimpleQueryService.queryTopicsAdmin(topicTitle);
 
         return new ResponseEntity<TopicDetailDto>(dto, HttpStatus.OK);
     }
@@ -49,7 +47,7 @@ public class TopicController {
     @GetMapping("/topics/{topicTitle}")
     @Transactional
     public ResponseEntity<TopicWithKeywordSentenceDto> queryTopicsTitle(@PathVariable("topicTitle") String topicTitle) {
-        TopicWithKeywordSentenceDto dto = topicService.queryTopicsCustomer(topicTitle);
+        TopicWithKeywordSentenceDto dto = topicSimpleQueryService.queryTopicsCustomer(topicTitle);
 
         return new ResponseEntity<TopicWithKeywordSentenceDto>(dto, HttpStatus.OK);
     }
@@ -61,7 +59,7 @@ public class TopicController {
     })
     @GetMapping("/topics/{topicTitle}/keywords")
     public ResponseEntity<List<KeywordDto>> queryTopicKeywords(@PathVariable("topicTitle") String topicTitle) {
-        List<KeywordDto> dtoList = topicService.queryTopicKeywords(topicTitle);
+        List<KeywordDto> dtoList = topicSimpleQueryService.queryTopicKeywords(topicTitle);
 
         return new ResponseEntity<List<KeywordDto>>(dtoList, HttpStatus.OK);
     }
@@ -73,7 +71,7 @@ public class TopicController {
     })
     @GetMapping("/topics/{topicTitle}/sentences")
     public ResponseEntity<List<SentenceDto>> queryTopicSentence(@PathVariable("topicTitle") String topicTitle) {
-        List<SentenceDto> dtoList = topicService.queryTopicSentences(topicTitle);
+        List<SentenceDto> dtoList = topicSimpleQueryService.queryTopicSentences(topicTitle);
         return new ResponseEntity<List<SentenceDto>>(dtoList, HttpStatus.OK);
     }
 
@@ -84,7 +82,7 @@ public class TopicController {
     })
     @GetMapping("/topics/{topicTitle}/descriptions")
     public ResponseEntity<List<DescriptionDto>> getDescriptionsInTopic(@PathVariable String topicTitle){
-        List<DescriptionDto> dtoList = topicService.queryTopicDescriptions(topicTitle);
+        List<DescriptionDto> dtoList = topicSimpleQueryService.queryTopicDescriptions(topicTitle);
 
         return new ResponseEntity<List<DescriptionDto>>(dtoList, HttpStatus.OK);
     }
@@ -95,7 +93,7 @@ public class TopicController {
     })
     @GetMapping("/admin/topics/{topicTitle}/choices/")
     public ResponseEntity<List<ChoiceDto>> getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
-        List<ChoiceDto> dtoList = topicService.queryTopicChoices(topicTitle);
+        List<ChoiceDto> dtoList = topicSimpleQueryService.queryTopicChoices(topicTitle);
         return new ResponseEntity<List<ChoiceDto>>(dtoList,HttpStatus.OK);
     }
 
@@ -108,7 +106,7 @@ public class TopicController {
     @PostMapping("/admin/topics")
     public ResponseEntity<Void> createTopic(@Validated @RequestBody TopicDetailDto topicDetailDto) {
 
-        Topic topic = topicService.createTopic(topicDetailDto);
+        topicService.createTopic(topicDetailDto);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
@@ -121,7 +119,7 @@ public class TopicController {
     @PatchMapping("/admin/topics/{topicTitle}")
     public ResponseEntity<Void> updateTopic(@PathVariable("topicTitle")String topicTitle,@Validated @RequestBody TopicDetailDto topicDetailDto) {
 
-        Topic topic = topicService.updateTopic(topicTitle, topicDetailDto);
+        topicService.updateTopic(topicTitle, topicDetailDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 

@@ -1,4 +1,4 @@
-package Project.OpenBook.Topic;
+package Project.OpenBook.Topic.Service;
 
 import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Topic.Repo.TopicRepository;

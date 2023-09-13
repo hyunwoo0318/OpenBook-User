@@ -1,4 +1,4 @@
-package Project.OpenBook.Topic;
+package Project.OpenBook.Topic.Service;
 
 import Project.OpenBook.Chapter.Domain.Chapter;
 import Project.OpenBook.Constants.StateConst;
@@ -8,15 +8,15 @@ import Project.OpenBook.Dto.description.DescriptionDto;
 import Project.OpenBook.Dto.keyword.KeywordDto;
 import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
 import Project.OpenBook.Dto.sentence.SentenceDto;
-import Project.OpenBook.Topic.Controller.dto.TopicNumberDto;
+import Project.OpenBook.Topic.Service.dto.TopicNumberDto;
 import Project.OpenBook.Repository.customer.CustomerRepository;
 import Project.OpenBook.Repository.primarydate.PrimaryDateRepository;
 import Project.OpenBook.Repository.topicprogress.TopicProgressRepository;
-import Project.OpenBook.Topic.Controller.dto.TopicWithKeywordSentenceDto;
+import Project.OpenBook.Topic.Service.dto.TopicWithKeywordSentenceDto;
 import Project.OpenBook.Topic.Domain.Topic;
 import Project.OpenBook.Utils.CustomException;
 import Project.OpenBook.Domain.*;
-import Project.OpenBook.Topic.Controller.dto.TopicDetailDto;
+import Project.OpenBook.Topic.Service.dto.TopicDetailDto;
 import Project.OpenBook.Repository.category.CategoryRepository;
 import Project.OpenBook.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Topic.Repo.TopicRepository;
@@ -44,9 +44,6 @@ public class TopicService {
     private final TopicProgressRepository topicProgressRepository;
     private final TopicValidator topicValidator;
 
-    public Topic queryTopic(String topicTitle) {
-        return topicValidator.checkTopic(topicTitle);
-    }
 
     public Topic queryTopicWithCategoryChapter(String topicTitle) {
         return topicRepository.queryTopicWithCategoryChapter(topicTitle).orElseThrow(() -> {
@@ -61,7 +58,7 @@ public class TopicService {
     }
 
     @Transactional
-    public Topic createTopic(TopicDetailDto topicDetailDto) {
+    public void createTopic(TopicDetailDto topicDetailDto) {
 
         Category category = checkCategory(topicDetailDto.getCategory());
         Chapter chapter = checkChapter(topicDetailDto.getChapter());
@@ -93,8 +90,6 @@ public class TopicService {
 
         //주제학습 레코드 생성
         updateTopicProgress(topic);
-
-        return topic;
     }
 
     private void updateTopicProgress(Topic topic) {
@@ -106,7 +101,7 @@ public class TopicService {
 
 
     @Transactional
-    public Topic updateTopic(String topicTitle, TopicDetailDto topicDetailDto) {
+    public void updateTopic(String topicTitle, TopicDetailDto topicDetailDto) {
         Topic topic = topicValidator.checkTopic(topicTitle);
         String inputTitle = topicDetailDto.getTitle();
 
@@ -132,12 +127,10 @@ public class TopicService {
                 .map(d -> new PrimaryDate(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment(), topic))
                 .collect(Collectors.toList());
         primaryDateRepository.saveAll(primaryDateList);
-
-        return topic;
     }
 
     @Transactional
-    public boolean deleteTopic(String topicTitle) {
+    public void deleteTopic(String topicTitle) {
         Topic findTopic = queryTopicWithCategoryChapter(topicTitle);
 
         List<Choice> choiceList = findTopic.getChoiceList();
@@ -163,8 +156,6 @@ public class TopicService {
         primaryDateRepository.deleteAllInBatch(primaryDateList);
 
         topicRepository.delete(findTopic);
-
-        return true;
     }
 
     private Chapter checkChapter(int num) {
@@ -178,7 +169,7 @@ public class TopicService {
             throw new CustomException(CATEGORY_NOT_FOUND);
         });
     }
-    @Transactional(rollbackFor = {Exception.class})
+    @Transactional
     public void updateTopicNumber(List<TopicNumberDto> topicNumberDtoList) {
         for (TopicNumberDto topicNumberDto : topicNumberDtoList) {
             Topic topic = topicValidator.checkTopic(topicNumberDto.getTitle());
@@ -186,41 +177,5 @@ public class TopicService {
         }
     }
 
-    @Transactional(readOnly = true)
-    public TopicDetailDto queryTopicsAdmin(String topicTitle) {
-        return new TopicDetailDto(queryTopicWithCategoryChapter(topicTitle));
-    }
 
-    @Transactional(readOnly = true)
-    public TopicWithKeywordSentenceDto queryTopicsCustomer(String topicTitle) {
-        return new TopicWithKeywordSentenceDto(queryTopicWithCategory(topicTitle));
-    }
-
-    @Transactional(readOnly = true)
-    public List<KeywordDto> queryTopicKeywords(String topicTitle) {
-        return queryTopic(topicTitle).getKeywordList().stream()
-                .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId()))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<SentenceDto> queryTopicSentences(String topicTitle) {
-        return queryTopic(topicTitle).getSentenceList().stream()
-                .map(s -> new SentenceDto(s.getName(), s.getId()))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<DescriptionDto> queryTopicDescriptions(String topicTitle) {
-        return  queryTopic(topicTitle).getDescriptionList().stream()
-                .map(d -> new DescriptionDto(d.getId(), d.getContent()))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<ChoiceDto> queryTopicChoices(String topicTitle) {
-        return queryTopic(topicTitle).getChoiceList().stream()
-                .map(c -> new ChoiceDto(c.getContent(), c.getId()))
-                .collect(Collectors.toList());
-    }
 }

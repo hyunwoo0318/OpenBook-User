@@ -1,4 +1,4 @@
-package Project.OpenBook.Topic.Controller.dto;
+package Project.OpenBook.Topic.Service.dto;
 
 import Project.OpenBook.Dto.primaryDate.PrimaryDateDto;
 import Project.OpenBook.Topic.Domain.Topic;
