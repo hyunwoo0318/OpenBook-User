@@ -8,11 +8,7 @@ import java.util.Optional;
 
 public interface SentenceRepositoryCustom {
 
-    public Optional<Sentence> querySentenceByContentInTopic(String name, String topicTitle);
-
-    public List<Sentence> queryByTopicTitle(String topicTitle);
-
     public List<Sentence> queryByTopicTitle(String topicTitle, int limit);
 
-    public List<Tuple> queryWrongSentences(String answerTopicTitle, int limit);
+    public List<Sentence> queryWrongSentences(String answerTopicTitle, int limit);
 }

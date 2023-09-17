@@ -53,7 +53,7 @@ public class ExamQuestionService {
                 .map(c -> new QuestionChoiceDto(c.getContent(), c.getComment(), c.getTopic().getTitle(), c.getId()))
                 .collect(Collectors.toList());
 
-        if (!choiceList.isEmpty()) {
+        if (!choiceDtoList.isEmpty()) {
             type = choiceList.get(0).getType();
         }
 

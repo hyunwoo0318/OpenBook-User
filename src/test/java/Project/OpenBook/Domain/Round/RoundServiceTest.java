@@ -1,4 +1,4 @@
-package Project.OpenBook.Round;
+package Project.OpenBook.Domain.Round;
 
 import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Category.Repository.CategoryRepository;

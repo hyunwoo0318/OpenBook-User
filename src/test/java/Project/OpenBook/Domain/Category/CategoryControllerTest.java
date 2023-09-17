@@ -1,4 +1,4 @@
-package Project.OpenBook.Controller;
+package Project.OpenBook.Domain.Category;
 
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Category.Domain.Category;

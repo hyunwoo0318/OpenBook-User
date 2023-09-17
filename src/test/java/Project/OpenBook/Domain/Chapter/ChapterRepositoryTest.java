@@ -1,4 +1,4 @@
-package Project.OpenBook.Chapter;
+package Project.OpenBook.Domain.Chapter;
 
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
@@ -34,8 +34,6 @@ public class ChapterRepositoryTest {
     CustomerRepository customerRepository;
     @Autowired
     ChapterSectionRepository chapterSectionRepository;
-    @Autowired
-    TestEntityManager entityManager;
 
     @Nested
     @DisplayName("queryMaxChapterNum() 메서드는")

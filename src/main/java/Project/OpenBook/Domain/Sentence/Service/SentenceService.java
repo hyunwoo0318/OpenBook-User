@@ -24,20 +24,30 @@ public class SentenceService {
     private final TopicRepository topicRepository;
 
     @Transactional
-    public void createSentence(SentenceCreateDto sentenceCreateDto) {
+    public Sentence createSentence(SentenceCreateDto sentenceCreateDto) {
         Topic topic = topicRepository.findTopicByTitle(sentenceCreateDto.getTopic()).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
 
         Sentence sentence = new Sentence(sentenceCreateDto.getName(), topic);
         sentenceRepository.save(sentence);
+        return sentence;
     }
 
     @Transactional
-    public void updateSentence(Long sentenceId,SentenceUpdateDto sentenceUpdateDto) {
+    public Sentence updateSentence(Long sentenceId,SentenceUpdateDto sentenceUpdateDto) {
         Sentence sentence = checkSentence(sentenceId);
 
         sentence.updateSentence(sentenceUpdateDto.getName());
+        return sentence;
+    }
+
+
+    @Transactional
+    public boolean deleteSentence(Long sentenceId) {
+        Sentence sentence = checkSentence(sentenceId);
+        sentenceRepository.delete(sentence);
+        return true;
     }
 
     private Sentence checkSentence(Long sentenceId) {
@@ -46,9 +56,4 @@ public class SentenceService {
         });
     }
 
-    public void deleteSentence(Long sentenceId) {
-        Sentence sentence = checkSentence(sentenceId);
-        sentenceRepository.delete(sentence);
-
-    }
 }

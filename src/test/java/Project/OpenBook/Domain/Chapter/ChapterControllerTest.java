@@ -1,4 +1,4 @@
-package Project.OpenBook.Chapter;
+package Project.OpenBook.Domain.Chapter;
 
 
 import Project.OpenBook.Constants.ChoiceConst;
@@ -113,7 +113,7 @@ class ChapterControllerTest {
     private ExamQuestion eq;
     private Customer customer1, customer2;
 
-    private final int chapterNum = 1;
+    private final int chapterNum = 111;
     private final String prefix = "http://localhost:";
     private String suffix;
 
@@ -226,8 +226,7 @@ class ChapterControllerTest {
             baseSetting();
             ch2 = new Chapter("ch2", 2);
             ch3 = new Chapter("ch3", 3);
-            ch4 = new Chapter("ch4", 4);
-            chapterRepository.saveAll(Arrays.asList(ch2, ch3, ch4));
+            chapterRepository.saveAll(Arrays.asList(ch2, ch3));
 
             /**
              * ch2 -> 완료
@@ -253,21 +252,22 @@ class ChapterControllerTest {
             List<ChapterUserDto> body = response.getBody();
             assertThat(body.size()).isEqualTo(chapterRepository.findAll().size());
 
-            //1단원
-            ChapterUserDto chapter1Dto
-                    = new ChapterUserDto(ch1.getTitle(), ch1.getNumber(), OPEN.getName(), COMPLETE.getName() );
-            assertThat(body.get(0)).usingRecursiveComparison().isEqualTo(chapter1Dto);
+
 
             //2단원
             ChapterUserDto chapter2Dto
                     = new ChapterUserDto(ch2.getTitle(), ch2.getNumber(),  OPEN.getName(), TIME_FLOW_STUDY.getName() );
-            assertThat(body.get(1)).usingRecursiveComparison().isEqualTo(chapter2Dto);
+            assertThat(body.get(0)).usingRecursiveComparison().isEqualTo(chapter2Dto);
 
             //3딘원
             ChapterUserDto chapter3Dto
                     = new ChapterUserDto(ch3.getTitle(), ch3.getNumber(), LOCKED.getName(),  NOT_STARTED.getName() );
-            assertThat(body.get(2)).usingRecursiveComparison().isEqualTo(chapter3Dto);
+            assertThat(body.get(1)).usingRecursiveComparison().isEqualTo(chapter3Dto);
 
+            //111단원
+            ChapterUserDto chapter1Dto
+                    = new ChapterUserDto(ch1.getTitle(), ch1.getNumber(), OPEN.getName(), COMPLETE.getName() );
+            assertThat(body.get(2)).usingRecursiveComparison().isEqualTo(chapter1Dto);
 
 
         }
@@ -380,7 +380,7 @@ class ChapterControllerTest {
 
             ResponseEntity<List<ProgressDto>> response = restTemplate
                     .withBasicAuth("customer1", "customer1")
-                    .exchange(URL + "?num=1", HttpMethod.GET, null, new ParameterizedTypeReference<List<ProgressDto>>() {});
+                    .exchange(URL + "?num=" + chapterNum, HttpMethod.GET, null, new ParameterizedTypeReference<List<ProgressDto>>() {});
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             List<ProgressDto> body = response.getBody();
@@ -436,7 +436,7 @@ class ChapterControllerTest {
         public void queryChaptersSuccess() {
             ResponseEntity<ChapterTitleDto> response = restTemplate
                     .withBasicAuth("customer1", "customer1")
-                    .getForEntity(URL + "?num=1", ChapterTitleDto.class);
+                    .getForEntity(URL + "?num=" + chapterNum, ChapterTitleDto.class);
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
             assertThat(response.getBody().getTitle()).isEqualTo("ch1");
@@ -608,7 +608,7 @@ class ChapterControllerTest {
         public void queryChapterTopicsAdminSuccess() {
             ResponseEntity<List<ChapterTopicWithCountDto>> response = restTemplate
                     .withBasicAuth("customer1", "customer1")
-                    .exchange(URL + "1/topics", HttpMethod.GET, null,
+                    .exchange(URL + chapterNum + "/topics", HttpMethod.GET, null,
                     new ParameterizedTypeReference<List<ChapterTopicWithCountDto>>() {
             });
             List<ChapterTopicWithCountDto> body = response.getBody();
@@ -664,7 +664,7 @@ class ChapterControllerTest {
         public void queryChapterTopicsCustomerSuccess() {
             ResponseEntity<List<ChapterTopicUserDto>> response = restTemplate
                     .withBasicAuth("customer1", "customer1")
-                    .exchange(URL + "1/topics", HttpMethod.GET, null,
+                    .exchange(URL + chapterNum + "/topics", HttpMethod.GET, null,
                     new ParameterizedTypeReference<List<ChapterTopicUserDto>>() {
                     });
             List<ChapterTopicUserDto> body = response.getBody();
@@ -827,7 +827,7 @@ class ChapterControllerTest {
         @Test
         public void createChapterFailDupNum() {
              //중복된 단원번호를 입력한 경우
-            ChapterAddUpdateDto wrongDto = new ChapterAddUpdateDto("title123", 1, 123, 456);
+            ChapterAddUpdateDto wrongDto = new ChapterAddUpdateDto("title123", chapterNum, 123, 456);
 
             ResponseEntity<List<ErrorMsgDto>> response = restTemplate
                     .withBasicAuth("customer1", "customer1")
@@ -999,7 +999,7 @@ class ChapterControllerTest {
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_NOT_FOUND.getErrorMessage())));
 
-            assertThat(chapterRepository.findOneByNumber(1).isPresent()).isTrue();
+            assertThat(chapterRepository.findOneByNumber(chapterNum).isPresent()).isTrue();
             assertThat(chapterRepository.findAll().size()).isEqualTo(prevSize);
         }
 
@@ -1015,7 +1015,7 @@ class ChapterControllerTest {
            assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(Arrays.asList(new ErrorMsgDto(CHAPTER_HAS_TOPIC.getErrorMessage())));
 
-            assertThat(chapterRepository.findOneByNumber(1).isPresent()).isTrue();
+            assertThat(chapterRepository.findOneByNumber(chapterNum).isPresent()).isTrue();
             assertThat(chapterRepository.findAll().size()).isEqualTo(prevSize);
         }
 

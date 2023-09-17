@@ -94,6 +94,10 @@ public class Topic extends BaseEntity {
         this.chapter = chapter;
     }
 
+    public Topic(String title) {
+        this.title = title;
+    }
+
     public Topic updateTopic(String title, Integer startDate, Integer endDate, Boolean startDateCheck, Boolean endDateCheck,
                              String detail, Chapter chapter, Category category) {
         this.title = title;

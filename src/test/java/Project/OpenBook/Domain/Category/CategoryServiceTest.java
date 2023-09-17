@@ -1,4 +1,4 @@
-package Project.OpenBook.Category;
+package Project.OpenBook.Domain.Category;
 
 import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
