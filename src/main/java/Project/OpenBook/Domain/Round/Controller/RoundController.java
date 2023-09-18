@@ -44,7 +44,7 @@ public class RoundController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 회차 조회 성공")
     })
-    @GetMapping("/rounds/{number}/questions")
+    @GetMapping("/admin/rounds/{number}/questions")
     public ResponseEntity<List<Integer>> getRounds(@PathVariable("number") Integer number) {
         List<Integer> dtoList = roundService.queryRoundQuestions(number);
         return new ResponseEntity<List<Integer>>(dtoList, HttpStatus.OK);

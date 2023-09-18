@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 public class KeywordDto {
 
     private String name;
-
     private String comment;
     private String file;
-
     private Long id;
 }

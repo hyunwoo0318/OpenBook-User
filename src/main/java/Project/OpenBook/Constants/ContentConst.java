@@ -4,7 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @AllArgsConstructor
@@ -27,5 +29,16 @@ public enum ContentConst {
 
     public static List<String> getTopicContent() {
         return Arrays.asList(TOPIC_STUDY.getName());
+    }
+
+    public static Map<String, Integer> getNameOrderMap() {
+        Map<String, Integer> map = new HashMap<>();
+        map.put(TOPIC_STUDY.name, TOPIC_STUDY.order);
+        map.put(CHAPTER_INFO.name, CHAPTER_INFO.order);
+        map.put(TIME_FLOW_STUDY.name, TIME_FLOW_STUDY.order);
+        map.put(TOPIC_STUDY.name, TOPIC_STUDY.order);
+        map.put(CHAPTER_COMPLETE_QUESTION.name, CHAPTER_COMPLETE_QUESTION.order);
+        map.put(COMPLETE.name, COMPLETE.order);
+        return map;
     }
 }

@@ -58,11 +58,10 @@ public class SecurityConfig {
                 .formLogin().disable()
                 .userDetailsService(customerService)
                 .authorizeRequests()
-//                .antMatchers("**").permitAll()
-                .antMatchers(permitAllList).permitAll()
-//                .antMatchers("/admin/**").hasAnyRole("ADMIN")
-                .antMatchers("/admin/**").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/**").hasAnyRole("USER", "ADMIN")
+                .antMatchers("**").permitAll()
+//                .antMatchers(permitAllList).permitAll()
+//                .antMatchers("/admin/**").hasAnyRole("USER", "ADMIN")
+//                .antMatchers("/**").hasAnyRole("USER", "ADMIN")
                 .anyRequest().authenticated()
                 .and().httpBasic().and().
                 exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)).and().

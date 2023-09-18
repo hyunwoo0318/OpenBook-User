@@ -7,10 +7,10 @@ import java.util.Optional;
 
 public interface ExamQuestionRepositoryCustom {
 
-    public Optional<ExamQuestion> queryExamQuestion(Integer roundNumber, Integer examNumber);
+    public Optional<ExamQuestion> queryExamQuestion(Integer roundNumber, Integer questionNumber);
 
-    public Optional<ExamQuestion> queryExamQuestionWithDescription(Integer roundNumber, Integer examNumber);
+    public Optional<ExamQuestion> queryExamQuestionWithDescription(Integer roundNumber, Integer questionNumber);
 
-    public List<ExamQuestion> queryExamQuestions(Integer roundNumber);
+    public List<ExamQuestion> queryExamQuestionsWithDescriptionAndTopic(Integer roundNumber);
 
 }

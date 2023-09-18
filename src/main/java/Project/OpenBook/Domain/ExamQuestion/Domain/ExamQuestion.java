@@ -35,14 +35,19 @@ public class ExamQuestion extends BaseEntity {
     @OneToOne(mappedBy = "examQuestion")
     private Description description;
 
-    public ExamQuestion(Round round, Integer number, Integer score) {
+    //TODO : ENUM으로 변환
+    private String choiceType;
+
+    public ExamQuestion(Round round, Integer number, Integer score, String choiceType) {
         this.round = round;
         this.number = number;
         this.score = score;
+        this.choiceType = choiceType;
     }
 
-    public void updateExamQuestion(Integer number, Integer score) {
+    public void updateExamQuestion(Integer number, Integer score, String choiceType) {
         this.number = number;
         this.score = score;
+        this.choiceType = choiceType;
     }
 }

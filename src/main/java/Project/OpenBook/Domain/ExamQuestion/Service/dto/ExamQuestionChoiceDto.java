@@ -10,12 +10,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ExamQuestionDto {
-    private Integer number;
-    private String description;
-    private String descriptionComment;
-    private String answer;
-    private String choiceType;
-    private Integer score;
+public class ExamQuestionChoiceDto {
+
     private List<QuestionChoiceDto> choiceList;
 }

@@ -45,7 +45,7 @@ public class KeywordService {
         checkDupKeyword(name, topicTitle);
 
         //이미지 저장
-        if(!encodedFile.isBlank()){
+        if(encodedFile != null && !encodedFile.isBlank()){
             imageService.checkBase64(encodedFile);
             imageUrl = imageService.storeFile(encodedFile);
         }
@@ -77,8 +77,10 @@ public class KeywordService {
         }
 
         //이미지 수정
-        imageService.checkBase64(encodedFile);
-        newImageUrl = imageService.storeFile(encodedFile);
+        if(encodedFile != null && !encodedFile.isBlank() &&!encodedFile.startsWith("https")){
+            imageService.checkBase64(encodedFile);
+            newImageUrl = imageService.storeFile(encodedFile);
+        }
 
 
         //키워드 수정

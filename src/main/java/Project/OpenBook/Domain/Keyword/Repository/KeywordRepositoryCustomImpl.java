@@ -31,13 +31,6 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
     }
 
     @Override
-    public List<Keyword> queryKeywordsInTopic(String topicTitle) {
-        return queryFactory.selectFrom(keyword)
-                .where(keyword.topic.title.eq(topicTitle))
-                .fetch();
-    }
-
-    @Override
     public List<Keyword> queryKeywordsInTopicWithLimit(String topicTitle, int limit) {
         return queryFactory.selectFrom(keyword)
                 .where(keyword.topic.title.eq(topicTitle))

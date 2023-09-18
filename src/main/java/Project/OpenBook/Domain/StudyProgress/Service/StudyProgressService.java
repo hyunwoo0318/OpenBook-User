@@ -21,7 +21,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 import static Project.OpenBook.Constants.ContentConst.*;
@@ -74,8 +76,10 @@ public class StudyProgressService {
             ChapterSection chapterSection = checkChapterSection(customer, chapter, state, content);
 
             chapterSection.updateState(state);
-            chapterProgress.updateProgress(content);
-
+            boolean ret = hasToUpdate(chapterProgress.getProgress(), content);
+            if (ret) {
+                chapterProgress.updateProgress(content);
+            }
 
             //다음 단원 학습을 open할 경우 이전 단원을 complete로 설정
             if (content.equals(CHAPTER_INFO.getName()) && chapterNum > 1) {
@@ -93,7 +97,50 @@ public class StudyProgressService {
             TopicProgress topicProgress = checkTopicProgress(customer, topic);
             ChapterProgress chapterProgress = checkChapterProgress(customer, chapter);
             topicProgress.updateState(state);
-            chapterProgress.updateProgress(title);
+            boolean ret = hasToUpdate(chapterProgress.getProgress(), title);
+            if (ret) {
+                chapterProgress.updateProgress(content);
+            }
+        }
+    }
+
+    private boolean hasToUpdate(String prevProgress, String newProgress) {
+        List<String> chapterContentList = ContentConst.getChapterContent();
+        Map<String, Integer> map = getNameOrderMap();
+        /**
+         * 새로운 progress와 기존의 progress가 단원학습, 연표학습, 단원 마무리 문제, 완료일 경우
+         * -> order 비교
+         */
+        if (chapterContentList.contains(newProgress) && chapterContentList.contains(prevProgress)) {
+            if (map.get(newProgress) > map.get(prevProgress)) {
+                return true;
+            }else{
+                return false;
+            }
+        }
+        /**
+         * 새로운 progresss는 단원학습, 연표학습, 단원마무리 문제이지만 기존 progress는 주제학습일 경우
+         * newProgress가 단원마무리문제이면 갱신 단원학습, 연표학습이면 갱신X
+         */
+        if (chapterContentList.contains(newProgress) && !chapterContentList.contains(prevProgress)) {
+            if (newProgress.equals(CHAPTER_COMPLETE_QUESTION.getName())) {
+                return true;
+            }else{
+                return false;
+            }
+        }
+        /**
+         * 기존, 새로운 progress가 모두 주제학습인경우
+         * 두개의 주제번호를 따져서 newProgress의 주제번호가 높으면 갱신
+         */
+        else{
+            Topic newTopic = checkTopic(newProgress);
+            Topic prevTopic = checkTopic(prevProgress);
+            if (newTopic.getNumber() > prevTopic.getNumber()) {
+                return true;
+            }else{
+                return false;
+            }
         }
     }
 

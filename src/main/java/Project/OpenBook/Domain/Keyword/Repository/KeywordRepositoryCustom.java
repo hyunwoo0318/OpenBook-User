@@ -18,13 +18,6 @@ public interface KeywordRepositoryCustom {
     public Optional<Keyword> queryByNameInTopic(String keywordName, String topicTitle);
 
     /**
-     * 특정 주제 내의 모든 키워드를 쿼리하는 메서드
-     * @param topicTitle 특정 주제의 제목
-     * @return 전체 키워드 값을 리스트로 리턴
-     */
-    public List<Keyword> queryKeywordsInTopic(String topicTitle);
-
-    /**
      * 특정 주제 내의 모든 키워드를 limit 개수만큼 쿼리하는 메서드
      * @param topicTitle 특정 주제의 제목
      * @param limit 쿼리할 키워드의 최대개수
@@ -32,8 +25,6 @@ public interface KeywordRepositoryCustom {
      * limit보다 특정 주제내의 모든 키워드의 개수가 크면 limit개수만큼 키워드를 리턴한다.
      */
     public List<Keyword> queryKeywordsInTopicWithLimit(String topicTitle, int limit);
-//
-//    public List<Keyword> queryKeywordsList(List<String> keywordNameList);
 
     /**
      * 정답 주제를 제외한 나머지 주제에서 limit만큼 키워드정보를 쿼리하는 메서드
