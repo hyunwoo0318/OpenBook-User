@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.Chapter;
 
 
-import Project.OpenBook.Constants.ChoiceConst;
+import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Service.dto.*;
@@ -582,7 +582,7 @@ class ChapterControllerTest {
             r1 = new Round(123, 1);
             roundRepository.save(r1);
 
-            eq = new ExamQuestion(r1, 10, 2);
+            eq = new ExamQuestion(r1, 10, 2, ChoiceType.String);
             examQuestionRepository.save(eq);
 
             //t1에 키워드, 선지, 보기를 각각 2개씩 추가
@@ -591,8 +591,8 @@ class ChapterControllerTest {
             keywordRepository.save(k1);
             keywordRepository.save(k2);
 
-            Choice choice1 = new Choice(ChoiceConst.CHOICE_STRING,"choice1", "comment1", t1,eq );
-            Choice choice2 = new Choice(ChoiceConst.CHOICE_STRING,"choice2", "comment2", t1, eq);
+            Choice choice1 = new Choice(ChoiceType.String,"choice1", "comment1", t1,eq );
+            Choice choice2 = new Choice(ChoiceType.String,"choice2", "comment2", t1, eq);
             choiceRepository.save(choice1);
             choiceRepository.save(choice2);
 

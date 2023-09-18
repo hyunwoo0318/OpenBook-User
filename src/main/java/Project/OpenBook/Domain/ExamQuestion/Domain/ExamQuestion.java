@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.ExamQuestion.Domain;
 
+import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
@@ -35,17 +36,17 @@ public class ExamQuestion extends BaseEntity {
     @OneToOne(mappedBy = "examQuestion")
     private Description description;
 
-    //TODO : ENUM으로 변환
-    private String choiceType;
+    @Enumerated(EnumType.STRING)
+    private ChoiceType choiceType;
 
-    public ExamQuestion(Round round, Integer number, Integer score, String choiceType) {
+    public ExamQuestion(Round round, Integer number, Integer score, ChoiceType choiceType) {
         this.round = round;
         this.number = number;
         this.score = score;
         this.choiceType = choiceType;
     }
 
-    public void updateExamQuestion(Integer number, Integer score, String choiceType) {
+    public void updateExamQuestion(Integer number, Integer score, ChoiceType choiceType) {
         this.number = number;
         this.score = score;
         this.choiceType = choiceType;

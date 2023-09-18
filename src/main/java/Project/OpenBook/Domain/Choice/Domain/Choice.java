@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Choice.Domain;
 
+import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -22,7 +23,8 @@ public class Choice extends BaseEntity {
 
     private String comment;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private ChoiceType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
@@ -32,7 +34,7 @@ public class Choice extends BaseEntity {
     @JoinColumn(name = "exam_question_id")
     private ExamQuestion examQuestion;
 
-    public Choice(String type,String content, String comment, Topic topic, ExamQuestion examQuestion) {
+    public Choice(ChoiceType type,String content, String comment, Topic topic, ExamQuestion examQuestion) {
         this.type = type;
         this.content = content;
         this.comment = comment;

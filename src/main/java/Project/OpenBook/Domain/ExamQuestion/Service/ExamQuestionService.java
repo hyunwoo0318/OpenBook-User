@@ -1,6 +1,6 @@
 package Project.OpenBook.Domain.ExamQuestion.Service;
 
-import Project.OpenBook.Constants.ChoiceConst;
+import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ChoiceAddUpdateDto;
@@ -24,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -43,14 +45,16 @@ public class ExamQuestionService {
     @Transactional(readOnly = true)
     public ExamQuestionInfoDto getExamQuestionInfo(Integer roundNumber, Integer questionNumber) {
 
-        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescription(roundNumber, questionNumber).orElseThrow(() -> {
+        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescriptionAndTopic(roundNumber, questionNumber).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
 
         Description description = examQuestion.getDescription();
 
+        ChoiceType choiceType = examQuestion.getChoiceType();
+
         return new ExamQuestionInfoDto(examQuestion.getNumber(), description.getContent(), description.getComment(),
-                description.getTopic().getTitle(),examQuestion.getChoiceType(),examQuestion.getScore());
+                description.getTopic().getTitle(),choiceType.name(),examQuestion.getScore());
     }
 
     @Transactional(readOnly = true)
@@ -65,7 +69,7 @@ public class ExamQuestionService {
                     .map(ch -> new QuestionChoiceDto(ch.getContent(), ch.getComment(), ch.getTopic().getTitle(), ch.getId()))
                     .collect(Collectors.toList());
             ExamQuestionDto dto = new ExamQuestionDto(examQuestion.getNumber(), examQuestion.getDescription().getContent(), examQuestion.getDescription().getComment(),
-                    topicTitle, examQuestion.getChoiceType(), examQuestion.getScore(), choiceDtoList);
+                    topicTitle, examQuestion.getChoiceType().name(), examQuestion.getScore(), choiceDtoList);
 
             examQuestionDtoList.add(dto);
         }
@@ -89,9 +93,12 @@ public class ExamQuestionService {
 
         String answer = examQuestionInfoDto.getAnswer();
         Integer questionNumber = examQuestionInfoDto.getNumber();
-        String choiceType = examQuestionInfoDto.getChoiceType();
+        String inputChoiceType = examQuestionInfoDto.getChoiceType();
 
-        //해당 회차에 해당 번호를 가진 문제가 존재하는 경우
+        //입력받은 choiceType이 옳은 형식인지 확인
+        ChoiceType choiceType = checkChoiceType(inputChoiceType);
+
+        //해당 회차에 해당 번호를 가진 문제가 이미 존재하는지 확인
         checkDupQuestionNumber(roundNumber, questionNumber);
 
 
@@ -116,7 +123,7 @@ public class ExamQuestionService {
     @Transactional
     public void saveExamQuestionChoice(Integer roundNumber, Integer questionNumber, ChoiceAddUpdateDto dto) throws IOException {
         Round round = checkRound(roundNumber);
-        String choiceType = dto.getChoiceType();
+        String inputChoiceType = dto.getChoiceType();
 
         //examQuestion 조회
         ExamQuestion examQuestion = checkExamQuestion(roundNumber, questionNumber);
@@ -124,13 +131,16 @@ public class ExamQuestionService {
         //입력 받은 주제 제목들이 DB에 존재하는 주제 제목인지 확인
         Topic answerTopic = checkTopic(dto.getKey());
 
+        //입력받은 choiceType이 옳은 형식인지 확인
+        ChoiceType choiceType = checkChoiceType(inputChoiceType);
+
         //선지 저장
-        if(choiceType.equals(ChoiceConst.CHOICE_STRING)){
+        if(choiceType.equals(ChoiceType.String)){
             Choice choice = new Choice(choiceType, dto.getChoice(), dto.getComment(), answerTopic, examQuestion);
             choiceRepository.save(choice);
         }
         //선지 전체 저장(이미지)
-        else if(choiceType.equals(ChoiceConst.CHOICE_IMAGE)){
+        else if(choiceType.equals(ChoiceType.Image)){
             String encodedFile = dto.getChoice();
             imageService.checkBase64(encodedFile);
             String choiceUrl = imageService.storeFile(encodedFile);
@@ -147,17 +157,20 @@ public class ExamQuestionService {
     public void updateExamQuestion(Integer roundNumber, Integer questionNumber, ExamQuestionInfoDto examQuestionInfoDto) throws IOException {
         checkRound(roundNumber);
         Integer newQuestionNumber = examQuestionInfoDto.getNumber();
-        String newChoiceType = examQuestionInfoDto.getChoiceType();
+        String inputChoiceType = examQuestionInfoDto.getChoiceType();
 
-        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescription(roundNumber, questionNumber).orElseThrow(() -> {
+        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescriptionAndTopic(roundNumber, questionNumber).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
+
+        //입력받은 choiceType이 옳은 형식인지 확인
+        ChoiceType choiceType = checkChoiceType(inputChoiceType);
 
         //문제번호, 점수 변경
         if (!questionNumber.equals(newQuestionNumber)) {
             checkDupQuestionNumber(roundNumber, newQuestionNumber);
         }
-        examQuestion.updateExamQuestion(newQuestionNumber, examQuestionInfoDto.getScore(), newChoiceType);
+        examQuestion.updateExamQuestion(newQuestionNumber, examQuestionInfoDto.getScore(), choiceType);
 
         //보기 변경
         Description description = examQuestion.getDescription();
@@ -173,7 +186,7 @@ public class ExamQuestionService {
     public void deleteExamQuestion(Integer roundNumber, Integer questionNumber) {
         Round round = checkRound(roundNumber);
 
-        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescription(roundNumber, questionNumber).orElseThrow(() -> {
+        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescriptionAndTopic(roundNumber, questionNumber).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
 
@@ -208,6 +221,16 @@ public class ExamQuestionService {
         return examQuestionRepository.queryExamQuestion(roundNumber, questionNumber).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
+    }
+
+    private ChoiceType checkChoiceType(String inputChoiceType){
+        //입력받은 choiceType이 옳은 형식인지 확인
+        Map<String, ChoiceType> map = ChoiceType.getChoiceTypeNameMap();
+        ChoiceType choiceType = map.get(inputChoiceType);
+        if(choiceType == null){
+            throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
+        }
+        return choiceType;
     }
 
 

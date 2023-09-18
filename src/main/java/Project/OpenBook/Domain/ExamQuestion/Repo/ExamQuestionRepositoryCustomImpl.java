@@ -32,9 +32,10 @@ public class ExamQuestionRepositoryCustomImpl implements ExamQuestionRepositoryC
     }
 
     @Override
-    public Optional<ExamQuestion> queryExamQuestionWithDescription(Integer roundNumber, Integer questionNumber) {
+    public Optional<ExamQuestion> queryExamQuestionWithDescriptionAndTopic(Integer roundNumber, Integer questionNumber) {
         ExamQuestion findExamQuestion = queryFactory.selectFrom(examQuestion)
-                .leftJoin(description).on(examQuestion.description.eq(description))
+                .leftJoin(examQuestion.description,description).fetchJoin()
+                .join(description.topic, topic).fetchJoin()
                 .where(examQuestion.round.number.eq(roundNumber))
                 .where(examQuestion.number.eq(questionNumber))
                 .fetchOne();
