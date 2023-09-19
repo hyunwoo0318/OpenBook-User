@@ -46,9 +46,10 @@ public class ExamQuestion extends BaseEntity {
         this.choiceType = choiceType;
     }
 
-    public void updateExamQuestion(Integer number, Integer score, ChoiceType choiceType) {
+    public ExamQuestion updateExamQuestion(Integer number, Integer score, ChoiceType choiceType) {
         this.number = number;
         this.score = score;
         this.choiceType = choiceType;
+        return this;
     }
 }

@@ -34,10 +34,8 @@ public class ChapterServiceTest {
 
     @InjectMocks
     private ChapterService chapterService;
-
     @Mock
     private ChapterRepository chapterRepository;
-
     @Mock private ChapterValidator chapterValidator;
 
     @Nested
@@ -57,8 +55,6 @@ public class ChapterServiceTest {
             public void saveChapterAndReturn() {
                 //given
                 Chapter chapter = new Chapter(chapterNum, chapterTitle, startDate, endDate);
-                given(chapterRepository.save(any()))
-                        .willReturn(chapter);
 
                 //when
                 Chapter findChapter = chapterService.createChapter(new ChapterAddUpdateDto(chapterTitle, chapterNum, startDate, endDate));

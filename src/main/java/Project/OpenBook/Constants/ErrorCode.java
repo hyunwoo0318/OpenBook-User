@@ -68,8 +68,13 @@ public enum ErrorCode {
     DUP_ROUND_NUMBER(HttpStatus.CONFLICT, "중복된 회차 번호입니다."),
     DUP_QUESTION_NUMBER(HttpStatus.CONFLICT, "중복된 문제 번호입니다."),
 
-    ;
 
+    /**
+     * 503 -  Service Unavailable
+     */
+    IMAGE_SAVE_FAIL(HttpStatus.SERVICE_UNAVAILABLE, "이미지 저장에 실패했습니다."),
+
+    ;
 
     private final HttpStatus statusCode;
     private final String errorMessage;

@@ -60,9 +60,8 @@ public class ChapterService {
         }
         Chapter chapter = chapterValidator.checkChapter(num);
 
-        Chapter updateChapter = chapter.updateChapter(chapterAddUpdateDto.getTitle(), chapterAddUpdateDto.getNumber(),
+        return chapter.updateChapter(chapterAddUpdateDto.getTitle(), chapterAddUpdateDto.getNumber(),
                 chapterAddUpdateDto.getStartDate(), chapterAddUpdateDto.getEndDate());
-        return updateChapter;
     }
 
     /**

@@ -12,7 +12,7 @@ import java.io.InputStream;
 import java.util.Base64;
 import java.util.UUID;
 
-import static Project.OpenBook.Constants.ErrorCode.IMAGE_NOT_FOUND;
+import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class ImageService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public String storeFile(String encodedFile) throws IOException {
+    public String storeFile(String encodedFile){
 
         String[] parts = encodedFile.split(",");
         String header = parts[0];
@@ -38,7 +38,12 @@ public class ImageService {
         String imageUrl = createPath(storedFileName);
 
         // 이미지 파일 저장
-        amazonS3Client.putObject(bucket, storedFileName, inputStream, null);
+        try {
+            amazonS3Client.putObject(bucket, storedFileName, inputStream, null);
+        } catch (Exception e) {
+            throw new CustomException(IMAGE_SAVE_FAIL);
+        }
+
 
         return imageUrl;
     }
@@ -63,22 +68,22 @@ public class ImageService {
 
     public void checkBase64(String encodedFile) {
         if (encodedFile == null || encodedFile.equals("")) {
-            throw new CustomException(IMAGE_NOT_FOUND);
+            throw new CustomException(NOT_VALIDATE_IMAGE);
         }
 
         try {
             String[] parts = encodedFile.split(",");
             if (parts.length != 2) {
-                throw new CustomException(IMAGE_NOT_FOUND);
+                throw new CustomException(NOT_VALIDATE_IMAGE);
             }
 
             String encodedImage = parts[1]; // "data:image/png;base64," 부분을 제외한 이미지 인코딩 값
             byte[] decode = Base64.getDecoder().decode(encodedImage);
             if (decode == null) {
-                throw new CustomException(IMAGE_NOT_FOUND);
+                throw new CustomException(NOT_VALIDATE_IMAGE);
             }
         } catch (Exception e) {
-            throw new CustomException(IMAGE_NOT_FOUND);
+            throw new CustomException(NOT_VALIDATE_IMAGE);
         }
     }
 }

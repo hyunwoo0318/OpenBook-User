@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,7 +38,6 @@ public class ExamQuestionService {
     private final TopicRepository topicRepository;
     private final DescriptionRepository descriptionRepository;
     private final ChoiceRepository choiceRepository;
-
     private final ImageService imageService;
 
     @Transactional(readOnly = true)
@@ -60,7 +58,7 @@ public class ExamQuestionService {
     @Transactional(readOnly = true)
     public List<ExamQuestionDto> getRoundQuestions(Integer roundNumber) {
         List<ExamQuestionDto> examQuestionDtoList = new ArrayList<>();
-        Round round = checkRound(roundNumber);
+        checkRound(roundNumber);
 
         List<ExamQuestion> examQuestionList = examQuestionRepository.queryExamQuestionsWithDescriptionAndTopic(roundNumber);
         for (ExamQuestion examQuestion : examQuestionList) {
@@ -88,7 +86,7 @@ public class ExamQuestionService {
     }
 
     @Transactional
-    public void saveExamQuestionInfo(Integer roundNumber, ExamQuestionInfoDto examQuestionInfoDto) throws IOException {
+    public ExamQuestion saveExamQuestionInfo(Integer roundNumber, ExamQuestionInfoDto examQuestionInfoDto) {
         Round round = checkRound(roundNumber);
 
         String answer = examQuestionInfoDto.getAnswer();
@@ -100,7 +98,6 @@ public class ExamQuestionService {
 
         //해당 회차에 해당 번호를 가진 문제가 이미 존재하는지 확인
         checkDupQuestionNumber(roundNumber, questionNumber);
-
 
         //입력 받은 주제 제목들이 DB에 존재하는 주제 제목인지 확인
         Topic answerTopic = checkTopic(answer);
@@ -117,48 +114,49 @@ public class ExamQuestionService {
                 answerTopic, examQuestion);
         descriptionRepository.save(description);
 
-
+        return examQuestion;
     }
 
     @Transactional
-    public void saveExamQuestionChoice(Integer roundNumber, Integer questionNumber, ChoiceAddUpdateDto dto) throws IOException {
-        Round round = checkRound(roundNumber);
+    public Choice saveExamQuestionChoice(Integer roundNumber, Integer questionNumber, ChoiceAddUpdateDto dto) throws IOException {
+        checkRound(roundNumber);
         String inputChoiceType = dto.getChoiceType();
 
         //examQuestion 조회
         ExamQuestion examQuestion = checkExamQuestion(roundNumber, questionNumber);
 
-        //입력 받은 주제 제목들이 DB에 존재하는 주제 제목인지 확인
-        Topic answerTopic = checkTopic(dto.getKey());
-
         //입력받은 choiceType이 옳은 형식인지 확인
         ChoiceType choiceType = checkChoiceType(inputChoiceType);
 
+        //입력 받은 주제 제목들이 DB에 존재하는 주제 제목인지 확인
+        Topic answerTopic = checkTopic(dto.getKey());
+
         //선지 저장
+        Choice choice = null;
         if(choiceType.equals(ChoiceType.String)){
-            Choice choice = new Choice(choiceType, dto.getChoice(), dto.getComment(), answerTopic, examQuestion);
+            choice = new Choice(choiceType, dto.getChoice(), dto.getComment(), answerTopic, examQuestion);
             choiceRepository.save(choice);
         }
-        //선지 전체 저장(이미지)
+        //선지 저장(이미지)
         else if(choiceType.equals(ChoiceType.Image)){
             String encodedFile = dto.getChoice();
             imageService.checkBase64(encodedFile);
             String choiceUrl = imageService.storeFile(encodedFile);
-            Choice choice = new Choice(choiceType, choiceUrl, dto.getComment(), answerTopic, examQuestion);
+            choice = new Choice(choiceType, choiceUrl, dto.getComment(), answerTopic, examQuestion);
             choiceRepository.save(choice);
-        }else{
-            throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
         }
+        return choice;
     }
 
 
 
     @Transactional
-    public void updateExamQuestion(Integer roundNumber, Integer questionNumber, ExamQuestionInfoDto examQuestionInfoDto) throws IOException {
+    public ExamQuestion updateExamQuestion(Integer roundNumber, Integer questionNumber, ExamQuestionInfoDto examQuestionInfoDto) throws IOException {
         checkRound(roundNumber);
         Integer newQuestionNumber = examQuestionInfoDto.getNumber();
         String inputChoiceType = examQuestionInfoDto.getChoiceType();
 
+        //해당 round에 해당 questionNumber를 가진 문제가 존재하는지 확인
         ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescriptionAndTopic(roundNumber, questionNumber).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
@@ -170,7 +168,7 @@ public class ExamQuestionService {
         if (!questionNumber.equals(newQuestionNumber)) {
             checkDupQuestionNumber(roundNumber, newQuestionNumber);
         }
-        examQuestion.updateExamQuestion(newQuestionNumber, examQuestionInfoDto.getScore(), choiceType);
+        ExamQuestion updatedExamQuestion = examQuestion.updateExamQuestion(newQuestionNumber, examQuestionInfoDto.getScore(), choiceType);
 
         //보기 변경
         Description description = examQuestion.getDescription();
@@ -180,11 +178,13 @@ public class ExamQuestionService {
             descriptionUrl = imageService.storeFile(descriptionUrl);
         }
         description.updateContent(descriptionUrl, examQuestionInfoDto.getDescriptionComment());
+
+        return updatedExamQuestion;
     }
 
     @Transactional
-    public void deleteExamQuestion(Integer roundNumber, Integer questionNumber) {
-        Round round = checkRound(roundNumber);
+    public Boolean deleteExamQuestion(Integer roundNumber, Integer questionNumber) {
+        checkRound(roundNumber);
 
         ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescriptionAndTopic(roundNumber, questionNumber).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
@@ -197,6 +197,7 @@ public class ExamQuestionService {
         choiceRepository.deleteAllInBatch(choiceList);
 
         examQuestionRepository.delete(examQuestion);
+        return true;
     }
 
     private void checkDupQuestionNumber(Integer roundNumber, Integer questionNumber) {

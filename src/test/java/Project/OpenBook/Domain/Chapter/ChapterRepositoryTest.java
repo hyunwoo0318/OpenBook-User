@@ -30,10 +30,6 @@ public class ChapterRepositoryTest {
 
     @Autowired
     ChapterRepository chapterRepository;
-    @Autowired
-    CustomerRepository customerRepository;
-    @Autowired
-    ChapterSectionRepository chapterSectionRepository;
 
     @Nested
     @DisplayName("queryMaxChapterNum() 메서드는")
@@ -42,7 +38,6 @@ public class ChapterRepositoryTest {
         @Test
         @DisplayName("존재하는 모든 단원번호중 제일 높은 번호를 Optional로 감싸서 리턴한다.")
         public void returnMaxChapterNumber() {
-
             //given
             Chapter ch1 = new Chapter("ch1", 1);
             Chapter ch2 = new Chapter("ch2", 123);
@@ -66,10 +61,8 @@ public class ChapterRepositoryTest {
             //when
             Optional<Integer> numOptional = chapterRepository.queryMaxChapterNum();
 
+            //then
             assertThat(numOptional.isEmpty()).isTrue();
         }
     }
-
-
-
 }
