@@ -5,6 +5,7 @@ import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.*;
+import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Topic.PrimaryDate.Domain.PrimaryDate;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Sentence.Domain.Sentence;
@@ -54,6 +55,10 @@ public class Topic extends BaseEntity {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "era_id")
+    private Era era;
+
     @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE)
     private List<TopicProgress> topicProgressList = new ArrayList<>();
 
@@ -74,7 +79,7 @@ public class Topic extends BaseEntity {
 
     @Builder
     public Topic(String title, Integer startDate, Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
-                 int questionNum, int choiceNum, String detail, Chapter chapter, Category category) {
+                 int questionNum, int choiceNum, String detail, Chapter chapter, Category category, Era era) {
         this.number = 0;
         this.title = title;
         this.startDate = startDate;
@@ -84,6 +89,7 @@ public class Topic extends BaseEntity {
         this.detail = detail;
         this.chapter = chapter;
         this.category = category;
+        this.era = era;
         this.startDateCheck = startDateCheck;
         this.endDateCheck = endDateCheck;
     }
@@ -99,7 +105,7 @@ public class Topic extends BaseEntity {
     }
 
     public Topic updateTopic(String title, Integer startDate, Integer endDate, Boolean startDateCheck, Boolean endDateCheck,
-                             String detail, Chapter chapter, Category category) {
+                             String detail, Chapter chapter, Category category, Era era) {
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -108,6 +114,7 @@ public class Topic extends BaseEntity {
         this.category = category;
         this.startDateCheck = startDateCheck;
         this.endDateCheck = endDateCheck;
+        this.era = era;
         return this;
     }
 

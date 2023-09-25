@@ -17,13 +17,16 @@ import java.util.stream.Collectors;
 public class TopicDetailDto {
 
     @Min(value = 1, message = "단원 번호를 입력해주세요.")
-    private int chapter;
+    private Integer chapter;
 
     @NotBlank(message = "상세정보 제목을 입력해주세요.")
     private String title;
 
     @NotBlank(message = "카테고리를 입력해주세요")
     private String category;
+
+    @NotBlank(message = "시대를 입력해주세요.")
+    private String era;
 
     private Integer startDate;
 
@@ -40,9 +43,20 @@ public class TopicDetailDto {
     private List<PrimaryDateDto> extraDateList;
 
     public TopicDetailDto(Topic topic) {
-        this.chapter = topic.getChapter().getNumber();
+        if (topic.getChapter() != null) {
+            this.chapter = topic.getChapter().getNumber();
+        }
+
         this.title = topic.getTitle();
-        this.category = topic.getCategory().getName();
+
+        if (topic.getCategory() != null) {
+            this.category = topic.getCategory().getName();
+        }
+
+        if (topic.getEra() != null) {
+            this.era = topic.getEra().getName();
+        }
+
         this.startDate = topic.getStartDate();
         this.endDate = topic.getEndDate();
         this.startDateCheck = topic.getStartDateCheck();

@@ -16,6 +16,7 @@ public enum ErrorCode {
     INVALID_PARAMETER (HttpStatus.BAD_REQUEST, "파라미터 값을 확인해주세요."),
     CHAPTER_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 단원에 토픽이 존재합니다."),
     CATEGORY_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 카테고리에 토픽이 존재합니다"),
+    ERA_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 시대에 토픽이 존재합니다."),
     TOPIC_HAS_CHOICE(HttpStatus.BAD_REQUEST, "해당 토픽에 선지가 존재합니다."),
     TOPIC_HAS_DESCRIPTION(HttpStatus.BAD_REQUEST, "해당 토픽에 보기가 존재합니다."),
     TOPIC_HAS_KEYWORD(HttpStatus.BAD_REQUEST, "해당 토픽에 키워드가 존재합니다."),
@@ -27,7 +28,7 @@ public enum ErrorCode {
     NOT_SAVED_CHOICE(HttpStatus.BAD_REQUEST, "해당 보기와 내용이 겹친 선지가 아닙니다."),
     WRONG_PROVIDER_NAME(HttpStatus.BAD_REQUEST, "잘못된 소셜 로그인 provider name입니다."),
     NOT_VALIDATE_IMAGE(HttpStatus.BAD_REQUEST, "잘못된 이미지 파일입니다."),
-    NOT_VALIDATE_CHOICE_TYPE(HttpStatus.BAD_REQUEST, "잘못된 choiceType입니다."),
+    NOT_VALIDATE_CHOICE_TYPE(HttpStatus.BAD_REQUEST, "잘못된 Type입니다."),
 
     /**
      * 401 - UNAUTHORIZED
@@ -52,6 +53,7 @@ public enum ErrorCode {
     CONTENT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 Content 이름입니다."),
     STATE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 State 이름입니다."),
     ROUND_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 round번호 입니다."),
+    ERA_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시대입니다."),
 
 
     /**
@@ -67,6 +69,7 @@ public enum ErrorCode {
     DUP_TOPIC_NUMBER(HttpStatus.CONFLICT, "중복된 단원 내 주제 번호입니다."),
     DUP_ROUND_NUMBER(HttpStatus.CONFLICT, "중복된 회차 번호입니다."),
     DUP_QUESTION_NUMBER(HttpStatus.CONFLICT, "중복된 문제 번호입니다."),
+    DUP_ERA_NAME(HttpStatus.CONFLICT, "중복된 시대입니다."),
 
 
     /**

@@ -6,6 +6,8 @@ import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Constants.StateConst;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
+import Project.OpenBook.Domain.Era.Era;
+import Project.OpenBook.Domain.Era.EraRepository;
 import Project.OpenBook.Domain.Topic.PrimaryDate.Domain.PrimaryDate;
 import Project.OpenBook.Domain.Topic.PrimaryDate.Repository.PrimaryDateRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
@@ -43,17 +45,12 @@ public class TopicService {
     private final CustomerRepository customerRepository;
     private final PrimaryDateRepository primaryDateRepository;
     private final TopicProgressRepository topicProgressRepository;
+    private final EraRepository eraRepository;
     private final TopicValidator topicValidator;
 
 
-    public Topic queryTopicWithCategoryChapter(String topicTitle) {
-        return topicRepository.queryTopicWithCategoryChapter(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
-    }
-
-    public Topic queryTopicWithCategory(String topicTitle) {
-        return topicRepository.queryTopicWithCategory(topicTitle).orElseThrow(() -> {
+    public Topic queryTopicWithCategoryChapterEra(String topicTitle) {
+        return topicRepository.queryTopicWithCategoryChapterEra(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
     }
@@ -62,6 +59,7 @@ public class TopicService {
     public void createTopic(TopicDetailDto topicDetailDto) {
 
         Category category = checkCategory(topicDetailDto.getCategory());
+        Era era = checkEra(topicDetailDto.getEra());
         Chapter chapter = checkChapter(topicDetailDto.getChapter());
         topicValidator.checkDupTopicTitle(topicDetailDto.getTitle());
 
@@ -69,6 +67,7 @@ public class TopicService {
         Topic topic = Topic.builder()
                 .chapter(chapter)
                 .category(category)
+                .era(era)
                 .title(topicDetailDto.getTitle())
                 .startDate(topicDetailDto.getStartDate())
                 .endDate(topicDetailDto.getEndDate())
@@ -116,10 +115,13 @@ public class TopicService {
         int chapterNum = topicDetailDto.getChapter();
         Chapter chapter = checkChapter(chapterNum);
 
+        String eraName = topicDetailDto.getEra();
+        Era era = checkEra(eraName);
+
 
         //토픽 수정
         topic.updateTopic(topicDetailDto.getTitle(), topicDetailDto.getStartDate(), topicDetailDto.getEndDate(), topicDetailDto.getStartDateCheck(),
-                topicDetailDto.getEndDateCheck(), topicDetailDto.getDetail(), chapter, category);
+                topicDetailDto.getEndDateCheck(), topicDetailDto.getDetail(), chapter, category, era);
 
         //연표에 나올 날짜 수정
         List<PrimaryDate> prevDateList = topic.getPrimaryDateList();
@@ -132,13 +134,12 @@ public class TopicService {
 
     @Transactional
     public void deleteTopic(String topicTitle) {
-        Topic findTopic = queryTopicWithCategoryChapter(topicTitle);
+        Topic findTopic = queryTopicWithCategoryChapterEra(topicTitle);
 
         List<Choice> choiceList = findTopic.getChoiceList();
         if (!choiceList.isEmpty()) {
             throw new CustomException(TOPIC_HAS_CHOICE);
         }
-
         List<Description> descriptionList = findTopic.getDescriptionList();
         if (!descriptionList.isEmpty()) {
             throw new CustomException(TOPIC_HAS_DESCRIPTION);
@@ -147,7 +148,6 @@ public class TopicService {
         if (!keywordList.isEmpty()) {
             throw new CustomException(TOPIC_HAS_KEYWORD);
         }
-
         List<Sentence> sentenceList = findTopic.getSentenceList();
         if (!sentenceList.isEmpty()) {
             throw new CustomException(TOPIC_HAS_SENTENCE);
@@ -168,6 +168,12 @@ public class TopicService {
     private Category checkCategory(String categoryName) {
         return categoryRepository.findCategoryByName(categoryName).orElseThrow(() -> {
             throw new CustomException(CATEGORY_NOT_FOUND);
+        });
+    }
+
+    private Era checkEra(String name) {
+        return eraRepository.findByName(name).orElseThrow(() -> {
+            throw new CustomException(ERA_NOT_FOUND);
         });
     }
     @Transactional

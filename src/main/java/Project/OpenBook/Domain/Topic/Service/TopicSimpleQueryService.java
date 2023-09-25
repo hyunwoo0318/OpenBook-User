@@ -28,7 +28,7 @@ public class TopicSimpleQueryService {
 
     @Transactional(readOnly = true)
     public TopicDetailDto queryTopicsAdmin(String topicTitle) {
-        Topic topic = topicRepository.queryTopicWithCategoryChapter(topicTitle).orElseThrow(() -> {
+        Topic topic = topicRepository.queryTopicWithCategoryChapterEra(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
         return new TopicDetailDto(topic);
