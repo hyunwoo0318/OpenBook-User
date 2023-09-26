@@ -23,7 +23,6 @@ import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Repository.ChapterP
 import Project.OpenBook.Domain.StudyProgress.ChapterSection.Repository.ChapterSectionRepository;
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
-import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
@@ -91,17 +90,12 @@ class ChapterControllerTest {
     ExamQuestionRepository examQuestionRepository;
     @Autowired
     RoundRepository roundRepository;
-
-
-
     @Autowired
     TokenManager tokenManager;
-
     @Autowired
     TestRestTemplate restTemplate;
     @Autowired
     CustomerService customerService;
-
     @Autowired
     PasswordEncoder passwordEncoder;
 

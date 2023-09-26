@@ -23,6 +23,8 @@ public class Choice extends BaseEntity {
 
     private String comment;
 
+    private Integer number;
+
     @Enumerated(EnumType.STRING)
     private ChoiceType type;
 
@@ -42,10 +44,23 @@ public class Choice extends BaseEntity {
         this.examQuestion = examQuestion;
     }
 
-    public Choice updateChoice(String content,String comment, Topic topic) {
+    public Choice(Integer number, String content, ChoiceType type, ExamQuestion examQuestion) {
+        this.number = number;
+        this.content = content;
+        this.type = type;
+        this.examQuestion = examQuestion;
+    }
+
+    public Choice updateChoice(String content, String comment, Topic topic) {
         this.content = content;
         this.comment = comment;
         this.topic = topic;
+        return this;
+    }
+
+    public Choice updateChoice(Integer number, String content){
+        this.number = number;
+        this.content = content;
         return this;
     }
 }

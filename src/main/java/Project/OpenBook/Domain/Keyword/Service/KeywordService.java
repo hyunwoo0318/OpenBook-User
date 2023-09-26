@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Keyword.Service;
 
+import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
@@ -23,6 +24,7 @@ import static Project.OpenBook.Constants.ErrorCode.*;
 public class KeywordService {
 
     private final KeywordRepository keywordRepository;
+    private final DescriptionKeywordRepository descriptionKeywordRepository;
     private final TopicRepository topicRepository;
     private final ImageService imageService;
 
@@ -49,7 +51,6 @@ public class KeywordService {
             imageService.checkBase64(encodedFile);
             imageUrl = imageService.storeFile(encodedFile);
         }
-
 
         //키워드 저장
         Keyword keyword = new Keyword(name,comment, topic,imageUrl);
@@ -103,8 +104,8 @@ public class KeywordService {
 
     @Transactional
     public void deleteKeyword(Long keywordId) {
-        checkKeyword(keywordId);
-
+        Keyword keyword = checkKeyword(keywordId);
+        descriptionKeywordRepository.deleteByKeyword(keyword);
         keywordRepository.deleteById(keywordId);
     }
 

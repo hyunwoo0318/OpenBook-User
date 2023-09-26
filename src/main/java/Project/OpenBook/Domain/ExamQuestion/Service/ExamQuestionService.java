@@ -3,6 +3,7 @@ package Project.OpenBook.Domain.ExamQuestion.Service;
 import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
+import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ChoiceAddUpdateDto;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionChoiceDto;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
@@ -16,7 +17,6 @@ import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Image.ImageService;
 import Project.OpenBook.Domain.Question.Dto.QuestionChoiceDto;
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
-import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -43,16 +43,13 @@ public class ExamQuestionService {
     @Transactional(readOnly = true)
     public ExamQuestionInfoDto getExamQuestionInfo(Integer roundNumber, Integer questionNumber) {
 
-        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestionWithDescriptionAndTopic(roundNumber, questionNumber).orElseThrow(() -> {
+        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestion(roundNumber, questionNumber).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
 
-        Description description = examQuestion.getDescription();
-
         ChoiceType choiceType = examQuestion.getChoiceType();
 
-        return new ExamQuestionInfoDto(examQuestion.getNumber(), description.getContent(), description.getComment(),
-                description.getTopic().getTitle(),choiceType.name(),examQuestion.getScore());
+        return new ExamQuestionInfoDto(examQuestion.getNumber(), examQuestion.getAnswer(), choiceType.name(), examQuestion.getScore());
     }
 
     @Transactional(readOnly = true)
@@ -89,7 +86,6 @@ public class ExamQuestionService {
     public ExamQuestion saveExamQuestionInfo(Integer roundNumber, ExamQuestionInfoDto examQuestionInfoDto) {
         Round round = checkRound(roundNumber);
 
-        String answer = examQuestionInfoDto.getAnswer();
         Integer questionNumber = examQuestionInfoDto.getNumber();
         String inputChoiceType = examQuestionInfoDto.getChoiceType();
 
@@ -99,20 +95,21 @@ public class ExamQuestionService {
         //해당 회차에 해당 번호를 가진 문제가 이미 존재하는지 확인
         checkDupQuestionNumber(roundNumber, questionNumber);
 
-        //입력 받은 주제 제목들이 DB에 존재하는 주제 제목인지 확인
-        Topic answerTopic = checkTopic(answer);
-
         //문제 저장
-        ExamQuestion examQuestion = new ExamQuestion(round, examQuestionInfoDto.getNumber(), examQuestionInfoDto.getScore(), choiceType);
+        ExamQuestion examQuestion = new ExamQuestion(round, examQuestionInfoDto.getNumber(), examQuestionInfoDto.getScore(), examQuestionInfoDto.getAnswer(),choiceType);
         examQuestionRepository.save(examQuestion);
 
-        //보기 저장
-        String descriptionEncodedFile = examQuestionInfoDto.getDescription();
-        imageService.checkBase64(descriptionEncodedFile);
-        String descriptionUrl = imageService.storeFile(descriptionEncodedFile);
-        Description description = new Description(descriptionUrl, examQuestionInfoDto.getDescriptionComment(),
-                answerTopic, examQuestion);
+        //보기 생성
+        Description description = new Description(examQuestion);
         descriptionRepository.save(description);
+
+//        //보기 저장
+//        String descriptionEncodedFile = examQuestionInfoDto.getDescription();
+//        imageService.checkBase64(descriptionEncodedFile);
+//        String descriptionUrl = imageService.storeFile(descriptionEncodedFile);
+//        Description description = new Description(descriptionUrl, examQuestionInfoDto.getDescriptionComment(),
+//                answerTopic, examQuestion);
+//        descriptionRepository.save(description);
 
         return examQuestion;
     }
@@ -151,7 +148,7 @@ public class ExamQuestionService {
 
 
     @Transactional
-    public ExamQuestion updateExamQuestion(Integer roundNumber, Integer questionNumber, ExamQuestionInfoDto examQuestionInfoDto) throws IOException {
+    public ExamQuestion updateExamQuestionInfo(Integer roundNumber, Integer questionNumber, ExamQuestionInfoDto examQuestionInfoDto) throws IOException {
         checkRound(roundNumber);
         Integer newQuestionNumber = examQuestionInfoDto.getNumber();
         String inputChoiceType = examQuestionInfoDto.getChoiceType();
@@ -168,16 +165,16 @@ public class ExamQuestionService {
         if (!questionNumber.equals(newQuestionNumber)) {
             checkDupQuestionNumber(roundNumber, newQuestionNumber);
         }
-        ExamQuestion updatedExamQuestion = examQuestion.updateExamQuestion(newQuestionNumber, examQuestionInfoDto.getScore(), choiceType);
+        ExamQuestion updatedExamQuestion = examQuestion.updateExamQuestion(newQuestionNumber, examQuestionInfoDto.getScore(),examQuestionInfoDto.getAnswer() ,choiceType);
 
-        //보기 변경
-        Description description = examQuestion.getDescription();
-        String descriptionUrl = examQuestionInfoDto.getDescription();
-        if (!descriptionUrl.startsWith("https")) {
-            imageService.checkBase64(descriptionUrl);
-            descriptionUrl = imageService.storeFile(descriptionUrl);
-        }
-        description.updateContent(descriptionUrl, examQuestionInfoDto.getDescriptionComment());
+//        //보기 변경
+//        Description description = examQuestion.getDescription();
+//        String descriptionUrl = examQuestionInfoDto.getDescription();
+//        if (!descriptionUrl.startsWith("https")) {
+//            imageService.checkBase64(descriptionUrl);
+//            descriptionUrl = imageService.storeFile(descriptionUrl);
+//        }
+//        description.updateContent(descriptionUrl, examQuestionInfoDto.getDescriptionComment());
 
         return updatedExamQuestion;
     }

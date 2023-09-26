@@ -25,6 +25,7 @@ public class ExamQuestion extends BaseEntity {
 
     private Integer number;
     private Integer score;
+    private Integer answer;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "round_id")
@@ -39,16 +40,18 @@ public class ExamQuestion extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ChoiceType choiceType;
 
-    public ExamQuestion(Round round, Integer number, Integer score, ChoiceType choiceType) {
+    public ExamQuestion(Round round, Integer number, Integer score,Integer answer, ChoiceType choiceType) {
         this.round = round;
         this.number = number;
         this.score = score;
+        this.answer = answer;
         this.choiceType = choiceType;
     }
 
-    public ExamQuestion updateExamQuestion(Integer number, Integer score, ChoiceType choiceType) {
+    public ExamQuestion updateExamQuestion(Integer number, Integer score,Integer answer, ChoiceType choiceType) {
         this.number = number;
         this.score = score;
+        this.answer = answer;
         this.choiceType = choiceType;
         return this;
     }

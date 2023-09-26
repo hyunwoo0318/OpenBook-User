@@ -4,7 +4,6 @@ import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.ExamQuestion.Service.ExamQuestionService;
@@ -554,7 +553,7 @@ public class ExamQuestionServiceTest {
                 doReturn(mock(Description.class)).when(mockExamQuestion).getDescription();
 
                 //when
-                ExamQuestion examQuestion = examQuestionService.updateExamQuestion(roundNumber, prevQuestionNumber, encodedDto);
+                ExamQuestion examQuestion = examQuestionService.updateExamQuestionInfo(roundNumber, prevQuestionNumber, encodedDto);
 
                 //then
                 assertThat(examQuestion.getNumber()).isEqualTo(encodedDto.getNumber());
@@ -584,7 +583,7 @@ public class ExamQuestionServiceTest {
 
                     //when
                     CustomException customException = assertThrows(CustomException.class, () -> {
-                        examQuestionService.updateExamQuestion(roundNumber, prevQuestionNumber,encodedDto);
+                        examQuestionService.updateExamQuestionInfo(roundNumber, prevQuestionNumber,encodedDto);
                     });
 
                     //then
@@ -616,7 +615,7 @@ public class ExamQuestionServiceTest {
 
                     //when
                     CustomException customException = assertThrows(CustomException.class, () -> {
-                        examQuestionService.updateExamQuestion(roundNumber, prevQuestionNumber,encodedDto);
+                        examQuestionService.updateExamQuestionInfo(roundNumber, prevQuestionNumber,encodedDto);
                     });
 
                     //then
@@ -645,7 +644,7 @@ public class ExamQuestionServiceTest {
                     doReturn(mock(Description.class)).when(mockExamQuestion).getDescription();
 
                     //when
-                    ExamQuestion examQuestion = examQuestionService.updateExamQuestion(roundNumber, prevQuestionNumber, urlDto);
+                    ExamQuestion examQuestion = examQuestionService.updateExamQuestionInfo(roundNumber, prevQuestionNumber, urlDto);
 
                     //then
                     assertThat(examQuestion.getNumber()).isEqualTo(encodedDto.getNumber());
@@ -673,7 +672,7 @@ public class ExamQuestionServiceTest {
 
                         //when
                         CustomException customException = assertThrows(CustomException.class, () -> {
-                            examQuestionService.updateExamQuestion(roundNumber, prevQuestionNumber, encodedDto);
+                            examQuestionService.updateExamQuestionInfo(roundNumber, prevQuestionNumber, encodedDto);
                         });
 
                         //then
@@ -697,7 +696,7 @@ public class ExamQuestionServiceTest {
 
                     //when
                     CustomException customException = assertThrows(CustomException.class, () -> {
-                        examQuestionService.updateExamQuestion(roundNumber, prevQuestionNumber, encodedDto);
+                        examQuestionService.updateExamQuestionInfo(roundNumber, prevQuestionNumber, encodedDto);
                     });
 
                     //then
@@ -722,7 +721,7 @@ public class ExamQuestionServiceTest {
 
                     //when
                     CustomException customException = assertThrows(CustomException.class, () -> {
-                        examQuestionService.updateExamQuestion(roundNumber, prevQuestionNumber, encodedDto);
+                        examQuestionService.updateExamQuestionInfo(roundNumber, prevQuestionNumber, encodedDto);
                     });
 
                     //then
@@ -748,7 +747,7 @@ public class ExamQuestionServiceTest {
 
                     //when
                     CustomException customException = assertThrows(CustomException.class, () -> {
-                        examQuestionService.updateExamQuestion(roundNumber, prevQuestionNumber,
+                        examQuestionService.updateExamQuestionInfo(roundNumber, prevQuestionNumber,
                                 new ExamQuestionInfoDto(questionNumber, description, descriptionComment, answer, "wrong choice type", score));
                     });
 

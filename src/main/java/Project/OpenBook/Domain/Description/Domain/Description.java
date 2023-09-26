@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Description.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
+import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,7 +20,6 @@ public class Description extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
     @Lob
     private String content;
 
@@ -27,13 +29,21 @@ public class Description extends BaseEntity {
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
+    @OneToMany(mappedBy = "description")
+    private List<DescriptionKeyword> descriptionKeywordList = new ArrayList<>();
+
     @OneToOne
+    @JoinColumn(name = "exam_question_id")
     private ExamQuestion examQuestion;
 
     public Description(String content,String comment,  Topic topic, ExamQuestion examQuestion) {
         this.comment = comment;
         this.content = content;
         this.topic = topic;
+        this.examQuestion = examQuestion;
+    }
+
+    public Description(ExamQuestion examQuestion) {
         this.examQuestion = examQuestion;
     }
 
