@@ -115,6 +115,7 @@ public class ChoiceService {
         choiceRepository.save(choice);
     }
 
+    @Transactional
     public void updateChoice(Long choiceId, ChoiceInfoDto dto) {
         Choice choice = choiceRepository.findById(choiceId).orElseThrow(() -> {
             throw new CustomException(CHOICE_NOT_FOUND);
@@ -196,8 +197,9 @@ public class ChoiceService {
         List<ChoiceCommentQueryDto> retList = new ArrayList<>();
 
         List<Choice> choiceList = examQuestion.getChoiceList();
-        List<ChoiceCommentInfoDto> dtoList = new ArrayList<>();
         for (Choice choice : choiceList) {
+            List<ChoiceCommentInfoDto> dtoList = new ArrayList<>();
+
             List<ChoiceKeyword> choiceKeywords = choiceKeywordRepository.queryChoiceKeywords(choice);
             for (ChoiceKeyword choiceKeyword : choiceKeywords) {
                 Keyword keyword = choiceKeyword.getKeyword();
