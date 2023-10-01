@@ -33,32 +33,16 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<ChoiceKeyword> queryChoiceKeywords(Choice inputChoice) {
-        return queryFactory.selectFrom(choiceKeyword)
-                .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
-                .leftJoin(keyword.topic, topic).fetchJoin()
-                .leftJoin(topic.chapter, chapter).fetchJoin()
-                .where(choiceKeyword.choice.eq(inputChoice))
-                .fetch();
-    }
-
-    @Override
-    public Map<Choice, List<ChoiceCommentInfoDto>>  queryChoiceKeywordsTemp(Integer roundNumber, Integer questionNumber) {
+    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywords(List<Choice> choiceList) {
         return queryFactory
                 .from(choiceKeyword)
                 .leftJoin(choiceKeyword.choice, choice)
                 .leftJoin(choiceKeyword.keyword, keyword)
                 .leftJoin(keyword.topic, topic)
                 .leftJoin(topic.chapter, chapter)
-                .where(choiceKeyword.choice.in(
-                        JPAExpressions.select(choice)
-                                .from(examQuestion)
-                                .where(choice.examQuestion.number.eq(questionNumber)
-                                        .and(choice.examQuestion.round.number.eq(roundNumber)))
-                ))
+                .where(choiceKeyword.choice.in(choiceList))
                 .distinct()
                 .transform(groupBy(choiceKeyword.choice)
-//                .as(list(choiceKeyword.keyword)));
                         .as(list(Projections.constructor(
                                 ChoiceCommentInfoDto.class,
                                 topic.chapter.number.as("chapterNumber"),
@@ -67,6 +51,5 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
                                 choiceKeyword.keyword.name.as("name"),
                                 choiceKeyword.keyword.id.as("id")
                         ))));
-
     }
 }

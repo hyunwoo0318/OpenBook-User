@@ -33,29 +33,15 @@ import static com.querydsl.core.group.GroupBy.list;
 public class ChoiceSentenceRepositoryCustomImpl implements ChoiceSentenceRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-    @Override
-    public List<ChoiceSentence> queryChoiceSentences(Choice inputChoice) {
-        return queryFactory.selectFrom(choiceSentence)
-                .leftJoin(choiceSentence.sentence, sentence).fetchJoin()
-                .leftJoin(sentence.topic, topic).fetchJoin()
-                .leftJoin(topic.chapter, chapter).fetchJoin()
-                .where(choiceSentence.choice.eq(inputChoice))
-                .fetch();
-    }
 
     @Override
-    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceSentenceTemp(Integer roundNumber, Integer questionNumber) {
+    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceSentences(List<Choice> choiceList) {
         return queryFactory.from(choiceSentence)
                 .leftJoin(choiceSentence.choice, choice)
                 .leftJoin(choiceSentence.sentence, sentence)
                 .leftJoin(sentence.topic, topic)
                 .leftJoin(topic.chapter, chapter)
-                .where(choiceSentence.choice.in(
-                        JPAExpressions.select(choice)
-                                .from(examQuestion)
-                                .where(choice.examQuestion.number.eq(questionNumber)
-                                        .and(choice.examQuestion.round.number.eq(roundNumber)))
-                ))
+                .where(choiceSentence.choice.in(choiceList))
                 .distinct()
                 .transform(groupBy(choiceSentence.choice)
                         .as(list(Projections.constructor(

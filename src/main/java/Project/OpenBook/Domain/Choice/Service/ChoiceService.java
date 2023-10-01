@@ -179,35 +179,28 @@ public class ChoiceService {
     public List<ChoiceCommentQueryDto> queryQuestionChoices(Integer roundNumber, Integer questionNumber) {
 
         List<ChoiceCommentQueryDto> retList = new ArrayList<>();
+        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestion(roundNumber, questionNumber).orElseThrow(() -> {
+            throw new CustomException(QUESTION_NOT_FOUND);
+        });
 
-        Map<Choice, List<ChoiceCommentInfoDto>> choiceKeywordMap
-                = choiceKeywordRepository.queryChoiceKeywordsTemp(roundNumber, questionNumber);
-        Map<Choice, List<ChoiceCommentInfoDto>> choiceSentenceMap
-                = choiceSentenceRepository.queryChoiceSentenceTemp(roundNumber, questionNumber);
+        List<Choice> choiceList = examQuestion.getChoiceList();
+        Map<Choice, List<ChoiceCommentInfoDto>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywords(choiceList);
+        Map<Choice, List<ChoiceCommentInfoDto>> choiceSentenceMap = choiceSentenceRepository.queryChoiceSentences(choiceList);
 
-        Set<Choice> keywordSet = choiceKeywordMap.keySet();
-        Set<Choice> sentenceSet = choiceSentenceMap.keySet();
-        Set<Choice> totalChoiceSet = new HashSet<>();
-
-        totalChoiceSet.addAll(keywordSet);
-        totalChoiceSet.addAll(sentenceSet);
-
-        for (Choice choice : totalChoiceSet) {
+        for (Choice choice : choiceList) {
             List<ChoiceCommentInfoDto> commentList = new ArrayList<>();
-
-            List<ChoiceCommentInfoDto> commentKeywordList = choiceKeywordMap.get(choice);
-            List<ChoiceCommentInfoDto> commentSentenceList = choiceSentenceMap.get(choice);
-
-            if (commentKeywordList != null) {
-                commentList.addAll(commentKeywordList);
+            List<ChoiceCommentInfoDto> dtoKeywordList = choiceKeywordMap.get(choice);
+            List<ChoiceCommentInfoDto> dtoSentenceList = choiceSentenceMap.get(choice);
+            if (dtoKeywordList != null) {
+                commentList.addAll(dtoKeywordList);
             }
-            if (commentSentenceList != null) {
-                commentList.addAll(commentSentenceList);
+            if (dtoSentenceList != null) {
+                commentList.addAll(dtoSentenceList);
             }
-
             retList.add(new ChoiceCommentQueryDto(choice.getContent(), choice.getNumber(), choice.getId(),
                     choice.getType().name(), commentList));
         }
+
 
         return retList;
     }

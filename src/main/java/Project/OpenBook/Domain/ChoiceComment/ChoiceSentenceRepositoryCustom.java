@@ -11,7 +11,6 @@ import java.util.Map;
 
 public interface ChoiceSentenceRepositoryCustom {
 
-    public List<ChoiceSentence> queryChoiceSentences(Choice inputChoice);
 
-    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceSentenceTemp(Integer roundNumber, Integer questionNumber);
+    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceSentences(List<Choice> choiceList);
 }

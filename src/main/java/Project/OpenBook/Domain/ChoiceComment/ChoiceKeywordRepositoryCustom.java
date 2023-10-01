@@ -8,7 +8,5 @@ import java.util.Map;
 
 public interface ChoiceKeywordRepositoryCustom {
 
-    public List<ChoiceKeyword> queryChoiceKeywords(Choice inputChoice);
-
-    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywordsTemp(Integer roundNumber, Integer questionNumber);
+      public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywords(List<Choice> choiceList);
 }
