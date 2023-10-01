@@ -23,9 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.tokens.CommentToken;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 
@@ -35,67 +34,57 @@ public class ChoiceService {
 
     private final ChoiceRepository choiceRepository;
     private final ImageService imageService;
-    private final TopicRepository topicRepository;
+//    private final TopicRepository topicRepository;
     private final ExamQuestionRepository examQuestionRepository;
     private final ChoiceKeywordRepository choiceKeywordRepository;
     private final ChoiceSentenceRepository choiceSentenceRepository;
     private final KeywordRepository keywordRepository;
     private final SentenceRepository sentenceRepository;
 
-    @Transactional
-    public void updateChoice(Long choiceId, ChoiceAddUpdateDto dto) throws IOException {
-        Choice choice = choiceRepository.findById(choiceId).orElseThrow(() -> {
-            throw new CustomException(CHOICE_NOT_FOUND);
-        });
+//    @Transactional
+//    public void updateChoice(Long choiceId, ChoiceAddUpdateDto dto) throws IOException {
+//        Choice choice = choiceRepository.findById(choiceId).orElseThrow(() -> {
+//            throw new CustomException(CHOICE_NOT_FOUND);
+//        });
+//
+//        Topic topic = checkTopic(dto.getKey());
+//
+//        String inputChoiceType = dto.getChoiceType();
+//
+//        //입력받은 choiceType이 옳은 형식인지 확인
+//        ChoiceType choiceType = checkChoiceType(inputChoiceType);
+//
+//        if(choiceType.equals(ChoiceType.String)){
+//            choice.updateChoice(dto.getChoice(), dto.getComment(), topic);
+//        }
+//        //선지 저장(이미지)
+//        else if(choiceType.equals(ChoiceType.Image)){
+//            String encodedFile = dto.getChoice();
+//            String choiceUrl = choice.getContent();
+//            if (!encodedFile.startsWith("https")){
+//                imageService.checkBase64(encodedFile);
+//                choiceUrl = imageService.storeFile(encodedFile);
+//            }
+//            choice.updateChoice(choiceUrl, dto.getComment(), topic);
+//        }else{
+//            throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
+//        }
+//    }
+//
+//    @Transactional
+//    public void deleteChoice(Long choiceId) {
+//        Choice choice = choiceRepository.findById(choiceId).orElseThrow(() -> {
+//            throw new CustomException(CHOICE_NOT_FOUND);
+//        });
+//
+//        choiceRepository.delete(choice);
+//    }
 
-        Topic topic = checkTopic(dto.getKey());
-
-        String inputChoiceType = dto.getChoiceType();
-
-        //입력받은 choiceType이 옳은 형식인지 확인
-        ChoiceType choiceType = checkChoiceType(inputChoiceType);
-
-        if(choiceType.equals(ChoiceType.String)){
-            choice.updateChoice(dto.getChoice(), dto.getComment(), topic);
-        }
-        //선지 저장(이미지)
-        else if(choiceType.equals(ChoiceType.Image)){
-            String encodedFile = dto.getChoice();
-            String choiceUrl = choice.getContent();
-            if (!encodedFile.startsWith("https")){
-                imageService.checkBase64(encodedFile);
-                choiceUrl = imageService.storeFile(encodedFile);
-            }
-            choice.updateChoice(choiceUrl, dto.getComment(), topic);
-        }else{
-            throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
-        }
-    }
-
-    @Transactional
-    public void deleteChoice(Long choiceId) {
-        Choice choice = choiceRepository.findById(choiceId).orElseThrow(() -> {
-            throw new CustomException(CHOICE_NOT_FOUND);
-        });
-
-        choiceRepository.delete(choice);
-    }
-
-    private Topic checkTopic(String topicTitle) {
-        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
-    }
-
-    private ChoiceType checkChoiceType(String inputChoiceType){
-        //입력받은 choiceType이 옳은 형식인지 확인
-        Map<String, ChoiceType> map = ChoiceType.getChoiceTypeNameMap();
-        ChoiceType choiceType = map.get(inputChoiceType);
-        if(choiceType == null){
-            throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
-        }
-        return choiceType;
-    }
+//    private Topic checkTopic(String topicTitle) {
+//        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
+//            throw new CustomException(TOPIC_NOT_FOUND);
+//        });
+//    }
 
     @Transactional
     public void createChoice(Integer roundNumber, Integer questionNumber, ChoiceInfoDto dto) {
@@ -104,14 +93,14 @@ public class ChoiceService {
         });
 
         //예외처리
-        String choiceType = dto.getChoiceType();
+        String inputChoiceType = dto.getChoiceType();
+        ChoiceType choiceType = checkChoiceType(inputChoiceType);
         String content = dto.getChoice();
-        if (choiceType.equals(ChoiceType.Image.name())) {
+        if (choiceType.equals(ChoiceType.Image)) {
             imageService.checkBase64(content);
             content = imageService.storeFile(content);
         }
-
-        Choice choice = new Choice(dto.getChoiceNumber(), content, ChoiceType.String, examQuestion);
+        Choice choice = new Choice(dto.getChoiceNumber(), content,  choiceType, examQuestion);
         choiceRepository.save(choice);
     }
 
@@ -121,7 +110,6 @@ public class ChoiceService {
             throw new CustomException(CHOICE_NOT_FOUND);
         });
 
-
         String inputChoiceType = dto.getChoiceType();
 
         //입력받은 choiceType이 옳은 형식인지 확인
@@ -133,12 +121,11 @@ public class ChoiceService {
         //선지 저장(이미지)
         else if(choiceType.equals(ChoiceType.Image)){
             String encodedFile = dto.getChoice();
-            String choiceUrl = choice.getContent();
             if (!encodedFile.startsWith("https")){
                 imageService.checkBase64(encodedFile);
-                choiceUrl = imageService.storeFile(encodedFile);
+                encodedFile = imageService.storeFile(encodedFile);
             }
-            choice.updateChoice(dto.getChoiceNumber(), dto.getChoice());
+            choice.updateChoice(dto.getChoiceNumber(),encodedFile);
         }else{
             throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
         }
@@ -190,39 +177,49 @@ public class ChoiceService {
 
     @Transactional(readOnly = true)
     public List<ChoiceCommentQueryDto> queryQuestionChoices(Integer roundNumber, Integer questionNumber) {
-        ExamQuestion examQuestion = examQuestionRepository.queryExamQuestion(roundNumber, questionNumber).orElseThrow(() -> {
-            throw new CustomException(QUESTION_NOT_FOUND);
-        });
 
         List<ChoiceCommentQueryDto> retList = new ArrayList<>();
 
-        List<Choice> choiceList = examQuestion.getChoiceList();
-        for (Choice choice : choiceList) {
-            List<ChoiceCommentInfoDto> dtoList = new ArrayList<>();
+        Map<Choice, List<ChoiceCommentInfoDto>> choiceKeywordMap
+                = choiceKeywordRepository.queryChoiceKeywordsTemp(roundNumber, questionNumber);
+        Map<Choice, List<ChoiceCommentInfoDto>> choiceSentenceMap
+                = choiceSentenceRepository.queryChoiceSentenceTemp(roundNumber, questionNumber);
 
-            List<ChoiceKeyword> choiceKeywords = choiceKeywordRepository.queryChoiceKeywords(choice);
-            for (ChoiceKeyword choiceKeyword : choiceKeywords) {
-                Keyword keyword = choiceKeyword.getKeyword();
-                Topic topic = keyword.getTopic();
-                Chapter chapter = topic.getChapter();
-                ChoiceCommentInfoDto dto = new ChoiceCommentInfoDto(chapter.getNumber(), topic.getTitle(), CommentConst.KEYWORD,
-                        keyword.getName(), keyword.getId());
-                dtoList.add(dto);
+        Set<Choice> keywordSet = choiceKeywordMap.keySet();
+        Set<Choice> sentenceSet = choiceSentenceMap.keySet();
+        Set<Choice> totalChoiceSet = new HashSet<>();
+
+        totalChoiceSet.addAll(keywordSet);
+        totalChoiceSet.addAll(sentenceSet);
+
+        for (Choice choice : totalChoiceSet) {
+            List<ChoiceCommentInfoDto> commentList = new ArrayList<>();
+
+            List<ChoiceCommentInfoDto> commentKeywordList = choiceKeywordMap.get(choice);
+            List<ChoiceCommentInfoDto> commentSentenceList = choiceSentenceMap.get(choice);
+
+            if (commentKeywordList != null) {
+                commentList.addAll(commentKeywordList);
             }
-            List<ChoiceSentence> choiceSentences = choiceSentenceRepository.queryChoiceSentences(choice);
-            for (ChoiceSentence choiceSentence : choiceSentences) {
-                Sentence sentence = choiceSentence.getSentence();
-                Topic topic = sentence.getTopic();
-                Chapter chapter = topic.getChapter();
-                ChoiceCommentInfoDto dto = new ChoiceCommentInfoDto(chapter.getNumber(), topic.getTitle(), CommentConst.SENTENCE,
-                        sentence.getName(), sentence.getId());
-                dtoList.add(dto);
+            if (commentSentenceList != null) {
+                commentList.addAll(commentSentenceList);
             }
 
             retList.add(new ChoiceCommentQueryDto(choice.getContent(), choice.getNumber(), choice.getId(),
-                    choice.getType().name(), dtoList));
+                    choice.getType().name(), commentList));
         }
 
         return retList;
     }
+
+    private ChoiceType checkChoiceType(String inputChoiceType){
+        //입력받은 choiceType이 옳은 형식인지 확인
+        Map<String, ChoiceType> map = ChoiceType.getChoiceTypeNameMap();
+        ChoiceType choiceType = map.get(inputChoiceType);
+        if(choiceType == null){
+            throw new CustomException(NOT_VALIDATE_CHOICE_TYPE);
+        }
+        return choiceType;
+    }
+
 }

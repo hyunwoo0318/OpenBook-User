@@ -39,7 +39,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({ Exception.class })
     protected ResponseEntity handleServerException(Exception ex) {
         System.out.println(ex.toString());
-        System.out.println("tracking : "  + ex.getStackTrace().toString());
+        System.out.println("tracking : "  + ex.getStackTrace());
         return new ResponseEntity(ex.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

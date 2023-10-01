@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.ChoiceComment;
 
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +8,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 public class ChoiceCommentQueryDto {
     private String choice;
@@ -16,5 +16,12 @@ public class ChoiceCommentQueryDto {
     private String choiceType;
     private List<ChoiceCommentInfoDto> commentList;
 
-
+    @QueryProjection
+    public ChoiceCommentQueryDto(String choice, Integer choiceNumber, Long choiceId, String choiceType, List<ChoiceCommentInfoDto> commentList) {
+        this.choice = choice;
+        this.choiceNumber = choiceNumber;
+        this.choiceId = choiceId;
+        this.choiceType = choiceType;
+        this.commentList = commentList;
+    }
 }

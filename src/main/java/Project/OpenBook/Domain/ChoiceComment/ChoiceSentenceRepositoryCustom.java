@@ -7,8 +7,11 @@ import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Sentence.Domain.Sentence;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ChoiceSentenceRepositoryCustom {
 
     public List<ChoiceSentence> queryChoiceSentences(Choice inputChoice);
+
+    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceSentenceTemp(Integer roundNumber, Integer questionNumber);
 }
