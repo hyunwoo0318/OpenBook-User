@@ -1,27 +1,20 @@
-package Project.OpenBook.Domain.ChoiceComment;
+package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
-import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Constants.CommentConst;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
-import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import Project.OpenBook.Domain.Topic.Domain.QTopic;
-import com.querydsl.core.group.GroupBy;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Choice.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.ChoiceComment.QChoiceKeyword.choiceKeyword;
-import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 import static com.querydsl.core.group.GroupBy.*;

@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PrimaryDateDto {
     private Integer extraDate;
-    private Boolean extraDateCheck;
     private String extraDateComment;
 }

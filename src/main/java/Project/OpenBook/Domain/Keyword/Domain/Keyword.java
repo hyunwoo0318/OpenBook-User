@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.Keyword.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
+import Project.OpenBook.Domain.KeywordPrimaryDate;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,7 +20,6 @@ public class Keyword extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true)
     private String name;
 
     private String comment;
@@ -32,6 +32,9 @@ public class Keyword extends BaseEntity {
 
     @OneToMany(mappedBy = "keyword")
     private List<DescriptionKeyword> descriptionKeywordList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "keyword")
+    private List<KeywordPrimaryDate> keywordPrimaryDateList = new ArrayList<>();
 
     public Keyword(String name, String comment, Topic topic, String imageUrl) {
         this.name = name;

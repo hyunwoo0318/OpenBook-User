@@ -5,7 +5,6 @@ import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.Sentence.Repository.SentenceRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +17,8 @@ import static Project.OpenBook.Constants.QuestionConst.WRONG_KEYWORD_SENTENCE_NU
  */
 public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory implements QuestionFactory {
 
-    public GetKeywordByTopicQuestion(TopicRepository topicRepository, KeywordRepository keywordRepository, SentenceRepository sentenceRepository) {
-        super(topicRepository, keywordRepository, sentenceRepository);
+    public GetKeywordByTopicQuestion(TopicRepository topicRepository, KeywordRepository keywordRepository) {
+        super(topicRepository, keywordRepository);
     }
 
     /**

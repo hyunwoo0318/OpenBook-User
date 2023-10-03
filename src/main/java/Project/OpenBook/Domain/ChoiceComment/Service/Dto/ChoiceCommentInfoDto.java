@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.ChoiceComment;
+package Project.OpenBook.Domain.ChoiceComment.Service.Dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;

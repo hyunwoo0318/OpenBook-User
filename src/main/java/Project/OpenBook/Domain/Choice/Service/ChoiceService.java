@@ -2,29 +2,29 @@ package Project.OpenBook.Domain.Choice.Service;
 
 import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Constants.CommentConst;
-import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
-import Project.OpenBook.Domain.ChoiceComment.*;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceSentence.ChoiceSentence;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceSentence.ChoiceSentenceRepository;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentAddUpdateDto;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentQueryDto;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceInfoDto;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ChoiceAddUpdateDto;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.Sentence.Domain.Sentence;
 import Project.OpenBook.Domain.Sentence.Repository.SentenceRepository;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import Project.OpenBook.Image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yaml.snakeyaml.tokens.CommentToken;
 
-import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 

@@ -17,6 +17,5 @@ public class ChapterAddUpdateDto {
     private String title;
     @Min(value = 1, message = "단원번호를 입력해주세요.")
     private int number;
-    private Integer startDate;
-    private Integer endDate;
+    private String dateComment;
 }

@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.ChoiceComment;
+package Project.OpenBook.Domain.ChoiceComment.Service;
 
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.Choice.Service.ChoiceService;

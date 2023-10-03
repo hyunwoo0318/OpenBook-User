@@ -1,0 +1,6 @@
+package Project.OpenBook.Domain;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface KeywordPrimaryDateRepository extends JpaRepository<KeywordPrimaryDate, Long> {
+}

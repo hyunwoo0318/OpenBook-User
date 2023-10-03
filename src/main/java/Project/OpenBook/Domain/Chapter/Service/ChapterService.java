@@ -24,7 +24,7 @@ public class ChapterService {
 
     /**
      * 단원 저장
-     * @param dto {title, number, startDate, endDate}
+     * @param dto {title, number, dateComment}
      * @return 저장한 단원
      * 중복된 단원 번호 -> throw CustomException(DUP_CHAPTER_NUM);
      */
@@ -33,12 +33,11 @@ public class ChapterService {
     public Chapter createChapter(ChapterAddUpdateDto dto) {
         int number = dto.getNumber();
         String title = dto.getTitle();
-        Integer startDate = dto.getStartDate();
-        Integer endDate = dto.getEndDate();
+        String dateComment = dto.getDateComment();
 
         chapterValidator.checkDupChapterNum(number);
 
-        Chapter newChapter = new Chapter(number, title, startDate, endDate);
+        Chapter newChapter = new Chapter(number, title, dateComment);
 
         chapterRepository.save(newChapter);
 
@@ -61,7 +60,7 @@ public class ChapterService {
         Chapter chapter = chapterValidator.checkChapter(num);
 
         return chapter.updateChapter(chapterAddUpdateDto.getTitle(), chapterAddUpdateDto.getNumber(),
-                chapterAddUpdateDto.getStartDate(), chapterAddUpdateDto.getEndDate());
+                chapterAddUpdateDto.getDateComment());
     }
 
     /**

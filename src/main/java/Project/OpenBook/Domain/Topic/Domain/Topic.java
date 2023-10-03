@@ -6,9 +6,8 @@ import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Domain.Era.Era;
-import Project.OpenBook.Domain.Topic.PrimaryDate.Domain.PrimaryDate;
+import Project.OpenBook.Domain.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import Project.OpenBook.Domain.Sentence.Domain.Sentence;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -30,11 +29,7 @@ public class Topic extends BaseEntity {
     @Column(unique = true)
     private String title;
 
-    private Integer startDate;
-    private Integer endDate;
-
-    private Boolean startDateCheck;
-    private Boolean endDateCheck;
+    private String dateComment;
 
     @ColumnDefault(value = "0")
     private int questionNum;
@@ -65,11 +60,9 @@ public class Topic extends BaseEntity {
     @OneToMany(mappedBy = "topic")
     private List<Keyword> keywordList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "topic")
-    private List<Sentence> sentenceList = new ArrayList<>();
 
     @OneToMany(mappedBy = "topic")
-    private List<PrimaryDate> primaryDateList = new ArrayList<>();
+    private List<TopicPrimaryDate> topicPrimaryDateList = new ArrayList<>();
 
     @OneToMany(mappedBy = "topic")
     private List<Choice> choiceList = new ArrayList<>();
@@ -78,20 +71,16 @@ public class Topic extends BaseEntity {
     private List<Description> descriptionList = new ArrayList<>();
 
     @Builder
-    public Topic(String title, Integer startDate, Integer endDate,Boolean startDateCheck, Boolean endDateCheck,
-                 int questionNum, int choiceNum, String detail, Chapter chapter, Category category, Era era) {
+    public Topic(String title, int questionNum, int choiceNum,String dateComment,  String detail, Chapter chapter, Category category, Era era) {
         this.number = 0;
         this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
         this.questionNum = questionNum;
         this.choiceNum = choiceNum;
+        this.dateComment = dateComment;
         this.detail = detail;
         this.chapter = chapter;
         this.category = category;
         this.era = era;
-        this.startDateCheck = startDateCheck;
-        this.endDateCheck = endDateCheck;
     }
 
 
@@ -104,16 +93,12 @@ public class Topic extends BaseEntity {
         this.title = title;
     }
 
-    public Topic updateTopic(String title, Integer startDate, Integer endDate, Boolean startDateCheck, Boolean endDateCheck,
-                             String detail, Chapter chapter, Category category, Era era) {
+    public Topic updateTopic(String title, String dateComment, String detail, Chapter chapter, Category category, Era era) {
         this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.dateComment = dateComment;
         this.detail = detail;
         this.chapter = chapter;
         this.category = category;
-        this.startDateCheck = startDateCheck;
-        this.endDateCheck = endDateCheck;
         this.era = era;
         return this;
     }

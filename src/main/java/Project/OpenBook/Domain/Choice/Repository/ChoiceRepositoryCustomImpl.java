@@ -108,8 +108,8 @@ public class ChoiceRepositoryCustomImpl implements ChoiceRepositoryCustom{
     public List<Choice> queryChoicesType2(Topic answerTopic, Topic descriptionTopic, int num, int interval, String categoryName) {
         List<Choice> choiceList = queryFactory.selectFrom(choice)
                 .where(choice.topic.category.name.eq(categoryName))
-                .where(choice.topic.endDate.lt(descriptionTopic.getStartDate()))
-                .where(choice.topic.startDate.gt(descriptionTopic.getEndDate()))
+//                .where(choice.topic.endDate.lt(descriptionTopic.getStartDate()))
+//                .where(choice.topic.startDate.gt(descriptionTopic.getEndDate()))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(num-1)
                 .fetch();

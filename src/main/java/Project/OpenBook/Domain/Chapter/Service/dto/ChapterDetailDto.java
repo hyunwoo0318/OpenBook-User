@@ -9,16 +9,14 @@ import lombok.NoArgsConstructor;
 public class ChapterDetailDto {
     private String title;
     private Integer number;
-    private Integer startDate;
-    private Integer endDate;
+    private String dateComment;
     private int topicCount;
 
     @Builder
-    public ChapterDetailDto(String title, Integer number, Integer startDate, Integer endDate, int topicCount) {
+    public ChapterDetailDto(String title, Integer number, String dateComment, int topicCount) {
         this.title = title;
         this.number = number;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.dateComment = dateComment;
         this.topicCount = topicCount;
     }
 }

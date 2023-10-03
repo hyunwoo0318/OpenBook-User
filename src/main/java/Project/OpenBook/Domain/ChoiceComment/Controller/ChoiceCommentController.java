@@ -1,6 +1,9 @@
-package Project.OpenBook.Domain.ChoiceComment;
+package Project.OpenBook.Domain.ChoiceComment.Controller;
 
 import Project.OpenBook.Domain.Choice.Service.ChoiceService;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentAddUpdateDto;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentQueryDto;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

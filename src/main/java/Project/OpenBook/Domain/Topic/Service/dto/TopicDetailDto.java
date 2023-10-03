@@ -28,19 +28,14 @@ public class TopicDetailDto {
     @NotBlank(message = "시대를 입력해주세요.")
     private String era;
 
-    private Integer startDate;
-
-    private Boolean startDateCheck;
-
-    private Boolean endDateCheck;
-
-    private Integer endDate;
+    private String dateComment;
 
 
    /* @NotBlank(message = "설명을 입력해주세요.")*/
     private String detail;
 
     private List<PrimaryDateDto> extraDateList;
+
 
     public TopicDetailDto(Topic topic) {
         if (topic.getChapter() != null) {
@@ -56,14 +51,10 @@ public class TopicDetailDto {
         if (topic.getEra() != null) {
             this.era = topic.getEra().getName();
         }
-
-        this.startDate = topic.getStartDate();
-        this.endDate = topic.getEndDate();
-        this.startDateCheck = topic.getStartDateCheck();
-        this.endDateCheck = topic.getEndDateCheck();
         this.detail = topic.getDetail();
-        this.extraDateList = topic.getPrimaryDateList().stream()
-                .map(pd -> new PrimaryDateDto(pd.getExtraDate(), pd.getExtraDateCheck(), pd.getExtraDateComment()))
+        this.dateComment = getDateComment();
+        this.extraDateList = topic.getTopicPrimaryDateList().stream()
+                .map(d -> new PrimaryDateDto(d.getExtraDate(), d.getExtraDateComment()))
                 .collect(Collectors.toList());
     }
 

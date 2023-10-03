@@ -8,8 +8,8 @@ import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Era.EraRepository;
-import Project.OpenBook.Domain.Topic.PrimaryDate.Domain.PrimaryDate;
-import Project.OpenBook.Domain.Topic.PrimaryDate.Repository.PrimaryDateRepository;
+import Project.OpenBook.Domain.TopicPrimaryDate.Domain.TopicPrimaryDate;
+import Project.OpenBook.Domain.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
@@ -43,7 +43,7 @@ public class TopicService {
     private final CategoryRepository categoryRepository;
     private final ChapterRepository chapterRepository;
     private final CustomerRepository customerRepository;
-    private final PrimaryDateRepository primaryDateRepository;
+    private final TopicPrimaryDateRepository topicPrimaryDateRepository;
     private final TopicProgressRepository topicProgressRepository;
     private final EraRepository eraRepository;
     private final TopicValidator topicValidator;
@@ -69,11 +69,7 @@ public class TopicService {
                 .category(category)
                 .era(era)
                 .title(topicDetailDto.getTitle())
-                .startDate(topicDetailDto.getStartDate())
-                .endDate(topicDetailDto.getEndDate())
                 .detail(topicDetailDto.getDetail())
-                .startDateCheck(topicDetailDto.getStartDateCheck())
-                .endDateCheck(topicDetailDto.getEndDateCheck())
                 .questionNum(0)
                 .choiceNum(0)
                 .build();
@@ -84,9 +80,9 @@ public class TopicService {
         if (topicDetailDto.getExtraDateList() != null) {
             dateList = topicDetailDto.getExtraDateList();
         }
-        List<PrimaryDate> primaryDateList = dateList.stream().map(d -> new PrimaryDate(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment(), topic))
+        List<TopicPrimaryDate> topicPrimaryDateList = dateList.stream().map(d -> new TopicPrimaryDate(d.getExtraDate(), d.getExtraDateComment(), topic))
                 .collect(Collectors.toList());
-        primaryDateRepository.saveAll(primaryDateList);
+        topicPrimaryDateRepository.saveAll(topicPrimaryDateList);
 
         //주제학습 레코드 생성
         updateTopicProgress(topic);
@@ -120,16 +116,15 @@ public class TopicService {
 
 
         //토픽 수정
-        topic.updateTopic(topicDetailDto.getTitle(), topicDetailDto.getStartDate(), topicDetailDto.getEndDate(), topicDetailDto.getStartDateCheck(),
-                topicDetailDto.getEndDateCheck(), topicDetailDto.getDetail(), chapter, category, era);
+        topic.updateTopic(topicDetailDto.getTitle(),topicDetailDto.getDateComment(), topicDetailDto.getDetail(), chapter, category, era);
 
         //연표에 나올 날짜 수정
-        List<PrimaryDate> prevDateList = topic.getPrimaryDateList();
-        primaryDateRepository.deleteAllInBatch(prevDateList);
-        List<PrimaryDate> primaryDateList = topicDetailDto.getExtraDateList().stream()
-                .map(d -> new PrimaryDate(d.getExtraDate(), d.getExtraDateCheck(), d.getExtraDateComment(), topic))
+        List<TopicPrimaryDate> prevDateList = topic.getTopicPrimaryDateList();
+        topicPrimaryDateRepository.deleteAllInBatch(prevDateList);
+        List<TopicPrimaryDate> topicPrimaryDateList = topicDetailDto.getExtraDateList().stream()
+                .map(d -> new TopicPrimaryDate(d.getExtraDate(), d.getExtraDateComment(), topic))
                 .collect(Collectors.toList());
-        primaryDateRepository.saveAll(primaryDateList);
+        topicPrimaryDateRepository.saveAll(topicPrimaryDateList);
     }
 
     @Transactional
@@ -153,8 +148,8 @@ public class TopicService {
             throw new CustomException(TOPIC_HAS_SENTENCE);
         }
 
-        List<PrimaryDate> primaryDateList = findTopic.getPrimaryDateList();
-        primaryDateRepository.deleteAllInBatch(primaryDateList);
+        List<TopicPrimaryDate> topicPrimaryDateList = findTopic.getTopicPrimaryDateList();
+        topicPrimaryDateRepository.deleteAllInBatch(topicPrimaryDateList);
 
         topicRepository.delete(findTopic);
     }

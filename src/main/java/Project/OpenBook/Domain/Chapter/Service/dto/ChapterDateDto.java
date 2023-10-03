@@ -8,6 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChapterDateDto {
-    private Integer startDate;
-    private Integer endDate;
+    private String dateComment;
 }

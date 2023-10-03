@@ -5,8 +5,11 @@ import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
+import Project.OpenBook.Domain.KeywordPrimaryDate;
+import Project.OpenBook.Domain.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Image.ImageService;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class KeywordService {
 
     private final KeywordRepository keywordRepository;
     private final DescriptionKeywordRepository descriptionKeywordRepository;
+    private final KeywordPrimaryDateRepository keywordPrimaryDateRepository;
     private final TopicRepository topicRepository;
     private final ImageService imageService;
 
@@ -56,6 +60,13 @@ public class KeywordService {
         Keyword keyword = new Keyword(name,comment, topic,imageUrl);
         keywordRepository.save(keyword);
 
+        //추가년도 저장
+        List<KeywordPrimaryDate> keywordPrimaryDateList = keywordCreateDto.getExtraDateList().stream()
+                .map(d -> new KeywordPrimaryDate(d.getExtraDate(), d.getExtraDateComment(), keyword))
+                .collect(Collectors.toList());
+
+        keywordPrimaryDateRepository.saveAll(keywordPrimaryDateList);
+
         return keyword;
     }
 
@@ -83,9 +94,18 @@ public class KeywordService {
             newImageUrl = imageService.storeFile(encodedFile);
         }
 
-
         //키워드 수정
         Keyword afterKeyword = keyword.updateKeyword(name, comment,newImageUrl);
+
+
+        //추가년도 수정
+        List<KeywordPrimaryDate> prevKeywordPrimaryDateList = afterKeyword.getKeywordPrimaryDateList();
+        keywordPrimaryDateRepository.deleteAllInBatch(prevKeywordPrimaryDateList);
+        List<KeywordPrimaryDate> newKeywordPrimaryDateList = keywordUserDto.getExtraDateList().stream()
+                .map(p -> new KeywordPrimaryDate(p.getExtraDate(), p.getExtraDateComment(), afterKeyword))
+                .collect(Collectors.toList());
+        keywordPrimaryDateRepository.saveAll(newKeywordPrimaryDateList);
+
         return afterKeyword;
     }
 

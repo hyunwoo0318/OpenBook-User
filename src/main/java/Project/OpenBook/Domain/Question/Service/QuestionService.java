@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.Question.Service;
 
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
-import Project.OpenBook.Domain.Topic.PrimaryDate.Domain.PrimaryDate;
+import Project.OpenBook.Domain.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -73,21 +73,21 @@ public class QuestionService {
         }
 
         List<TimeFlowQuestionDto> timeFlowQuestionDtoList = new ArrayList<>();
-        for (Topic topic : topicList) {
-            String topicTitle = topic.getTitle();
-            if (topic.getStartDateCheck()) {
-                timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topic.getStartDate(), makeComment(topicTitle, "startDate"), topicTitle));
-            }
-            if (topic.getEndDateCheck()) {
-                timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topic.getEndDate(), makeComment(topicTitle, "endDate"), topicTitle));
-            }
-            List<PrimaryDate> primaryDateList = topic.getPrimaryDateList();
-            for (PrimaryDate primaryDate : primaryDateList) {
-                if (primaryDate.getExtraDateCheck()) {
-                    timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(primaryDate.getExtraDate(), primaryDate.getExtraDateComment(), topicTitle));
-                }
-            }
-        }
+//        for (Topic topic : topicList) {
+//            String topicTitle = topic.getTitle();
+//            if (topic.getStartDateCheck()) {
+//                timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topic.getStartDate(), makeComment(topicTitle, "startDate"), topicTitle));
+//            }
+//            if (topic.getEndDateCheck()) {
+//                timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topic.getEndDate(), makeComment(topicTitle, "endDate"), topicTitle));
+//            }
+//            List<TopicPrimaryDate> topicPrimaryDateList = topic.getTopicPrimaryDateList();
+//            for (TopicPrimaryDate topicPrimaryDate : topicPrimaryDateList) {
+//                if (topicPrimaryDate.getExtraDateCheck()) {
+//                    timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topicPrimaryDate.getExtraDate(), topicPrimaryDate.getExtraDateComment(), topicTitle));
+//                }
+//            }
+//        }
 
         //연도 순으로 오름차순으로 정렬
         Collections.sort(timeFlowQuestionDtoList, Comparator.comparing(TimeFlowQuestionDto::getDate));

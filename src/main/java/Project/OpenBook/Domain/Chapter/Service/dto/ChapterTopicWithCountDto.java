@@ -15,8 +15,6 @@ public class ChapterTopicWithCountDto {
     private String category;
     private Integer number;
     private String title;
-    private Integer startDate;
-    private Integer endDate;
     private int descriptionCount;
     private int choiceCount;
     private int keywordCount;
@@ -26,8 +24,6 @@ public class ChapterTopicWithCountDto {
         this.category = topic.getCategory().getName();
         this.number = topic.getNumber();
         this.title = topic.getTitle();
-        this.startDate = topic.getStartDate();
-        this.endDate = topic.getEndDate();
         this.descriptionCount = topic.getDescriptionList().size();
         this.choiceCount = topic.getChoiceList().size();
         this.keywordCount = topic.getKeywordList().size();

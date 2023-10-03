@@ -30,8 +30,7 @@ public class ChapterSimpleQueryService {
                 .map(c -> {
                     return new ChapterDetailDto(c.getTitle(),
                             c.getNumber(),
-                            c.getStartDate(),
-                            c.getStartDate(),
+                            c.getDateComment(),
                             c.getTopicList().size());
                 })
                 .collect(Collectors.toList());
@@ -43,7 +42,7 @@ public class ChapterSimpleQueryService {
 
     public ChapterDateDto queryChapterDate(Integer num) {
         Chapter chapter = chapterValidator.checkChapter(num);
-        return new ChapterDateDto(chapter.getStartDate(), chapter.getEndDate());
+        return new ChapterDateDto(chapter.getDateComment());
     }
 
     public ChapterInfoDto queryChapterInfo(Integer num) {

@@ -1,7 +1,7 @@
-package Project.OpenBook.Domain.ChoiceComment;
+package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
-import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
 
 import java.util.List;
 import java.util.Map;

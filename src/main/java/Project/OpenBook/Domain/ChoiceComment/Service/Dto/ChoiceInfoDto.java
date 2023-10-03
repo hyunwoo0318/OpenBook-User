@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.ChoiceComment;
+package Project.OpenBook.Domain.ChoiceComment.Service.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
