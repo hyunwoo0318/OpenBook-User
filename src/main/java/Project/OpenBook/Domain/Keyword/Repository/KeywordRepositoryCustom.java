@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Keyword.Repository;
 
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
 import com.querydsl.core.Tuple;
 
 import java.util.List;
@@ -33,4 +34,8 @@ public interface KeywordRepositoryCustom {
      * @return {keyword.name, keyword.comment, keyword.topic.title} 리턴
      */
     public List<Tuple> queryWrongKeywords(String answerTopicTitle, int limit);
+
+    public List<Keyword> queryKeywordsInTopicWithPrimaryDate(String topicTitle);
+
+    //public List<KeywordDto> queryKeywordDtoList(String topicTitle);
 }

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 public class ExamQuestionDescQueryDto {
     private Integer chapterNumber;
     private String topicTitle;
-    private String type;
     private String name;
     private Long id;
 }

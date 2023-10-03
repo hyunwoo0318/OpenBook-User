@@ -52,7 +52,7 @@ public class TopicDetailDto {
             this.era = topic.getEra().getName();
         }
         this.detail = topic.getDetail();
-        this.dateComment = getDateComment();
+        this.dateComment = topic.getDateComment();
         this.extraDateList = topic.getTopicPrimaryDateList().stream()
                 .map(d -> new PrimaryDateDto(d.getExtraDate(), d.getExtraDateComment()))
                 .collect(Collectors.toList());

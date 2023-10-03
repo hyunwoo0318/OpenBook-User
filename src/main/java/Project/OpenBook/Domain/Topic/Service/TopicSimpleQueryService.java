@@ -2,11 +2,14 @@ package Project.OpenBook.Domain.Topic.Service;
 
 import Project.OpenBook.Domain.Choice.Dto.ChoiceDto;
 import Project.OpenBook.Domain.Description.Dto.DescriptionDto;
-import Project.OpenBook.Domain.Sentence.Dto.SentenceDto;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.Keyword.Repository.KeywordRepositoryCustom;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
-import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordSentenceDto;
+import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +27,7 @@ import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
 public class TopicSimpleQueryService {
 
     private final TopicRepository topicRepository;
+    private final KeywordRepository keywordRepository;
     private final TopicValidator topicValidator;
 
     @Transactional(readOnly = true)
@@ -35,26 +39,28 @@ public class TopicSimpleQueryService {
     }
 
     @Transactional(readOnly = true)
-    public TopicWithKeywordSentenceDto queryTopicsCustomer(String topicTitle) {
+    public TopicWithKeywordDto queryTopicsCustomer(String topicTitle) {
         Topic topic = topicRepository.queryTopicWithCategory(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
-        return new TopicWithKeywordSentenceDto(topic);
+        return new TopicWithKeywordDto(topic);
     }
 
     @Transactional(readOnly = true)
     public List<KeywordDto> queryTopicKeywords(String topicTitle) {
-        return topicValidator.checkTopic(topicTitle).getKeywordList().stream()
-                .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId()))
+
+        return keywordRepository.queryKeywordsInTopicWithPrimaryDate(topicTitle)
+                .stream()
+                .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId(),
+                        k.getDateComment(),
+                        k.getKeywordPrimaryDateList().stream()
+                                .map(p -> new PrimaryDateDto(p.getExtraDate(), p.getExtraDateComment()))
+                                .collect(Collectors.toList()),
+                        null))
                 .collect(Collectors.toList());
+
     }
 
-    @Transactional(readOnly = true)
-    public List<SentenceDto> queryTopicSentences(String topicTitle) {
-        return topicValidator.checkTopic(topicTitle).getSentenceList().stream()
-                .map(s -> new SentenceDto(s.getName(), s.getId()))
-                .collect(Collectors.toList());
-    }
 
     @Transactional(readOnly = true)
     public List<DescriptionDto> queryTopicDescriptions(String topicTitle) {

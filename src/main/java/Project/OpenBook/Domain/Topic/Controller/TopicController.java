@@ -1,7 +1,6 @@
 package Project.OpenBook.Domain.Topic.Controller;
 
-import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordSentenceDto;
-import Project.OpenBook.Domain.Sentence.Dto.SentenceDto;
+import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
 import Project.OpenBook.Domain.Choice.Dto.ChoiceDto;
 import Project.OpenBook.Domain.Description.Dto.DescriptionDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
@@ -45,10 +44,10 @@ public class TopicController {
     })
     @GetMapping("/topics/{topicTitle}")
     @Transactional
-    public ResponseEntity<TopicWithKeywordSentenceDto> queryTopicsTitle(@PathVariable("topicTitle") String topicTitle) {
-        TopicWithKeywordSentenceDto dto = topicSimpleQueryService.queryTopicsCustomer(topicTitle);
+    public ResponseEntity<TopicWithKeywordDto> queryTopicsTitle(@PathVariable("topicTitle") String topicTitle) {
+        TopicWithKeywordDto dto = topicSimpleQueryService.queryTopicsCustomer(topicTitle);
 
-        return new ResponseEntity<TopicWithKeywordSentenceDto>(dto, HttpStatus.OK);
+        return new ResponseEntity<TopicWithKeywordDto>(dto, HttpStatus.OK);
     }
 
     @Operation(summary = "특정 토픽의 전체 키워드 조회")
@@ -63,16 +62,6 @@ public class TopicController {
         return new ResponseEntity<List<KeywordDto>>(dtoList, HttpStatus.OK);
     }
 
-    @Operation(summary = "특정 토픽의 전체 문장 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "특정 토픽의 전체 문장 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
-    })
-    @GetMapping("/topics/{topicTitle}/sentences")
-    public ResponseEntity<List<SentenceDto>> queryTopicSentence(@PathVariable("topicTitle") String topicTitle) {
-        List<SentenceDto> dtoList = topicSimpleQueryService.queryTopicSentences(topicTitle);
-        return new ResponseEntity<List<SentenceDto>>(dtoList, HttpStatus.OK);
-    }
 
     @Operation(summary = "특정 토픽별 모든 보기 조회")
     @ApiResponses(value = {

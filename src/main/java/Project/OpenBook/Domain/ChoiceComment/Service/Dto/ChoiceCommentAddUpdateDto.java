@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChoiceCommentAddUpdateDto {
 
-    private String type;
     private Long id;
 }

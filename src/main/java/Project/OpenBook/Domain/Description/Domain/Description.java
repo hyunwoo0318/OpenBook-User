@@ -32,7 +32,7 @@ public class Description extends BaseEntity {
     @OneToMany(mappedBy = "description")
     private List<DescriptionKeyword> descriptionKeywordList = new ArrayList<>();
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exam_question_id")
     private ExamQuestion examQuestion;
 

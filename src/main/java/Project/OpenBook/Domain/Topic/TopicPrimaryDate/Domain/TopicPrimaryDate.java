@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Sentence.Domain;
+package Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -11,26 +11,23 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Sentence extends BaseEntity {
+public class TopicPrimaryDate extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String name;
+    private Integer extraDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    private String extraDateComment;
+
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    public Sentence(String name, Topic topic) {
-        this.name = name;
+    public TopicPrimaryDate(Integer extraDate, String extraDateComment, Topic topic) {
+        this.extraDate = extraDate;
+        this.extraDateComment = extraDateComment;
         this.topic = topic;
-    }
-
-    public Sentence updateSentence(String name) {
-        this.name = name;
-        return this;
     }
 }

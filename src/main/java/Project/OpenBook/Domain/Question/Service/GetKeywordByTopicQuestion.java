@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static Project.OpenBook.Constants.QuestionConst.GET_KEYWORD_TYPE;
-import static Project.OpenBook.Constants.QuestionConst.WRONG_KEYWORD_SENTENCE_NUM;
+import static Project.OpenBook.Constants.QuestionConst.WRONG_KEYWORD_NUM;
 
 /**
  * 주제 보고 키워드 맞추기
@@ -40,7 +40,7 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
         List<QuestionChoiceDto> answerChoiceList = toQuestionChoiceDtoByKeyword(answerKeywordList);
 
         //오답 키워드 조회
-        List<QuestionChoiceDto> wrongChoiceList = getWrongKeywordsByTopic(topicTitle, WRONG_KEYWORD_SENTENCE_NUM);
+        List<QuestionChoiceDto> wrongChoiceList = getWrongKeywordsByTopic(topicTitle, WRONG_KEYWORD_NUM);
         if (wrongChoiceList.isEmpty()) {
             return null;
         }
@@ -64,7 +64,7 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
         List<Keyword> keywordList = getTotalKeywordByAnswerTopic(topicTitle);
         for (Keyword k : keywordList) {
             //오답 키워드 조회
-            List<QuestionChoiceDto> choiceList = getWrongKeywordsByTopic(topicTitle, WRONG_KEYWORD_SENTENCE_NUM);
+            List<QuestionChoiceDto> choiceList = getWrongKeywordsByTopic(topicTitle, WRONG_KEYWORD_NUM);
 
             //Dto 변환
             if(!choiceList.isEmpty()){

@@ -8,15 +8,14 @@ import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Era.EraRepository;
-import Project.OpenBook.Domain.TopicPrimaryDate.Domain.TopicPrimaryDate;
-import Project.OpenBook.Domain.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicNumberDto;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import Project.OpenBook.Domain.Sentence.Domain.Sentence;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
@@ -68,6 +67,7 @@ public class TopicService {
                 .chapter(chapter)
                 .category(category)
                 .era(era)
+                .dateComment(topicDetailDto.getDateComment())
                 .title(topicDetailDto.getTitle())
                 .detail(topicDetailDto.getDetail())
                 .questionNum(0)
@@ -143,10 +143,7 @@ public class TopicService {
         if (!keywordList.isEmpty()) {
             throw new CustomException(TOPIC_HAS_KEYWORD);
         }
-        List<Sentence> sentenceList = findTopic.getSentenceList();
-        if (!sentenceList.isEmpty()) {
-            throw new CustomException(TOPIC_HAS_SENTENCE);
-        }
+
 
         List<TopicPrimaryDate> topicPrimaryDateList = findTopic.getTopicPrimaryDateList();
         topicPrimaryDateRepository.deleteAllInBatch(topicPrimaryDateList);

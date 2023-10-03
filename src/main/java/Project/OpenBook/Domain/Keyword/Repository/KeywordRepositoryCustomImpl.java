@@ -3,6 +3,8 @@ package Project.OpenBook.Domain.Keyword.Repository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 
 import Project.OpenBook.Domain.Keyword.Domain.QKeyword;
+import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
+import Project.OpenBook.Domain.Topic.Domain.QTopic;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 
 @Repository
@@ -50,4 +53,19 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
                 .limit(limit)
                 .fetch();
     }
+
+    @Override
+    public List<Keyword> queryKeywordsInTopicWithPrimaryDate(String topicTitle) {
+        return queryFactory.select(keyword).distinct()
+                .from(keyword)
+                .leftJoin(keyword.keywordPrimaryDateList).fetchJoin()
+                .where(keyword.topic.title.eq(topicTitle))
+                .fetch();
+    }
+
+//    @Override
+//    public List<KeywordDto> queryKeywordDtoList(String topicTitle) {
+//        queryFactory.from(topic)
+//                .leftJoin(topic.
+//    }
 }

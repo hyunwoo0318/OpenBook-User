@@ -27,17 +27,17 @@ public class DescriptionController {
 
     @Operation(summary = "보기 키워드/문장 추가")
     @PostMapping("/descriptions/{id}")
-    public ResponseEntity insertDescriptionKeywordSentence(@PathVariable("id") Long descriptionId,
+    public ResponseEntity insertDescriptionKeyword(@PathVariable("id") Long descriptionId,
                                                            @Validated @RequestBody DescriptionCommentAddDto descriptionCommentAddDto){
-        descriptionCommentService.insertDescriptionKeywordSentence(descriptionId, descriptionCommentAddDto);
+        descriptionCommentService.insertDescriptionKeyword(descriptionId, descriptionCommentAddDto);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @Operation(summary = "보기 키워드/문장 삭제")
     @DeleteMapping("/descriptions/{id}")
-    public ResponseEntity deleteDescriptionKeywordSentence(@PathVariable("id") Long descriptionId,
+    public ResponseEntity deleteDescriptionKeyword(@PathVariable("id") Long descriptionId,
                                                            @Validated @RequestBody DescriptionCommentAddDto descriptionCommentAddDto){
-        descriptionCommentService.deleteDescriptionKeywordSentence(descriptionId, descriptionCommentAddDto);
+        descriptionCommentService.deleteDescriptionKeyword(descriptionId, descriptionCommentAddDto);
         return new ResponseEntity(HttpStatus.OK);
     }
 

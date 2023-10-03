@@ -8,6 +8,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DescriptionCommentAddDto {
-    private String type;
     private Long id;
 }

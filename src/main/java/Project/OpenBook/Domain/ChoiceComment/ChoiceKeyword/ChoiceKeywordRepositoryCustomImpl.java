@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
-import Project.OpenBook.Constants.CommentConst;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
 import com.querydsl.core.types.Projections;
@@ -14,7 +13,7 @@ import java.util.Map;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Choice.Domain.QChoice.choice;
-import static Project.OpenBook.Domain.ChoiceComment.QChoiceKeyword.choiceKeyword;
+import static Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.QChoiceKeyword.choiceKeyword;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 import static com.querydsl.core.group.GroupBy.*;
@@ -40,7 +39,6 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
                                 ChoiceCommentInfoDto.class,
                                 topic.chapter.number.as("chapterNumber"),
                                 keyword.topic.title.as("topicTitle"),
-                                Expressions.as(Expressions.constant(CommentConst.KEYWORD), "type"),
                                 choiceKeyword.keyword.name.as("name"),
                                 choiceKeyword.keyword.id.as("id")
                         ))));

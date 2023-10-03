@@ -1,6 +1,7 @@
-package Project.OpenBook.Domain.TopicPrimaryDate.Domain;
+package Project.OpenBook.Domain.Keyword.KeywordPrimaryDate;
 
 import Project.OpenBook.Domain.BaseEntity;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class TopicPrimaryDate extends BaseEntity {
+public class KeywordPrimaryDate extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,13 +22,13 @@ public class TopicPrimaryDate extends BaseEntity {
 
     private String extraDateComment;
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "topic_id")
-    private Topic topic;
+    @ManyToOne(fetch = FetchType.LAZY ,cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "keyword_id")
+    private Keyword keyword;
 
-    public TopicPrimaryDate(Integer extraDate, String extraDateComment, Topic topic) {
+    public KeywordPrimaryDate(Integer extraDate, String extraDateComment, Keyword keyword) {
         this.extraDate = extraDate;
         this.extraDateComment = extraDateComment;
-        this.topic = topic;
+        this.keyword = keyword;
     }
 }

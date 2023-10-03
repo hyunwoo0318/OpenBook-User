@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.Keyword.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
-import Project.OpenBook.Domain.KeywordPrimaryDate;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.KeywordPrimaryDate;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,6 +26,8 @@ public class Keyword extends BaseEntity {
 
     private String imageUrl;
 
+    private String dateComment;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
@@ -33,12 +35,13 @@ public class Keyword extends BaseEntity {
     @OneToMany(mappedBy = "keyword")
     private List<DescriptionKeyword> descriptionKeywordList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "keyword")
+    @OneToMany(mappedBy = "keyword", cascade = CascadeType.REMOVE)
     private List<KeywordPrimaryDate> keywordPrimaryDateList = new ArrayList<>();
 
-    public Keyword(String name, String comment, Topic topic, String imageUrl) {
+    public Keyword(String name, String comment,String dateComment, Topic topic, String imageUrl) {
         this.name = name;
         this.comment = comment;
+        this.dateComment = dateComment;
         this.topic = topic;
         this.imageUrl = imageUrl;
     }
@@ -47,9 +50,10 @@ public class Keyword extends BaseEntity {
         this.name = name;
     }
 
-    public Keyword updateKeyword(String name, String comment,String imageUrl) {
+    public Keyword updateKeyword(String name, String comment,String dateComment, String imageUrl) {
         this.name = name;
         this.comment = comment;
+        this.dateComment = dateComment;
         this.imageUrl = imageUrl;
         return this;
     }

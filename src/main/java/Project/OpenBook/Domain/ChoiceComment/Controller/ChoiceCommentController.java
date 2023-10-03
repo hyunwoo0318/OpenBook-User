@@ -47,17 +47,17 @@ public class ChoiceCommentController {
 
     @Operation(summary = "선지 키워드/문장 추가")
     @PostMapping("/admin/choices/{choiceId}/choice-comment")
-    public ResponseEntity insertChoiceKeywordSentence(@PathVariable("choiceId")Long choiceId,
-                                                      @Validated @RequestBody ChoiceCommentAddUpdateDto dto) {
-        choiceService.insertChoiceKeywordSentence(choiceId, dto);
+    public ResponseEntity insertChoiceKeyword(@PathVariable("choiceId")Long choiceId,
+                                              @Validated @RequestBody ChoiceCommentAddUpdateDto dto) {
+        choiceService.insertChoiceKeyword(choiceId, dto);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @Operation(summary = "선지 키워드/문장 삭제")
     @DeleteMapping("/admin/choices/{choiceId}/choice-comment")
-    public ResponseEntity deleteChoiceKeywordSentence(@PathVariable("choiceId")Long choiceId,
-                                                      @Validated @RequestBody ChoiceCommentAddUpdateDto dto) {
-        choiceService.deleteChoiceKeywordSentence(choiceId, dto);
+    public ResponseEntity deleteChoiceKeyword(@PathVariable("choiceId")Long choiceId,
+                                              @Validated @RequestBody ChoiceCommentAddUpdateDto dto) {
+        choiceService.deleteChoiceKeyword(choiceId, dto);
         return new ResponseEntity(HttpStatus.OK);
     }
 

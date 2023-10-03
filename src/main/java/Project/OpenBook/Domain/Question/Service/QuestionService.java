@@ -1,14 +1,12 @@
 package Project.OpenBook.Domain.Question.Service;
 
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
-import Project.OpenBook.Domain.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.Sentence.Repository.SentenceRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 
 import org.springframework.stereotype.Service;
@@ -26,23 +24,21 @@ public class QuestionService {
     private TopicRepository topicRepository;
     private ChapterRepository chapterRepository;
     private KeywordRepository keywordRepository;
-    private SentenceRepository sentenceRepository;
 
     private GetKeywordByTopicQuestion type1 ;
-    private GetSentenceByTopicQuestion type2;
+//    private GetSentenceByTopicQuestion type2;
     private GetTopicByKeywordQuestion type3;
-    private GetTopicBySentenceQuestion type4;
+//    private GetTopicBySentenceQuestion type4;
 
-    public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository, SentenceRepository sentenceRepository) {
+    public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository) {
         this.topicRepository = topicRepository;
         this.chapterRepository = chapterRepository;
         this.keywordRepository = keywordRepository;
-        this.sentenceRepository = sentenceRepository;
 
-        this.type1 = new GetKeywordByTopicQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
-        this.type2 = new GetSentenceByTopicQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
-        this.type3 = new GetTopicByKeywordQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
-        this.type4 = new GetTopicBySentenceQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
+        this.type1 = new GetKeywordByTopicQuestion(this.topicRepository, this.keywordRepository);
+//        this.type2 = new GetSentenceByTopicQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
+        this.type3 = new GetTopicByKeywordQuestion(this.topicRepository, this.keywordRepository);
+//        this.type4 = new GetTopicBySentenceQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
     }
 
     private Topic checkTopic(String topicTitle) {
@@ -110,12 +106,12 @@ public class QuestionService {
         return type1.getJJHQuestion(topicTitle);
     }
 
-    @Transactional
-    public List<QuestionDto> queryGetSentencesQuestion(String topicTitle) {
-        Topic topic = checkTopic(topicTitle);
-
-        return type2.getJJHQuestion(topicTitle);
-    }
+//    @Transactional
+//    public List<QuestionDto> queryGetSentencesQuestion(String topicTitle) {
+//        Topic topic = checkTopic(topicTitle);
+//
+//        return type2.getJJHQuestion(topicTitle);
+//    }
 
     @Transactional
     public List<QuestionDto> queryGetTopicsByKeywordQuestion(Integer num) {
@@ -139,25 +135,25 @@ public class QuestionService {
         return questionList;
     }
 
-    @Transactional
-    public List<QuestionDto> queryGetTopicsBySentenceQuestion(Integer num) {
-        List<QuestionDto> questionList = new ArrayList<>();
-
-        Chapter chapter = chapterRepository.findOneByNumber(num).orElseThrow(() -> {
-            throw new CustomException(CHAPTER_NOT_FOUND);
-        });
-
-        List<String> topicTitleList = chapter.getTopicList().stream()
-                .map(Topic::getTitle)
-                .collect(Collectors.toList());
-        for (String topicTitle : topicTitleList) {
-            QuestionDto dto = type4.getQuestion(topicTitle);
-            if (dto != null) {
-                questionList.add(dto);
-            }
-        }
-        return questionList;
-    }
+//    @Transactional
+//    public List<QuestionDto> queryGetTopicsBySentenceQuestion(Integer num) {
+//        List<QuestionDto> questionList = new ArrayList<>();
+//
+//        Chapter chapter = chapterRepository.findOneByNumber(num).orElseThrow(() -> {
+//            throw new CustomException(CHAPTER_NOT_FOUND);
+//        });
+//
+//        List<String> topicTitleList = chapter.getTopicList().stream()
+//                .map(Topic::getTitle)
+//                .collect(Collectors.toList());
+//        for (String topicTitle : topicTitleList) {
+//            QuestionDto dto = type4.getQuestion(topicTitle);
+//            if (dto != null) {
+//                questionList.add(dto);
+//            }
+//        }
+//        return questionList;
+//    }
 
     @Transactional
     public List<QuestionDto> queryRandomQuestion(Integer chapterNum, Integer questionCount) {
@@ -181,18 +177,12 @@ public class QuestionService {
         for (int i = 0; i < questionCount; i++) {
             String title = topicTitleList.get(i % totalSize);
             QuestionDto dto = null;
-            if (i % 4 == 0) {
+            if (i % 2 == 0) {
                 //1유형
                 dto = type1.getQuestion(title);
-            } else if (i % 4 == 1) {
+            } else if (i % 2 == 1) {
                 //2유형
-                dto = type2.getQuestion(title);
-            } else if (i % 4 == 2) {
-                //3유형
                 dto = type3.getQuestion(title);
-            } else if (i % 4 == 3) {
-                //4유형
-                dto = type4.getQuestion(title);
             }
 
             questionList.add(dto);

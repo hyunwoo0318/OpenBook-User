@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain;
+package Project.OpenBook.Domain.Keyword.KeywordPrimaryDate;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

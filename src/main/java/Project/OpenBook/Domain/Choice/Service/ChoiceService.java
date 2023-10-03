@@ -1,13 +1,10 @@
 package Project.OpenBook.Domain.Choice.Service;
 
 import Project.OpenBook.Constants.ChoiceType;
-import Project.OpenBook.Constants.CommentConst;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
-import Project.OpenBook.Domain.ChoiceComment.ChoiceSentence.ChoiceSentence;
-import Project.OpenBook.Domain.ChoiceComment.ChoiceSentence.ChoiceSentenceRepository;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentAddUpdateDto;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentQueryDto;
@@ -16,8 +13,6 @@ import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.Sentence.Domain.Sentence;
-import Project.OpenBook.Domain.Sentence.Repository.SentenceRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import Project.OpenBook.Image.ImageService;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +29,9 @@ public class ChoiceService {
 
     private final ChoiceRepository choiceRepository;
     private final ImageService imageService;
-//    private final TopicRepository topicRepository;
     private final ExamQuestionRepository examQuestionRepository;
     private final ChoiceKeywordRepository choiceKeywordRepository;
-    private final ChoiceSentenceRepository choiceSentenceRepository;
     private final KeywordRepository keywordRepository;
-    private final SentenceRepository sentenceRepository;
 
 //    @Transactional
 //    public void updateChoice(Long choiceId, ChoiceAddUpdateDto dto) throws IOException {
@@ -132,47 +124,35 @@ public class ChoiceService {
     }
 
     @Transactional
-    public void insertChoiceKeywordSentence(Long choiceId, ChoiceCommentAddUpdateDto dto) {
+    public void insertChoiceKeyword(Long choiceId, ChoiceCommentAddUpdateDto dto) {
         Choice choice = choiceRepository.findById(choiceId).orElseThrow(() -> {
             throw new CustomException(CHOICE_NOT_FOUND);
         });
 
-        String type = dto.getType();
-        if (type.equals(CommentConst.KEYWORD)) {
+
             Keyword keyword = keywordRepository.findById(dto.getId()).orElseThrow(() -> {
                 throw new CustomException(KEYWORD_NOT_FOUND);
             });
             ChoiceKeyword choiceKeyword = new ChoiceKeyword(choice, keyword);
             choiceKeywordRepository.save(choiceKeyword);
-        } else if (type.equals(CommentConst.SENTENCE)) {
-            Sentence sentence = sentenceRepository.findById(dto.getId()).orElseThrow(() -> {
-                throw new CustomException(SENTENCE_NOT_FOUND);
-            });
-            choiceSentenceRepository.save(new ChoiceSentence(choice, sentence));
 
-        }
+
     }
 
     @Transactional
-    public void deleteChoiceKeywordSentence(Long choiceId, ChoiceCommentAddUpdateDto dto) {
+    public void deleteChoiceKeyword(Long choiceId, ChoiceCommentAddUpdateDto dto) {
         Choice choice = choiceRepository.findById(choiceId).orElseThrow(() -> {
             throw new CustomException(CHOICE_NOT_FOUND);
         });
 
-        String type = dto.getType();
-        if (type.equals(CommentConst.KEYWORD)) {
+
+
             Keyword keyword = keywordRepository.findById(dto.getId()).orElseThrow(() -> {
                 throw new CustomException(KEYWORD_NOT_FOUND);
             });
 
             choiceKeywordRepository.deleteByChoiceAndKeyword(choice, keyword);
-        } else if (type.equals(CommentConst.SENTENCE)) {
-            Sentence sentence = sentenceRepository.findById(dto.getId()).orElseThrow(() -> {
-                throw new CustomException(SENTENCE_NOT_FOUND);
-            });
-            choiceSentenceRepository.deleteByChoiceAndSentence(choice, sentence);
 
-        }
     }
 
     @Transactional(readOnly = true)
@@ -185,18 +165,14 @@ public class ChoiceService {
 
         List<Choice> choiceList = examQuestion.getChoiceList();
         Map<Choice, List<ChoiceCommentInfoDto>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywords(choiceList);
-        Map<Choice, List<ChoiceCommentInfoDto>> choiceSentenceMap = choiceSentenceRepository.queryChoiceSentences(choiceList);
 
         for (Choice choice : choiceList) {
             List<ChoiceCommentInfoDto> commentList = new ArrayList<>();
             List<ChoiceCommentInfoDto> dtoKeywordList = choiceKeywordMap.get(choice);
-            List<ChoiceCommentInfoDto> dtoSentenceList = choiceSentenceMap.get(choice);
             if (dtoKeywordList != null) {
                 commentList.addAll(dtoKeywordList);
             }
-            if (dtoSentenceList != null) {
-                commentList.addAll(dtoSentenceList);
-            }
+
             retList.add(new ChoiceCommentQueryDto(choice.getContent(), choice.getNumber(), choice.getId(),
                     choice.getType().name(), commentList));
         }

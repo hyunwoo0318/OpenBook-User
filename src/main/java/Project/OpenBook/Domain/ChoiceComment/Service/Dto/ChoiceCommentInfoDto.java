@@ -19,10 +19,9 @@ public class ChoiceCommentInfoDto {
     private Long id;
 
 
-    public ChoiceCommentInfoDto(Integer chapterNumber, String topicTitle, String type, String name, Long id) {
+    public ChoiceCommentInfoDto(Integer chapterNumber, String topicTitle,  String name, Long id) {
         this.chapterNumber = chapterNumber;
         this.topicTitle = topicTitle;
-        this.type = type;
         this.name = name;
         this.id = id;
     }

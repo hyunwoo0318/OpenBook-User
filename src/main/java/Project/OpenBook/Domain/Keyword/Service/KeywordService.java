@@ -5,11 +5,10 @@ import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
-import Project.OpenBook.Domain.KeywordPrimaryDate;
-import Project.OpenBook.Domain.KeywordPrimaryDateRepository;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.KeywordPrimaryDate;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Image.ImageService;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -57,7 +56,7 @@ public class KeywordService {
         }
 
         //키워드 저장
-        Keyword keyword = new Keyword(name,comment, topic,imageUrl);
+        Keyword keyword = new Keyword(name,comment, keywordCreateDto.getDateComment(),topic,imageUrl);
         keywordRepository.save(keyword);
 
         //추가년도 저장
@@ -95,7 +94,7 @@ public class KeywordService {
         }
 
         //키워드 수정
-        Keyword afterKeyword = keyword.updateKeyword(name, comment,newImageUrl);
+        Keyword afterKeyword = keyword.updateKeyword(name, comment, keywordUserDto.getDateComment(),newImageUrl);
 
 
         //추가년도 수정

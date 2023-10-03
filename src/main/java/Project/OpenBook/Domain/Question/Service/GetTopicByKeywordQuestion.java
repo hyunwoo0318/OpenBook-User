@@ -6,7 +6,6 @@ import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordNameCommentDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.Sentence.Repository.SentenceRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -14,8 +13,8 @@ import java.util.stream.Collectors;
 import static Project.OpenBook.Constants.QuestionConst.GET_TOPIC_BY_KEYWORD_TYPE;
 
 public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory implements QuestionFactory {
-    public GetTopicByKeywordQuestion(TopicRepository topicRepository, KeywordRepository keywordRepository, SentenceRepository sentenceRepository) {
-        super(topicRepository, keywordRepository, sentenceRepository);
+    public GetTopicByKeywordQuestion(TopicRepository topicRepository, KeywordRepository keywordRepository) {
+        super(topicRepository, keywordRepository);
     }
 
     /**

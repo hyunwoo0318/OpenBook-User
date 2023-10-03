@@ -6,7 +6,7 @@ import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.*;
 import Project.OpenBook.Domain.Era.Era;
-import Project.OpenBook.Domain.TopicPrimaryDate.Domain.TopicPrimaryDate;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
 import lombok.*;

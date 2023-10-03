@@ -43,17 +43,6 @@ public class QuestionController {
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }
 
-    @Operation(summary = "주제보고 문장 맞추기 문제 제공")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "주제보고 문장 맞추기 문제 제공 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
-    })
-    @GetMapping("/questions/get-sentences")
-    public ResponseEntity<List<QuestionDto>> queryGetSentencesQuestion(@RequestParam("title") String topicTitle) {
-        List<QuestionDto> questionDtoList = questionService.queryGetSentencesQuestion(topicTitle);
-
-        return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
-    }
 
     @Operation(summary = "키워드 보고 주제 맞추기 문제 제공")
     @ApiResponses(value = {
@@ -67,17 +56,7 @@ public class QuestionController {
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }
 
-    @Operation(summary = "문장 보고 주제 맞추기 문제 제공")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "키워드/문장 보고 주제 맞추기 문제 제공 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
-    })
-    @GetMapping("/questions/get-topics-sentences")
-    public ResponseEntity<List<QuestionDto>> queryGetTopicsBySentenceQuestion(@RequestParam("num") Integer num){
-        List<QuestionDto> questionDtoList = questionService.queryGetTopicsBySentenceQuestion(num);
 
-        return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
-    }
 
     @Operation(summary = "랜덤 문제 제공")
     @ApiResponses(value = {

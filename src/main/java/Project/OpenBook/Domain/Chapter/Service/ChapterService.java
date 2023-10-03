@@ -37,7 +37,7 @@ public class ChapterService {
 
         chapterValidator.checkDupChapterNum(number);
 
-        Chapter newChapter = new Chapter(number, title, dateComment);
+        Chapter newChapter = new Chapter(number, dateComment, title);
 
         chapterRepository.save(newChapter);
 
