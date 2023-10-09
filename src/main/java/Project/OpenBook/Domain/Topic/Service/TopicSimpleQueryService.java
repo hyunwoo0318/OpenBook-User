@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,11 +53,12 @@ public class TopicSimpleQueryService {
         return keywordRepository.queryKeywordsInTopicWithPrimaryDate(topicTitle)
                 .stream()
                 .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId(),
-                        k.getDateComment(),
+                        k.getDateComment(),k.getNumber(),
                         k.getKeywordPrimaryDateList().stream()
                                 .map(p -> new PrimaryDateDto(p.getExtraDate(), p.getExtraDateComment()))
                                 .collect(Collectors.toList()),
                         null))
+                .sorted(Comparator.comparing(KeywordDto::getNumber))
                 .collect(Collectors.toList());
 
     }

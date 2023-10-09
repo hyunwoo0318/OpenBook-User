@@ -17,6 +17,7 @@ public class KeywordDto {
     private String file;
     private Long id;
     private String dateComment;
+    private Integer number;
     private List<PrimaryDateDto> extraDateList = new ArrayList<>();
     private List<QuestionNumberDto> questionList = new ArrayList<>();
 }

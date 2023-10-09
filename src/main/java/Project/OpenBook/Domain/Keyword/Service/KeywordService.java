@@ -3,6 +3,7 @@ package Project.OpenBook.Domain.Keyword.Service;
 import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
+import Project.OpenBook.Domain.Keyword.Dto.KeywordNumberDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.KeywordPrimaryDate;
@@ -16,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -91,6 +95,9 @@ public class KeywordService {
         if(encodedFile != null && !encodedFile.isBlank() &&!encodedFile.startsWith("https")){
             imageService.checkBase64(encodedFile);
             newImageUrl = imageService.storeFile(encodedFile);
+        } else if (encodedFile != null && encodedFile.isBlank()) {
+            //기존 이미지 삭제
+            newImageUrl = null;
         }
 
         //키워드 수정
@@ -129,4 +136,24 @@ public class KeywordService {
     }
 
 
+    @Transactional
+    public void updateKeywordNumbers(List<KeywordNumberDto> keywordNumberDtoList) {
+        Map<Long, Integer> m = new HashMap<>();
+        List<Long> keywordIdList = new ArrayList<>();
+        for (KeywordNumberDto keywordNumberDto : keywordNumberDtoList) {
+            m.put(keywordNumberDto.getId(), keywordNumberDto.getNumber());
+            keywordIdList.add(keywordNumberDto.getId());
+        }
+        List<Keyword> keywordList = keywordRepository.findAllById(keywordIdList);
+        if (keywordList.size() != keywordNumberDtoList.size()) {
+            throw new CustomException(KEYWORD_NOT_FOUND);
+        }
+
+        for (Keyword keyword : keywordList) {
+            Long keywordId = keyword.getId();
+            Integer number = m.get(keywordId);
+            keyword.updateNumber(number);
+        }
+
+    }
 }

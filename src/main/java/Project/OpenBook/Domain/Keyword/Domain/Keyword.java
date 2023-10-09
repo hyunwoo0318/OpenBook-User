@@ -28,6 +28,8 @@ public class Keyword extends BaseEntity {
 
     private String dateComment;
 
+    private Integer number = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
@@ -39,11 +41,16 @@ public class Keyword extends BaseEntity {
     private List<KeywordPrimaryDate> keywordPrimaryDateList = new ArrayList<>();
 
     public Keyword(String name, String comment,String dateComment, Topic topic, String imageUrl) {
+        this.number = 0;
         this.name = name;
         this.comment = comment;
         this.dateComment = dateComment;
         this.topic = topic;
         this.imageUrl = imageUrl;
+    }
+
+    public void updateNumber(Integer number) {
+        this.number = number;
     }
 
     public void changeName(String name) {

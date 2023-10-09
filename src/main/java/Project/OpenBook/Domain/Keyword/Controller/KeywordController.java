@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Keyword.Controller;
 
+import Project.OpenBook.Domain.Keyword.Dto.KeywordNumberDto;
 import Project.OpenBook.Domain.Keyword.Service.KeywordService;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
@@ -13,12 +14,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 public class KeywordController {
 
     private final KeywordService keywordService;
+    private List<KeywordNumberDto> keywordNumberDto;
 
 
     @Operation(summary = "키워드 생성")
@@ -60,5 +63,19 @@ public class KeywordController {
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
+
+    @Operation(summary = "키워드 번호 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "키워드 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력으로 인하여 키워드 수정 실패"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 키워드 수정 시도")
+    })
+    @PatchMapping("admin/keyword-numbers")
+    public ResponseEntity<Void> updateKeywordNumbers(@Validated @RequestBody List<KeywordNumberDto> keywordNumberDtoList) throws IOException {
+        keywordService.updateKeywordNumbers(keywordNumberDtoList);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+
 }
 
