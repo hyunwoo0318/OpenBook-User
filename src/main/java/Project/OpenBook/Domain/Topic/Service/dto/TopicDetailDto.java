@@ -33,6 +33,7 @@ public class TopicDetailDto {
 
    /* @NotBlank(message = "설명을 입력해주세요.")*/
     private String detail;
+    private Integer number;
 
     private List<PrimaryDateDto> extraDateList;
 
@@ -56,6 +57,7 @@ public class TopicDetailDto {
         this.extraDateList = topic.getTopicPrimaryDateList().stream()
                 .map(d -> new PrimaryDateDto(d.getExtraDate(), d.getExtraDateComment()))
                 .collect(Collectors.toList());
+        this.number = topic.getNumber();
     }
 
 }

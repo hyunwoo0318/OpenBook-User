@@ -24,7 +24,7 @@ public class TopicWithKeywordDto {
                 .map(pd -> new PrimaryDateDto(pd.getExtraDate(), pd.getExtraDateComment()))
                 .collect(Collectors.toList());
         this.keywordList = topic.getKeywordList().stream()
-                .map(k -> new KeywordUserDto(k.getName(), k.getComment(),k.getDateComment(), k.getImageUrl(),
+                .map(k -> new KeywordUserDto(k.getName(), k.getComment(),k.getDateComment(), k.getImageUrl(),k.getNumber(),
                         k.getKeywordPrimaryDateList().stream()
                                 .map(p -> new PrimaryDateDto(p.getExtraDate(), p.getExtraDateComment()))
                                 .collect(Collectors.toList())

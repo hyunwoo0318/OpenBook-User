@@ -70,6 +70,7 @@ public class TopicService {
                 .dateComment(topicDetailDto.getDateComment())
                 .title(topicDetailDto.getTitle())
                 .detail(topicDetailDto.getDetail())
+                .number(topicDetailDto.getNumber())
                 .questionNum(0)
                 .choiceNum(0)
                 .build();
@@ -116,7 +117,7 @@ public class TopicService {
 
 
         //토픽 수정
-        topic.updateTopic(topicDetailDto.getTitle(),topicDetailDto.getDateComment(), topicDetailDto.getDetail(), chapter, category, era);
+        topic.updateTopic(topicDetailDto.getNumber(), topicDetailDto.getTitle(),topicDetailDto.getDateComment(), topicDetailDto.getDetail(), chapter, category, era);
 
         //연표에 나올 날짜 수정
         List<TopicPrimaryDate> prevDateList = topic.getTopicPrimaryDateList();

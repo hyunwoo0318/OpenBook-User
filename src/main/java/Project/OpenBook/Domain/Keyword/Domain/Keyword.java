@@ -40,8 +40,8 @@ public class Keyword extends BaseEntity {
     @OneToMany(mappedBy = "keyword", cascade = CascadeType.REMOVE)
     private List<KeywordPrimaryDate> keywordPrimaryDateList = new ArrayList<>();
 
-    public Keyword(String name, String comment,String dateComment, Topic topic, String imageUrl) {
-        this.number = 0;
+    public Keyword(Integer number, String name, String comment,String dateComment, Topic topic, String imageUrl) {
+        this.number = number;
         this.name = name;
         this.comment = comment;
         this.dateComment = dateComment;
@@ -57,7 +57,8 @@ public class Keyword extends BaseEntity {
         this.name = name;
     }
 
-    public Keyword updateKeyword(String name, String comment,String dateComment, String imageUrl) {
+    public Keyword updateKeyword(Integer number, String name, String comment,String dateComment, String imageUrl) {
+        this.number = number;
         this.name = name;
         this.comment = comment;
         this.dateComment = dateComment;

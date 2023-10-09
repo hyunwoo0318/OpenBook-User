@@ -16,5 +16,6 @@ public class KeywordUserDto {
     private String comment;
     private String file;
     private String dateComment;
+    private Integer number;
     private List<PrimaryDateDto> extraDateList;
 }

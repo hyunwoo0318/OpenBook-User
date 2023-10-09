@@ -23,5 +23,6 @@ public class KeywordCreateDto {
     private String topic;
     private String file;
     private String dateComment;
+    private Integer number;
     private List<PrimaryDateDto> extraDateList = new ArrayList<>();
 }

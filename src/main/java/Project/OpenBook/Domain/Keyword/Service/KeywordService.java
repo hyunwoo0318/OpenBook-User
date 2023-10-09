@@ -43,6 +43,7 @@ public class KeywordService {
         String comment = keywordCreateDto.getComment();
         String topicTitle = keywordCreateDto.getTopic();
         String encodedFile = keywordCreateDto.getFile();
+        Integer number = keywordCreateDto.getNumber();
         String imageUrl = null;
 
         //입력 받은 토픽 제목이 실제 존재하는 토픽 제목인지 확인
@@ -60,7 +61,7 @@ public class KeywordService {
         }
 
         //키워드 저장
-        Keyword keyword = new Keyword(name,comment, keywordCreateDto.getDateComment(),topic,imageUrl);
+        Keyword keyword = new Keyword(number,name,comment, keywordCreateDto.getDateComment(),topic,imageUrl);
         keywordRepository.save(keyword);
 
         //추가년도 저장
@@ -80,6 +81,7 @@ public class KeywordService {
         String name = keywordUserDto.getName();
         String comment = keywordUserDto.getComment();
         String encodedFile = keywordUserDto.getFile();
+        Integer number = keywordUserDto.getNumber();
 
         Keyword keyword = checkKeyword(keywordId);
         String title = keyword.getTopic().getTitle();
@@ -101,7 +103,7 @@ public class KeywordService {
         }
 
         //키워드 수정
-        Keyword afterKeyword = keyword.updateKeyword(name, comment, keywordUserDto.getDateComment(),newImageUrl);
+        Keyword afterKeyword = keyword.updateKeyword(number, name, comment, keywordUserDto.getDateComment(),newImageUrl);
 
 
         //추가년도 수정

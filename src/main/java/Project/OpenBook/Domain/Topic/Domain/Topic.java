@@ -71,8 +71,8 @@ public class Topic extends BaseEntity {
     private List<Description> descriptionList = new ArrayList<>();
 
     @Builder
-    public Topic(String title, int questionNum, int choiceNum,String dateComment,  String detail, Chapter chapter, Category category, Era era) {
-        this.number = 0;
+    public Topic(Integer number, String title, int questionNum, int choiceNum,String dateComment,  String detail, Chapter chapter, Category category, Era era) {
+        this.number = number;
         this.title = title;
         this.questionNum = questionNum;
         this.choiceNum = choiceNum;
@@ -93,7 +93,8 @@ public class Topic extends BaseEntity {
         this.title = title;
     }
 
-    public Topic updateTopic(String title, String dateComment, String detail, Chapter chapter, Category category, Era era) {
+    public Topic updateTopic(Integer number, String title, String dateComment, String detail, Chapter chapter, Category category, Era era) {
+        this.number = number;
         this.title = title;
         this.dateComment = dateComment;
         this.detail = detail;
