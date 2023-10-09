@@ -39,10 +39,10 @@ public class ChapterController {
             @ApiResponse(responseCode = "200", description = "단원 전체 조회 성공")
     })
     @GetMapping("/admin/chapters")
-    public ResponseEntity<List<ChapterTitleNumDto>> queryChaptersAdmin(){
-        List<ChapterTitleNumDto> dtoList = chapterSimpleQueryService.queryChaptersAdmin();
+    public ResponseEntity<List<ChapterQueryAdminDto>> queryChaptersAdmin(){
+        List<ChapterQueryAdminDto> dtoList = chapterSimpleQueryService.queryChaptersAdmin();
 
-        return new ResponseEntity<List<ChapterTitleNumDto>>(dtoList, HttpStatus.OK);
+        return new ResponseEntity<List<ChapterQueryAdminDto>>(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "모든 단원 정보 가져오기 - 정주행")
@@ -87,7 +87,7 @@ public class ChapterController {
         return new ResponseEntity<ChapterTitleDto>(dto, HttpStatus.OK);
     }
 
-    @Operation(summary = "단원 시작년도/종료년도 조회")
+    @Operation(summary = "단원 dateComment 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")

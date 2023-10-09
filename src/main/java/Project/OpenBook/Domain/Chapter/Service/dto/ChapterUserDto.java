@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ChapterUserDto {
     private String title;
     private Integer number;
+    private String dateComment;
     private String state;
     private String progress;
 }

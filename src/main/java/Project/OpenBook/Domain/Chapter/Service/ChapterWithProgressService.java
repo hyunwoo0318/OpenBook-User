@@ -75,7 +75,7 @@ public class ChapterWithProgressService {
             if(!findChapterProgress.getProgress().equals(ContentConst.NOT_STARTED.getName())){
                 state = StateConst.OPEN.getName();
             }
-            ChapterUserDto chapterUserDto = new ChapterUserDto(chapter.getTitle(), chapter.getNumber(), state, findChapterProgress.getProgress());
+            ChapterUserDto chapterUserDto = new ChapterUserDto(chapter.getTitle(), chapter.getNumber(),chapter.getDateComment(), state, findChapterProgress.getProgress());
             chapterUserDtoList.add(chapterUserDto);
         }
 

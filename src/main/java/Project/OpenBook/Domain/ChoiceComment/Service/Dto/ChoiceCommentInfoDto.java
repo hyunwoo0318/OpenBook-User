@@ -14,17 +14,12 @@ public class ChoiceCommentInfoDto {
 
     @Setter
     private String type;
-
     private String name;
     private Long id;
-
-
     public ChoiceCommentInfoDto(Integer chapterNumber, String topicTitle,  String name, Long id) {
         this.chapterNumber = chapterNumber;
         this.topicTitle = topicTitle;
         this.name = name;
         this.id = id;
     }
-
-
 }

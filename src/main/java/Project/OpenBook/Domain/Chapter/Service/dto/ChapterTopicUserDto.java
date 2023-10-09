@@ -11,9 +11,13 @@ import lombok.NoArgsConstructor;
 public class ChapterTopicUserDto {
     private String title;
     private String category;
+    private String dateComment;
+    private String era;
 
     public ChapterTopicUserDto(Topic topic) {
         this.title = topic.getTitle();
+        this.dateComment = topic.getDateComment();
+        this.era = topic.getEra().getName();
         this.category = topic.getCategory().getName();
     }
 }

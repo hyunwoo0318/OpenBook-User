@@ -19,9 +19,9 @@ public class ChapterSimpleQueryService {
     private final ChapterRepository chapterRepository;
     private final ChapterValidator chapterValidator;
 
-    public List<ChapterTitleNumDto> queryChaptersAdmin() {
+    public List<ChapterQueryAdminDto> queryChaptersAdmin() {
         return chapterRepository.findAll().stream()
-                .map(c -> new ChapterTitleNumDto(c.getTitle(), c.getNumber()))
+                .map(c -> new ChapterQueryAdminDto(c.getTitle(), c.getNumber(), c.getDateComment()))
                 .collect(Collectors.toList());
     }
 

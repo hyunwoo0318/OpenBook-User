@@ -184,15 +184,15 @@ class ChapterControllerTest {
             chapterRepository.saveAllAndFlush(chapterList);
 
 
-            ResponseEntity<List<ChapterTitleNumDto>> response = restTemplate
+            ResponseEntity<List<ChapterQueryAdminDto>> response = restTemplate
                     .withBasicAuth("customer1", "customer1")
                     .exchange(URL, HttpMethod.GET, null,
-                    new ParameterizedTypeReference<List<ChapterTitleNumDto>>() {
+                    new ParameterizedTypeReference<List<ChapterQueryAdminDto>>() {
             });
 
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-            List<ChapterTitleNumDto> expectResult = chapterList.stream()
-                    .map(c -> new ChapterTitleNumDto(c.getTitle(), c.getNumber()))
+            List<ChapterQueryAdminDto> expectResult = chapterList.stream()
+                    .map(c -> new ChapterQueryAdminDto(c.getTitle(), c.getNumber()))
                     .collect(Collectors.toList());
             assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(expectResult);
         }
