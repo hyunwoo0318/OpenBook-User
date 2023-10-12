@@ -99,7 +99,7 @@ public class StudyProgressService {
             topicProgress.updateState(state);
             boolean ret = hasToUpdate(chapterProgress.getProgress(), title);
             if (ret) {
-                chapterProgress.updateProgress(content);
+                chapterProgress.updateProgress(title);
             }
         }
     }
@@ -107,6 +107,14 @@ public class StudyProgressService {
     private boolean hasToUpdate(String prevProgress, String newProgress) {
         List<String> chapterContentList = ContentConst.getChapterContent();
         Map<String, Integer> map = getNameOrderMap();
+
+        /**
+         * 새로운 단원의 단원학습을 오픈하는 경우
+         */
+        if (newProgress.equals(CHAPTER_INFO.getName())) {
+            return true;
+        }
+
         /**
          * 새로운 progress와 기존의 progress가 단원학습, 연표학습, 단원 마무리 문제, 완료일 경우
          * -> order 비교
@@ -129,19 +137,35 @@ public class StudyProgressService {
                 return false;
             }
         }
+
         /**
-         * 기존, 새로운 progress가 모두 주제학습인경우
-         * 두개의 주제번호를 따져서 newProgress의 주제번호가 높으면 갱신
+         * 새로운 progress는 주제학습이지만 기존 progress는 단원학습, 연표학습, 단원마무리 문제인 경우
+         * 기존 progress가 연표학습이면 갱신 o, 단원 마무리 문제이면 갱신 X
          */
-        else{
-            Topic newTopic = checkTopic(newProgress);
-            Topic prevTopic = checkTopic(prevProgress);
-            if (newTopic.getNumber() > prevTopic.getNumber()) {
+        if(!chapterContentList.contains(newProgress) && chapterContentList.contains(prevProgress))
+        {
+            if (prevProgress.equals(TIME_FLOW_STUDY.getName())) {
                 return true;
             }else{
                 return false;
             }
         }
+
+
+
+        /**
+         * 기존, 새로운 progress가 모두 주제학습인경우
+         * 두개의 주제번호를 따져서 newProgress의 주제번호가 높으면 갱신
+         */
+
+         Topic newTopic = checkTopic(newProgress);
+         Topic prevTopic = checkTopic(prevProgress);
+         if (newTopic.getNumber() > prevTopic.getNumber()) {
+              return true;
+         }else{
+              return false;
+         }
+
     }
 
 
