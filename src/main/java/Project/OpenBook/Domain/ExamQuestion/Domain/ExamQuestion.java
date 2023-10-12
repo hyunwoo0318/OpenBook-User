@@ -31,7 +31,7 @@ public class ExamQuestion extends BaseEntity {
     @JoinColumn(name = "round_id")
     private Round round;
 
-    @OneToMany(mappedBy = "examQuestion")
+    @OneToMany(mappedBy = "examQuestion",fetch = FetchType.LAZY)
     private List<Choice> choiceList = new ArrayList<>();
 
     @OneToOne(mappedBy = "examQuestion")

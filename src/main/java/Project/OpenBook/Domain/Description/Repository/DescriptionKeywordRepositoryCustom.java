@@ -12,4 +12,7 @@ public interface DescriptionKeywordRepositoryCustom {
 
     public Optional<Description> queryDescription(Integer roundNumber, Integer questionNumber);
 
+    public List<DescriptionKeyword> queryDescriptionKeywords(String topicTitle);
+
+
 }

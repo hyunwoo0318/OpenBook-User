@@ -2,6 +2,9 @@ package Project.OpenBook.Domain.Description.Repository;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
+import Project.OpenBook.Domain.Description.Service.QDescriptionKeyword;
+import Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion;
+import Project.OpenBook.Domain.Round.Domain.QRound;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -12,7 +15,9 @@ import java.util.Optional;
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
 import static Project.OpenBook.Domain.Description.Service.QDescriptionKeyword.descriptionKeyword;
+import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.Round.Domain.QRound.round;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 @Repository
@@ -44,4 +49,16 @@ public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywor
 
     }
 
+    @Override
+    public List<DescriptionKeyword> queryDescriptionKeywords(String topicTitle) {
+        return queryFactory.selectFrom(descriptionKeyword)
+                .leftJoin(descriptionKeyword.keyword,keyword).fetchJoin()
+                .leftJoin(descriptionKeyword.description, description).fetchJoin()
+                .leftJoin(description.examQuestion, examQuestion).fetchJoin()
+                .leftJoin(examQuestion.round, round).fetchJoin()
+                .where(descriptionKeyword.keyword.topic.title.eq(topicTitle))
+                .fetch();
+
+
+    }
 }

@@ -9,4 +9,6 @@ import java.util.Map;
 public interface ChoiceKeywordRepositoryCustom {
 
       public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywords(List<Choice> choiceList);
+
+      public List<ChoiceKeyword> queryChoiceKeywords(String topicTitle);
 }

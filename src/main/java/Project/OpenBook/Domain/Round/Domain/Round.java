@@ -23,7 +23,7 @@ public class Round extends BaseEntity {
     @Column(nullable = false, unique = true)
     private Integer number;
 
-    @OneToMany(mappedBy = "round")
+    @OneToMany(mappedBy = "round", fetch = FetchType.LAZY)
     private List<ExamQuestion> examQuestionList;
 
     public Round(Integer date, Integer number) {

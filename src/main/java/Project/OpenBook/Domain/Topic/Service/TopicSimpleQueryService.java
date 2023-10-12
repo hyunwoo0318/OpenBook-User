@@ -1,10 +1,12 @@
 package Project.OpenBook.Domain.Topic.Service;
 
 import Project.OpenBook.Domain.Choice.Dto.ChoiceDto;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
 import Project.OpenBook.Domain.Description.Dto.DescriptionDto;
-import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordRepository;
+import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.Keyword.Repository.KeywordRepositoryCustom;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
@@ -29,7 +31,10 @@ public class TopicSimpleQueryService {
 
     private final TopicRepository topicRepository;
     private final KeywordRepository keywordRepository;
+    private final DescriptionKeywordRepository descriptionKeywordRepository;
+    private final ChoiceKeywordRepository choiceKeywordRepository;
     private final TopicValidator topicValidator;
+
 
     @Transactional(readOnly = true)
     public TopicDetailDto queryTopicsAdmin(String topicTitle) {
@@ -50,6 +55,9 @@ public class TopicSimpleQueryService {
     @Transactional(readOnly = true)
     public List<KeywordDto> queryTopicKeywords(String topicTitle) {
 
+        List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordRepository.queryDescriptionKeywords(topicTitle);
+        List<ChoiceKeyword> choiceKeywordList = choiceKeywordRepository.queryChoiceKeywords(topicTitle);
+
         return keywordRepository.queryKeywordsInTopicWithPrimaryDate(topicTitle)
                 .stream()
                 .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId(),
@@ -60,7 +68,6 @@ public class TopicSimpleQueryService {
                         null))
                 .sorted(Comparator.comparing(KeywordDto::getNumber))
                 .collect(Collectors.toList());
-
     }
 
 
