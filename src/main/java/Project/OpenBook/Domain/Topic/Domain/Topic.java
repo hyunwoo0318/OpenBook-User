@@ -61,7 +61,7 @@ public class Topic extends BaseEntity {
     private List<Keyword> keywordList = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(mappedBy = "topic",cascade = CascadeType.REMOVE)
     private List<TopicPrimaryDate> topicPrimaryDateList = new ArrayList<>();
 
     @OneToMany(mappedBy = "topic")

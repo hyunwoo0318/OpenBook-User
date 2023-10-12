@@ -1,12 +1,16 @@
 package Project.OpenBook.Domain.Question.Service;
 
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 
 import org.springframework.stereotype.Service;
@@ -24,16 +28,21 @@ public class QuestionService {
     private TopicRepository topicRepository;
     private ChapterRepository chapterRepository;
     private KeywordRepository keywordRepository;
+    private KeywordPrimaryDateRepository keywordPrimaryDateRepository;
+    private TopicPrimaryDateRepository topicPrimaryDateRepository;
 
     private GetKeywordByTopicQuestion type1 ;
 //    private GetSentenceByTopicQuestion type2;
     private GetTopicByKeywordQuestion type3;
 //    private GetTopicBySentenceQuestion type4;
 
-    public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository) {
+    public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository,
+                           KeywordPrimaryDateRepository keywordPrimaryDateRepository, TopicPrimaryDateRepository topicPrimaryDateRepository) {
         this.topicRepository = topicRepository;
         this.chapterRepository = chapterRepository;
         this.keywordRepository = keywordRepository;
+        this.topicPrimaryDateRepository = topicPrimaryDateRepository;
+        this.keywordPrimaryDateRepository = keywordPrimaryDateRepository;
 
         this.type1 = new GetKeywordByTopicQuestion(this.topicRepository, this.keywordRepository);
 //        this.type2 = new GetSentenceByTopicQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
@@ -55,35 +64,25 @@ public class QuestionService {
 
     @Transactional
     public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Integer num) {
-        List<Topic> topicList = new ArrayList<>();
-        if (num == 0) {
-            topicList = topicRepository.findAll();
-        }else{
-            if (num == -1) {
-                num = queryRandChapterNum();
-            }
-            Chapter chapter = chapterRepository.findOneByNumber(num).orElseThrow(() -> {
-                throw new CustomException(CHAPTER_NOT_FOUND);
-            });
-            topicList = chapter.getTopicList();
+        if(num == 0){
+            num = queryRandChapterNum();
         }
 
         List<TimeFlowQuestionDto> timeFlowQuestionDtoList = new ArrayList<>();
-//        for (Topic topic : topicList) {
-//            String topicTitle = topic.getTitle();
-//            if (topic.getStartDateCheck()) {
-//                timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topic.getStartDate(), makeComment(topicTitle, "startDate"), topicTitle));
-//            }
-//            if (topic.getEndDateCheck()) {
-//                timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topic.getEndDate(), makeComment(topicTitle, "endDate"), topicTitle));
-//            }
-//            List<TopicPrimaryDate> topicPrimaryDateList = topic.getTopicPrimaryDateList();
-//            for (TopicPrimaryDate topicPrimaryDate : topicPrimaryDateList) {
-//                if (topicPrimaryDate.getExtraDateCheck()) {
-//                    timeFlowQuestionDtoList.add(new TimeFlowQuestionDto(topicPrimaryDate.getExtraDate(), topicPrimaryDate.getExtraDateComment(), topicTitle));
-//                }
-//            }
-//        }
+        List<TopicPrimaryDate> topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInChapter(num);
+        List<KeywordPrimaryDate> keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInChapter(num);
+
+        for (KeywordPrimaryDate kp : keywordPrimaryDateList) {
+            TimeFlowQuestionDto dto
+                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(), kp.getKeyword().getName());
+            timeFlowQuestionDtoList.add(dto);
+        }
+
+        for (TopicPrimaryDate tp : topicPrimaryDateList) {
+            TimeFlowQuestionDto dto
+                    = new TimeFlowQuestionDto(tp.getExtraDate(), tp.getExtraDateComment(), tp.getTopic().getTitle());
+            timeFlowQuestionDtoList.add(dto);
+        }
 
         //연도 순으로 오름차순으로 정렬
         Collections.sort(timeFlowQuestionDtoList, Comparator.comparing(TimeFlowQuestionDto::getDate));
@@ -91,13 +90,6 @@ public class QuestionService {
         return timeFlowQuestionDtoList;
     }
 
-    public String makeComment(String topicTitle, String type) {
-        if (type.equals("startDate")) {
-            return topicTitle + "의 시작연도입니다.";
-        } else {
-            return topicTitle + "의 종료연도입니다.";
-        }
-    }
 
     @Transactional
     public List<QuestionDto> queryGetKeywordsQuestion(String topicTitle) {

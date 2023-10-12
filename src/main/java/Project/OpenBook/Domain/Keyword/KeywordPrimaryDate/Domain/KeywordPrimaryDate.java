@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Keyword.KeywordPrimaryDate;
+package Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;

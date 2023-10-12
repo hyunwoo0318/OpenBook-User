@@ -8,6 +8,7 @@ import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Era.EraRepository;
+import Project.OpenBook.Domain.Keyword.Dto.KeywordNumberDto;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
@@ -29,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -171,10 +174,27 @@ public class TopicService {
     }
     @Transactional
     public void updateTopicNumber(List<TopicNumberDto> topicNumberDtoList) {
+        Map<String, Integer> m = new HashMap<>();
+        List<String> topicTitleList = new ArrayList<>();
+
         for (TopicNumberDto topicNumberDto : topicNumberDtoList) {
-            Topic topic = topicValidator.checkTopic(topicNumberDto.getTitle());
-            topic.updateTopicNumber(topicNumberDto.getNumber());
+            String topicTitle = topicNumberDto.getTitle();
+            Integer topicNumber = topicNumberDto.getNumber();
+            m.put(topicTitle, topicNumber);
+            topicTitleList.add(topicTitle);
         }
+
+        List<Topic> topicList = topicRepository.queryTopicsByTopicTitleList(topicTitleList);
+        if (topicList.size() != topicTitleList.size()) {
+            throw new CustomException(TOPIC_NOT_FOUND);
+        }
+
+        for (Topic topic : topicList) {
+            Integer number = m.get(topic.getTitle());
+            topic.updateTopicNumber(number);
+        }
+
+
     }
 
 

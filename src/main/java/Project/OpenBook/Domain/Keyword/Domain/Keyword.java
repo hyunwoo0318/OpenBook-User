@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.Keyword.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
-import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.KeywordPrimaryDate;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
