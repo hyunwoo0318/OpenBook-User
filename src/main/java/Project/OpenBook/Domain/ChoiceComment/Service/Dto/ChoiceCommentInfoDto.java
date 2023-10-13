@@ -12,8 +12,6 @@ public class ChoiceCommentInfoDto {
     private Integer chapterNumber;
     private String topicTitle;
 
-    @Setter
-    private String type;
     private String name;
     private Long id;
     public ChoiceCommentInfoDto(Integer chapterNumber, String topicTitle,  String name, Long id) {

@@ -59,12 +59,11 @@ public class ExamQuestionService {
 
         List<ExamQuestion> examQuestionList = examQuestionRepository.queryExamQuestionsWithDescriptionAndTopic(roundNumber);
         for (ExamQuestion examQuestion : examQuestionList) {
-            String topicTitle = examQuestion.getDescription().getTopic().getTitle();
             List<QuestionChoiceDto> choiceDtoList = examQuestion.getChoiceList().stream()
                     .map(ch -> new QuestionChoiceDto(ch.getContent(), ch.getComment(), ch.getTopic().getTitle(), ch.getId()))
                     .collect(Collectors.toList());
             ExamQuestionDto dto = new ExamQuestionDto(examQuestion.getNumber(), examQuestion.getDescription().getContent(), examQuestion.getDescription().getComment(),
-                    topicTitle, examQuestion.getChoiceType().name(), examQuestion.getScore(), choiceDtoList);
+                    examQuestion.getAnswer(), examQuestion.getChoiceType().name(), examQuestion.getScore(), choiceDtoList);
 
             examQuestionDtoList.add(dto);
         }

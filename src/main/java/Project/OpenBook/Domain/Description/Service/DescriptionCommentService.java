@@ -12,6 +12,7 @@ import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
+import Project.OpenBook.Image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,8 @@ public class DescriptionCommentService {
     private final DescriptionRepository descriptionRepository;
     private final ExamQuestionRepository examQuestionRepository;
     private final KeywordRepository keywordRepository;
+
+    private final ImageService imageService;
 
     @Transactional(readOnly = true)
     public DescriptionCommentDto queryQuestionDescription(Integer roundNumber, Integer questionNumber) {
@@ -57,11 +60,9 @@ public class DescriptionCommentService {
         Description description = checkDescription(id);
 
         //dto 검증
-
-            Keyword keyword = checkKeyword(dto.getId());
-            DescriptionKeyword descriptionKeyword = new DescriptionKeyword(description, keyword);
-            descriptionKeywordRepository.save(descriptionKeyword);
-
+        Keyword keyword = checkKeyword(dto.getId());
+        DescriptionKeyword descriptionKeyword = new DescriptionKeyword(description, keyword);
+        descriptionKeywordRepository.save(descriptionKeyword);
     }
 
     private Description checkDescription(Long id) {
@@ -79,16 +80,23 @@ public class DescriptionCommentService {
     public void deleteDescriptionKeyword(Long id, DescriptionCommentAddDto dto) {
         Description description = checkDescription(id);
         //dto 검증
-
-            Keyword keyword = checkKeyword(dto.getId());
-            descriptionKeywordRepository.deleteByDescriptionAndKeyword(description, keyword);
+        Keyword keyword = checkKeyword(dto.getId());
+        descriptionKeywordRepository.deleteByDescriptionAndKeyword(description, keyword);
 
     }
 
     @Transactional
     public void updateDescription(Long id, DescriptionUpdateDto dto) {
         Description description = checkDescription(id);
+        String encodedFile = dto.getDescription();
+        String imageUrl="";
 
-        description.updateContent(dto.getDescription(), description.getComment());
+        if(encodedFile != null && !encodedFile.isBlank() &&!encodedFile.startsWith("https")){
+            imageService.checkBase64(encodedFile);
+            imageUrl = imageService.storeFile(encodedFile);
+            description.updateContent(imageUrl, description.getComment());
+        } else if (encodedFile == null || encodedFile.isBlank() || !encodedFile.startsWith("https")) {
+            throw new CustomException(NOT_VALIDATE_IMAGE);
+        }
     }
 }

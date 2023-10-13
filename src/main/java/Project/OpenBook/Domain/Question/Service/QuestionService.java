@@ -98,12 +98,6 @@ public class QuestionService {
         return type1.getJJHQuestion(topicTitle);
     }
 
-//    @Transactional
-//    public List<QuestionDto> queryGetSentencesQuestion(String topicTitle) {
-//        Topic topic = checkTopic(topicTitle);
-//
-//        return type2.getJJHQuestion(topicTitle);
-//    }
 
     @Transactional
     public List<QuestionDto> queryGetTopicsByKeywordQuestion(Integer num) {
@@ -127,25 +121,6 @@ public class QuestionService {
         return questionList;
     }
 
-//    @Transactional
-//    public List<QuestionDto> queryGetTopicsBySentenceQuestion(Integer num) {
-//        List<QuestionDto> questionList = new ArrayList<>();
-//
-//        Chapter chapter = chapterRepository.findOneByNumber(num).orElseThrow(() -> {
-//            throw new CustomException(CHAPTER_NOT_FOUND);
-//        });
-//
-//        List<String> topicTitleList = chapter.getTopicList().stream()
-//                .map(Topic::getTitle)
-//                .collect(Collectors.toList());
-//        for (String topicTitle : topicTitleList) {
-//            QuestionDto dto = type4.getQuestion(topicTitle);
-//            if (dto != null) {
-//                questionList.add(dto);
-//            }
-//        }
-//        return questionList;
-//    }
 
     @Transactional
     public List<QuestionDto> queryRandomQuestion(Integer chapterNum, Integer questionCount) {

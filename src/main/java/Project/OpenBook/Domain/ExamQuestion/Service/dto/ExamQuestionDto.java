@@ -14,7 +14,7 @@ public class ExamQuestionDto {
     private Integer number;
     private String description;
     private String descriptionComment;
-    private String answer;
+    private Integer answer;
     private String choiceType;
     private Integer score;
     private List<QuestionChoiceDto> choiceList;
