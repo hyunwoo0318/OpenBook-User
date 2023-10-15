@@ -1,16 +1,20 @@
 package Project.OpenBook.Domain.Chapter.Service;
 
+import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterAddUpdateDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterInfoDto;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterNumberUpdateDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.security.cert.CertificateNotYetValidException;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 
@@ -99,6 +103,33 @@ public class ChapterService {
         return new ChapterInfoDto(chapter.getContent());
     }
 
+    @Transactional
+    public void updateChapterNumber(List<ChapterNumberUpdateDto> chapterNumberUpdateDtoList) {
+        Map<Long, Integer> m = new HashMap<>();
+        Set<Integer> numberSet = new HashSet<>();
+        Set<Long> idSet = new HashSet<>();
+        for (ChapterNumberUpdateDto dto : chapterNumberUpdateDtoList) {
+            m.put(dto.getId(), dto.getNumber()+1);
+            numberSet.add(dto.getNumber()+1);
+            idSet.add(dto.getId());
+        }
+
+        if (idSet.size() != chapterNumberUpdateDtoList.size() || numberSet.size() != chapterNumberUpdateDtoList.size()) {
+            throw new CustomException(CHAPTER_NOT_FOUND);
+        }
+
+        List<Chapter> chapterList = chapterRepository.findAll();
+        chapterList.forEach(c -> c.updateNumber(-c.getNumber()));
+
+        for (Chapter chapter : chapterList) {
+            Integer chapterNumber = m.get(chapter.getId());
+            if (chapterNumber == null) {
+                throw new CustomException(CHAPTER_NOT_FOUND);
+            }
+            chapter.updateNumber(chapterNumber);
+        }
 
 
+
+    }
 }

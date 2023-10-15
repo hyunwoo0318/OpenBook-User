@@ -22,7 +22,7 @@ public class ChapterSimpleQueryService {
 
     public List<ChapterQueryAdminDto> queryChaptersAdmin() {
         return chapterRepository.findAll().stream()
-                .map(c -> new ChapterQueryAdminDto(c.getTitle(), c.getNumber(), c.getDateComment()))
+                .map(c -> new ChapterQueryAdminDto(c.getTitle(), c.getNumber(), c.getDateComment(), c.getId()))
                 .sorted(Comparator.comparing(ChapterQueryAdminDto::getNumber))
                 .collect(Collectors.toList());
     }

@@ -20,4 +20,5 @@ public class ChapterQueryAdminDto {
     private int number;
 
     private String dateComment;
+    private Long id;
 }

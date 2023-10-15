@@ -183,4 +183,18 @@ public class ChapterController {
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
+
+    @Operation(summary = "단원 번호 변경")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "단원 번호 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 입력"),
+    })
+    @PatchMapping("/admin/chapter-numbers")
+    public ResponseEntity<Void> updateChapterNumber(@Validated @RequestBody List<ChapterNumberUpdateDto> chapterNumberUpdateDtoList) {
+        chapterService.updateChapterNumber(chapterNumberUpdateDtoList);
+
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+
 }

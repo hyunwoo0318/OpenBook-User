@@ -27,8 +27,7 @@ public class Chapter extends BaseEntity {
     @Column(nullable = false, unique = true)
     private int number;
 
-//    private Integer startDate;
-//    private Integer endDate;
+
     private String dateComment;
 
 
@@ -37,12 +36,7 @@ public class Chapter extends BaseEntity {
         this.number = number;
     }
 
-//    public Chapter(int number, String title, Integer startDate, Integer endDate) {
-//        this.number = number;
-//        this.startDate = startDate;
-//        this.endDate = endDate;
-//        this.title = title;
-//    }
+
 
 
     public Chapter(int number, String dateComment, String title) {
@@ -74,6 +68,11 @@ public class Chapter extends BaseEntity {
 
     public Chapter updateContent(String content) {
         this.content = content;
+        return this;
+    }
+
+    public Chapter updateNumber(Integer number) {
+        this.number = number;
         return this;
     }
 
