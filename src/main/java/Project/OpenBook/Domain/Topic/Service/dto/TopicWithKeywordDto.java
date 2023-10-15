@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ public class TopicWithKeywordDto {
         this.category = topic.getCategory().getName();
         this.extraDateList = topic.getTopicPrimaryDateList().stream()
                 .map(pd -> new PrimaryDateDto(pd.getExtraDate(), pd.getExtraDateComment()))
+                .sorted(Comparator.comparing(PrimaryDateDto::getExtraDate))
                 .collect(Collectors.toList());
         this.keywordList = topic.getKeywordList().stream()
                 .map(k -> new KeywordUserDto(k.getName(), k.getComment(),k.getDateComment(), k.getImageUrl(),k.getNumber(),
@@ -29,6 +31,7 @@ public class TopicWithKeywordDto {
                                 .map(p -> new PrimaryDateDto(p.getExtraDate(), p.getExtraDateComment()))
                                 .collect(Collectors.toList())
                 ))
+                .sorted(Comparator.comparing(KeywordUserDto::getNumber))
                 .collect(Collectors.toList());
 
     }

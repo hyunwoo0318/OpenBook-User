@@ -63,27 +63,27 @@ public class TopicController {
     }
 
 
-    @Operation(summary = "특정 토픽별 모든 보기 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적인 토픽별 보기 조회"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽별 보기 조회 요청")
-    })
-    @GetMapping("/topics/{topicTitle}/descriptions")
-    public ResponseEntity<List<DescriptionDto>> getDescriptionsInTopic(@PathVariable String topicTitle){
-        List<DescriptionDto> dtoList = topicSimpleQueryService.queryTopicDescriptions(topicTitle);
-
-        return new ResponseEntity<List<DescriptionDto>>(dtoList, HttpStatus.OK);
-    }
-
-    @Operation(summary = "특정 토픽별 모든 선지 조회")
-    @ApiResponses( value = {
-            @ApiResponse(responseCode = "200", description = "성공적인 조회")
-    })
-    @GetMapping("/admin/topics/{topicTitle}/choices/")
-    public ResponseEntity<List<ChoiceDto>> getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
-        List<ChoiceDto> dtoList = topicSimpleQueryService.queryTopicChoices(topicTitle);
-        return new ResponseEntity<List<ChoiceDto>>(dtoList,HttpStatus.OK);
-    }
+//    @Operation(summary = "특정 토픽별 모든 보기 조회")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "성공적인 토픽별 보기 조회"),
+//            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽별 보기 조회 요청")
+//    })
+//    @GetMapping("/topics/{topicTitle}/descriptions")
+//    public ResponseEntity<List<DescriptionDto>> getDescriptionsInTopic(@PathVariable String topicTitle){
+//        List<DescriptionDto> dtoList = topicSimpleQueryService.queryTopicDescriptions(topicTitle);
+//
+//        return new ResponseEntity<List<DescriptionDto>>(dtoList, HttpStatus.OK);
+//    }
+//
+//    @Operation(summary = "특정 토픽별 모든 선지 조회")
+//    @ApiResponses( value = {
+//            @ApiResponse(responseCode = "200", description = "성공적인 조회")
+//    })
+//    @GetMapping("/admin/topics/{topicTitle}/choices/")
+//    public ResponseEntity<List<ChoiceDto>> getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
+//        List<ChoiceDto> dtoList = topicSimpleQueryService.queryTopicChoices(topicTitle);
+//        return new ResponseEntity<List<ChoiceDto>>(dtoList,HttpStatus.OK);
+//    }
 
 
     @Operation(summary = "새로운 상세정보 입력")

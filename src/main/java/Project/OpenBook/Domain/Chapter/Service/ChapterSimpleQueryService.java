@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ public class ChapterSimpleQueryService {
     public List<ChapterQueryAdminDto> queryChaptersAdmin() {
         return chapterRepository.findAll().stream()
                 .map(c -> new ChapterQueryAdminDto(c.getTitle(), c.getNumber(), c.getDateComment()))
+                .sorted(Comparator.comparing(ChapterQueryAdminDto::getNumber))
                 .collect(Collectors.toList());
     }
 
@@ -33,6 +35,7 @@ public class ChapterSimpleQueryService {
                             c.getDateComment(),
                             c.getTopicList().size());
                 })
+                .sorted(Comparator.comparing(ChapterDetailDto::getNumber))
                 .collect(Collectors.toList());
     }
 
@@ -53,12 +56,14 @@ public class ChapterSimpleQueryService {
         List<Topic> topicList = chapterValidator.checkChapter(num).getTopicList();
         return topicList.stream()
                 .map(t -> new ChapterTopicWithCountDto(t))
+                .sorted(Comparator.comparing(ChapterTopicWithCountDto::getNumber))
                 .collect(Collectors.toList());
     }
 
 
     public List<ChapterTopicUserDto> queryChapterTopicsCustomer(int num) {
         return chapterValidator.checkChapter(num).getTopicList().stream()
+                .sorted(Comparator.comparing(Topic::getNumber))
                 .map(t -> new ChapterTopicUserDto(t))
                 .collect(Collectors.toList());
     }
