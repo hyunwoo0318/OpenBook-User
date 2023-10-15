@@ -74,7 +74,7 @@ public enum ErrorCode {
      * 503 -  Service Unavailable
      */
     IMAGE_SAVE_FAIL(HttpStatus.SERVICE_UNAVAILABLE, "이미지 저장에 실패했습니다."),
-
+    CONNECTION_FAIL(HttpStatus.SERVICE_UNAVAILABLE, "연결에 실패했습니다."),
     ;
 
     private final HttpStatus statusCode;

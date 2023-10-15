@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.Topic.Repo;
 
 import Project.OpenBook.Domain.Era.QEra;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
+import Project.OpenBook.Domain.Topic.Repo.TopicRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -17,7 +18,7 @@ import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 @Repository
 @RequiredArgsConstructor
-public class TopicRepositoryCustomImpl implements TopicRepositoryCustom{
+public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
 

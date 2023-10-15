@@ -8,7 +8,8 @@ import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Era.EraRepository;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordNumberDto;
+import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
+import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
@@ -47,6 +48,7 @@ public class TopicService {
     private final CustomerRepository customerRepository;
     private final TopicPrimaryDateRepository topicPrimaryDateRepository;
     private final TopicProgressRepository topicProgressRepository;
+    private final TopicSearchRepository topicSearchRepository;
     private final EraRepository eraRepository;
     private final TopicValidator topicValidator;
 
@@ -78,6 +80,7 @@ public class TopicService {
                 .choiceNum(0)
                 .build();
         topicRepository.save(topic);
+        topicSearchRepository.save(new TopicSearch(topic.getDetail(), topic.getTitle(), topic.getId()));
 
         //연표에 표시할 날짜 저장
         List<PrimaryDateDto> dateList = new ArrayList<>();
@@ -121,6 +124,11 @@ public class TopicService {
 
         //토픽 수정
         topic.updateTopic(topicDetailDto.getNumber(), topicDetailDto.getTitle(),topicDetailDto.getDateComment(), topicDetailDto.getDetail(), chapter, category, era);
+        topicSearchRepository.findById(topic.getId()).ifPresent(ts -> {
+            topicSearchRepository.delete(ts);
+        });
+        topicSearchRepository.save(new TopicSearch(topicDetailDto.getDetail(), topicDetailDto.getTitle(), topic.getId()));
+
 
         //연표에 나올 날짜 수정
         List<TopicPrimaryDate> prevDateList = topic.getTopicPrimaryDateList();
@@ -153,6 +161,7 @@ public class TopicService {
         topicPrimaryDateRepository.deleteAllInBatch(topicPrimaryDateList);
 
         topicRepository.delete(findTopic);
+        topicSearchRepository.deleteById(findTopic.getId());
     }
 
     private Chapter checkChapter(int num) {

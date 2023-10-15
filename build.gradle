@@ -35,6 +35,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+	implementation 'org.springframework.data:spring-data-elasticsearch'
+	implementation 'jakarta.json:jakarta.json-api:2.0.1'
 //	implementation "io.springfox:springfox-boot-starter:3.0.0"
 //	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 //	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'

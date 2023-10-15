@@ -48,13 +48,13 @@ public class Chapter extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "chapter")
+    @OneToMany(mappedBy = "chapter",fetch = FetchType.LAZY)
     private List<Topic> topicList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<ChapterSection> chapterSectionList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<ChapterProgress> chapterProgressList = new ArrayList<>();
 
 

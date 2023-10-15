@@ -1,5 +1,7 @@
 package Project.OpenBook.Domain.Topic.Controller;
 
+import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
 import Project.OpenBook.Domain.Choice.Dto.ChoiceDto;
 import Project.OpenBook.Domain.Description.Dto.DescriptionDto;
@@ -133,5 +135,10 @@ public class TopicController {
     public ResponseEntity<Void> deleteTopic(@PathVariable("topicTitle") String topicTitle) {
         topicService.deleteTopic(topicTitle);
         return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @GetMapping("/topic-search-ex")
+    public List<TopicSearch> exTopic(@RequestParam String input) {
+        return topicSimpleQueryService.searchEx(input);
     }
 }

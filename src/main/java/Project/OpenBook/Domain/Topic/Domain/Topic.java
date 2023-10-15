@@ -11,22 +11,29 @@ import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import javax.persistence.*;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+@Document(indexName = "query-results")
 @Entity
 @Getter
 @NoArgsConstructor
-public class Topic extends BaseEntity {
+public class Topic extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
+    @Field(type = FieldType.Text)
     private String title;
 
     private String dateComment;
@@ -34,12 +41,14 @@ public class Topic extends BaseEntity {
     @ColumnDefault(value = "0")
     private int questionNum;
 
-    @ColumnDefault(value="0")
+    @ColumnDefault(value = "0")
     private int choiceNum;
 
     private Integer number;
 
+
     @Lob
+    @Field(type = FieldType.Text)
     private String detail;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,24 +63,24 @@ public class Topic extends BaseEntity {
     @JoinColumn(name = "era_id")
     private Era era;
 
-    @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<TopicProgress> topicProgressList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
     private List<Keyword> keywordList = new ArrayList<>();
 
 
-    @OneToMany(mappedBy = "topic",cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<TopicPrimaryDate> topicPrimaryDateList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(mappedBy = "topic",fetch = FetchType.LAZY)
     private List<Choice> choiceList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "topic")
+    @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
     private List<Description> descriptionList = new ArrayList<>();
 
     @Builder
-    public Topic(Integer number, String title, int questionNum, int choiceNum,String dateComment,  String detail, Chapter chapter, Category category, Era era) {
+    public Topic(Integer number, String title, int questionNum, int choiceNum, String dateComment, String detail, Chapter chapter, Category category, Era era) {
         this.number = number;
         this.title = title;
         this.questionNum = questionNum;
@@ -104,7 +113,7 @@ public class Topic extends BaseEntity {
         return this;
     }
 
-    public void updateTopicNumber(Integer number){
+    public void updateTopicNumber(Integer number) {
         this.number = number;
     }
 }

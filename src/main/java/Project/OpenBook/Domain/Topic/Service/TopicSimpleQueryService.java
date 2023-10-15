@@ -7,8 +7,10 @@ import Project.OpenBook.Domain.Description.Dto.DescriptionDto;
 import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
@@ -34,10 +36,17 @@ public class TopicSimpleQueryService {
     private final DescriptionKeywordRepository descriptionKeywordRepository;
     private final ChoiceKeywordRepository choiceKeywordRepository;
     private final TopicValidator topicValidator;
+    private final TopicSearchRepository topicSearchRepository;
+
+    @Transactional(readOnly = true)
+    public List<TopicSearch> searchEx(String input) {
+       return topicSearchRepository.queryTopicSearchNameByInput(input);
+    }
 
 
     @Transactional(readOnly = true)
     public TopicDetailDto queryTopicsAdmin(String topicTitle) {
+
         Topic topic = topicRepository.queryTopicWithCategoryChapterEra(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
