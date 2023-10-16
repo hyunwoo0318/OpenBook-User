@@ -28,7 +28,7 @@ public class KakaoLogin implements Oauth2Login{
                         .path("/oauth/token")
                         .queryParam("grant_type", "authorization_code")
                         .queryParam("client_id", kakaoKey)
-                        .queryParam("redirect_uri", redirectURL)
+                        .queryParam("redirect_uri", "http://" + redirectURL)
                         .queryParam("code", code)
                         .build()
                 )
