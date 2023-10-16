@@ -13,7 +13,7 @@ import java.util.List;
 public class ExamQuestionDto {
     private Integer number;
     private String description;
-    private String descriptionComment;
+    private List<ExamQuestionCommentDto> descriptionCommentList;
     private Integer answer;
     private String choiceType;
     private Integer score;

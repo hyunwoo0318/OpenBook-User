@@ -2,14 +2,17 @@ package Project.OpenBook.Domain.ExamQuestion.Service;
 
 import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
+import Project.OpenBook.Domain.ChoiceComment.Controller.ChoiceCommentController;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
 import Project.OpenBook.Domain.Description.Domain.Description;
+import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ChoiceAddUpdateDto;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionChoiceDto;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionInfoDto;
+import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.*;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -23,9 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -38,6 +39,8 @@ public class ExamQuestionService {
     private final TopicRepository topicRepository;
     private final DescriptionRepository descriptionRepository;
     private final ChoiceRepository choiceRepository;
+    private final ChoiceKeywordRepository choiceKeywordRepository;
+    private final DescriptionKeywordRepository descriptionKeywordRepository;
     private final ImageService imageService;
 
     @Transactional(readOnly = true)
@@ -59,27 +62,53 @@ public class ExamQuestionService {
 
         List<ExamQuestion> examQuestionList = examQuestionRepository.queryExamQuestionsWithDescriptionAndTopic(roundNumber);
         for (ExamQuestion examQuestion : examQuestionList) {
-            List<QuestionChoiceDto> choiceDtoList = examQuestion.getChoiceList().stream()
-                    .map(ch -> new QuestionChoiceDto(ch.getContent(), ch.getComment(), ch.getTopic().getTitle(), ch.getId()))
-                    .collect(Collectors.toList());
-            ExamQuestionDto dto = new ExamQuestionDto(examQuestion.getNumber(), examQuestion.getDescription().getContent(), examQuestion.getDescription().getComment(),
-                    examQuestion.getAnswer(), examQuestion.getChoiceType().name(), examQuestion.getScore(), choiceDtoList);
 
-            examQuestionDtoList.add(dto);
+            List<ExamQuestionCommentDto> descriptionCommentList = new ArrayList<>();
+            List<QuestionChoiceDto> choiceDtoList = new ArrayList<>();
+
+            List<Choice> choiceList = examQuestion.getChoiceList();
+            Description description = examQuestion.getDescription();
+            List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordRepository.queryDescriptionKeywordsAdmin(description);
+            for (DescriptionKeyword descriptionKeyword : descriptionKeywordList) {
+                Keyword keyword = descriptionKeyword.getKeyword();
+                Topic topic = keyword.getTopic();
+
+                ExamQuestionCommentDto dto
+                        = new ExamQuestionCommentDto(topic.getDateComment(), topic.getTitle(), keyword.getDateComment(),
+                        keyword.getName(), keyword.getComment());
+                descriptionCommentList.add(dto);
+            }
+
+            Map<Choice, List<ExamQuestionCommentDto>> choiceListMap = choiceKeywordRepository.queryChoiceKeywordsCustomer(choiceList);
+            for (Choice choice : choiceList) {
+                List<ExamQuestionCommentDto> dtoList = choiceListMap.get(choice);
+                QuestionChoiceDto choiceDto = new QuestionChoiceDto(choice.getContent(), choice.getNumber(), dtoList);
+                choiceDtoList.add(choiceDto);
+            }
+
+            choiceDtoList = choiceDtoList.stream()
+                    .sorted(Comparator.comparing(QuestionChoiceDto::getNumber))
+                    .collect(Collectors.toList());
+
+            ExamQuestionDto examQuestionDto = new ExamQuestionDto(examQuestion.getNumber(), description.getContent(), descriptionCommentList,
+                    examQuestion.getAnswer(), examQuestion.getChoiceType().name(), examQuestion.getScore(),
+                    choiceDtoList);
+            examQuestionDtoList.add(examQuestionDto);
+
         }
 
         return examQuestionDtoList;
 
     }
 
-    @Transactional(readOnly = true)
-    public ExamQuestionChoiceDto getExamQuestionChoices(Integer roundNumber, Integer questionNumber) {
-        ExamQuestion examQuestion = checkExamQuestion(roundNumber, questionNumber);
-        List<QuestionChoiceDto> choiceDtoList = examQuestion.getChoiceList().stream()
-                .map(ch -> new QuestionChoiceDto(ch.getContent(), ch.getComment(), ch.getTopic().getTitle(), ch.getId()))
-                .collect(Collectors.toList());
-        return new ExamQuestionChoiceDto(choiceDtoList);
-    }
+//    @Transactional(readOnly = true)
+//    public ExamQuestionChoiceDto getExamQuestionChoices(Integer roundNumber, Integer questionNumber) {
+//        ExamQuestion examQuestion = checkExamQuestion(roundNumber, questionNumber);
+//        List<QuestionChoiceDto> choiceDtoList = examQuestion.getChoiceList().stream()
+//                .map(ch -> new QuestionChoiceDto(ch.getContent(), ch.getComment(), ch.getTopic().getTitle(), ch.getId()))
+//                .collect(Collectors.toList());
+//        return new ExamQuestionChoiceDto(choiceDtoList);
+//    }
 
     @Transactional
     public ExamQuestion saveExamQuestionInfo(Integer roundNumber, ExamQuestionInfoDto examQuestionInfoDto) {

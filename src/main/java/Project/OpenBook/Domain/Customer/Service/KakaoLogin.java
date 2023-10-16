@@ -14,13 +14,12 @@ import static Project.OpenBook.Constants.ErrorCode.LOGIN_FAIL;
 
 @RequiredArgsConstructor
 public class KakaoLogin implements Oauth2Login{
-    private final String redirectURL = KakaoConst.REDIRECT_URL_LOGIN;
     private final WebClient.Builder webClientBuilder;
     private final ObjectMapper objectMapper;
 
     private String kakaoKey = "ca80f14a6e6b6c34ea821c46af0cc10c";
     @Override
-    public String login(String code) throws JsonProcessingException {
+    public String login(String code, String redirectURL) throws JsonProcessingException {
         Map<String, String> map = webClientBuilder.build()
                 .post()
                 .uri(uriBuilder -> uriBuilder

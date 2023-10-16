@@ -8,6 +8,7 @@ import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterNumberUpdateDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Handler.Exception.CustomException;
+import Project.OpenBook.Image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ public class ChapterService {
 
     private final ChapterRepository chapterRepository;
     private final ChapterValidator chapterValidator;
+    private final ImageService imageService;
 
 
     /**
@@ -99,6 +101,11 @@ public class ChapterService {
     public ChapterInfoDto updateChapterInfo(Integer num, String content) {
         Chapter chapter = chapterValidator.checkChapter(num);
 
+        if(content != null && !content.isBlank() &&!content.startsWith("https"))
+        {
+            imageService.checkBase64(content);
+            content = imageService.storeFile(content);
+        }
         chapter.updateContent(content);
         return new ChapterInfoDto(chapter.getContent());
     }

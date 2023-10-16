@@ -1,5 +1,7 @@
 package Project.OpenBook.Domain.Question.Service;
 
+import Project.OpenBook.Constants.ChoiceType;
+import Project.OpenBook.Domain.Question.Dto.ChoiceTempDto;
 import Project.OpenBook.Domain.Question.Dto.QuestionChoiceDto;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
@@ -7,6 +9,7 @@ import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static Project.OpenBook.Constants.QuestionConst.GET_KEYWORD_TYPE;
@@ -31,16 +34,16 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
      */
     @Override
     public QuestionDto getQuestion(String topicTitle) {
-        List<QuestionChoiceDto> choiceList = new ArrayList<>();
+        List<ChoiceTempDto> choiceList = new ArrayList<>();
         //정답 키워드 조회
         List<Keyword> answerKeywordList = getKeywordsByAnswerTopic(topicTitle, 1);
         if (answerKeywordList.isEmpty()) {
             return null;
         }
-        List<QuestionChoiceDto> answerChoiceList = toQuestionChoiceDtoByKeyword(answerKeywordList);
+        List<ChoiceTempDto> answerChoiceList = toQuestionChoiceDtoByKeyword(answerKeywordList);
 
         //오답 키워드 조회
-        List<QuestionChoiceDto> wrongChoiceList = getWrongKeywordsByTopic(topicTitle, WRONG_KEYWORD_NUM);
+        List<ChoiceTempDto> wrongChoiceList = getWrongKeywordsByTopic(topicTitle, WRONG_KEYWORD_NUM);
         if (wrongChoiceList.isEmpty()) {
             return null;
         }
@@ -64,11 +67,11 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
         List<Keyword> keywordList = getTotalKeywordByAnswerTopic(topicTitle);
         for (Keyword k : keywordList) {
             //오답 키워드 조회
-            List<QuestionChoiceDto> choiceList = getWrongKeywordsByTopic(topicTitle, WRONG_KEYWORD_NUM);
+            List<ChoiceTempDto> choiceList = getWrongKeywordsByTopic(topicTitle, WRONG_KEYWORD_NUM);
 
             //Dto 변환
             if(!choiceList.isEmpty()){
-                choiceList.add(new QuestionChoiceDto(k.getName(), k.getComment(), topicTitle));
+                choiceList.add(new ChoiceTempDto(k.getName(), topicTitle));
                 QuestionDto dto = toQuestionDto(topicTitle, choiceList);
                 questionList.add(dto);
             }
@@ -76,10 +79,11 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
         return questionList;
     }
 
-    private QuestionDto toQuestionDto(String topicTitle, List<QuestionChoiceDto> choiceList) {
+    private QuestionDto toQuestionDto(String topicTitle, List<ChoiceTempDto> choiceList) {
         return QuestionDto.builder()
                 .questionType(GET_KEYWORD_TYPE)
-                .descriptionSentence(topicTitle)
+                .choiceType(ChoiceType.String.name())
+                .description(Arrays.asList(topicTitle))
                 .answer(topicTitle)
                 .choiceList(choiceList)
                 .build();

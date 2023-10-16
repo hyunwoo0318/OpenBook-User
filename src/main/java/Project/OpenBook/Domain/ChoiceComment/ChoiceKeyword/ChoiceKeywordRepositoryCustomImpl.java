@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -29,7 +30,7 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywords(List<Choice> choiceList) {
+    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywordsAdmin(List<Choice> choiceList) {
         return queryFactory
                 .from(choiceKeyword)
                 .leftJoin(choiceKeyword.choice, choice)
@@ -49,7 +50,28 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
     }
 
     @Override
-    public List<ChoiceKeyword> queryChoiceKeywords(String topicTitle) {
+    public Map<Choice, List<ExamQuestionCommentDto>> queryChoiceKeywordsCustomer(List<Choice> choiceList) {
+        return queryFactory
+                .from(choiceKeyword)
+                .leftJoin(choiceKeyword.choice, choice)
+                .leftJoin(choiceKeyword.keyword, keyword)
+                .leftJoin(keyword.topic, topic)
+                .leftJoin(topic.chapter, chapter)
+                .where(choiceKeyword.choice.in(choiceList))
+                .distinct()
+                .transform(groupBy(choiceKeyword.choice)
+                        .as(list(Projections.constructor(
+                                ExamQuestionCommentDto.class,
+                                keyword.topic.dateComment.as("topicDateComment"),
+                                keyword.topic.title.as("topicTitle"),
+                                choiceKeyword.keyword.dateComment.as("keywordDateComment"),
+                                choiceKeyword.keyword.name.as("keywordName"),
+                                choiceKeyword.keyword.comment.as("keywordComment")
+                        ))));
+    }
+
+    @Override
+    public List<ChoiceKeyword> queryChoiceKeywordsAdmin(String topicTitle) {
         return queryFactory.selectFrom(choiceKeyword)
                 .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
                 .leftJoin(choiceKeyword.choice, choice).fetchJoin()

@@ -18,11 +18,11 @@ public class KeywordPrimaryDateRepositoryCustomImpl implements KeywordPrimaryDat
     @Override
     public List<KeywordPrimaryDate> queryKeywordPrimaryDateInChapter(Integer chapterNum) {
         if (chapterNum == -1) {
-            return queryFactory.selectFrom(keywordPrimaryDate)
+            return queryFactory.selectFrom(keywordPrimaryDate).distinct()
                     .leftJoin(keywordPrimaryDate.keyword, keyword).fetchJoin()
                     .fetch();
         }
-        return queryFactory.selectFrom(keywordPrimaryDate)
+        return queryFactory.selectFrom(keywordPrimaryDate).distinct()
                 .leftJoin(keywordPrimaryDate.keyword, keyword).fetchJoin()
                 .where(keyword.topic.chapter.number.eq(chapterNum))
                 .fetch();

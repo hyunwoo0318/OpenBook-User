@@ -41,7 +41,7 @@ public class DescriptionCommentService {
 
         Description description = examQuestion.getDescription();
 
-        List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordRepository.queryDescriptionKeywords(description);
+        List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordRepository.queryDescriptionKeywordsAdmin(description);
 
         List<ExamQuestionDescQueryDto> dtoList = new ArrayList<>();
         for (DescriptionKeyword descriptionKeyword : descriptionKeywordList) {

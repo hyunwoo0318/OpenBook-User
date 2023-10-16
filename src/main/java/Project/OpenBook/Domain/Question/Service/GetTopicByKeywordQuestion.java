@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Question.Service;
 
 import Project.OpenBook.Constants.QuestionConst;
+import Project.OpenBook.Domain.Question.Dto.ChoiceTempDto;
 import Project.OpenBook.Domain.Question.Dto.QuestionChoiceDto;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
@@ -27,30 +28,30 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
     @Override
     public QuestionDto getQuestion(String topicTitle) {
         //정답 키워드 2개 조회
-        List<KeywordNameCommentDto> descriptionKeywordList = getKeywordsByAnswerTopic(topicTitle, 2).stream()
-                .map(k -> new KeywordNameCommentDto(k.getName(), k.getComment()))
+        List<String> descriptionList = getKeywordsByAnswerTopic(topicTitle, 2).stream()
+                .map(k -> k.getName())
                 .collect(Collectors.toList());
 
-        if (descriptionKeywordList.size() != 2) {
+        if (descriptionList.isEmpty()) {
             return null;
         }
 
         //오답 주제 조회
-        List<QuestionChoiceDto> choiceList = getWrongTopic(topicTitle, QuestionConst.GET_TOPIC_WRONG_ANSWER_NUM);
+        List<ChoiceTempDto> choiceList = getWrongTopic(topicTitle, QuestionConst.GET_TOPIC_WRONG_ANSWER_NUM);
 
         //정답 선지 추가
-        choiceList.add(new QuestionChoiceDto(topicTitle, null, topicTitle));
+        choiceList.add(new ChoiceTempDto(topicTitle, topicTitle));
 
         //Dto 변환
-        return toQuestionDto(topicTitle, descriptionKeywordList, choiceList);
+        return toQuestionDto(topicTitle, descriptionList, choiceList);
     }
 
-    private QuestionDto toQuestionDto(String topicTitle, List<KeywordNameCommentDto> descriptionKeywordList, List<QuestionChoiceDto> choiceList) {
+    private QuestionDto toQuestionDto(String topicTitle, List<String> descriptionList, List<ChoiceTempDto> choiceList) {
                return QuestionDto.builder()
                 .questionType(GET_TOPIC_BY_KEYWORD_TYPE)
                 .answer(topicTitle)
                 .choiceList(choiceList)
-                .descriptionKeyword(descriptionKeywordList)
+                .description(descriptionList)
                 .build();
     }
 }

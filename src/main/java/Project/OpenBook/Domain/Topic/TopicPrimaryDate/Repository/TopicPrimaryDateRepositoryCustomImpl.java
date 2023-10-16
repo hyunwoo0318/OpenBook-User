@@ -20,13 +20,15 @@ public class TopicPrimaryDateRepositoryCustomImpl implements TopicPrimaryDateRep
     @Override
     public List<TopicPrimaryDate> queryTopicPrimaryDateInChapter(Integer chapterNum) {
         if (chapterNum == -1) {
-            return queryFactory.selectFrom(topicPrimaryDate)
+            return queryFactory.selectFrom(topicPrimaryDate).distinct()
                     .join(topicPrimaryDate.topic, topic).fetchJoin()
+                    .leftJoin(topic.keywordList).fetchJoin()
                     .fetch();
         }
 
-        return queryFactory.selectFrom(topicPrimaryDate)
+        return queryFactory.selectFrom(topicPrimaryDate).distinct()
                 .join(topicPrimaryDate.topic, topic).fetchJoin()
+                .leftJoin(topic.keywordList).fetchJoin()
                 .where(topicPrimaryDate.topic.chapter.number.eq(chapterNum))
                 .fetch();
     }

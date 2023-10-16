@@ -64,8 +64,8 @@ public class TopicSimpleQueryService {
     @Transactional(readOnly = true)
     public List<KeywordDto> queryTopicKeywords(String topicTitle) {
 
-        List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordRepository.queryDescriptionKeywords(topicTitle);
-        List<ChoiceKeyword> choiceKeywordList = choiceKeywordRepository.queryChoiceKeywords(topicTitle);
+        List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordRepository.queryDescriptionKeywordsAdmin(topicTitle);
+        List<ChoiceKeyword> choiceKeywordList = choiceKeywordRepository.queryChoiceKeywordsAdmin(topicTitle);
 
         return keywordRepository.queryKeywordsInTopicWithPrimaryDate(topicTitle)
                 .stream()

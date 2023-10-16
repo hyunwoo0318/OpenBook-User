@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Question.Service;
 
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
@@ -32,9 +33,7 @@ public class QuestionService {
     private TopicPrimaryDateRepository topicPrimaryDateRepository;
 
     private GetKeywordByTopicQuestion type1 ;
-//    private GetSentenceByTopicQuestion type2;
     private GetTopicByKeywordQuestion type3;
-//    private GetTopicBySentenceQuestion type4;
 
     public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository,
                            KeywordPrimaryDateRepository keywordPrimaryDateRepository, TopicPrimaryDateRepository topicPrimaryDateRepository) {
@@ -45,9 +44,7 @@ public class QuestionService {
         this.keywordPrimaryDateRepository = keywordPrimaryDateRepository;
 
         this.type1 = new GetKeywordByTopicQuestion(this.topicRepository, this.keywordRepository);
-//        this.type2 = new GetSentenceByTopicQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
         this.type3 = new GetTopicByKeywordQuestion(this.topicRepository, this.keywordRepository);
-//        this.type4 = new GetTopicBySentenceQuestion(this.topicRepository, this.keywordRepository, this.sentenceRepository);
     }
 
     private Topic checkTopic(String topicTitle) {
@@ -74,13 +71,17 @@ public class QuestionService {
 
         for (KeywordPrimaryDate kp : keywordPrimaryDateList) {
             TimeFlowQuestionDto dto
-                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(), kp.getKeyword().getName());
+                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(), kp.getKeyword().getName(),null);
             timeFlowQuestionDtoList.add(dto);
         }
 
         for (TopicPrimaryDate tp : topicPrimaryDateList) {
+            List<String> keywordList = tp.getTopic().getKeywordList().stream()
+                    .sorted(Comparator.comparing(Keyword::getNumber))
+                    .map(k -> k.getName())
+                    .collect(Collectors.toList());
             TimeFlowQuestionDto dto
-                    = new TimeFlowQuestionDto(tp.getExtraDate(), tp.getExtraDateComment(), tp.getTopic().getTitle());
+                    = new TimeFlowQuestionDto(tp.getExtraDate(), tp.getExtraDateComment(), tp.getTopic().getTitle(), keywordList);
             timeFlowQuestionDtoList.add(dto);
         }
 

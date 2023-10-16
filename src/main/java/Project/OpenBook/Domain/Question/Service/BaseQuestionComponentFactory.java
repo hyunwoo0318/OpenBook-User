@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Question.Service;
 
+import Project.OpenBook.Domain.Question.Dto.ChoiceTempDto;
 import Project.OpenBook.Domain.Question.Dto.QuestionChoiceDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
@@ -29,31 +30,29 @@ public class BaseQuestionComponentFactory {
 
 
 
-    public List<QuestionChoiceDto> getWrongKeywordsByTopic(String topicTitle, int limit) {
+    public List<ChoiceTempDto> getWrongKeywordsByTopic(String topicTitle, int limit) {
         return keywordRepository.queryWrongKeywords(topicTitle, limit).stream()
-                .map(k -> QuestionChoiceDto.builder()
+                .map(k -> ChoiceTempDto.builder()
                         .choice(k.get(keyword.name))
-                        .comment(k.get(keyword.comment))
                         .key(k.get(keyword.topic.title))
                         .build()
                 ).collect(Collectors.toList());
     }
 
 
-    public List<QuestionChoiceDto> getWrongTopic(String answerTopicTitle, int limit) {
+    public List<ChoiceTempDto> getWrongTopic(String answerTopicTitle, int limit) {
         return topicRepository.queryWrongTopicTitle(answerTopicTitle,limit).stream()
-                .map(t -> QuestionChoiceDto.builder()
+                .map(t -> ChoiceTempDto.builder()
                         .key(t)
                         .choice(t)
                         .build())
                 .collect(Collectors.toList());
     }
 
-    public List<QuestionChoiceDto> toQuestionChoiceDtoByKeyword(List<Keyword> keywordList) {
+    public List<ChoiceTempDto> toQuestionChoiceDtoByKeyword(List<Keyword> keywordList) {
         return keywordList.stream()
-                .map(k -> QuestionChoiceDto.builder()
+                .map(k -> ChoiceTempDto.builder()
                         .choice(k.getName())
-                        .comment(k.getComment())
                         .key(k.getTopic().getTitle())
                         .build()
                 ).collect(Collectors.toList());

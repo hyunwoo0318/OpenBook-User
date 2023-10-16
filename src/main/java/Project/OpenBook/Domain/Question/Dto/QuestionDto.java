@@ -13,31 +13,16 @@ public class QuestionDto {
 
     private String answer;
     private String questionType;
-
-    /**
-     * 문제
-     */
-    private String questionSentence;
-
-    private String description;
-
-    private String descriptionSentence;
-
-    private List<KeywordNameCommentDto> descriptionKeyword;
-
-    private List<QuestionChoiceDto> choiceList;
-
     private String choiceType;
+    private List<String> description;
+    private List<ChoiceTempDto> choiceList;
 
     @Builder
-    public QuestionDto(String choiceType, String questionType, String answer, String questionSentence, String description, String descriptionSentence, List<KeywordNameCommentDto> descriptionKeyword, List<QuestionChoiceDto> choiceList) {
-        this.choiceType = choiceType;
-        this.questionType = questionType;
+    public QuestionDto(String answer, String questionType, String choiceType, List<String> description, List<ChoiceTempDto> choiceList) {
         this.answer = answer;
-        this.questionSentence = questionSentence;
+        this.questionType = questionType;
+        this.choiceType = choiceType;
         this.description = description;
-        this.descriptionSentence = descriptionSentence;
-        this.descriptionKeyword = descriptionKeyword;
         this.choiceList = choiceList;
     }
 }
