@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Keyword.Controller;
 
+import Project.OpenBook.Domain.Keyword.Dto.KeywordIdNameDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordNumberDto;
 import Project.OpenBook.Domain.Keyword.Service.KeywordService;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
@@ -21,8 +22,17 @@ import java.util.List;
 public class KeywordController {
 
     private final KeywordService keywordService;
-    private List<KeywordNumberDto> keywordNumberDto;
 
+    @Operation(summary = "키워드 전체 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "키워드 전체 조회 성공"),
+    })
+    @GetMapping("/admin/keywords")
+    public ResponseEntity<List<KeywordIdNameDto>> queryTotalKeywords() {
+        List<KeywordIdNameDto> dtoList
+                = keywordService.queryTotalKeywords();
+        return new ResponseEntity<>(dtoList, HttpStatus.OK);
+    }
 
     @Operation(summary = "키워드 생성")
     @ApiResponses(value = {

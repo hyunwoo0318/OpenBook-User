@@ -3,6 +3,7 @@ package Project.OpenBook.Domain.Keyword.Service;
 import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
+import Project.OpenBook.Domain.Keyword.Dto.KeywordIdNameDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordNumberDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
@@ -34,6 +35,14 @@ public class KeywordService {
     private final KeywordPrimaryDateRepository keywordPrimaryDateRepository;
     private final TopicRepository topicRepository;
     private final ImageService imageService;
+
+
+    @Transactional(readOnly = true)
+    public List<KeywordIdNameDto> queryTotalKeywords() {
+        return keywordRepository.findAll().stream()
+                .map(k -> new KeywordIdNameDto(k.getName(), k.getId()))
+                .collect(Collectors.toList());
+    }
 
 
     @Transactional
@@ -158,4 +167,6 @@ public class KeywordService {
         }
 
     }
+
+
 }
