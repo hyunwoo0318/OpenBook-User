@@ -8,16 +8,13 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import javax.persistence.Column;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 
 @Document(indexName = "keywords")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class KeywordSearch {
-
 
     @Field(type = FieldType.Text)
     private String name;
