@@ -45,18 +45,7 @@ public class WebConfig extends WebMvcConfigurationSupport{
         registry.addResourceHandler("/**").addResourceLocations("classpath:/static/");
     }
 
-    /**
-     * 기본 관리자 아이디 세팅
-     */
 
-    @Bean
-    public void initAdmin(){
-        if(customerRepository.findByNickName("admin1").isEmpty()){
-            Customer admin1 = new Customer("admin1", passwordEncoder.encode("admin1"), Role.ADMIN);
-            Customer admin2 = new Customer("admin2", passwordEncoder.encode("admin2"), Role.ADMIN);
-            customerRepository.saveAll(Arrays.asList(admin1, admin2));
-        }
-    }
 
     /**
      * WebClient
