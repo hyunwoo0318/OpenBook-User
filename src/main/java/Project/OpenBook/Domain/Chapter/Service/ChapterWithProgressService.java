@@ -6,6 +6,8 @@ import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
 import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
@@ -16,6 +18,8 @@ import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Repository.ChapterP
 import Project.OpenBook.Domain.StudyProgress.ChapterSection.Repository.ChapterSectionRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +39,8 @@ public class ChapterWithProgressService {
     private final ChapterProgressRepository chapterProgressRepository;
     private final ChapterSectionRepository chapterSectionRepository;
     private final TopicProgressRepository topicProgressRepository;
-    private final CustomerRepository customerRepository;
+    private final TopicPrimaryDateRepository topicPrimaryDateRepository;
+    private final KeywordPrimaryDateRepository keywordPrimaryDateRepository;
     private final ChapterValidator chapterValidator;
 
     /**
@@ -113,30 +118,39 @@ public class ChapterWithProgressService {
 
         /**
          * 1. 단원 학습
+         * 단원 학습이 null인 경우 보내지 않아야함.
          */
-        String chapterInfoName = ContentConst.CHAPTER_INFO.getName();
-        ChapterSection chapterInfoProgress = chapterMap.get(chapterInfoName);
-        if (chapterInfoProgress == null) {
-            if (chapterNum == 1) {
-                chapterInfoProgress = new ChapterSection(customer, chapter, chapterInfoName, StateConst.OPEN.getName());
-            }else{
-                chapterInfoProgress = new ChapterSection(customer, chapter, chapterInfoName, StateConst.LOCKED.getName());
-            }
-            chapterSectionRepository.save(chapterInfoProgress);
+        if(chapter.getContent() != null) {
+            String chapterInfoName = ContentConst.CHAPTER_INFO.getName();
+            ChapterSection chapterInfoProgress = chapterMap.get(chapterInfoName);
+            if (chapterInfoProgress == null) {
+                if (chapterNum == 1) {
+                    chapterInfoProgress = new ChapterSection(customer, chapter, chapterInfoName, StateConst.OPEN.getName());
+                }else{
+                    chapterInfoProgress = new ChapterSection(customer, chapter, chapterInfoName, StateConst.LOCKED.getName());
+                }
+                chapterSectionRepository.save(chapterInfoProgress);
 
+            }
+            contentTableList.add(new ProgressDto(chapterInfoName, title, chapterInfoProgress.getState()));
         }
-        contentTableList.add(new ProgressDto(chapterInfoName, title, chapterInfoProgress.getState()));
+
 
         /**
          * 2. 연표 학습
+         * 해당 단원에서 추가 년도가 존재하지 않는 경우 보내지 않아야함.
          */
-        String timeFlowStudyName = ContentConst.TIME_FLOW_STUDY.getName();
-        ChapterSection timeFlowStudyProgress = chapterMap.get(timeFlowStudyName);
-        if (timeFlowStudyProgress == null) {
-            timeFlowStudyProgress = new ChapterSection(customer, chapter, timeFlowStudyName, StateConst.LOCKED.getName());
-            chapterSectionRepository.save(timeFlowStudyProgress);
+        List<TopicPrimaryDate> topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInChapter(chapterNum);
+        List<KeywordPrimaryDate> keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInChapter(chapterNum);
+        if(topicPrimaryDateList.isEmpty() && keywordPrimaryDateList.isEmpty()) {
+            String timeFlowStudyName = ContentConst.TIME_FLOW_STUDY.getName();
+            ChapterSection timeFlowStudyProgress = chapterMap.get(timeFlowStudyName);
+            if (timeFlowStudyProgress == null) {
+                timeFlowStudyProgress = new ChapterSection(customer, chapter, timeFlowStudyName, StateConst.LOCKED.getName());
+                chapterSectionRepository.save(timeFlowStudyProgress);
+            }
+            contentTableList.add(new ProgressDto(timeFlowStudyName, title, timeFlowStudyProgress.getState()));
         }
-        contentTableList.add(new ProgressDto(timeFlowStudyName, title, timeFlowStudyProgress.getState()));
 
 
         /**

@@ -33,7 +33,6 @@ public class KeywordRepositoryTest {
     private Topic t1;
     @BeforeAll
     public void baseInit() {
-
         t1 = new Topic("t1");
         topicRepository.save(t1);
     }
