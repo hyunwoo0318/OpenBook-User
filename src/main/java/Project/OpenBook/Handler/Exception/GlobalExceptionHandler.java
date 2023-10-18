@@ -36,6 +36,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity(errorMsgDtoList, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler({ClassCastException.class})
+    protected ResponseEntity handleClassCastException(ClassCastException e) {
+        return new ResponseEntity("로그인을 다시 진행해주세요.", HttpStatus.UNAUTHORIZED);
+    }
+
     @ExceptionHandler({ Exception.class })
     protected ResponseEntity handleServerException(Exception ex) {
         System.out.println(ex.toString());

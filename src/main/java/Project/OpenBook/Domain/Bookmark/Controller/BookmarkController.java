@@ -26,7 +26,7 @@ public class BookmarkController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @PostMapping
-    public ResponseEntity<Void> addBookmark(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> addBookmark(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                       @RequestBody String topicTitle) {
         Bookmark bookmark = bookmarkService.addBookmark(customer, topicTitle);
 
@@ -39,7 +39,7 @@ public class BookmarkController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @DeleteMapping
-    public ResponseEntity<Void> deleteBookmark(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> deleteBookmark(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                          @RequestBody String topicTitle) {
         bookmarkService.deleteBookmark(customer, topicTitle);
 

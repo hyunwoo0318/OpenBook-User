@@ -29,7 +29,7 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원번호 혹은 회원아이디 입력")
     })
     @PatchMapping("/study-progress/chapter/wrong-count")
-    public ResponseEntity<Void> addChapterProgressWrongCount(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> addChapterProgressWrongCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                                              @Validated @RequestBody ChapterProgressAddDto chapterProgressAddDto) {
         studyProgressService.addChapterProgressWrongCount(customer, chapterProgressAddDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -42,7 +42,7 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원번호 혹은 회원아이디 입력")
     })
     @PatchMapping("/study-progress/chapter/progress")
-    public ResponseEntity<Void> addChapterProgressProgressUpdate(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> addChapterProgressProgressUpdate(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                                                  @Validated @RequestBody ProgressDto progressDto) {
         studyProgressService.updateStudyProgress(customer, progressDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -55,7 +55,7 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 제목 혹은 회원아이디 입력")
     })
     @PatchMapping("/study-progress/topic/wrong-count")
-    public ResponseEntity<Void> addTopicProgress(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
+    public ResponseEntity<Void> addTopicProgress(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                                  @Validated @RequestBody List<TopicProgressAddDto> topicProgressAddDtoList) {
         studyProgressService.addTopicProgressWrongCount(customer, topicProgressAddDtoList);
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -66,7 +66,7 @@ public class StudyProgressController {
             @ApiResponse(responseCode = "200", description = "성공적인 조회")
     })
     @GetMapping("/total-progress")
-    public ResponseEntity<TotalProgressDto> queryTotalProgress(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer) {
+    public ResponseEntity<TotalProgressDto> queryTotalProgress(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
         TotalProgressDto dto = studyProgressService.queryTotalProgress(customer);
         return new ResponseEntity<TotalProgressDto>(dto, HttpStatus.OK);
     }

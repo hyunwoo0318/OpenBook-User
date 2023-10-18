@@ -50,7 +50,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
     })
     @GetMapping("/customer-infos/bookmarks")
-    public ResponseEntity<List<String>> queryBookmarks(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer){
+    public ResponseEntity<List<String>> queryBookmarks(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer){
         List<String> titleList = bookmarkService.queryBookmarks(customer);
 
         return new ResponseEntity<List<String>>(titleList, HttpStatus.OK);
@@ -95,7 +95,7 @@ public class CustomerController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
     })
     @DeleteMapping("/customers")
-    public ResponseEntity<Void> deleteCustomer(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer){
+    public ResponseEntity<Void> deleteCustomer(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer){
 
         customerService.deleteCustomer(customer);
         return new ResponseEntity<Void>(HttpStatus.OK);

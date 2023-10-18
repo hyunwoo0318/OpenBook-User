@@ -20,6 +20,7 @@ public class KakaoLogin implements Oauth2Login{
     private String kakaoKey = "ca80f14a6e6b6c34ea821c46af0cc10c";
     @Override
     public String login(String code, String redirectURL) throws JsonProcessingException {
+        String kakaoUri = "http://" + redirectURL;
         Map<String, String> map = webClientBuilder.build()
                 .post()
                 .uri(uriBuilder -> uriBuilder
@@ -28,7 +29,7 @@ public class KakaoLogin implements Oauth2Login{
                         .path("/oauth/token")
                         .queryParam("grant_type", "authorization_code")
                         .queryParam("client_id", kakaoKey)
-                        .queryParam("redirect_uri", "http://" + redirectURL)
+                        .queryParam("redirect_uri", kakaoUri)
                         .queryParam("code", code)
                         .build()
                 )
