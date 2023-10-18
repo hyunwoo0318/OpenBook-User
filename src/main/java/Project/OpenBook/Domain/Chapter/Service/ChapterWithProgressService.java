@@ -120,7 +120,7 @@ public class ChapterWithProgressService {
          * 1. 단원 학습
          * 단원 학습이 null인 경우 보내지 않아야함.
          */
-        if(chapter.getContent() != null) {
+//        if(chapter.getContent() != null) {
             String chapterInfoName = ContentConst.CHAPTER_INFO.getName();
             ChapterSection chapterInfoProgress = chapterMap.get(chapterInfoName);
             if (chapterInfoProgress == null) {
@@ -133,16 +133,16 @@ public class ChapterWithProgressService {
 
             }
             contentTableList.add(new ProgressDto(chapterInfoName, title, chapterInfoProgress.getState()));
-        }
+//        }
 
 
         /**
          * 2. 연표 학습
          * 해당 단원에서 추가 년도가 존재하지 않는 경우 보내지 않아야함.
          */
-        List<TopicPrimaryDate> topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInChapter(chapterNum);
-        List<KeywordPrimaryDate> keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInChapter(chapterNum);
-        if(topicPrimaryDateList.isEmpty() && keywordPrimaryDateList.isEmpty()) {
+//        List<TopicPrimaryDate> topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInChapter(chapterNum);
+//        List<KeywordPrimaryDate> keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInChapter(chapterNum);
+//        if(!(topicPrimaryDateList.isEmpty() && keywordPrimaryDateList.isEmpty())) {
             String timeFlowStudyName = ContentConst.TIME_FLOW_STUDY.getName();
             ChapterSection timeFlowStudyProgress = chapterMap.get(timeFlowStudyName);
             if (timeFlowStudyProgress == null) {
@@ -150,7 +150,7 @@ public class ChapterWithProgressService {
                 chapterSectionRepository.save(timeFlowStudyProgress);
             }
             contentTableList.add(new ProgressDto(timeFlowStudyName, title, timeFlowStudyProgress.getState()));
-        }
+//        }
 
 
         /**
