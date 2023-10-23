@@ -44,10 +44,6 @@ public class TopicSimpleQueryService {
     private final TopicValidator topicValidator;
     private final TopicSearchRepository topicSearchRepository;
 
-    @Transactional(readOnly = true)
-    public List<TopicSearch> searchEx(String input) {
-       return topicSearchRepository.queryTopicSearchNameByInput(input);
-    }
 
 
     @Transactional(readOnly = true)

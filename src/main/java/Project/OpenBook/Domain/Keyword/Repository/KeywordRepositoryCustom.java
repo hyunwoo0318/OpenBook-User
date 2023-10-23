@@ -37,5 +37,7 @@ public interface KeywordRepositoryCustom {
 
     public List<Keyword> queryKeywordsInTopicWithPrimaryDate(String topicTitle);
 
+    public List<Keyword> queryKeywordsWithChapter();
+
     //public List<KeywordDto> queryKeywordDtoList(String topicTitle);
 }

@@ -14,4 +14,6 @@ public interface  TopicRepositoryCustom {
     public Optional<Topic> queryTopicWithCategoryChapterEra(String topicTitle);
 
     public Optional<Topic> queryTopicWithCategory(String topicTitle);
+
+    public List<Topic> queryTopicsWithChapter();
 }

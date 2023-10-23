@@ -1,9 +1,15 @@
 package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.Role;
+import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
+import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
+import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
+import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
+import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
+import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -23,6 +29,12 @@ public class InitConfig {
 
     private final TopicSearchRepository topicSearchRepository;
     private final TopicRepository topicRepository;
+    private final ChapterRepository chapterRepository;
+    private final ChapterSearchRepository chapterSearchRepository;
+
+    private final KeywordRepository keywordRepository;
+    private final KeywordSearchRepository keywordSearchRepository;
+
     private final CustomerRepository customerRepository;
     private final KeywordAssociationRepository keywordAssociationRepository;
     private final PasswordEncoder passwordEncoder;
@@ -33,14 +45,26 @@ public class InitConfig {
      */
     @Bean
     public void initElasticSearchIndex() {
-        List<Topic> topicList = topicRepository.findAll();
+        chapterSearchRepository.deleteAll();
         topicSearchRepository.deleteAll();
+        keywordSearchRepository.deleteAll();
 
-        List<TopicSearch> topicSearchList = topicList.stream()
-                .map(topic -> new TopicSearch(topic.getDetail(), topic.getTitle(), topic.getId()))
+        List<ChapterSearch> chapterSearchList = chapterRepository.findAll().stream()
+                .map(ChapterSearch::new)
                 .collect(Collectors.toList());
 
+        List<TopicSearch> topicSearchList = topicRepository.queryTopicsWithChapter().stream()
+                .map(TopicSearch::new)
+                .collect(Collectors.toList());
+
+        List<KeywordSearch> keywordSearchList = keywordRepository.queryKeywordsWithChapter().stream()
+                .map(KeywordSearch::new)
+                .collect(Collectors.toList());
+
+        chapterSearchRepository.saveAll(chapterSearchList);
         topicSearchRepository.saveAll(topicSearchList);
+        keywordSearchRepository.saveAll(keywordSearchList);
+
     }
 
     /**

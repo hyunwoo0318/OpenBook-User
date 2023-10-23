@@ -137,8 +137,5 @@ public class TopicController {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    @GetMapping("/topic-search-ex")
-    public List<TopicSearch> exTopic(@RequestParam String input) {
-        return topicSimpleQueryService.searchEx(input);
-    }
+
 }

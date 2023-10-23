@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Keyword.Repository;
 
+import Project.OpenBook.Domain.Chapter.Domain.QChapter;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 
 import Project.OpenBook.Domain.Keyword.Domain.QKeyword;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
@@ -63,9 +65,11 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
                 .fetch();
     }
 
-//    @Override
-//    public List<KeywordDto> queryKeywordDtoList(String topicTitle) {
-//        queryFactory.from(topic)
-//                .leftJoin(topic.
-//    }
+    @Override
+    public List<Keyword> queryKeywordsWithChapter() {
+        return queryFactory.selectFrom(keyword)
+                .leftJoin(keyword.topic,topic).fetchJoin()
+                .leftJoin(topic.chapter, chapter).fetchJoin()
+                .fetch();
+    }
 }

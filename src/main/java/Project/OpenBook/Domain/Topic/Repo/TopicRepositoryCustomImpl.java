@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Topic.Repo;
 
+import Project.OpenBook.Domain.Chapter.Domain.QChapter;
 import Project.OpenBook.Domain.Era.QEra;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepositoryCustom;
@@ -56,5 +57,12 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
                 .where(topic.title.eq(topicTitle))
                 .fetchOne();
         return Optional.ofNullable(findTopic);
+    }
+
+    @Override
+    public List<Topic> queryTopicsWithChapter() {
+        return queryFactory.selectFrom(topic)
+                .leftJoin(topic.chapter, chapter).fetchJoin()
+                .fetch();
     }
 }

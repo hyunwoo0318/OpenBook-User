@@ -1,5 +1,8 @@
 package Project.OpenBook.Domain.Search.KeywordSearch;
 
+import Project.OpenBook.Domain.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,4 +28,22 @@ public class KeywordSearch {
     @Id
     @Field(type = FieldType.Long)
     private Long id;
+
+    @Field(type = FieldType.Integer)
+    private Integer chapterNumber;
+    @Field(type = FieldType.Text)
+    private String chapterTitle;
+    @Field(type = FieldType.Text)
+    private String topicTitle;
+
+    public KeywordSearch(Keyword keyword) {
+        this.id = keyword.getId();
+        this.name = keyword.getName();
+        this.comment = keyword.getComment();
+        Topic topic = keyword.getTopic();
+        this.topicTitle = topic.getTitle();
+        Chapter chapter = topic.getChapter();
+        this.chapterNumber= chapter.getNumber();
+        this.chapterTitle = chapter.getTitle();
+    }
 }

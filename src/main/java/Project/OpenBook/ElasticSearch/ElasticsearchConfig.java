@@ -1,5 +1,6 @@
 package Project.OpenBook.ElasticSearch;
 
+import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
@@ -15,7 +16,8 @@ import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverte
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 
-@EnableElasticsearchRepositories(basePackageClasses = {TopicSearchRepository.class, KeywordSearchRepository.class})
+@EnableElasticsearchRepositories(basePackageClasses = {TopicSearchRepository.class, KeywordSearchRepository.class,
+        ChapterSearchRepository.class})
 @Configuration
 public class ElasticsearchConfig extends ElasticsearchConfiguration {
 

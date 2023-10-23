@@ -6,6 +6,8 @@ import Project.OpenBook.Domain.Chapter.Service.dto.ChapterAddUpdateDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterInfoDto;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterNumberUpdateDto;
+import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
+import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Handler.Exception.CustomException;
 import Project.OpenBook.Image.ImageService;
@@ -24,6 +26,7 @@ import static Project.OpenBook.Constants.ErrorCode.*;
 public class ChapterService {
 
     private final ChapterRepository chapterRepository;
+    private final ChapterSearchRepository chapterSearchRepository;
     private final ChapterValidator chapterValidator;
     private final ImageService imageService;
 
@@ -45,7 +48,8 @@ public class ChapterService {
 
         Chapter newChapter = new Chapter(number, dateComment, title);
 
-        chapterRepository.save(newChapter);
+        Chapter chapter = chapterRepository.save(newChapter);
+        chapterSearchRepository.save(new ChapterSearch(chapter));
 
         return newChapter;
     }
@@ -65,8 +69,10 @@ public class ChapterService {
         }
         Chapter chapter = chapterValidator.checkChapter(num);
 
-        return chapter.updateChapter(chapterAddUpdateDto.getTitle(), chapterAddUpdateDto.getNumber(),
+        Chapter updatedChapter = chapter.updateChapter(chapterAddUpdateDto.getTitle(), chapterAddUpdateDto.getNumber(),
                 chapterAddUpdateDto.getDateComment());
+        chapterSearchRepository.save(new ChapterSearch(updatedChapter));
+        return updatedChapter;
     }
 
     /**
