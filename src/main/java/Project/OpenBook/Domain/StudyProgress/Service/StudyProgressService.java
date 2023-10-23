@@ -50,12 +50,12 @@ public class StudyProgressService {
 
     @Transactional
     public void addTopicProgressWrongCount(Customer customer, List<TopicProgressAddDto> topicProgressAddDtoList) {
-        for (TopicProgressAddDto topicProgressAddDto : topicProgressAddDtoList) {
-            Topic topic = checkTopic(topicProgressAddDto.getTopicTitle());
-
-            TopicProgress topicProgress = checkTopicProgress(customer, topic);
-            topicProgress.updateWrongCount(topicProgressAddDto.getCount());
-        }
+//        for (TopicProgressAddDto topicProgressAddDto : topicProgressAddDtoList) {
+//            Topic topic = checkTopic(topicProgressAddDto.get());
+//
+//            TopicProgress topicProgress = checkTopicProgress(customer, topic);
+//            topicProgress.updateWrongCount(topicProgressAddDto.getCount());
+//        }
 
     }
 
