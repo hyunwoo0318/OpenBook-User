@@ -3,18 +3,15 @@ package Project.OpenBook.Domain.Customer.Service;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.Customer.Dto.CustomerAddDetailDto;
-import Project.OpenBook.Domain.Customer.Dto.CustomerCodeList;
-import Project.OpenBook.Domain.Customer.Dto.CustomerDetailDto;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
-import Project.OpenBook.Domain.Jwt.TokenDto;
+import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Repository.ChapterProgressRepository;
 import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
 import Project.OpenBook.Constants.*;
-import Project.OpenBook.Domain.Jwt.TokenManager;
+import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Domain.StudyProgress.ChapterSection.Repository.ChapterSectionRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
 import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
@@ -33,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 import static Project.OpenBook.Constants.ErrorCode.*;

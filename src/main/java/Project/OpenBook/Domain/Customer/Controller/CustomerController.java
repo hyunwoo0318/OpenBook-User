@@ -3,7 +3,7 @@ package Project.OpenBook.Domain.Customer.Controller;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Dto.AdminDto;
 import Project.OpenBook.Domain.Customer.Dto.CustomerNicknameDto;
-import Project.OpenBook.Domain.Jwt.TokenDto;
+import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
 import io.swagger.v3.oas.annotations.Operation;

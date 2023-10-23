@@ -52,6 +52,7 @@ public enum ErrorCode {
     STATE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 State 이름입니다."),
     ROUND_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 round번호 입니다."),
     ERA_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 시대입니다."),
+    TIMELINE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 timeline입니다."),
 
 
     /**
