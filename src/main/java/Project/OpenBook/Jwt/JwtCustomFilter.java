@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Jwt;
+package Project.OpenBook.Jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

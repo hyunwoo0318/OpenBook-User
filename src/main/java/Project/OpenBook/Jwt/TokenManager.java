@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Jwt;
+package Project.OpenBook.Jwt;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;

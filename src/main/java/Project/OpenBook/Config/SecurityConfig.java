@@ -1,6 +1,6 @@
 package Project.OpenBook.Config;
 
-import Project.OpenBook.Domain.Jwt.JwtCustomFilter;
+import Project.OpenBook.Jwt.JwtCustomFilter;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
