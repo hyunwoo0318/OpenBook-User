@@ -6,7 +6,11 @@ import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordReposito
 import Project.OpenBook.Domain.Description.Dto.DescriptionDto;
 import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
+import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Keyword.Dto.QuestionNumberDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
@@ -20,8 +24,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
@@ -64,19 +70,48 @@ public class TopicSimpleQueryService {
     @Transactional(readOnly = true)
     public List<KeywordDto> queryTopicKeywords(String topicTitle) {
 
-        List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordRepository.queryDescriptionKeywordsAdmin(topicTitle);
-        List<ChoiceKeyword> choiceKeywordList = choiceKeywordRepository.queryChoiceKeywordsAdmin(topicTitle);
+        List<KeywordDto> keywordDtoList = new ArrayList<>();
 
-        return keywordRepository.queryKeywordsInTopicWithPrimaryDate(topicTitle)
-                .stream()
-                .map(k -> new KeywordDto(k.getName(), k.getComment(), k.getImageUrl(), k.getId(),
-                        k.getDateComment(),k.getNumber(),
-                        k.getKeywordPrimaryDateList().stream()
-                                .map(p -> new PrimaryDateDto(p.getExtraDate(), p.getExtraDateComment()))
-                                .collect(Collectors.toList()),
-                        null))
-                .sorted(Comparator.comparing(KeywordDto::getNumber))
-                .collect(Collectors.toList());
+        Map<Keyword, List<DescriptionKeyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordsAdmin(topicTitle).stream()
+                .collect(Collectors.groupingBy(descriptionKeyword -> descriptionKeyword.getKeyword()));
+        Map<Keyword, List<ChoiceKeyword>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsAdmin(topicTitle).stream()
+                .collect(Collectors.groupingBy(choiceKeyword -> choiceKeyword.getKeyword()));
+
+        List<Keyword> keywordList = keywordRepository.queryKeywordsInTopicWithPrimaryDate(topicTitle);
+
+        for (Keyword keyword : keywordList) {
+            List<QuestionNumberDto> questionList = new ArrayList<>();
+            List<DescriptionKeyword> descriptionKeywords = descriptionKeywordMap.get(keyword);
+            List<ChoiceKeyword> choiceKeywords = choiceKeywordMap.get(keyword);
+            if (descriptionKeywords != null) {
+                for (DescriptionKeyword descriptionKeyword : descriptionKeywords) {
+                    ExamQuestion examQuestion = descriptionKeyword.getDescription().getExamQuestion();
+                    Integer roundNumber = examQuestion.getRound().getNumber();
+                    Integer questionNumber = examQuestion.getNumber();
+                    questionList.add(new QuestionNumberDto(roundNumber, questionNumber,null));
+                }
+            }
+
+            if (choiceKeywords != null) {
+                for (ChoiceKeyword choiceKeyword : choiceKeywords) {
+                    ExamQuestion examQuestion = choiceKeyword.getChoice().getExamQuestion();
+                    Integer roundNumber = examQuestion.getRound().getNumber();
+                    Integer questionNumber = examQuestion.getNumber();
+                    questionList.add(new QuestionNumberDto(roundNumber, questionNumber,null));
+                }
+            }
+
+            List<PrimaryDateDto> primaryDateDtoList = keyword.getKeywordPrimaryDateList().stream()
+                    .map(p -> new PrimaryDateDto(p.getExtraDate(), p.getExtraDateComment()))
+                    .collect(Collectors.toList());
+            KeywordDto keywordDto = new KeywordDto(keyword.getName(), keyword.getComment(), keyword.getImageUrl(), keyword.getId(),
+                    keyword.getDateComment(), keyword.getNumber(), primaryDateDtoList, questionList);
+            keywordDtoList.add(keywordDto);
+
+
+        }
+
+        return keywordDtoList;
     }
 
 

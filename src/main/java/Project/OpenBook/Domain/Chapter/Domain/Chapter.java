@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Chapter.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
+import Project.OpenBook.Domain.JJHListEntity;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
 import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
@@ -30,14 +31,12 @@ public class Chapter extends BaseEntity {
 
     private String dateComment;
 
+    private Integer jjhListNumber;
 
     public Chapter(String title, int number) {
         this.title = title;
         this.number = number;
     }
-
-
-
 
     public Chapter(int number, String dateComment, String title) {
         this.number = number;
@@ -74,6 +73,10 @@ public class Chapter extends BaseEntity {
     public Chapter updateNumber(Integer number) {
         this.number = number;
         return this;
+    }
+
+    public void updateJJHListNumber(Integer jjhListNumber) {
+        this.jjhListNumber = jjhListNumber;
     }
 
 }

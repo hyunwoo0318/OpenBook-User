@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class TopicProgressAddDto {
 
-    @NotBlank(message = "토픽 제목을 입력해주세요.")
-    private String topicTitle;
+    @NotBlank(message = "키워드 이름을 입력해주세요.")
+    private String keywordName;
 
     private Integer count;
 

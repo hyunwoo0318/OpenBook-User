@@ -15,7 +15,7 @@ import Project.OpenBook.Handler.Exception.error.ErrorMsgDto;
 import Project.OpenBook.Domain.StudyProgress.Dto.ProgressDto;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
-import Project.OpenBook.Domain.Jwt.TokenManager;
+import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;

@@ -61,6 +61,7 @@ public class QuestionService {
 
     @Transactional
     public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Integer num) {
+        //TODO : 시대로 연표문제 수정
         if(num == 0){
             num = queryRandChapterNum();
         }

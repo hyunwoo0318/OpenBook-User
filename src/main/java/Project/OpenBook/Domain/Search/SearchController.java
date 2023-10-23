@@ -11,7 +11,7 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    @GetMapping("/search-temp")
+    @GetMapping("/search")
     public void searchByInput(@RequestParam("searchKey") String input) {
         searchService.searchByInput(input);
 
