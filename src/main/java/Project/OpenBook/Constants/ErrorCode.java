@@ -28,6 +28,7 @@ public enum ErrorCode {
     WRONG_PROVIDER_NAME(HttpStatus.BAD_REQUEST, "잘못된 소셜 로그인 provider name입니다."),
     NOT_VALIDATE_IMAGE(HttpStatus.BAD_REQUEST, "잘못된 이미지 파일입니다."),
     NOT_VALIDATE_CHOICE_TYPE(HttpStatus.BAD_REQUEST, "잘못된 Type입니다."),
+    NOT_VALIDATE_CONTENT_NUMBER(HttpStatus.BAD_REQUEST, "잘못된 번호입니다."),
 
     /**
      * 401 - UNAUTHORIZED

@@ -1,9 +1,9 @@
 package Project.OpenBook.Domain.Customer.Domain;
 
-import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
-import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
 import Project.OpenBook.Domain.BaseEntity;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
+
+import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgress;
+import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -52,14 +52,11 @@ public class Customer extends BaseEntity implements UserDetails {
     @Column(name = "is_subscribed", columnDefinition = "TINYINT(1)")
     private boolean isSubscribed = true;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
-    private List<ChapterSection> chapterSectionList = new ArrayList<>();
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<JJHListProgress> jjhListProgressList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
-    private List<ChapterProgress> chapterProgressList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE)
-    private List<TopicProgress> topicProgressList = new ArrayList<>();
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<JJHContentProgress> jjhContentProgressList = new ArrayList<>();
 
     @Builder
     public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId, Boolean isSubscribed) {

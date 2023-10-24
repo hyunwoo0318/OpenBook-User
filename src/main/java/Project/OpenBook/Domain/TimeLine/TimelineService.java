@@ -25,7 +25,7 @@ public class TimelineService {
     @Transactional(readOnly = true)
     public List<TimelineQueryDto> queryTimelines() {
         return timelineRepository.queryTimelinesWithEra().stream()
-                .map(t -> new TimelineQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(), t.getJjhListNumber(),t.getId()))
+                .map(t -> new TimelineQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(), t.getId()))
                 .sorted(Comparator.comparing(TimelineQueryDto::getStartDate))
                 .collect(Collectors.toList());
     }

@@ -1,21 +1,20 @@
 package Project.OpenBook.Domain.Customer.Service;
 
-import Project.OpenBook.Domain.Chapter.Domain.Chapter;
-import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
+import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.Constants.ProgressConst;
+import Project.OpenBook.Constants.Role;
+import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
-import Project.OpenBook.Jwt.TokenDto;
-import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Repository.ChapterProgressRepository;
-import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
-import Project.OpenBook.Constants.*;
-import Project.OpenBook.Jwt.TokenManager;
-import Project.OpenBook.Domain.StudyProgress.ChapterSection.Repository.ChapterSectionRepository;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
+import Project.OpenBook.Domain.JJH.JJHContent.JJHContentRepository;
+import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgress;
+import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgressRepository;
+import Project.OpenBook.Domain.JJH.JJHList.JJHListRepository;
+import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
+import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgressRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
+import Project.OpenBook.Jwt.TokenDto;
+import Project.OpenBook.Jwt.TokenManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,21 +28,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-
-import static Project.OpenBook.Constants.ErrorCode.*;
+import static Project.OpenBook.Constants.ErrorCode.LOGIN_FAIL;
+import static Project.OpenBook.Constants.ErrorCode.WRONG_PROVIDER_NAME;
 
 @Service
 @RequiredArgsConstructor
 public class CustomerService implements UserDetailsService {
 
     private final CustomerRepository customerRepository;
-    private final ChapterRepository chapterRepository;
-    private final TopicRepository topicRepository;
-    private final TopicProgressRepository topicProgressRepository;
-    private final ChapterSectionRepository chapterSectionRepository;
-    private final ChapterProgressRepository chapterProgressRepository;
+    private final JJHListRepository jjhListRepository;
+    private final JJHListProgressRepository jjhListProgressRepository;
+
+    private final JJHContentProgressRepository jjhContentProgressRepository;
+    private final JJHContentRepository jjhContentRepository;
 
 
 
@@ -146,9 +148,8 @@ public class CustomerService implements UserDetailsService {
             customerRepository.save(customer);
 
             //단원전체진도, 단원섹션별 진도, 주제학습 레코드 생성
-            initChapterProgress(customer);
-            initChapterSection(customer);
-            initTopicProgress(customer);
+            initJJHListProgress(customer);
+            initJJHContentProgress(customer);
         }else{
             customer = customerOptional.get();
         }
@@ -167,50 +168,38 @@ public class CustomerService implements UserDetailsService {
         }
     }
 
+    private void initJJHListProgress(Customer customer) {
+        List<JJHListProgress> jjhListProgressList = jjhListRepository.findAll().stream()
+                .map(jl -> {
+                    return jl.getNumber() == 1 ?
+                            new JJHListProgress(customer, jl, StateConst.OPEN, ProgressConst.NOT_STARTED) :
+                            new JJHListProgress(customer, jl);
+                })
+                .collect(Collectors.toList());
 
-    private void initChapterSection(Customer customer) {
-        List<Chapter> chapterList = chapterRepository.findAll();
-        List<ChapterSection> chapterSectionList = new ArrayList<>();
-        List<String> contentConstList = ContentConst.getChapterContent();
-
-        for (Chapter chapter : chapterList) {
-            for (String content : contentConstList) {
-                ChapterSection chapterSection;
-                if(chapter.getNumber() == 1 && content.equals(ContentConst.CHAPTER_INFO.getName())){
-                    chapterSection = new ChapterSection(customer, chapter, content, StateConst.OPEN.getName());
-                }else{
-                    chapterSection = new ChapterSection(customer, chapter,content, StateConst.LOCKED.getName());
-                }
-                chapterSectionList.add(chapterSection);
-            }
+        try {
+            jjhListProgressRepository.saveAll(jjhListProgressList);
+        } catch (Exception e) {
+            jjhListProgressRepository.deleteAllByCustomer(customer);
+            jjhListProgressRepository.saveAll(jjhListProgressList);
         }
-        chapterSectionRepository.saveAll(chapterSectionList);
     }
 
+    private void initJJHContentProgress(Customer customer) {
+        List<JJHContentProgress> jjhContentProgressList = jjhContentRepository.findAll().stream()
+                .map(jc -> {
+                    return jc.getNumber() == 1 ?
+                            new JJHContentProgress(customer, jc, StateConst.OPEN) :
+                            new JJHContentProgress(customer, jc);
+                })
+                .collect(Collectors.toList());
 
-    private void initChapterProgress(Customer customer) {
-        List<Chapter> chapterList = chapterRepository.findAll();
-        List<ChapterProgress> chapterProgressList = new ArrayList<>();
-        for (Chapter chapter : chapterList) {
-            ChapterProgress chapterProgress;
-            if(chapter.getNumber() == 1){
-                chapterProgress = new ChapterProgress(customer, chapter, 0, ContentConst.CHAPTER_INFO.getName());
-            }else{
-                chapterProgress = new ChapterProgress(customer, chapter, 0, ContentConst.NOT_STARTED.getName());
-            }
-            chapterProgressList.add(chapterProgress);
+        try {
+            jjhContentProgressRepository.saveAll(jjhContentProgressList);
+        } catch (Exception e) {
+            jjhContentProgressRepository.deleteAllByCustomer(customer);
+            jjhContentProgressRepository.saveAll(jjhContentProgressList);
         }
-        chapterProgressRepository.saveAll(chapterProgressList);
     }
 
-    private void initTopicProgress(Customer customer) {
-        List<Topic> topicList = topicRepository.findAll();
-        List<TopicProgress> topicProgressList = new ArrayList<>();
-        for (Topic topic : topicList) {
-            TopicProgress topicProgress;
-            topicProgress = new TopicProgress(customer, topic, 0, StateConst.LOCKED.getName());
-            topicProgressList.add(topicProgress);
-        }
-        topicProgressRepository.saveAll(topicProgressList);
-    }
 }

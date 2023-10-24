@@ -25,6 +25,14 @@ public class TimelineRepositoryCustomImpl implements TimelineRepositoryCustom {
     }
 
     @Override
+    public List<Timeline> queryTimelinesWithEraAndjjhList() {
+        return queryFactory.selectFrom(timeline)
+                .leftJoin(timeline.era, era).fetchJoin()
+                .leftJoin(timeline.jjhLists).fetchJoin()
+                .fetch();
+    }
+
+    @Override
     public Optional<Timeline> queryTimelineWithEra(Long id) {
         Timeline findTimeline = queryFactory.selectFrom(timeline)
                 .leftJoin(timeline.era, era).fetchJoin()

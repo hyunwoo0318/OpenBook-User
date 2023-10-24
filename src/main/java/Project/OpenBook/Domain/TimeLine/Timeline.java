@@ -2,11 +2,14 @@ package Project.OpenBook.Domain.TimeLine;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Era.Era;
+import Project.OpenBook.Domain.JJH.JJHList.JJHList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,11 +23,13 @@ public class Timeline extends BaseEntity {
 
     private Integer endDate;
 
-    private Integer jjhListNumber;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "era_id")
     private Era era;
+
+    @OneToMany(mappedBy = "timeline",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<JJHList> jjhLists = new ArrayList<>();
 
     public Timeline(Integer startDate, Integer endDate, Era era) {
         this.startDate = startDate;
@@ -38,9 +43,6 @@ public class Timeline extends BaseEntity {
         this.era = era;
     }
 
-    public void updateJJHListNumber(Integer jjhListNumber) {
-        this.jjhListNumber = jjhListNumber;
-    }
 
 
 }

@@ -1,41 +1,34 @@
 package Project.OpenBook.Domain.Topic.Service;
 
 import Project.OpenBook.Domain.Category.Domain.Category;
+import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
-import Project.OpenBook.Constants.StateConst;
-
+import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Era.EraRepository;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
-import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
-import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
-import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicNumberDto;
-import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
-import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
-import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 
 import static Project.OpenBook.Constants.ErrorCode.*;
 @Service
@@ -47,7 +40,6 @@ public class TopicService {
     private final ChapterRepository chapterRepository;
     private final CustomerRepository customerRepository;
     private final TopicPrimaryDateRepository topicPrimaryDateRepository;
-    private final TopicProgressRepository topicProgressRepository;
     private final TopicSearchRepository topicSearchRepository;
     private final EraRepository eraRepository;
     private final TopicValidator topicValidator;
@@ -91,15 +83,10 @@ public class TopicService {
         topicPrimaryDateRepository.saveAll(topicPrimaryDateList);
 
         //주제학습 레코드 생성
-        updateTopicProgress(topic);
+        //updateTopicProgress(topic);
     }
 
-    private void updateTopicProgress(Topic topic) {
-        List<TopicProgress> topicProgressList = customerRepository.findAll().stream()
-                .map(c -> new TopicProgress(c, topic,0, StateConst.LOCKED.getName()))
-                .collect(Collectors.toList());
-        topicProgressRepository.saveAll(topicProgressList);
-    }
+
 
 
     @Transactional

@@ -6,7 +6,6 @@ import Project.OpenBook.Domain.Chapter.Service.ChapterSimpleQueryService;
 import Project.OpenBook.Domain.Chapter.Service.ChapterWithProgressService;
 import Project.OpenBook.Domain.Chapter.Service.dto.*;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.StudyProgress.Dto.ProgressDto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -51,8 +51,8 @@ public class ChapterController {
     })
     @GetMapping("/jjh/chapters")
     public ResponseEntity<List<ChapterUserDto>> queryChapterUserJJH(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer, HttpServletRequest request){
-        List<ChapterUserDto> chapterUserDtoList = chapterWithProgressService.queryChapterUserDtos(customer);
-        return new ResponseEntity<List<ChapterUserDto>>(chapterUserDtoList, HttpStatus.OK);
+        //List<ChapterUserDto> chapterUserDtoList = chapterWithProgressService.queryChapterUserDtos(customer);
+        return new ResponseEntity<List<ChapterUserDto>>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @Operation(summary = "모든 단원 정보 가져오기 - 학습자료 모음")
@@ -65,15 +65,15 @@ public class ChapterController {
         return new ResponseEntity<List<ChapterDetailDto>>(dtoList, HttpStatus.OK);
     }
 
-    @Operation(summary = "목차 제공 - 사용자")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "목차 제공 성공")
-    })
-    @GetMapping("/contents-table")
-    public ResponseEntity<List<ProgressDto>> queryContentTable(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer, @RequestParam("num") Integer number) {
-        List<ProgressDto> contentTable = chapterWithProgressService.queryContentTable(customer, number);
-        return new ResponseEntity<List<ProgressDto>>(contentTable, HttpStatus.OK);
-    }
+//    @Operation(summary = "목차 제공 - 사용자")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "목차 제공 성공")
+//    })
+//    @GetMapping("/contents-table")
+//    public ResponseEntity<List<ProgressDto>> queryContentTable(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer, @RequestParam("num") Integer number) {
+//        List<ProgressDto> contentTable = chapterWithProgressService.queryContentTable(customer, number);
+//        return new ResponseEntity<List<ProgressDto>>(contentTable, HttpStatus.OK);
+//    }
 
     @Operation(summary = "단원 이름 조회", description = "단원 번호를 넘기면 단원 이름을 알려주는 endPoint")
     @ApiResponses(value = {

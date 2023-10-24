@@ -1,10 +1,8 @@
 package Project.OpenBook.Domain.Chapter.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
-import Project.OpenBook.Domain.JJHListEntity;
+import Project.OpenBook.Domain.JJH.JJHList.JJHList;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
-import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +10,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Getter
@@ -31,7 +28,6 @@ public class Chapter extends BaseEntity {
 
     private String dateComment;
 
-    private Integer jjhListNumber;
 
     public Chapter(String title, int number) {
         this.title = title;
@@ -47,15 +43,11 @@ public class Chapter extends BaseEntity {
     @Column(nullable = false)
     private String title;
 
+    @OneToMany(mappedBy = "chapter",cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<JJHList> jjhLists = new ArrayList<>();
+
     @OneToMany(mappedBy = "chapter",fetch = FetchType.LAZY)
     private List<Topic> topicList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<ChapterSection> chapterSectionList = new ArrayList<>();
-
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-    private List<ChapterProgress> chapterProgressList = new ArrayList<>();
-
 
 
     public Chapter updateChapter(String title, int number, String dateComment) {
@@ -75,8 +67,5 @@ public class Chapter extends BaseEntity {
         return this;
     }
 
-    public void updateJJHListNumber(Integer jjhListNumber) {
-        this.jjhListNumber = jjhListNumber;
-    }
 
 }

@@ -22,7 +22,7 @@ public class Era extends BaseEntity {
     @Column(nullable = false,unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "era")
+    @OneToMany(mappedBy = "era",fetch = FetchType.LAZY)
     private List<Topic> topicList = new ArrayList<>();
 
     public Era(String name) {

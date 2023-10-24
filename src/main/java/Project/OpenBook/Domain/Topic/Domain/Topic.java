@@ -8,7 +8,6 @@ import Project.OpenBook.Domain.*;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.PersistenceCreator;
@@ -62,9 +61,6 @@ public class Topic extends BaseEntity implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "era_id")
     private Era era;
-
-    @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private List<TopicProgress> topicProgressList = new ArrayList<>();
 
     @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
     private List<Keyword> keywordList = new ArrayList<>();

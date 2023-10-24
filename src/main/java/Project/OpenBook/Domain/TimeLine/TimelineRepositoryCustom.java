@@ -7,6 +7,8 @@ public interface TimelineRepositoryCustom {
 
     public List<Timeline> queryTimelinesWithEra();
 
+    public List<Timeline> queryTimelinesWithEraAndjjhList();
+
     public Optional<Timeline> queryTimelineWithEra(Long id);
 
     public Optional<Long> queryRandomTimeline();
