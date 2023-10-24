@@ -107,7 +107,10 @@ public class ChapterService {
     public ChapterInfoDto updateChapterInfo(Integer num, String content) {
         Chapter chapter = chapterValidator.checkChapter(num);
 
-        if(content != null && !content.isBlank() &&!content.startsWith("https"))
+        if(content != null && content.isBlank()){
+            content = null;
+        }
+        else if(content != null && !content.isBlank() &&!content.startsWith("https"))
         {
             imageService.checkBase64(content);
             content = imageService.storeFile(content);

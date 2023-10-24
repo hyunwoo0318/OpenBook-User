@@ -6,6 +6,8 @@ import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryD
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
+import Project.OpenBook.Domain.TimeLine.Timeline;
+import Project.OpenBook.Domain.TimeLine.TimelineRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
@@ -23,25 +25,26 @@ import java.util.stream.Collectors;
 import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
-//@RequiredArgsConstructor
 public class QuestionService {
 
     private TopicRepository topicRepository;
     private ChapterRepository chapterRepository;
     private KeywordRepository keywordRepository;
+    private TimelineRepository timelineRepository;
     private KeywordPrimaryDateRepository keywordPrimaryDateRepository;
     private TopicPrimaryDateRepository topicPrimaryDateRepository;
 
     private GetKeywordByTopicQuestion type1 ;
     private GetTopicByKeywordQuestion type3;
 
-    public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository,
+    public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository,TimelineRepository timelineRepository,
                            KeywordPrimaryDateRepository keywordPrimaryDateRepository, TopicPrimaryDateRepository topicPrimaryDateRepository) {
         this.topicRepository = topicRepository;
         this.chapterRepository = chapterRepository;
         this.keywordRepository = keywordRepository;
         this.topicPrimaryDateRepository = topicPrimaryDateRepository;
         this.keywordPrimaryDateRepository = keywordPrimaryDateRepository;
+        this.timelineRepository = timelineRepository;
 
         this.type1 = new GetKeywordByTopicQuestion(this.topicRepository, this.keywordRepository);
         this.type3 = new GetTopicByKeywordQuestion(this.topicRepository, this.keywordRepository);
@@ -53,22 +56,33 @@ public class QuestionService {
         });
     }
 
-    private Integer queryRandChapterNum() {
-        Integer maxNum = chapterRepository.queryMaxChapterNum().orElseGet( () -> 0);
-        Random random = new Random();
-        return random.nextInt(maxNum) + 1;
-    }
 
     @Transactional
-    public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Integer num) {
-        //TODO : 시대로 연표문제 수정
-        if(num == 0){
-            num = queryRandChapterNum();
-        }
+    public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Long timelineId) {
 
         List<TimeFlowQuestionDto> timeFlowQuestionDtoList = new ArrayList<>();
-        List<TopicPrimaryDate> topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInChapter(num);
-        List<KeywordPrimaryDate> keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInChapter(num);
+        List<TopicPrimaryDate> topicPrimaryDateList = new ArrayList<>();
+        List<KeywordPrimaryDate> keywordPrimaryDateList = new ArrayList<>();
+        if (timelineId == 0) {
+            timelineId = timelineRepository.queryRandomTimeline().orElseThrow(() -> {
+                throw new CustomException(TIMELINE_NOT_FOUND);
+            });
+        }
+        if (timelineId == -1) {
+            topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInTimeline(-1L, 0, 0);
+            keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInTimeline(-1L, 0, 0);
+        } else{
+            Timeline timeline = timelineRepository.queryTimelineWithEra(timelineId).orElseThrow(() -> {
+                throw new CustomException(TIMELINE_NOT_FOUND);
+            });
+            Long eraId = timeline.getEra().getId();
+            Integer startDate = timeline.getStartDate();
+            Integer endDate = timeline.getEndDate();
+
+
+            topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInTimeline(eraId, startDate, endDate);
+            keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInTimeline(eraId, startDate, endDate);
+        }
 
         for (KeywordPrimaryDate kp : keywordPrimaryDateList) {
             TimeFlowQuestionDto dto
@@ -79,7 +93,7 @@ public class QuestionService {
         for (TopicPrimaryDate tp : topicPrimaryDateList) {
             List<String> keywordList = tp.getTopic().getKeywordList().stream()
                     .sorted(Comparator.comparing(Keyword::getNumber))
-                    .map(k -> k.getName())
+                    .map(Keyword::getName)
                     .collect(Collectors.toList());
             TimeFlowQuestionDto dto
                     = new TimeFlowQuestionDto(tp.getExtraDate(), tp.getExtraDateComment(), tp.getTopic().getTitle(), keywordList);

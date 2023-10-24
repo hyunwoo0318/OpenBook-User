@@ -7,4 +7,6 @@ import java.util.List;
 public interface KeywordPrimaryDateRepositoryCustom {
 
     public List<KeywordPrimaryDate> queryKeywordPrimaryDateInChapter(Integer chapterNum);
+
+    public List<KeywordPrimaryDate> queryKeywordPrimaryDateInTimeline(Long eraId, Integer startDate, Integer endDate);
 }

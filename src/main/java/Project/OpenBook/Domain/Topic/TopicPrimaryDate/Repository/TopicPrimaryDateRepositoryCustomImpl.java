@@ -32,4 +32,23 @@ public class TopicPrimaryDateRepositoryCustomImpl implements TopicPrimaryDateRep
                 .where(topicPrimaryDate.topic.chapter.number.eq(chapterNum))
                 .fetch();
     }
+
+    @Override
+    public List<TopicPrimaryDate> queryTopicPrimaryDateInTimeline(Long eraId, Integer startDate, Integer endDate) {
+        if (eraId == -1) {
+            return queryFactory.selectFrom(topicPrimaryDate).distinct()
+                    .join(topicPrimaryDate.topic, topic).fetchJoin()
+                    .leftJoin(topic.keywordList).fetchJoin()
+                    .fetch();
+        }
+
+        return queryFactory.selectFrom(topicPrimaryDate).distinct()
+                .leftJoin(topicPrimaryDate.topic, topic).fetchJoin()
+                .leftJoin(topic.keywordList).fetchJoin()
+                .where(topicPrimaryDate.topic.era.id.eq(eraId))
+                .where(topicPrimaryDate.extraDate.goe(startDate))
+                .where(topicPrimaryDate.extraDate.loe(endDate))
+                .fetch();
+
+    }
 }

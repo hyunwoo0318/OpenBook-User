@@ -80,8 +80,7 @@ public class TopicService {
                 .choiceNum(0)
                 .build();
         topicRepository.save(topic);
-        topicSearchRepository.save(new TopicSearch(topic.getDetail(), topic.getTitle(), topic.getId(),null,null));
-
+        topicSearchRepository.save(new TopicSearch(topic));
         //연표에 표시할 날짜 저장
         List<PrimaryDateDto> dateList = new ArrayList<>();
         if (topicDetailDto.getExtraDateList() != null) {
@@ -123,11 +122,9 @@ public class TopicService {
 
 
         //토픽 수정
-        topic.updateTopic(topicDetailDto.getNumber(), topicDetailDto.getTitle(),topicDetailDto.getDateComment(), topicDetailDto.getDetail(), chapter, category, era);
-        topicSearchRepository.findById(topic.getId()).ifPresent(ts -> {
-            topicSearchRepository.delete(ts);
-        });
-        topicSearchRepository.save(new TopicSearch(topicDetailDto.getDetail(), topicDetailDto.getTitle(), topic.getId(),null,null));
+        Topic updatedTopic = topic.updateTopic(topicDetailDto.getNumber(), topicDetailDto.getTitle(), topicDetailDto.getDateComment(), topicDetailDto.getDetail(), chapter, category, era);
+
+        topicSearchRepository.save(new TopicSearch(updatedTopic));
 
 
         //연표에 나올 날짜 수정

@@ -25,7 +25,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/questions/time-flow")
-    public ResponseEntity<List<TimeFlowQuestionDto>> queryTimeFlowQuestion(@RequestParam("id") Integer id) {
+    public ResponseEntity<List<TimeFlowQuestionDto>> queryTimeFlowQuestion(@RequestParam("id") Long id) {
         List<TimeFlowQuestionDto> timeFlowQuestionDtoList = questionService.queryTimeFlowQuestion(id);
 
         return new ResponseEntity<List<TimeFlowQuestionDto>>(timeFlowQuestionDtoList, HttpStatus.OK);

@@ -9,6 +9,8 @@ import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
+import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
+import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Image.ImageService;
@@ -31,6 +33,7 @@ import static Project.OpenBook.Constants.ErrorCode.*;
 public class KeywordService {
 
     private final KeywordRepository keywordRepository;
+    private final KeywordSearchRepository keywordSearchRepository;
     private final DescriptionKeywordRepository descriptionKeywordRepository;
     private final KeywordPrimaryDateRepository keywordPrimaryDateRepository;
     private final TopicRepository topicRepository;
@@ -72,6 +75,7 @@ public class KeywordService {
         //키워드 저장
         Keyword keyword = new Keyword(number,name,comment, keywordCreateDto.getDateComment(),topic,imageUrl);
         keywordRepository.save(keyword);
+        keywordSearchRepository.save(new KeywordSearch(keyword));
 
         //추가년도 저장
         List<KeywordPrimaryDate> keywordPrimaryDateList = keywordCreateDto.getExtraDateList().stream()
@@ -113,7 +117,7 @@ public class KeywordService {
 
         //키워드 수정
         Keyword afterKeyword = keyword.updateKeyword(number, name, comment, keywordUserDto.getDateComment(),newImageUrl);
-
+        keywordSearchRepository.save(new KeywordSearch(afterKeyword));
 
         //추가년도 수정
         List<KeywordPrimaryDate> prevKeywordPrimaryDateList = afterKeyword.getKeywordPrimaryDateList();
