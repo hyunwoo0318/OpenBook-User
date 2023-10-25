@@ -103,7 +103,10 @@ public class JJHService {
             if (chapter != null) {
                 title = chapter.getTitle();
             } else if (timeline != null) {
-                title = timeline.getEra().getName();
+                Integer startDate = timeline.getStartDate();
+                Integer endDate = timeline.getEndDate();
+                String eraName = timeline.getEra().getName();
+                title = eraName + " ( " + startDate + " ~ " + endDate + " ) ";
             } else if (topic != null) {
                 title = topic.getTitle();
             }
@@ -230,9 +233,18 @@ public class JJHService {
 
             } else if (timeline != null) {
                 //4. 연표학습 체크
-                JJHContent jjhContent = m.get(new jjhContentType(ContentConst.TIME_FLOW_STUDY, timeline.getId()));
+                JJHContent jjhContent = m.get(new jjhContentType(ContentConst.TIMELINE_STUDY, timeline.getId()));
                 if (jjhContent == null) {
-                    JJHContent newJJHContent = new JJHContent(ContentConst.TIME_FLOW_STUDY, idx++, jjhList, timeline);
+                    JJHContent newJJHContent = new JJHContent(ContentConst.TIMELINE_STUDY, idx++, jjhList, timeline);
+                    jjhContentRepository.save(newJJHContent);
+                }else{
+                    jjhContent.updateNumber(idx++);
+                }
+
+                //5. 연표문제 체크
+                JJHContent jjhContent2 = m.get(new jjhContentType(ContentConst.TIMELINE_QUESTION, timeline.getId()));
+                if (jjhContent == null) {
+                    JJHContent newJJHContent = new JJHContent(ContentConst.TIMELINE_QUESTION, idx++, jjhList, timeline);
                     jjhContentRepository.save(newJJHContent);
                 }else{
                     jjhContent.updateNumber(idx++);
@@ -280,10 +292,10 @@ public class JJHService {
         if(cur.equals(ContentConst.CHAPTER_COMPLETE_QUESTION) && (
                         next.equals(ContentConst.TOPIC_STUDY) ||
                         next.equals(ContentConst.CHAPTER_INFO) ||
-                        next.equals(ContentConst.TIME_FLOW_STUDY)
+                        next.equals(ContentConst.TIMELINE_STUDY)
                 )) return true;
 
-        if (cur.equals(ContentConst.TIME_FLOW_STUDY) && (
+        if (cur.equals(ContentConst.TIMELINE_STUDY) && (
                 next.equals(ContentConst.TOPIC_STUDY) ||
                         next.equals(ContentConst.CHAPTER_INFO)
                 )) return true;
