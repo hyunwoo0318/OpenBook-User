@@ -2,8 +2,16 @@ package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepositoryCustom;
+import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
+import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordRepository;
+import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
+import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
@@ -21,6 +29,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -34,9 +44,14 @@ public class InitConfig {
 
     private final KeywordRepository keywordRepository;
     private final KeywordSearchRepository keywordSearchRepository;
+    private final ExamQuestionRepository examQuestionRepository;
 
     private final CustomerRepository customerRepository;
+
     private final KeywordAssociationRepository keywordAssociationRepository;
+    private final ChoiceKeywordRepository choiceKeywordRepository;
+    private final DescriptionKeywordRepository descriptionKeywordRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     /**
@@ -80,11 +95,22 @@ public class InitConfig {
     }
 
     /**
-     * 키워드 연관성 관련 세팅     *
+     * 기출문제 분석 로직
      */
 
     @Bean
     public void initKeywordAssociation() {
+        Map<ExamQuestion, List<Keyword>> choiceMap = choiceKeywordRepository.queryChoiceKeywordsForInit();
+        Map<ExamQuestion, List<Keyword>> descriptionMap = descriptionKeywordRepository.queryDescriptionKeywordsForInit();
+
+        List<ExamQuestion> examQuestionList = examQuestionRepository.findAll();
+
+//        for (ExamQuestion examQuestion : examQuestionList) {
+//            List<Keyword> keywordList1 = choiceMap.get(examQuestion);
+//            List<Keyword> keywordList2 = descriptionMap.get(descriptionMap);
+//
+//            Set<Keyword> keywordSet = keywordList1 + keywordList2;
+//        }
 
     }
 

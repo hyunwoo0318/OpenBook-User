@@ -2,24 +2,26 @@ package Project.OpenBook.Domain.Description.Repository;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
+import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
-import com.querydsl.core.types.Projections;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
-import static Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.QChoiceKeyword.choiceKeyword;
 import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
 import static Project.OpenBook.Domain.Description.Service.QDescriptionKeyword.descriptionKeyword;
 import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Round.Domain.QRound.round;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
-import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.*;
 import static com.querydsl.core.types.Projections.list;
 
 @Repository
@@ -79,5 +81,15 @@ public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywor
                 .fetch();
 
 
+    }
+
+    @Override
+    public Map<ExamQuestion, List<Keyword>> queryDescriptionKeywordsForInit() {
+        return queryFactory.from(descriptionKeyword)
+                .transform(groupBy(descriptionKeyword.description.examQuestion)
+                        .as(GroupBy.list(
+                                descriptionKeyword.keyword
+                        )));
+                
     }
 }
