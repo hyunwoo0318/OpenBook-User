@@ -243,11 +243,11 @@ public class JJHService {
 
                 //5. 연표문제 체크
                 JJHContent jjhContent2 = m.get(new jjhContentType(ContentConst.TIMELINE_QUESTION, timeline.getId()));
-                if (jjhContent == null) {
+                if (jjhContent2 == null) {
                     JJHContent newJJHContent = new JJHContent(ContentConst.TIMELINE_QUESTION, idx++, jjhList, timeline);
                     jjhContentRepository.save(newJJHContent);
                 }else{
-                    jjhContent.updateNumber(idx++);
+                    jjhContent2.updateNumber(idx++);
                 }
             }
         }
@@ -295,7 +295,7 @@ public class JJHService {
                         next.equals(ContentConst.TIMELINE_STUDY)
                 )) return true;
 
-        if (cur.equals(ContentConst.TIMELINE_STUDY) && (
+        if (cur.equals(ContentConst.TIMELINE_QUESTION) && (
                 next.equals(ContentConst.TOPIC_STUDY) ||
                         next.equals(ContentConst.CHAPTER_INFO)
                 )) return true;
