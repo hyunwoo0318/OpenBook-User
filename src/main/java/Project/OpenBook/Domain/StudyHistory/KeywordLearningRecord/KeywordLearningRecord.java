@@ -1,11 +1,10 @@
-package Project.OpenBook.Domain.StudyProgress.KeywordLearningRecord;
+package Project.OpenBook.Domain.StudyHistory.KeywordLearningRecord;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 
@@ -26,19 +25,26 @@ public class KeywordLearningRecord {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    private Integer totalCount = 0;
+    private Integer answerCount = 0;
 
     private Integer wrongCount = 0;
 
     public KeywordLearningRecord(Keyword keyword, Customer customer) {
         this.keyword = keyword;
         this.customer = customer;
-        totalCount = 0;
+        answerCount = 0;
         wrongCount = 0;
     }
 
-    public KeywordLearningRecord updateCount(Integer totalCount, Integer wrongCount) {
-        this.totalCount += totalCount;
+    public KeywordLearningRecord(Keyword keyword, Customer customer, Integer answerCount, Integer wrongCount) {
+        this.keyword = keyword;
+        this.customer = customer;
+        this.answerCount = answerCount;
+        this.wrongCount = wrongCount;
+    }
+
+    public KeywordLearningRecord updateCount(Integer answerCount, Integer wrongCount) {
+        this.answerCount += answerCount;
         this.wrongCount += wrongCount;
         return this;
     }

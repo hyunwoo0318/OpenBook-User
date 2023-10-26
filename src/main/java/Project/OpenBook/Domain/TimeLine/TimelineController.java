@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.TimeLine;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +14,18 @@ public class TimelineController {
 
     private final TimelineService timelineService;
 
-    @GetMapping("/time-lines")
-    public ResponseEntity queryTimelines() {
-        List<TimelineQueryDto> dtoList = timelineService.queryTimelines();
+    @GetMapping("/admin/time-lines")
+    public ResponseEntity queryTimelinesAdmin() {
+        List<TimelineQueryAdminDto> dtoList = timelineService.queryTimelines();
         return new ResponseEntity(dtoList, HttpStatus.OK);
     }
+
+    //TODO
+//    @GetMapping("/time-lines")
+//    public ResponseEntity queryTimelinesCustomer() {
+//        return new ResponseEntity()
+//    }
+
 
     @PostMapping("/admin/time-lines")
     public ResponseEntity addTimeline(@Validated @RequestBody TimelineAddUpdateDto dto) {

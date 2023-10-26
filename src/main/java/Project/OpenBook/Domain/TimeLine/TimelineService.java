@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.TimeLine;
 
-import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Era.EraRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
@@ -10,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.ERA_NOT_FOUND;
@@ -23,10 +21,10 @@ public class TimelineService {
     private final EraRepository eraRepository;
 
     @Transactional(readOnly = true)
-    public List<TimelineQueryDto> queryTimelines() {
+    public List<TimelineQueryAdminDto> queryTimelines() {
         return timelineRepository.queryTimelinesWithEra().stream()
-                .map(t -> new TimelineQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(), t.getId()))
-                .sorted(Comparator.comparing(TimelineQueryDto::getStartDate))
+                .map(t -> new TimelineQueryAdminDto(t.getTitle(), t.getEra().getName(), t.getStartDate(), t.getEndDate(), t.getId()))
+                .sorted(Comparator.comparing(TimelineQueryAdminDto::getStartDate))
                 .collect(Collectors.toList());
     }
 
@@ -37,7 +35,7 @@ public class TimelineService {
             throw new CustomException(ERA_NOT_FOUND);
         });
 
-        Timeline timeline = new Timeline(dto.getStartDate(), dto.getEndDate(), era);
+        Timeline timeline = new Timeline(dto.getTitle(),dto.getStartDate(), dto.getEndDate(), era);
         timelineRepository.save(timeline);
     }
 
@@ -52,7 +50,7 @@ public class TimelineService {
             throw new CustomException(TIMELINE_NOT_FOUND);
         });
 
-        timeline.updateTimeline(dto.getStartDate(), dto.getEndDate(),era);
+        timeline.updateTimeline(dto.getTitle(), dto.getStartDate(), dto.getEndDate(),era);
     }
 
     @Transactional

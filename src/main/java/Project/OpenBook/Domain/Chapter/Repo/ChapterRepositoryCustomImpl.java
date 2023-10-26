@@ -20,4 +20,6 @@ public class ChapterRepositoryCustomImpl implements ChapterRepositoryCustom{
                 .leftJoin(chapter.jjhLists).fetchJoin()
                 .fetch();
     }
+
+
 }

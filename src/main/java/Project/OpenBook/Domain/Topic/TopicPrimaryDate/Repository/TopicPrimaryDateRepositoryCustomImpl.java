@@ -1,7 +1,5 @@
 package Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository;
 
-import Project.OpenBook.Domain.Topic.Domain.QTopic;
-import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.QTopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +43,7 @@ public class TopicPrimaryDateRepositoryCustomImpl implements TopicPrimaryDateRep
         return queryFactory.selectFrom(topicPrimaryDate).distinct()
                 .leftJoin(topicPrimaryDate.topic, topic).fetchJoin()
                 .leftJoin(topic.keywordList).fetchJoin()
-                .where(topicPrimaryDate.topic.era.id.eq(eraId))
+                .where(topicPrimaryDate.topic.questionCategory.era.id.eq(eraId))
                 .where(topicPrimaryDate.extraDate.goe(startDate))
                 .where(topicPrimaryDate.extraDate.loe(endDate))
                 .fetch();

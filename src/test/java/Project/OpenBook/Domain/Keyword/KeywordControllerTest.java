@@ -1,16 +1,14 @@
 package Project.OpenBook.Domain.Keyword;
 
 import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
-import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.StudyProgress.ChapterSection.Repository.ChapterSectionRepository;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
+import Project.OpenBook.Domain.StudyHistory.ChapterSection.Repository.ChapterSectionRepository;
+import Project.OpenBook.Domain.StudyHistory.TopicProgress.Repository.TopicProgressRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Handler.Exception.error.ErrorMsgDto;

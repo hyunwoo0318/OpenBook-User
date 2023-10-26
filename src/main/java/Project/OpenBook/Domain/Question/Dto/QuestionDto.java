@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.Question.Dto;
 
-import Project.OpenBook.Domain.Keyword.Dto.KeywordNameCommentDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +15,7 @@ public class QuestionDto {
     private String choiceType;
     private List<String> description;
     private List<ChoiceTempDto> choiceList;
+    private List<Long> keywordIdList;
 
     @Builder
     public QuestionDto(String answer, String questionType, String choiceType, List<String> description, List<ChoiceTempDto> choiceList) {

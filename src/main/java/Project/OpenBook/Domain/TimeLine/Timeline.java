@@ -19,6 +19,8 @@ public class Timeline extends BaseEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title;
+
     private Integer startDate;
 
     private Integer endDate;
@@ -31,13 +33,15 @@ public class Timeline extends BaseEntity {
     @OneToMany(mappedBy = "timeline",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<JJHList> jjhLists = new ArrayList<>();
 
-    public Timeline(Integer startDate, Integer endDate, Era era) {
+    public Timeline(String title, Integer startDate, Integer endDate, Era era) {
+        this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.era = era;
     }
 
-    public void updateTimeline(Integer startDate, Integer endDate, Era era) {
+    public void updateTimeline(String title, Integer startDate, Integer endDate, Era era) {
+        this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
         this.era = era;

@@ -1,11 +1,10 @@
 package Project.OpenBook.Domain.Chapter.Service.dto;
 
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
@@ -23,11 +22,12 @@ public class ChapterTopicWithCountDto {
 
 
     public ChapterTopicWithCountDto(Topic topic){
-        this.category = topic.getCategory().getName();
+        QuestionCategory questionCategory = topic.getQuestionCategory();
+        this.category = questionCategory.getCategory().getName();
         this.number = topic.getNumber();
         this.title = topic.getTitle();
         this.dateComment = topic.getDateComment();
-        this.era = topic.getEra().getName();
+        this.era = questionCategory.getEra().getName();
         this.descriptionCount = topic.getDescriptionList().size();
         this.choiceCount = topic.getChoiceList().size();
         this.keywordCount = topic.getKeywordList().size();

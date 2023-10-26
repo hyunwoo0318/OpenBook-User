@@ -4,17 +4,17 @@ import Project.OpenBook.Domain.Chapter.Service.ChapterValidator;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Service.ChapterWithProgressService;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterUserDto;
-import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
-import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
+import Project.OpenBook.Domain.StudyHistory.ChapterProgress.Domain.ChapterProgress;
+import Project.OpenBook.Domain.StudyHistory.ChapterSection.Domain.ChapterSection;
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.StudyProgress.Dto.ProgressDto;
+import Project.OpenBook.Domain.StudyHistory.Dto.ProgressDto;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Repository.ChapterProgressRepository;
-import Project.OpenBook.Domain.StudyProgress.ChapterSection.Repository.ChapterSectionRepository;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
+import Project.OpenBook.Domain.StudyHistory.ChapterProgress.Repository.ChapterProgressRepository;
+import Project.OpenBook.Domain.StudyHistory.ChapterSection.Repository.ChapterSectionRepository;
+import Project.OpenBook.Domain.StudyHistory.TopicProgress.Repository.TopicProgressRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Domain.TopicProgress;
+import Project.OpenBook.Domain.StudyHistory.TopicProgress.Domain.TopicProgress;
 import Project.OpenBook.Handler.Exception.CustomException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -159,7 +159,7 @@ public class ChapterWithProgressServiceTest {
 
                     given(chapterValidator.checkChapter(1)).willReturn(mockChapter);
                     ChapterSection cs1 = new ChapterSection(mockCustomer, ch1, CHAPTER_INFO.getName(), OPEN.getName());
-                    ChapterSection cs2 = new ChapterSection(mockCustomer, ch1, TIME_FLOW_STUDY.getName(), OPEN.getName());
+                    ChapterSection cs2 = new ChapterSection(mockCustomer, ch1, TIMELINE_STUDY.getName(), OPEN.getName());
                     ChapterSection cs3 = new ChapterSection(mockCustomer, ch1, CHAPTER_COMPLETE_QUESTION.getName(), LOCKED.getName());
                     given(chapterSectionRepository.queryChapterSections(1L, 1))
                             .willReturn(Arrays.asList(cs1, cs2, cs3));
@@ -174,7 +174,7 @@ public class ChapterWithProgressServiceTest {
 
                     //then
                     ProgressDto dto1 = new ProgressDto(CHAPTER_INFO.getName(), chapterTitle, OPEN.getName());
-                    ProgressDto dto2 = new ProgressDto(TIME_FLOW_STUDY.getName(), chapterTitle, OPEN.getName());
+                    ProgressDto dto2 = new ProgressDto(TIMELINE_STUDY.getName(), chapterTitle, OPEN.getName());
                     ProgressDto dto3 = new ProgressDto(TOPIC_STUDY.getName(), topic1.getTitle(), OPEN.getName());
                     ProgressDto dto4 = new ProgressDto(CHAPTER_COMPLETE_QUESTION.getName(), chapterTitle, LOCKED.getName());
 
@@ -197,7 +197,7 @@ public class ChapterWithProgressServiceTest {
                     given(chapterValidator.checkChapter(1)).willReturn(ch1);
 
                     ChapterSection cs1 = new ChapterSection(mockCustomer, ch1, CHAPTER_INFO.getName(), OPEN.getName());
-                    ChapterSection cs2 = new ChapterSection(mockCustomer, ch1, TIME_FLOW_STUDY.getName(), OPEN.getName());
+                    ChapterSection cs2 = new ChapterSection(mockCustomer, ch1, TIMELINE_STUDY.getName(), OPEN.getName());
                     ChapterSection cs3 = new ChapterSection(mockCustomer, ch1, CHAPTER_COMPLETE_QUESTION.getName(), LOCKED.getName());
                     given(chapterSectionRepository.queryChapterSections(1L, 1))
                             .willReturn(Arrays.asList(cs1, cs2, cs3));
@@ -211,7 +211,7 @@ public class ChapterWithProgressServiceTest {
 
                     //then
                     ProgressDto dto1 = new ProgressDto(CHAPTER_INFO.getName(), chapterTitle, OPEN.getName());
-                    ProgressDto dto2 = new ProgressDto(TIME_FLOW_STUDY.getName(), chapterTitle, OPEN.getName());
+                    ProgressDto dto2 = new ProgressDto(TIMELINE_STUDY.getName(), chapterTitle, OPEN.getName());
                     ProgressDto dto3 = new ProgressDto(CHAPTER_COMPLETE_QUESTION.getName(), chapterTitle, LOCKED.getName());
 
                     assertThat(contentTableList).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2, dto3));
@@ -248,7 +248,7 @@ public class ChapterWithProgressServiceTest {
 
                     //then
                     ProgressDto dto1 = new ProgressDto(CHAPTER_INFO.getName(), chapterTitle, OPEN.getName());
-                    ProgressDto dto2 = new ProgressDto(TIME_FLOW_STUDY.getName(), chapterTitle, LOCKED.getName());
+                    ProgressDto dto2 = new ProgressDto(TIMELINE_STUDY.getName(), chapterTitle, LOCKED.getName());
                     ProgressDto dto3 = new ProgressDto(CHAPTER_COMPLETE_QUESTION.getName(), chapterTitle, LOCKED.getName());
 
                     assertThat(contentTableList).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2, dto3));
@@ -282,7 +282,7 @@ public class ChapterWithProgressServiceTest {
 
                     //then
                     ProgressDto dto1 = new ProgressDto(CHAPTER_INFO.getName(), chapterTitle, LOCKED.getName());
-                    ProgressDto dto2 = new ProgressDto(TIME_FLOW_STUDY.getName(), chapterTitle, LOCKED.getName());
+                    ProgressDto dto2 = new ProgressDto(TIMELINE_STUDY.getName(), chapterTitle, LOCKED.getName());
                     ProgressDto dto3 = new ProgressDto(CHAPTER_COMPLETE_QUESTION.getName(), chapterTitle, LOCKED.getName());
 
                     assertThat(contentTableList).usingRecursiveComparison().isEqualTo(Arrays.asList(dto1, dto2, dto3));

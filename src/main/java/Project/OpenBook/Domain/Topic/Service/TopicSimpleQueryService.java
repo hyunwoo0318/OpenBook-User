@@ -1,5 +1,7 @@
 package Project.OpenBook.Domain.Topic.Service;
 
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicUserDto;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
 import Project.OpenBook.Domain.Choice.Dto.ChoiceDto;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
@@ -8,17 +10,14 @@ import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordReposito
 import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
 import Project.OpenBook.Domain.Keyword.Dto.QuestionNumberDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.Round.Domain.Round;
-import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -42,14 +41,27 @@ public class TopicSimpleQueryService {
     private final DescriptionKeywordRepository descriptionKeywordRepository;
     private final ChoiceKeywordRepository choiceKeywordRepository;
     private final TopicValidator topicValidator;
-    private final TopicSearchRepository topicSearchRepository;
 
+    public List<ChapterTopicWithCountDto> queryChapterTopicsAdmin(int num) {
+        return topicRepository.queryTopicsWithQuestionCategory(num).stream()
+                .sorted(Comparator.comparing(Topic::getNumber))
+                .map(ChapterTopicWithCountDto::new)
+                .collect(Collectors.toList());
+    }
+
+
+    public List<ChapterTopicUserDto> queryChapterTopicsCustomer(int num) {
+        return topicRepository.queryTopicsWithQuestionCategory(num).stream()
+                .sorted(Comparator.comparing(Topic::getNumber))
+                .map(ChapterTopicUserDto::new)
+                .collect(Collectors.toList());
+    }
 
 
     @Transactional(readOnly = true)
     public TopicDetailDto queryTopicsAdmin(String topicTitle) {
 
-        Topic topic = topicRepository.queryTopicWithCategoryChapterEra(topicTitle).orElseThrow(() -> {
+        Topic topic = topicRepository.queryTopicWithQuestionCategory(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
         return new TopicDetailDto(topic);

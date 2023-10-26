@@ -1,9 +1,6 @@
 package Project.OpenBook.Domain.Topic.Repo;
 
-import Project.OpenBook.Domain.Chapter.Domain.QChapter;
-import Project.OpenBook.Domain.Era.QEra;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.Domain.Topic.Repo.TopicRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -14,6 +11,7 @@ import java.util.Optional;
 import static Project.OpenBook.Domain.Category.Domain.QCategory.category;
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Era.QEra.era;
+import static Project.OpenBook.Domain.QuestionCategory.QQuestionCategory.questionCategory;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 
@@ -40,20 +38,34 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
     }
 
     @Override
-    public Optional<Topic> queryTopicWithCategoryChapterEra(String topicTitle) {
+    public Optional<Topic> queryTopicWithQuestionCategory(String topicTitle) {
         Topic findTopic = queryFactory.selectFrom(topic)
-                .leftJoin(topic.category, category).fetchJoin()
                 .leftJoin(topic.chapter, chapter).fetchJoin()
-                .leftJoin(topic.era, era).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.category,category).fetchJoin()
+                .leftJoin(questionCategory.era,era).fetchJoin()
                 .where(topic.title.eq(topicTitle))
                 .fetchOne();
         return Optional.ofNullable(findTopic);
     }
 
     @Override
+    public List<Topic> queryTopicsWithQuestionCategory(Integer chapterNum) {
+        return queryFactory.selectFrom(topic)
+                .leftJoin(topic.chapter, chapter).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.category,category).fetchJoin()
+                .leftJoin(questionCategory.era,era).fetchJoin()
+                .where(topic.chapter.number.eq(chapterNum))
+                .fetch();
+    }
+
+    @Override
     public Optional<Topic> queryTopicWithCategory(String topicTitle) {
         Topic findTopic = queryFactory.selectFrom(topic)
-                .join(topic.category, category).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.category, category).fetchJoin()
+                .leftJoin(topic.keywordList).fetchJoin()
                 .where(topic.title.eq(topicTitle))
                 .fetchOne();
         return Optional.ofNullable(findTopic);

@@ -1,28 +1,24 @@
 package Project.OpenBook.Domain.Topic.Domain;
 
-import Project.OpenBook.Domain.Category.Domain.Category;
+import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.*;
-import Project.OpenBook.Domain.Era.Era;
-import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import lombok.*;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import org.springframework.data.annotation.PersistenceCreator;
-import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import javax.persistence.*;
-
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(indexName = "query-results")
 @Entity
 @Getter
 @NoArgsConstructor
@@ -55,16 +51,11 @@ public class Topic extends BaseEntity implements Serializable {
     private Chapter chapter;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private Category category;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "era_id")
-    private Era era;
+    @JoinColumn(name = "question_category_id")
+    private QuestionCategory questionCategory;
 
     @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
     private List<Keyword> keywordList = new ArrayList<>();
-
 
     @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<TopicPrimaryDate> topicPrimaryDateList = new ArrayList<>();
@@ -76,7 +67,7 @@ public class Topic extends BaseEntity implements Serializable {
     private List<Description> descriptionList = new ArrayList<>();
 
     @Builder
-    public Topic(Integer number, String title, int questionNum, int choiceNum, String dateComment, String detail, Chapter chapter, Category category, Era era) {
+    public Topic(Integer number, String title, int questionNum, int choiceNum, String dateComment, String detail, Chapter chapter, QuestionCategory questionCategory) {
         this.number = number;
         this.title = title;
         this.questionNum = questionNum;
@@ -84,8 +75,7 @@ public class Topic extends BaseEntity implements Serializable {
         this.dateComment = dateComment;
         this.detail = detail;
         this.chapter = chapter;
-        this.category = category;
-        this.era = era;
+        this.questionCategory = questionCategory;
     }
 
 
@@ -98,18 +88,19 @@ public class Topic extends BaseEntity implements Serializable {
         this.title = title;
     }
 
-    public Topic updateTopic(Integer number, String title, String dateComment, String detail, Chapter chapter, Category category, Era era) {
+    public Topic updateTopic(Integer number, String title, String dateComment, String detail, Chapter chapter, QuestionCategory questionCategory) {
         this.number = number;
         this.title = title;
         this.dateComment = dateComment;
         this.detail = detail;
         this.chapter = chapter;
-        this.category = category;
-        this.era = era;
+        this.questionCategory = questionCategory;
         return this;
     }
 
     public void updateTopicNumber(Integer number) {
         this.number = number;
     }
+
+
 }

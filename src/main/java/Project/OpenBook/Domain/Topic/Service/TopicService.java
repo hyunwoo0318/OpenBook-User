@@ -10,6 +10,8 @@ import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Era.EraRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
+import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -42,11 +44,12 @@ public class TopicService {
     private final TopicPrimaryDateRepository topicPrimaryDateRepository;
     private final TopicSearchRepository topicSearchRepository;
     private final EraRepository eraRepository;
+    private final QuestionCategoryRepository questionCategoryRepository;
     private final TopicValidator topicValidator;
 
 
     public Topic queryTopicWithCategoryChapterEra(String topicTitle) {
-        return topicRepository.queryTopicWithCategoryChapterEra(topicTitle).orElseThrow(() -> {
+        return topicRepository.queryTopicWithQuestionCategory(topicTitle).orElseThrow(() -> {
             throw new CustomException(TOPIC_NOT_FOUND);
         });
     }
@@ -54,16 +57,17 @@ public class TopicService {
     @Transactional
     public void createTopic(TopicDetailDto topicDetailDto) {
 
-        Category category = checkCategory(topicDetailDto.getCategory());
-        Era era = checkEra(topicDetailDto.getEra());
+        Long questionCategoryId = topicDetailDto.getQuestionCategoryId();
+        QuestionCategory questionCategory = questionCategoryRepository.findById(questionCategoryId).orElseThrow(() -> {
+            throw new CustomException(QUESTION_CATEGORY_NOT_FOUND);
+        });
         Chapter chapter = checkChapter(topicDetailDto.getChapter());
         topicValidator.checkDupTopicTitle(topicDetailDto.getTitle());
 
         //토픽 저장
         Topic topic = Topic.builder()
                 .chapter(chapter)
-                .category(category)
-                .era(era)
+                .questionCategory(questionCategory)
                 .dateComment(topicDetailDto.getDateComment())
                 .title(topicDetailDto.getTitle())
                 .detail(topicDetailDto.getDetail())
@@ -98,18 +102,19 @@ public class TopicService {
             //새로 입력받은 제목이 중복되는지 확인
             topicValidator.checkDupTopicTitle(inputTitle);
         }
-        String categoryName = topicDetailDto.getCategory();
-        Category category = checkCategory(categoryName);
+
 
         int chapterNum = topicDetailDto.getChapter();
         Chapter chapter = checkChapter(chapterNum);
 
-        String eraName = topicDetailDto.getEra();
-        Era era = checkEra(eraName);
+        Long questionCategoryId = topicDetailDto.getQuestionCategoryId();
+        QuestionCategory questionCategory = questionCategoryRepository.findById(questionCategoryId).orElseThrow(() -> {
+            throw new CustomException(QUESTION_CATEGORY_NOT_FOUND);
+        });
 
 
         //토픽 수정
-        Topic updatedTopic = topic.updateTopic(topicDetailDto.getNumber(), topicDetailDto.getTitle(), topicDetailDto.getDateComment(), topicDetailDto.getDetail(), chapter, category, era);
+        Topic updatedTopic = topic.updateTopic(topicDetailDto.getNumber(), topicDetailDto.getTitle(), topicDetailDto.getDateComment(), topicDetailDto.getDetail(), chapter, questionCategory);
 
         topicSearchRepository.save(new TopicSearch(updatedTopic));
 

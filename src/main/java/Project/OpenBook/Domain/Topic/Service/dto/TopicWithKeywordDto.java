@@ -20,7 +20,7 @@ public class TopicWithKeywordDto {
     private List<KeywordUserDto> keywordList;
 
     public TopicWithKeywordDto(Topic topic) {
-        this.category = topic.getCategory().getName();
+        this.category = topic.getQuestionCategory().getCategory().getName();
         this.extraDateList = topic.getTopicPrimaryDateList().stream()
                 .map(pd -> new PrimaryDateDto(pd.getExtraDate(), pd.getExtraDateComment()))
                 .sorted(Comparator.comparing(PrimaryDateDto::getExtraDate))

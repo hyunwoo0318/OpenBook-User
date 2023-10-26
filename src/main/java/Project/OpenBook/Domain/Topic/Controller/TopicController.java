@@ -1,15 +1,13 @@
 package Project.OpenBook.Domain.Topic.Controller;
 
-import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
-import Project.OpenBook.Domain.Choice.Dto.ChoiceDto;
-import Project.OpenBook.Domain.Description.Dto.DescriptionDto;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicUserDto;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
+import Project.OpenBook.Domain.Topic.Service.TopicService;
 import Project.OpenBook.Domain.Topic.Service.TopicSimpleQueryService;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicNumberDto;
-import Project.OpenBook.Domain.Topic.Service.TopicService;
+import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -52,6 +50,26 @@ public class TopicController {
         return new ResponseEntity<TopicWithKeywordDto>(dto, HttpStatus.OK);
     }
 
+    @Operation(summary = "해당 단원의 모든 topic 조회 - 관리자")
+    @GetMapping("/admin/chapters/{num}/topics")
+    public ResponseEntity<List<ChapterTopicWithCountDto>> queryChapterTopicsAdmin(@PathVariable("num") int num) {
+        List<ChapterTopicWithCountDto> dtoList = topicSimpleQueryService.queryChapterTopicsAdmin(num);
+
+        return new ResponseEntity<List<ChapterTopicWithCountDto>>(dtoList, HttpStatus.OK);
+    }
+
+    @Operation(summary = "해당 단원의 모든 topic 조회 - 사용자")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "전체 topic 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
+    })
+    @GetMapping("/chapters/{num}/topics")
+    public ResponseEntity<List<ChapterTopicUserDto>> queryChapterTopicsCustomer(@PathVariable("num") int num){
+        List<ChapterTopicUserDto> dtoList = topicSimpleQueryService.queryChapterTopicsCustomer(num);
+
+        return new ResponseEntity<List<ChapterTopicUserDto>>(dtoList, HttpStatus.OK);
+    }
+
     @Operation(summary = "특정 토픽의 전체 키워드 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "특정 토픽의 전체 키워드 조회 성공"),
@@ -63,30 +81,6 @@ public class TopicController {
 
         return new ResponseEntity<List<KeywordDto>>(dtoList, HttpStatus.OK);
     }
-
-
-//    @Operation(summary = "특정 토픽별 모든 보기 조회")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "성공적인 토픽별 보기 조회"),
-//            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽별 보기 조회 요청")
-//    })
-//    @GetMapping("/topics/{topicTitle}/descriptions")
-//    public ResponseEntity<List<DescriptionDto>> getDescriptionsInTopic(@PathVariable String topicTitle){
-//        List<DescriptionDto> dtoList = topicSimpleQueryService.queryTopicDescriptions(topicTitle);
-//
-//        return new ResponseEntity<List<DescriptionDto>>(dtoList, HttpStatus.OK);
-//    }
-//
-//    @Operation(summary = "특정 토픽별 모든 선지 조회")
-//    @ApiResponses( value = {
-//            @ApiResponse(responseCode = "200", description = "성공적인 조회")
-//    })
-//    @GetMapping("/admin/topics/{topicTitle}/choices/")
-//    public ResponseEntity<List<ChoiceDto>> getChoicesInTopics(@PathVariable("topicTitle") String topicTitle){
-//        List<ChoiceDto> dtoList = topicSimpleQueryService.queryTopicChoices(topicTitle);
-//        return new ResponseEntity<List<ChoiceDto>>(dtoList,HttpStatus.OK);
-//    }
-
 
     @Operation(summary = "새로운 상세정보 입력")
     @ApiResponses(value = {

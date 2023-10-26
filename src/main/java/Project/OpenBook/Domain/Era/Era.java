@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.Era;
 
 import Project.OpenBook.Domain.BaseEntity;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,8 +22,8 @@ public class Era extends BaseEntity {
     @Column(nullable = false,unique = true)
     private String name;
 
-    @OneToMany(mappedBy = "era",fetch = FetchType.LAZY)
-    private List<Topic> topicList = new ArrayList<>();
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+    private List<QuestionCategory> questionCategoryList = new ArrayList<>();
 
     public Era(String name) {
         this.name = name;

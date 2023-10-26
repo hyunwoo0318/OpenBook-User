@@ -1,7 +1,6 @@
 package Project.OpenBook.Domain.Era;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static Project.OpenBook.Constants.ErrorCode.*;
+import static Project.OpenBook.Constants.ErrorCode.DUP_ERA_NAME;
 import static Project.OpenBook.Constants.ErrorCode.ERA_NOT_FOUND;
 
 @RequiredArgsConstructor
@@ -65,8 +64,8 @@ public class EraService {
     public void deleteEra(String eraName) {
         Era era = checkEra(eraName);
 
-        List<Topic> topicList = era.getTopicList();
-        if (!topicList.isEmpty()) {
+        List<QuestionCategory> questionCategoryList = era.getQuestionCategoryList();
+        if (!questionCategoryList.isEmpty()) {
             throw new CustomException(ERA_NOT_FOUND);
         }
 

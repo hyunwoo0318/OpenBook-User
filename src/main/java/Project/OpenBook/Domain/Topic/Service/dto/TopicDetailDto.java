@@ -22,11 +22,7 @@ public class TopicDetailDto {
     @NotBlank(message = "상세정보 제목을 입력해주세요.")
     private String title;
 
-    @NotBlank(message = "카테고리를 입력해주세요")
-    private String category;
-
-    @NotBlank(message = "시대를 입력해주세요.")
-    private String era;
+    private Long questionCategoryId;
 
     private String dateComment;
 
@@ -45,13 +41,10 @@ public class TopicDetailDto {
 
         this.title = topic.getTitle();
 
-        if (topic.getCategory() != null) {
-            this.category = topic.getCategory().getName();
+        if (topic.getQuestionCategory() != null) {
+            this.questionCategoryId = topic.getQuestionCategory().getId();
         }
 
-        if (topic.getEra() != null) {
-            this.era = topic.getEra().getName();
-        }
         this.detail = topic.getDetail();
         this.dateComment = topic.getDateComment();
         this.extraDateList = topic.getTopicPrimaryDateList().stream()

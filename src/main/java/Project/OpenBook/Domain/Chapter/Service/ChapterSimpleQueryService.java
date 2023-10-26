@@ -52,19 +52,5 @@ public class ChapterSimpleQueryService {
         return new ChapterInfoDto(chapterValidator.checkChapter(num).getContent());
     }
 
-    public List<ChapterTopicWithCountDto> queryChapterTopicsAdmin(int num) {
-        List<Topic> topicList = chapterValidator.checkChapter(num).getTopicList();
-        return topicList.stream()
-                .map(t -> new ChapterTopicWithCountDto(t))
-                .sorted(Comparator.comparing(ChapterTopicWithCountDto::getNumber))
-                .collect(Collectors.toList());
-    }
 
-
-    public List<ChapterTopicUserDto> queryChapterTopicsCustomer(int num) {
-        return chapterValidator.checkChapter(num).getTopicList().stream()
-                .sorted(Comparator.comparing(Topic::getNumber))
-                .map(t -> new ChapterTopicUserDto(t))
-                .collect(Collectors.toList());
-    }
 }

@@ -123,25 +123,7 @@ public class ChapterController {
         return new ResponseEntity<ChapterInfoDto>(chapterInfoDto, HttpStatus.OK);
     }
 
-    @Operation(summary = "해당 단원의 모든 topic 조회 - 관리자")
-    @GetMapping("/admin/chapters/{num}/topics")
-    public ResponseEntity<List<ChapterTopicWithCountDto>> queryChapterTopicsAdmin(@PathVariable("num") int num) {
-        List<ChapterTopicWithCountDto> dtoList = chapterSimpleQueryService.queryChapterTopicsAdmin(num);
 
-        return new ResponseEntity<List<ChapterTopicWithCountDto>>(dtoList, HttpStatus.OK);
-    }
-
-    @Operation(summary = "해당 단원의 모든 topic 조회 - 사용자")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "전체 topic 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
-    })
-    @GetMapping("/chapters/{num}/topics")
-    public ResponseEntity<List<ChapterTopicUserDto>> queryChapterTopicsCustomer(@PathVariable("num") int num){
-        List<ChapterTopicUserDto> dtoList = chapterSimpleQueryService.queryChapterTopicsCustomer(num);
-
-        return new ResponseEntity<List<ChapterTopicUserDto>>(dtoList, HttpStatus.OK);
-    }
 
 
     @Operation(summary = "단원 추가", description = "단원제목과 단원번호를 입력해서 새로운 단원 추가")

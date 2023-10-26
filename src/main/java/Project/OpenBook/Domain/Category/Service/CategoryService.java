@@ -1,11 +1,10 @@
 package Project.OpenBook.Domain.Category.Service;
 
-import Project.OpenBook.Domain.Category.Service.Dto.CategoryDto;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Handler.Exception.CustomException;
 import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
+import Project.OpenBook.Domain.Category.Service.Dto.CategoryDto;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
+import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,8 +53,8 @@ public class CategoryService {
     public boolean deleteCategory(String categoryName) {
         Category category = checkCategory(categoryName);
 
-        List<Topic> topicList = category.getTopicList();
-        if(!topicList.isEmpty()){
+        List<QuestionCategory> questionCategoryList = category.getQuestionCategoryList();
+        if(!questionCategoryList.isEmpty()){
             throw new CustomException(CATEGORY_HAS_TOPIC);
         }
 
