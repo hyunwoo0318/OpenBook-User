@@ -15,4 +15,5 @@ public interface ExamQuestionRepositoryCustom {
 
     public List<ExamQuestion> queryExamQuestionsWithDescriptionAndTopic(Integer roundNumber);
 
+
 }

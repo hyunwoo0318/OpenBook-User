@@ -2,7 +2,9 @@ package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
+import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,8 +17,6 @@ import java.util.Map;
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Choice.Domain.QChoice.choice;
 import static Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.QChoiceKeyword.choiceKeyword;
-import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
-import static Project.OpenBook.Domain.Description.Service.QDescriptionKeyword.descriptionKeyword;
 import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Round.Domain.QRound.round;
@@ -79,5 +79,14 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
                 .leftJoin(examQuestion.round, round).fetchJoin()
                 .where(choiceKeyword.keyword.topic.title.eq(topicTitle))
                 .fetch();
+    }
+
+    @Override
+    public Map<ExamQuestion, List<Keyword>> queryChoiceKeywordsForInit() {
+        return queryFactory.from(choiceKeyword)
+                .transform(groupBy(choiceKeyword.choice.examQuestion)
+                        .as(list(
+                                choiceKeyword.keyword
+                        )));
     }
 }

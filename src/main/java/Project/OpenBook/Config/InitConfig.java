@@ -1,20 +1,18 @@
 package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
-import Project.OpenBook.Domain.Era.EraRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
-import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -36,10 +34,6 @@ public class InitConfig {
 
     private final KeywordRepository keywordRepository;
     private final KeywordSearchRepository keywordSearchRepository;
-
-    private final QuestionCategoryRepository questionCategoryRepository;
-    private final CategoryRepository categoryRepository;
-    private final EraRepository eraRepository;
 
     private final CustomerRepository customerRepository;
     private final KeywordAssociationRepository keywordAssociationRepository;
@@ -93,19 +87,5 @@ public class InitConfig {
     public void initKeywordAssociation() {
 
     }
-
-//    @Bean
-//    @Transactional
-//    public void initQuestionCategories() {
-//        List<Topic> topicList = topicRepository.findAll();
-//        for (Topic topic : topicList) {
-//            Category category = topic.getCategory();
-//            Era era = topic.getEra();
-//            QuestionCategory questionCategory = questionCategoryRepository.findByCategoryAndEra(category, era).orElseThrow(() -> {
-//                throw new CustomException(ErrorCode.KEYWORD_NOT_FOUND);
-//            });
-//            topic.updateQuestionCategory(questionCategory);
-//        }
-//    }
 
 }
