@@ -1,6 +1,7 @@
-package Project.OpenBook.Domain.KeywordLearningRecord;
+package Project.OpenBook.Domain.KeywordLearningRecord.Repo;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
-import static Project.OpenBook.Domain.KeywordLearningRecord.QKeywordLearningRecord.keywordLearningRecord;
+import static Project.OpenBook.Domain.KeywordLearningRecord.Domain.QKeywordLearningRecord.keywordLearningRecord;
 
 @Repository
 @RequiredArgsConstructor

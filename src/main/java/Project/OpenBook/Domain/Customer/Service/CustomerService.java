@@ -12,6 +12,20 @@ import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgressReposito
 import Project.OpenBook.Domain.JJH.JJHList.JJHListRepository;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgressRepository;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.KeywordLearningRecord.Domain.KeywordLearningRecord;
+import Project.OpenBook.Domain.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
+import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
+import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
+import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
+import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
+import Project.OpenBook.Domain.TimelineLearningRecord.Domain.TimelineLearningRecord;
+import Project.OpenBook.Domain.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
+import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import Project.OpenBook.Domain.TopicLearningRecord.Domain.TopicLearningRecord;
+import Project.OpenBook.Domain.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
@@ -41,13 +55,21 @@ import static Project.OpenBook.Constants.ErrorCode.WRONG_PROVIDER_NAME;
 public class CustomerService implements UserDetailsService {
 
     private final CustomerRepository customerRepository;
+
     private final JJHListRepository jjhListRepository;
-    private final JJHListProgressRepository jjhListProgressRepository;
-
-    private final JJHContentProgressRepository jjhContentProgressRepository;
     private final JJHContentRepository jjhContentRepository;
+    private final KeywordRepository keywordRepository;
+    private final TopicRepository topicRepository;
+    private final QuestionCategoryRepository questionCategoryRepository;
+    private final TimelineRepository timelineRepository;
 
 
+    private final JJHListProgressRepository jjhListProgressRepository;
+    private final JJHContentProgressRepository jjhContentProgressRepository;
+    private final KeywordLearningRecordRepository keywordLearningRecordRepository;
+    private final TopicLearningRecordRepository topicLearningRecordRepository;
+    private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
+    private final TimelineLearningRecordRepository timelineLearningRecordRepository;
 
     private final AuthenticationManagerBuilder authenticationManager;
     private final WebClient.Builder webClientBuilder;
@@ -148,8 +170,8 @@ public class CustomerService implements UserDetailsService {
             customerRepository.save(customer);
 
             //단원전체진도, 단원섹션별 진도, 주제학습 레코드 생성
-            initJJHListProgress(customer);
-            initJJHContentProgress(customer);
+            initCustomerData(customer);
+
         }else{
             customer = customerOptional.get();
         }
@@ -166,6 +188,26 @@ public class CustomerService implements UserDetailsService {
         }else{
             throw new CustomException(WRONG_PROVIDER_NAME);
         }
+    }
+
+    private void initCustomerData(Customer customer){
+        //1. 정주행 리스트 progress
+        initJJHListProgress(customer);
+
+        //2. 정주행 콘텐츠 progress
+        initJJHContentProgress(customer);
+
+        //3. keyword 학습정도
+        initKeywordLearningHistory(customer);
+
+        //4. topic 학습정도
+        initTopicLearningHistory(customer);
+
+        //5. questionCategory 학습정도
+        initQuestionCategoryLearningHistory(customer);
+
+        //6. timeline 학습정도
+        initTimelineLearningHistory(customer);
     }
 
     private void initJJHListProgress(Customer customer) {
@@ -194,12 +236,40 @@ public class CustomerService implements UserDetailsService {
                 })
                 .collect(Collectors.toList());
 
-        try {
-            jjhContentProgressRepository.saveAll(jjhContentProgressList);
-        } catch (Exception e) {
-            jjhContentProgressRepository.deleteAllByCustomer(customer);
-            jjhContentProgressRepository.saveAll(jjhContentProgressList);
-        }
+        jjhContentProgressRepository.saveAll(jjhContentProgressList);
+    }
+
+    private void initKeywordLearningHistory(Customer customer) {
+        List<KeywordLearningRecord> recordList = keywordRepository.findAll().stream()
+                .map(k -> new KeywordLearningRecord(k, customer))
+                .collect(Collectors.toList());
+
+        keywordLearningRecordRepository.saveAll(recordList);
+
+    }
+
+    private void initTopicLearningHistory(Customer customer) {
+        List<TopicLearningRecord> recordList = topicRepository.findAll().stream()
+                .map(t -> new TopicLearningRecord(t, customer))
+                .collect(Collectors.toList());
+
+        topicLearningRecordRepository.saveAll(recordList);
+    }
+
+    private void initQuestionCategoryLearningHistory(Customer customer) {
+        List<QuestionCategoryLearningRecord> recordList = questionCategoryRepository.findAll().stream()
+                .map(qc -> new QuestionCategoryLearningRecord(qc, customer))
+                .collect(Collectors.toList());
+
+        questionCategoryLearningRecordRepository.saveAll(recordList);
+    }
+
+    private void initTimelineLearningHistory(Customer customer) {
+        List<TimelineLearningRecord> recordList = timelineRepository.findAll().stream()
+                .map(tl -> new TimelineLearningRecord(tl, customer))
+                .collect(Collectors.toList());
+
+        timelineLearningRecordRepository.saveAll(recordList);
     }
 
 }

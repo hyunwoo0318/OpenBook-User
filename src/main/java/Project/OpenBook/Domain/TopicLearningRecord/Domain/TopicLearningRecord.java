@@ -1,7 +1,8 @@
-package Project.OpenBook.Domain.KeywordLearningRecord;
+package Project.OpenBook.Domain.TopicLearningRecord.Domain;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,15 +12,15 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "keyword_learning_record")
-public class KeywordLearningRecord {
+@Table(name = "topic_learning_record")
+public class TopicLearningRecord {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "keyword_id")
-    private Keyword keyword;
+    @JoinColumn(name = "topic_id")
+    private Topic topic;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -29,21 +30,21 @@ public class KeywordLearningRecord {
 
     private Integer wrongCount = 0;
 
-    public KeywordLearningRecord(Keyword keyword, Customer customer) {
-        this.keyword = keyword;
+    public TopicLearningRecord(Topic topic, Customer customer) {
+        this.topic = topic;
         this.customer = customer;
         answerCount = 0;
         wrongCount = 0;
     }
 
-    public KeywordLearningRecord(Keyword keyword, Customer customer, Integer answerCount, Integer wrongCount) {
-        this.keyword = keyword;
+    public TopicLearningRecord(Topic topic, Customer customer, Integer answerCount, Integer wrongCount) {
+        this.topic = topic;
         this.customer = customer;
         this.answerCount = answerCount;
         this.wrongCount = wrongCount;
     }
 
-    public KeywordLearningRecord updateCount(Integer answerCount, Integer wrongCount) {
+    public TopicLearningRecord updateCount(Integer answerCount, Integer wrongCount) {
         this.answerCount += answerCount;
         this.wrongCount += wrongCount;
         return this;

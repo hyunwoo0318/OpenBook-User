@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.QuestionCategoryLearningRecord;
+package Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;

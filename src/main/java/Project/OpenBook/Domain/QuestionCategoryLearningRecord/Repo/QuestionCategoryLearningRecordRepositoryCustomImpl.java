@@ -1,13 +1,14 @@
-package Project.OpenBook.Domain.QuestionCategoryLearningRecord;
+package Project.OpenBook.Domain.QuestionCategoryLearningRecord.Repo;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static Project.OpenBook.Domain.QuestionCategoryLearningRecord.QQuestionCategoryLearningRecord.questionCategoryLearningRecord;
+import static Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QQuestionCategoryLearningRecord.questionCategoryLearningRecord;
 
 @Repository
 @RequiredArgsConstructor
