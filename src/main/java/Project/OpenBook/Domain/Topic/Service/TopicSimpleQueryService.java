@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.Topic.Service;
 
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicUserDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
+import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Choice.Dto.ChoiceDto;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
@@ -102,10 +103,11 @@ public class TopicSimpleQueryService {
 
             if (choiceKeywords != null) {
                 for (ChoiceKeyword choiceKeyword : choiceKeywords) {
-                    ExamQuestion examQuestion = choiceKeyword.getChoice().getExamQuestion();
+                    Choice choice = choiceKeyword.getChoice();
+                    ExamQuestion examQuestion = choice.getExamQuestion();
                     Integer roundNumber = examQuestion.getRound().getNumber();
                     Integer questionNumber = examQuestion.getNumber();
-                    questionList.add(new QuestionNumberDto(roundNumber, questionNumber,null));
+                    questionList.add(new QuestionNumberDto(roundNumber, questionNumber,choice.getContent()));
                 }
             }
 
