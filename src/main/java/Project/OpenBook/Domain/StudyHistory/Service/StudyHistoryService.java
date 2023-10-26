@@ -1,10 +1,11 @@
-package Project.OpenBook.Domain.StudyHistory;
+package Project.OpenBook.Domain.StudyHistory.Service;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.StudyHistory.KeywordLearningRecord.KeywordLearningRecord;
-import Project.OpenBook.Domain.StudyHistory.KeywordLearningRecord.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.KeywordLearningRecord.KeywordLearningRecord;
+import Project.OpenBook.Domain.KeywordLearningRecord.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.StudyHistory.Service.Dto.WrongCountAddDto;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

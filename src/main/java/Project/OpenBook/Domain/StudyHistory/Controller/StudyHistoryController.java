@@ -1,8 +1,8 @@
 package Project.OpenBook.Domain.StudyHistory.Controller;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.StudyHistory.WrongCountAddDto;
-import Project.OpenBook.Domain.StudyHistory.StudyHistoryService;
+import Project.OpenBook.Domain.StudyHistory.Service.Dto.WrongCountAddDto;
+import Project.OpenBook.Domain.StudyHistory.Service.StudyHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;

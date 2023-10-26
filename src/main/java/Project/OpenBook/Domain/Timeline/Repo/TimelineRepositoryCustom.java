@@ -1,4 +1,6 @@
-package Project.OpenBook.Domain.TimeLine;
+package Project.OpenBook.Domain.Timeline.Repo;
+
+import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 
 import java.util.List;
 import java.util.Optional;

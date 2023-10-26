@@ -8,7 +8,7 @@ import java.util.List;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.JJH.JJHList.QJJHList.jJHList;
-import static Project.OpenBook.Domain.TimeLine.QTimeline.timeline;
+import static Project.OpenBook.Domain.Timeline.Domain.QTimeline.timeline;
 
 @Repository
 @RequiredArgsConstructor

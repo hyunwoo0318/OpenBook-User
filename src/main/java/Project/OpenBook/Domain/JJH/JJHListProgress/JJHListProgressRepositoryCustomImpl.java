@@ -1,11 +1,6 @@
 package Project.OpenBook.Domain.JJH.JJHListProgress;
 
-import Project.OpenBook.Domain.Chapter.Domain.QChapter;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.Era.QEra;
-import Project.OpenBook.Domain.JJH.JJHList.QJJHList;
-import Project.OpenBook.Domain.QJJHListEntity;
-import Project.OpenBook.Domain.TimeLine.QTimeline;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,7 +11,7 @@ import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Era.QEra.era;
 import static Project.OpenBook.Domain.JJH.JJHList.QJJHList.jJHList;
 import static Project.OpenBook.Domain.JJH.JJHListProgress.QJJHListProgress.jJHListProgress;
-import static Project.OpenBook.Domain.TimeLine.QTimeline.timeline;
+import static Project.OpenBook.Domain.Timeline.Domain.QTimeline.timeline;
 
 @Repository
 @RequiredArgsConstructor

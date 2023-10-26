@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.StudyHistory.KeywordLearningRecord;
+package Project.OpenBook.Domain.KeywordLearningRecord;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
-import static Project.OpenBook.Domain.StudyHistory.KeywordLearningRecord.QKeywordLearningRecord.keywordLearningRecord;
+import static Project.OpenBook.Domain.KeywordLearningRecord.QKeywordLearningRecord.keywordLearningRecord;
 
 @Repository
 @RequiredArgsConstructor

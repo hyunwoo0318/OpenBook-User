@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.StudyHistory.KeywordLearningRecord;
+package Project.OpenBook.Domain.KeywordLearningRecord;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;

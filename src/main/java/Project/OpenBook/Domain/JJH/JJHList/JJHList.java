@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.JJH.JJHList;
 
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.JJH.JJHContent.JJHContent;
-import Project.OpenBook.Domain.TimeLine.Timeline;
+import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

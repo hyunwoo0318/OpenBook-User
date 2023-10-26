@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.StudyHistory;
+package Project.OpenBook.Domain.StudyHistory.Service.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

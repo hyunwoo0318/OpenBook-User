@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.TimeLine;
+package Project.OpenBook.Domain.Timeline.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Era.Era;

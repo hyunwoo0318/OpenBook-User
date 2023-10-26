@@ -1,8 +1,15 @@
-package Project.OpenBook.Domain.TimeLine;
+package Project.OpenBook.Domain.Timeline.Controller;
 
+import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.Timeline.Service.Dto.TimelineAddUpdateDto;
+import Project.OpenBook.Domain.Timeline.Service.Dto.TimelineQueryAdminDto;
+import Project.OpenBook.Domain.Timeline.Service.Dto.TimelineQueryCustomerDto;
+import Project.OpenBook.Domain.Timeline.Service.TimelineService;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,15 +23,16 @@ public class TimelineController {
 
     @GetMapping("/admin/time-lines")
     public ResponseEntity queryTimelinesAdmin() {
-        List<TimelineQueryAdminDto> dtoList = timelineService.queryTimelines();
+        List<TimelineQueryAdminDto> dtoList = timelineService.queryTimelinesAdmin();
         return new ResponseEntity(dtoList, HttpStatus.OK);
     }
 
     //TODO
-//    @GetMapping("/time-lines")
-//    public ResponseEntity queryTimelinesCustomer() {
-//        return new ResponseEntity()
-//    }
+    @GetMapping("/time-lines")
+    public ResponseEntity queryTimelinesCustomer(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
+        List<TimelineQueryCustomerDto> dtoList = timelineService.queryTimelinesCustomer(customer);
+        return new ResponseEntity(dtoList, HttpStatus.OK);
+    }
 
 
     @PostMapping("/admin/time-lines")

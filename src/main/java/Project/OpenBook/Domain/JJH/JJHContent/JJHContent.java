@@ -3,7 +3,7 @@ package Project.OpenBook.Domain.JJH.JJHContent;
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.JJH.JJHList.JJHList;
-import Project.OpenBook.Domain.TimeLine.Timeline;
+import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;

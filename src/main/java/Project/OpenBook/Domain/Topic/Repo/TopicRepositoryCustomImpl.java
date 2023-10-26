@@ -11,7 +11,7 @@ import java.util.Optional;
 import static Project.OpenBook.Domain.Category.Domain.QCategory.category;
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Era.QEra.era;
-import static Project.OpenBook.Domain.QuestionCategory.QQuestionCategory.questionCategory;
+import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 

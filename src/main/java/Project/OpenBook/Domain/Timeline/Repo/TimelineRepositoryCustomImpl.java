@@ -1,6 +1,6 @@
-package Project.OpenBook.Domain.TimeLine;
+package Project.OpenBook.Domain.Timeline.Repo;
 
-import Project.OpenBook.Domain.Era.QEra;
+import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.Era.QEra.era;
-import static Project.OpenBook.Domain.TimeLine.QTimeline.timeline;
+import static Project.OpenBook.Domain.Timeline.Domain.QTimeline.timeline;
 
 @Repository
 @RequiredArgsConstructor

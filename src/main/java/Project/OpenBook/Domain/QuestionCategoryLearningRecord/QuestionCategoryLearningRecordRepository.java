@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.StudyHistory.QuestionCategoryLearningRecord;
+package Project.OpenBook.Domain.QuestionCategoryLearningRecord;
 
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -5,27 +5,27 @@ import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Service.dto.*;
-import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Domain.ChapterProgress;
-import Project.OpenBook.Domain.StudyProgress.ChapterSection.Domain.ChapterSection;
+import Project.OpenBook.Domain.StudyHistory.ChapterProgress.Domain.ChapterProgress;
+import Project.OpenBook.Domain.StudyHistory.ChapterSection.Domain.ChapterSection;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Handler.Exception.error.ErrorMsgDto;
-import Project.OpenBook.Domain.StudyProgress.Dto.ProgressDto;
+import Project.OpenBook.Domain.StudyHistory.Dto.ProgressDto;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Jwt.TokenManager;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Domain.StudyProgress.ChapterProgress.Repository.ChapterProgressRepository;
-import Project.OpenBook.Domain.StudyProgress.ChapterSection.Repository.ChapterSectionRepository;
+import Project.OpenBook.Domain.StudyHistory.ChapterProgress.Repository.ChapterProgressRepository;
+import Project.OpenBook.Domain.StudyHistory.ChapterSection.Repository.ChapterSectionRepository;
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Domain.StudyProgress.TopicProgress.Repository.TopicProgressRepository;
+import Project.OpenBook.Domain.StudyHistory.TopicProgress.Repository.TopicProgressRepository;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
@@ -228,7 +228,7 @@ class ChapterControllerTest {
              * ch4 -> Not Started
              */
             ChapterProgress cp1 = new ChapterProgress(customer1, ch1, 0, COMPLETE.getName());
-            ChapterProgress cp2 = new ChapterProgress(customer1, ch2, 0, TIME_FLOW_STUDY.getName());
+            ChapterProgress cp2 = new ChapterProgress(customer1, ch2, 0, TIMELINE_STUDY.getName());
             ChapterProgress cp3 = new ChapterProgress(customer1, ch3, 0, NOT_STARTED.getName());
             chapterProgressRepository.saveAll(Arrays.asList(cp1, cp2, cp3));
         }
@@ -250,7 +250,7 @@ class ChapterControllerTest {
 
             //2단원
             ChapterUserDto chapter2Dto
-                    = new ChapterUserDto(ch2.getTitle(), ch2.getNumber(),  OPEN.getName(), TIME_FLOW_STUDY.getName() );
+                    = new ChapterUserDto(ch2.getTitle(), ch2.getNumber(),  OPEN.getName(), TIMELINE_STUDY.getName() );
             assertThat(body.get(0)).usingRecursiveComparison().isEqualTo(chapter2Dto);
 
             //3딘원
@@ -361,7 +361,7 @@ class ChapterControllerTest {
             baseSetting();
 
             cs1 = new ChapterSection(customer1, ch1, CHAPTER_INFO.getName(), OPEN.getName());
-            cs2 = new ChapterSection(customer1, ch1, TIME_FLOW_STUDY.getName(), OPEN.getName());
+            cs2 = new ChapterSection(customer1, ch1, TIMELINE_STUDY.getName(), OPEN.getName());
             cs4 = new ChapterSection(customer1, ch1, CHAPTER_COMPLETE_QUESTION.getName(), LOCKED.getName());
 
             chapterSectionRepository.saveAllAndFlush(Arrays.asList(cs1, cs2, cs4));

@@ -9,7 +9,7 @@ import java.util.List;
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Era.QEra.era;
 import static Project.OpenBook.Domain.JJH.JJHContent.QJJHContent.jJHContent;
-import static Project.OpenBook.Domain.TimeLine.QTimeline.timeline;
+import static Project.OpenBook.Domain.Timeline.Domain.QTimeline.timeline;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 @Repository

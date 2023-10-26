@@ -1,7 +1,14 @@
-package Project.OpenBook.Domain.TimeLine;
+package Project.OpenBook.Domain.Timeline.Service;
 
+import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Era.EraRepository;
+import Project.OpenBook.Domain.Timeline.Domain.Timeline;
+import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
+import Project.OpenBook.Domain.Timeline.Service.Dto.TimelineAddUpdateDto;
+import Project.OpenBook.Domain.Timeline.Service.Dto.TimelineQueryAdminDto;
+import Project.OpenBook.Domain.Timeline.Service.Dto.TimelineQueryCustomerDto;
+import Project.OpenBook.Domain.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,14 +25,23 @@ import static Project.OpenBook.Constants.ErrorCode.TIMELINE_NOT_FOUND;
 @RequiredArgsConstructor
 public class TimelineService {
     private final TimelineRepository timelineRepository;
+    private final TimelineLearningRecordRepository timelineLearningRecordRepository;
     private final EraRepository eraRepository;
 
     @Transactional(readOnly = true)
-    public List<TimelineQueryAdminDto> queryTimelines() {
+    public List<TimelineQueryAdminDto> queryTimelinesAdmin() {
         return timelineRepository.queryTimelinesWithEra().stream()
                 .map(t -> new TimelineQueryAdminDto(t.getTitle(), t.getEra().getName(), t.getStartDate(), t.getEndDate(), t.getId()))
                 .sorted(Comparator.comparing(TimelineQueryAdminDto::getStartDate))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<TimelineQueryCustomerDto> queryTimelinesCustomer(Customer customer) {
+        return timelineLearningRecordRepository.queryTimelineLearningRecord(customer).stream()
+                .map(TimelineQueryCustomerDto::new)
+                .collect(Collectors.toList());
+
     }
 
     @Transactional
@@ -57,6 +73,7 @@ public class TimelineService {
     public void deleteTimeline(Long id) {
         timelineRepository.deleteById(id);
     }
+
 
 
 }

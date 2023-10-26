@@ -6,8 +6,8 @@ import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryD
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
-import Project.OpenBook.Domain.TimeLine.Timeline;
-import Project.OpenBook.Domain.TimeLine.TimelineRepository;
+import Project.OpenBook.Domain.Timeline.Domain.Timeline;
+import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;

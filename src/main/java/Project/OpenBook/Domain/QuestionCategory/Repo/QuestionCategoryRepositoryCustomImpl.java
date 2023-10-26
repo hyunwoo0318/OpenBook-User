@@ -9,7 +9,7 @@ import java.util.List;
 
 import static Project.OpenBook.Domain.Category.Domain.QCategory.category;
 import static Project.OpenBook.Domain.Era.QEra.era;
-import static Project.OpenBook.Domain.QuestionCategory.QQuestionCategory.questionCategory;
+import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
 
 @Repository
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.StudyHistory.QuestionCategoryLearningRecord;
+package Project.OpenBook.Domain.QuestionCategoryLearningRecord;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static Project.OpenBook.Domain.StudyHistory.QuestionCategoryLearningRecord.QQuestionCategoryLearningRecord.questionCategoryLearningRecord;
+import static Project.OpenBook.Domain.QuestionCategoryLearningRecord.QQuestionCategoryLearningRecord.questionCategoryLearningRecord;
 
 @Repository
 @RequiredArgsConstructor

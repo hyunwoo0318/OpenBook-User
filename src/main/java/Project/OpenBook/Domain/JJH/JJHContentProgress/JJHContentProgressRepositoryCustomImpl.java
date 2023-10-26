@@ -15,7 +15,7 @@ import static Project.OpenBook.Domain.Era.QEra.era;
 import static Project.OpenBook.Domain.JJH.JJHContent.QJJHContent.jJHContent;
 import static Project.OpenBook.Domain.JJH.JJHContentProgress.QJJHContentProgress.jJHContentProgress;
 import static Project.OpenBook.Domain.JJH.JJHList.QJJHList.jJHList;
-import static Project.OpenBook.Domain.TimeLine.QTimeline.timeline;
+import static Project.OpenBook.Domain.Timeline.Domain.QTimeline.timeline;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 @Repository
