@@ -17,7 +17,7 @@ import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
-import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
+import Project.OpenBook.Domain.Topic.Service.dto.TopicAddUpdateDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicNumberDto;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
@@ -55,23 +55,23 @@ public class TopicService {
     }
 
     @Transactional
-    public void createTopic(TopicDetailDto topicDetailDto) {
+    public void createTopic(TopicAddUpdateDto topicAddUpdateDto) {
 
-        Long questionCategoryId = topicDetailDto.getQuestionCategoryId();
+        Long questionCategoryId = topicAddUpdateDto.getQuestionCategory().getId();
         QuestionCategory questionCategory = questionCategoryRepository.findById(questionCategoryId).orElseThrow(() -> {
             throw new CustomException(QUESTION_CATEGORY_NOT_FOUND);
         });
-        Chapter chapter = checkChapter(topicDetailDto.getChapter());
-        topicValidator.checkDupTopicTitle(topicDetailDto.getTitle());
+        Chapter chapter = checkChapter(topicAddUpdateDto.getChapter());
+        topicValidator.checkDupTopicTitle(topicAddUpdateDto.getTitle());
 
         //토픽 저장
         Topic topic = Topic.builder()
                 .chapter(chapter)
                 .questionCategory(questionCategory)
-                .dateComment(topicDetailDto.getDateComment())
-                .title(topicDetailDto.getTitle())
-                .detail(topicDetailDto.getDetail())
-                .number(topicDetailDto.getNumber())
+                .dateComment(topicAddUpdateDto.getDateComment())
+                .title(topicAddUpdateDto.getTitle())
+                .detail(topicAddUpdateDto.getDetail())
+                .number(topicAddUpdateDto.getNumber())
                 .questionNum(0)
                 .choiceNum(0)
                 .build();
@@ -79,8 +79,8 @@ public class TopicService {
         topicSearchRepository.save(new TopicSearch(topic));
         //연표에 표시할 날짜 저장
         List<PrimaryDateDto> dateList = new ArrayList<>();
-        if (topicDetailDto.getExtraDateList() != null) {
-            dateList = topicDetailDto.getExtraDateList();
+        if (topicAddUpdateDto.getExtraDateList() != null) {
+            dateList = topicAddUpdateDto.getExtraDateList();
         }
         List<TopicPrimaryDate> topicPrimaryDateList = dateList.stream().map(d -> new TopicPrimaryDate(d.getExtraDate(), d.getExtraDateComment(), topic))
                 .collect(Collectors.toList());
@@ -94,9 +94,9 @@ public class TopicService {
 
 
     @Transactional
-    public void updateTopic(String topicTitle, TopicDetailDto topicDetailDto) {
+    public void updateTopic(String topicTitle,TopicAddUpdateDto topicAddUpdateDto) {
         Topic topic = topicValidator.checkTopic(topicTitle);
-        String inputTitle = topicDetailDto.getTitle();
+        String inputTitle = topicAddUpdateDto.getTitle();
 
         if(!topicTitle.equals(inputTitle)){
             //새로 입력받은 제목이 중복되는지 확인
@@ -104,17 +104,17 @@ public class TopicService {
         }
 
 
-        int chapterNum = topicDetailDto.getChapter();
+        int chapterNum = topicAddUpdateDto.getChapter();
         Chapter chapter = checkChapter(chapterNum);
 
-        Long questionCategoryId = topicDetailDto.getQuestionCategoryId();
+        Long questionCategoryId = topicAddUpdateDto.getQuestionCategory().getId();
         QuestionCategory questionCategory = questionCategoryRepository.findById(questionCategoryId).orElseThrow(() -> {
             throw new CustomException(QUESTION_CATEGORY_NOT_FOUND);
         });
 
 
         //토픽 수정
-        Topic updatedTopic = topic.updateTopic(topicDetailDto.getNumber(), topicDetailDto.getTitle(), topicDetailDto.getDateComment(), topicDetailDto.getDetail(), chapter, questionCategory);
+        Topic updatedTopic = topic.updateTopic(topicAddUpdateDto.getNumber(), topicAddUpdateDto.getTitle(), topicAddUpdateDto.getDateComment(), topicAddUpdateDto.getDetail(), chapter, questionCategory);
 
         topicSearchRepository.save(new TopicSearch(updatedTopic));
 
@@ -122,7 +122,7 @@ public class TopicService {
         //연표에 나올 날짜 수정
         List<TopicPrimaryDate> prevDateList = topic.getTopicPrimaryDateList();
         topicPrimaryDateRepository.deleteAllInBatch(prevDateList);
-        List<TopicPrimaryDate> topicPrimaryDateList = topicDetailDto.getExtraDateList().stream()
+        List<TopicPrimaryDate> topicPrimaryDateList = topicAddUpdateDto.getExtraDateList().stream()
                 .map(d -> new TopicPrimaryDate(d.getExtraDate(), d.getExtraDateComment(), topic))
                 .collect(Collectors.toList());
         topicPrimaryDateRepository.saveAll(topicPrimaryDateList);

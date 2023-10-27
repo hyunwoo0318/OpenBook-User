@@ -5,6 +5,7 @@ import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
 import Project.OpenBook.Domain.Topic.Service.TopicService;
 import Project.OpenBook.Domain.Topic.Service.TopicSimpleQueryService;
+import Project.OpenBook.Domain.Topic.Service.dto.TopicAddUpdateDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicNumberDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
@@ -31,7 +32,7 @@ public class TopicController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "토픽 상세정보 조회 성공")
     })
-    @GetMapping("admin/topics/{topicTitle}")
+    @GetMapping("/admin/topics/{topicTitle}")
     public ResponseEntity<TopicDetailDto> queryTopicsAdmin(@PathVariable("topicTitle") String topicTitle) {
         TopicDetailDto dto = topicSimpleQueryService.queryTopicsAdmin(topicTitle);
 
@@ -88,9 +89,9 @@ public class TopicController {
             @ApiResponse(responseCode = "400", description = "잘못된 입력으로 상세정보 생성 실패"),
     })
     @PostMapping("/admin/topics")
-    public ResponseEntity<Void> createTopic(@Validated @RequestBody TopicDetailDto topicDetailDto) {
+    public ResponseEntity<Void> createTopic(@Validated @RequestBody TopicAddUpdateDto topicAddUpdateDto) {
 
-        topicService.createTopic(topicDetailDto);
+        topicService.createTopic(topicAddUpdateDto);
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
 
@@ -101,9 +102,10 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 상세정보 수정 시도")
     })
     @PatchMapping("/admin/topics/{topicTitle}")
-    public ResponseEntity<Void> updateTopic(@PathVariable("topicTitle")String topicTitle,@Validated @RequestBody TopicDetailDto topicDetailDto) {
+    public ResponseEntity<Void> updateTopic(@PathVariable("topicTitle")String topicTitle
+            ,@Validated @RequestBody TopicAddUpdateDto topicAddUpdateDto) {
 
-        topicService.updateTopic(topicTitle, topicDetailDto);
+        topicService.updateTopic(topicTitle, topicAddUpdateDto);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 

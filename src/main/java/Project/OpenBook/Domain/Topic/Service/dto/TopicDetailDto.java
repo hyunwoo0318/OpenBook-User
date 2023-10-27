@@ -1,5 +1,7 @@
 package Project.OpenBook.Domain.Topic.Service.dto;
 
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
+import Project.OpenBook.Domain.QuestionCategory.Service.Dto.QuestionCategoryIdTitleDto;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.*;
 
@@ -11,7 +13,6 @@ import java.util.stream.Collectors;
 
 
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class TopicDetailDto {
@@ -22,7 +23,7 @@ public class TopicDetailDto {
     @NotBlank(message = "상세정보 제목을 입력해주세요.")
     private String title;
 
-    private Long questionCategoryId;
+    private QuestionCategoryIdTitleDto questionCategory;
 
     private String dateComment;
 
@@ -41,8 +42,9 @@ public class TopicDetailDto {
 
         this.title = topic.getTitle();
 
-        if (topic.getQuestionCategory() != null) {
-            this.questionCategoryId = topic.getQuestionCategory().getId();
+        QuestionCategory findQuestionCategory = topic.getQuestionCategory();
+        if (findQuestionCategory != null) {
+            this.questionCategory = new QuestionCategoryIdTitleDto(findQuestionCategory.getId(), findQuestionCategory.getTitle());
         }
 
         this.detail = topic.getDetail();
