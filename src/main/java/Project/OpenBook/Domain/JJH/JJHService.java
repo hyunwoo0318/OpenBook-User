@@ -54,7 +54,7 @@ public class JJHService {
         List<TimelineJJHAdminQueryDto> timelineList = timelineRepository.queryTimelinesWithEraAndjjhList().stream()
                 .map(t -> {
                     Integer jjhNumber = (!t.getJjhLists().isEmpty()) ? t.getJjhLists().get(0).getNumber() : 1000;
-                    return new TimelineJJHAdminQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(), jjhNumber, t.getId());
+                    return new TimelineJJHAdminQueryDto(t.getTitle(),t.getEra().getName(), t.getStartDate(), t.getEndDate(), jjhNumber, t.getId());
                 })
                 .sorted(Comparator.comparing(TimelineJJHAdminQueryDto::getJjhNumber))
                 .collect(Collectors.toList());
@@ -103,10 +103,7 @@ public class JJHService {
             if (chapter != null) {
                 title = chapter.getTitle();
             } else if (timeline != null) {
-                Integer startDate = timeline.getStartDate();
-                Integer endDate = timeline.getEndDate();
-                String eraName = timeline.getEra().getName();
-                title = eraName + " ( " + startDate + " ~ " + endDate + " ) ";
+                title = timeline.getTitle();
             } else if (topic != null) {
                 title = topic.getTitle();
             }

@@ -7,6 +7,7 @@ import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.Era.EraRepository;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.QuestionCategory.Service.Dto.QuestionCategoryAddUpdateDto;
+import Project.OpenBook.Domain.QuestionCategory.Service.Dto.QuestionCategoryNumberUpdateDto;
 import Project.OpenBook.Domain.QuestionCategory.Service.Dto.QuestionCategoryQueryAdminDto;
 import Project.OpenBook.Domain.QuestionCategory.Service.Dto.QuestionCategoryQueryCustomerDto;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -94,4 +96,24 @@ public class QuestionCategoryService {
     }
 
 
+    @Transactional
+    public void updateQCNumber(List<QuestionCategoryNumberUpdateDto> dtoList) {
+        List<Long> qcIdList = dtoList.stream()
+                .map(d -> d.getId())
+                .collect(Collectors.toList());
+
+        Map<Long, QuestionCategory> qcMap = questionCategoryRepository.findAllById(qcIdList)
+                .stream().collect(Collectors.toMap(qc -> qc.getId(), qc -> qc));
+
+        for (QuestionCategoryNumberUpdateDto dto : dtoList) {
+            Long qcId = dto.getId();
+            Integer number = dto.getNumber();
+
+            QuestionCategory questionCategory = qcMap.get(qcId);
+            if (questionCategory == null) {
+                throw new CustomException(QUESTION_CATEGORY_NOT_FOUND);
+            }
+            questionCategory.updateNumber(number);
+        }
+    }
 }
