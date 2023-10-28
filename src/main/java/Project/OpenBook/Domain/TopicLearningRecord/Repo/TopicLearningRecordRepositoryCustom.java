@@ -6,5 +6,5 @@ import Project.OpenBook.Domain.Customer.Domain.Customer;
 import java.util.List;
 
 public interface TopicLearningRecordRepositoryCustom {
-    public List<TopicLearningRecord> queryTopicLearningRecordsInKeywords(Customer customer, List<Long> keywordIdList);
+    public List<TopicLearningRecord> queryTopicLearningRecordsInKeywords(Customer customer, List<Long> topicIdList);
 }

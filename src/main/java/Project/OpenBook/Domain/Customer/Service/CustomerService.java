@@ -12,11 +12,9 @@ import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgressReposito
 import Project.OpenBook.Domain.JJH.JJHList.JJHListRepository;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgressRepository;
-import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
-import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
 import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;

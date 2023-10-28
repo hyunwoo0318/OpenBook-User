@@ -8,4 +8,6 @@ import java.util.List;
 public interface QuestionCategoryLearningRecordRepositoryCustom {
 
     public List<QuestionCategoryLearningRecord> queryQuestionRecords(Customer customer);
+
+    public List<QuestionCategoryLearningRecord> queryQuestionRecordsInKeywords(Customer customer, List<Long> questionCategoryIdList);
 }

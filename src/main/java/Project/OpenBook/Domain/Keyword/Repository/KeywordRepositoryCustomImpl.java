@@ -1,23 +1,18 @@
 package Project.OpenBook.Domain.Keyword.Repository;
 
-import Project.OpenBook.Domain.Chapter.Domain.QChapter;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-
-import Project.OpenBook.Domain.Keyword.Domain.QKeyword;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
-import Project.OpenBook.Domain.Topic.Domain.QTopic;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-
 import java.util.List;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 
@@ -70,6 +65,15 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
         return queryFactory.selectFrom(keyword)
                 .leftJoin(keyword.topic,topic).fetchJoin()
                 .leftJoin(topic.chapter, chapter).fetchJoin()
+                .fetch();
+    }
+
+    @Override
+    public List<Keyword> queryKeywordsForUpdateHistory(List<Long> keywordIdList) {
+        return queryFactory.selectFrom(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .where(keyword.id.in(keywordIdList))
                 .fetch();
     }
 }

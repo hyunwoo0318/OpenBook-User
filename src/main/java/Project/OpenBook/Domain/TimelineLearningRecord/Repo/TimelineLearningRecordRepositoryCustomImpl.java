@@ -26,4 +26,14 @@ public class TimelineLearningRecordRepositoryCustomImpl implements TimelineLearn
                 .where(timelineLearningRecord.customer.eq(customer))
                 .fetch();
     }
+
+    @Override
+    public List<TimelineLearningRecord> queryTimelineLearningRecordInKeywords(Customer customer, List<Long> timelineIdList) {
+        return queryFactory.selectFrom(timelineLearningRecord)
+                .leftJoin(timelineLearningRecord.timeline, timeline).fetchJoin()
+                .where(timelineLearningRecord.customer.eq(customer))
+                .where(timelineLearningRecord.timeline.id.in(timelineIdList))
+                .fetch();
+    }
+
 }
