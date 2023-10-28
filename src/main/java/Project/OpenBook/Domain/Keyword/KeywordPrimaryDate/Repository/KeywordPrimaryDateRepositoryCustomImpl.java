@@ -39,7 +39,7 @@ public class KeywordPrimaryDateRepositoryCustomImpl implements KeywordPrimaryDat
         return queryFactory.selectFrom(keywordPrimaryDate).distinct()
                 .leftJoin(keywordPrimaryDate.keyword, keyword).fetchJoin()
                 .leftJoin(keyword.topic, topic).fetchJoin()
-                .where(keyword.topic.questionCategory.era.id.eq(eraId))
+                .where(topic.questionCategory.era.id.eq(eraId))
                 .where(keywordPrimaryDate.extraDate.goe(startDate))
                 .where(keywordPrimaryDate.extraDate.loe(endDate))
                 .fetch();

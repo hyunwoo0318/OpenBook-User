@@ -19,7 +19,7 @@ public class QuestionController {
 
     private final QuestionService questionService;
 
-    @Operation(summary = "단원 내 연표 문제 제공")
+    @Operation(summary = "timeline 내 연표 문제 제공")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "연표문제 제공 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")

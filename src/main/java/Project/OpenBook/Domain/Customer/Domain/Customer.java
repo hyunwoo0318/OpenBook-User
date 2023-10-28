@@ -4,6 +4,10 @@ import Project.OpenBook.Domain.BaseEntity;
 
 import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgress;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
+import Project.OpenBook.Domain.KeywordLearningRecord.Domain.KeywordLearningRecord;
+import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
+import Project.OpenBook.Domain.TimelineLearningRecord.Domain.TimelineLearningRecord;
+import Project.OpenBook.Domain.TopicLearningRecord.Domain.TopicLearningRecord;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -57,6 +61,18 @@ public class Customer extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<JJHContentProgress> jjhContentProgressList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<KeywordLearningRecord> keywordLearningRecordList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<TopicLearningRecord> topicLearningRecordList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<QuestionCategoryLearningRecord> questionCategoryLearningRecordList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<TimelineLearningRecord> timelineLearningRecordList = new ArrayList<>();
 
     @Builder
     public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId, Boolean isSubscribed) {

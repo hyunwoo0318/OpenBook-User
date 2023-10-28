@@ -43,7 +43,7 @@ public class TopicPrimaryDateRepositoryCustomImpl implements TopicPrimaryDateRep
         return queryFactory.selectFrom(topicPrimaryDate).distinct()
                 .leftJoin(topicPrimaryDate.topic, topic).fetchJoin()
                 .leftJoin(topic.keywordList).fetchJoin()
-                .where(topicPrimaryDate.topic.questionCategory.era.id.eq(eraId))
+                .where(topic.questionCategory.era.id.eq(eraId))
                 .where(topicPrimaryDate.extraDate.goe(startDate))
                 .where(topicPrimaryDate.extraDate.loe(endDate))
                 .fetch();
