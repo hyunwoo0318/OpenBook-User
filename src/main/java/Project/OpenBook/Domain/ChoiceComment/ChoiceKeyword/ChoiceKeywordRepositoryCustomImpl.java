@@ -2,11 +2,9 @@ package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
-import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -21,8 +19,8 @@ import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQues
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Round.Domain.QRound.round;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
-import static com.querydsl.core.group.GroupBy.*;
 import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 
 @Repository
 @RequiredArgsConstructor
@@ -82,9 +80,9 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
     }
 
     @Override
-    public Map<ExamQuestion, List<Keyword>> queryChoiceKeywordsForInit() {
+    public Map<Long, List<Keyword>> queryChoiceKeywordsForInit() {
         return queryFactory.from(choiceKeyword)
-                .transform(groupBy(choiceKeyword.choice.examQuestion)
+                .transform(groupBy(choiceKeyword.choice.examQuestion.id)
                         .as(list(
                                 choiceKeyword.keyword
                         )));

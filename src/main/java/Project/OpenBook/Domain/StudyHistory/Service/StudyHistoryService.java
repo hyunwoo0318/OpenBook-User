@@ -77,7 +77,7 @@ public class StudyHistoryService {
         for (WrongCountAddDto dto : dtoList) {
             Long keywordId = dto.getId();
             Integer wrongCount = dto.getWrongCount();
-            Integer answerCount = dto.getAnswerCount();
+            Integer answerCount = dto.getCorrectCount();
 
             Keyword keyword = keywordMap.get(keywordId);
             if (keyword == null) {
@@ -136,7 +136,7 @@ public class StudyHistoryService {
         for (WrongCountAddDto dto : dtoList) {
             Long timelineId = dto.getId();
             Integer wrongCount = dto.getWrongCount();
-            Integer answerCount = dto.getAnswerCount();
+            Integer answerCount = dto.getCorrectCount();
 
             Timeline timeline = timelineMap.get(timelineId);
             if (timeline == null) {

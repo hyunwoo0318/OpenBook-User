@@ -1,9 +1,7 @@
 package Project.OpenBook.Domain.TopicLearningRecord.Repo;
 
-import Project.OpenBook.Domain.Topic.Domain.QTopic;
-import Project.OpenBook.Domain.TopicLearningRecord.Domain.QTopicLearningRecord;
-import Project.OpenBook.Domain.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.TopicLearningRecord.Domain.TopicLearningRecord;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -25,6 +23,16 @@ public class TopicLearningRecordRepositoryCustomImpl implements TopicLearningRec
                 .leftJoin(topicLearningRecord.topic, topic).fetchJoin()
                 .where(topicLearningRecord.customer.eq(customer))
                 .where(topicLearningRecord.topic.id.in(topicIdList))
+                .fetch();
+    }
+
+    @Override
+    public List<TopicLearningRecord> queryTopicLearningRecordsInQuestionCategory(Customer customer, Long questionCategoryId) {
+        return queryFactory.selectFrom(topicLearningRecord).distinct()
+                .leftJoin(topicLearningRecord.topic, topic).fetchJoin()
+                .leftJoin(topic.keywordList).fetchJoin()
+                .where(topicLearningRecord.customer.eq(customer))
+                .where(topicLearningRecord.topic.questionCategory.id.eq(questionCategoryId))
                 .fetch();
     }
 }

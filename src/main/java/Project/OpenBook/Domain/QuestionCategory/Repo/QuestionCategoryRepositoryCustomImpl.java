@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static Project.OpenBook.Domain.Category.Domain.QCategory.category;
 import static Project.OpenBook.Domain.Era.QEra.era;
@@ -24,5 +25,14 @@ public class QuestionCategoryRepositoryCustomImpl implements QuestionCategoryRep
                 .leftJoin(questionCategory.era, era).fetchJoin()
                 .leftJoin(questionCategory.topicList).fetchJoin()
                 .fetch();
+    }
+
+    @Override
+    public Optional<QuestionCategory> queryQuestionCategoriesWithTopicList(Long id) {
+        QuestionCategory findQuestionCategory = queryFactory.selectFrom(questionCategory).distinct()
+                .leftJoin(questionCategory.topicList).fetchJoin()
+                .where(questionCategory.id.eq(id))
+                .fetchOne();
+        return Optional.ofNullable(findQuestionCategory);
     }
 }

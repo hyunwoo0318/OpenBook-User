@@ -7,4 +7,8 @@ import java.util.List;
 
 public interface KeywordLearningRecordRepositoryCustom {
     public List<KeywordLearningRecord> queryKeywordLearningRecordsInKeywords(Customer customer, List<Long> keywordIdList);
+
+    public List<KeywordLearningRecord> queryKeywordLearningRecordsInQuestionCategory(Customer customer, Long questionCategoryId);
+
+
 }

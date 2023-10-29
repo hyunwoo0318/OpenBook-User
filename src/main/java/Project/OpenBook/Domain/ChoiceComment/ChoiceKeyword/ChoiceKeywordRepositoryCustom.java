@@ -2,7 +2,6 @@ package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
-import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 
@@ -17,5 +16,5 @@ public interface ChoiceKeywordRepositoryCustom {
 
       public List<ChoiceKeyword> queryChoiceKeywordsAdmin(String topicTitle);
 
-      public Map<ExamQuestion, List<Keyword>> queryChoiceKeywordsForInit();
+      public Map<Long, List<Keyword>> queryChoiceKeywordsForInit();
 }

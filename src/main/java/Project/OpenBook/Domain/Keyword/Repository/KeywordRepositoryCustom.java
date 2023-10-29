@@ -1,7 +1,6 @@
 package Project.OpenBook.Domain.Keyword.Repository;
 
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import com.querydsl.core.Tuple;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,13 +25,9 @@ public interface KeywordRepositoryCustom {
      */
     public List<Keyword> queryKeywordsInTopicWithLimit(String topicTitle, int limit);
 
-    /**
-     * 정답 주제를 제외한 나머지 주제에서 limit만큼 키워드정보를 쿼리하는 메서드
-     * @param answerTopicTitle 정답 주제 제목
-     * @param limit 쿼리할 키워드의 최대 개수
-     * @return {keyword.name, keyword.comment, keyword.topic.title} 리턴
-     */
-    public List<Tuple> queryWrongKeywords(String answerTopicTitle, int limit);
+    public List<Keyword> queryWrongKeywords(String answerTopicTitle, int limit);
+
+    public List<Keyword> queryWrongKeywords(String answerTopicTitle);
 
     public List<Keyword> queryKeywordsInTopicWithPrimaryDate(String topicTitle);
 

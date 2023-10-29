@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Topic.Repo;
 
 import Project.OpenBook.Domain.Topic.Domain.Topic;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -25,6 +26,13 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
     public List<String> queryWrongTopicTitle(String topicTitle,int size) {
          return queryFactory.select(topic.title)
                  .from(topic)
+                 .where(
+                         topic.questionCategory.eq(
+                                 JPAExpressions.select(topic.questionCategory)
+                                         .from(topic)
+                                         .where(topic.title.eq(topicTitle))
+                         )
+                 )
                  .where(topic.title.ne(topicTitle))
                  .limit(size)
                  .fetch();

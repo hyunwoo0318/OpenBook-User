@@ -1,8 +1,6 @@
-package Project.OpenBook.Domain.Description.Repository;
+package Project.OpenBook.Domain.Description.DescriptionKeyword;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
-import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 
@@ -20,7 +18,7 @@ public interface DescriptionKeywordRepositoryCustom {
 
     public List<DescriptionKeyword> queryDescriptionKeywordsAdmin(String topicTitle);
 
-    public Map<ExamQuestion, List<Keyword>> queryDescriptionKeywordsForInit();
+    public Map<Long, List<Keyword>> queryDescriptionKeywordsForInit();
 
 
 }

@@ -15,11 +15,11 @@ public class KeywordAssociation {
     @Id @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "keyword_id")
     private Keyword keyword1;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "related_keyword_id")
     private Keyword keyword2;
 
@@ -29,6 +29,12 @@ public class KeywordAssociation {
         this.keyword1 = keyword1;
         this.keyword2 = keyword2;
         val = 0;
+    }
+
+    public KeywordAssociation(Keyword keyword1, Keyword keyword2, Integer val) {
+        this.keyword1 = keyword1;
+        this.keyword2 = keyword2;
+        this.val = val;
     }
 
     public KeywordAssociation updateVal(Integer val) {

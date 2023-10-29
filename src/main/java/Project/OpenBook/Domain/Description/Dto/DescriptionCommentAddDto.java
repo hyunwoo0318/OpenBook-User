@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.StudyHistory.Service.Dto;
+package Project.OpenBook.Domain.Description.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WrongCountAddDto {
+public class DescriptionCommentAddDto {
     private Long id;
-    private Integer wrongCount;
-    private Integer correctCount;
 }

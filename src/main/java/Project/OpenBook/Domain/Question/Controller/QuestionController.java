@@ -1,14 +1,17 @@
 package Project.OpenBook.Domain.Question.Controller;
 
+import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Question.Service.QuestionService;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,8 +68,9 @@ public class QuestionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/questions/random")
-    public ResponseEntity<List<QuestionDto>> queryRandomQuestion(@RequestParam("num") Integer chapterNum, @RequestParam("count") Integer questionCount) {
-        List<QuestionDto> questionDtoList = questionService.queryRandomQuestion(chapterNum, questionCount);
+public ResponseEntity<List<QuestionDto>> queryRandomQuestion(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+                                                             @RequestParam("id") Long questionCategoryId, @RequestParam("count") Integer questionCount) {
+        List<QuestionDto> questionDtoList = questionService.queryRandomQuestion(customer, questionCategoryId, questionCount);
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }
 

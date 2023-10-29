@@ -1,9 +1,10 @@
 package Project.OpenBook.Domain.Description.Service;
 
-import Project.OpenBook.Domain.Description.Controller.DescriptionCommentAddDto;
+import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.Description.Dto.DescriptionCommentAddDto;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Description.Dto.DescriptionUpdateDto;
-import Project.OpenBook.Domain.Description.Repository.DescriptionKeywordRepository;
+import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionCommentDto;
 import Project.OpenBook.Domain.DescriptionComment.ExamQuestionDescQueryDto;

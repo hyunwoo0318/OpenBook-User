@@ -1,8 +1,8 @@
 package Project.OpenBook.Domain.Keyword.Repository;
 
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -42,12 +42,34 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
 
 
     @Override
-    public List<Tuple> queryWrongKeywords(String answerTopicTitle, int limit) {
-        return queryFactory.select(keyword.name, keyword.comment,keyword.topic.title)
-                .from(keyword)
+    public List<Keyword> queryWrongKeywords(String answerTopicTitle, int limit) {
+        return queryFactory.selectFrom(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .where(
+                        keyword.topic.questionCategory.eq(
+                                JPAExpressions.select(topic.questionCategory)
+                                        .from(topic)
+                                        .where(topic.title.eq(answerTopicTitle))
+                        )
+                )
                 .where(keyword.topic.title.ne(answerTopicTitle))
                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                 .limit(limit)
+                .fetch();
+    }
+
+    @Override
+    public List<Keyword> queryWrongKeywords(String answerTopicTitle) {
+        return queryFactory.selectFrom(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .where(
+                        keyword.topic.questionCategory.eq(
+                                JPAExpressions.select(topic.questionCategory)
+                                        .from(topic)
+                                        .where(topic.title.eq(answerTopicTitle))
+                        )
+                )
+                .where(keyword.topic.title.ne(answerTopicTitle))
                 .fetch();
     }
 

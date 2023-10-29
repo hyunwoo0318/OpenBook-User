@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Description.Service;
+package Project.OpenBook.Domain.Description.DescriptionKeyword;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Description.Domain.Description;

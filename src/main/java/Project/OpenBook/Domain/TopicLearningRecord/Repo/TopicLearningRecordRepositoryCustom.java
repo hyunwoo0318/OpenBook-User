@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface TopicLearningRecordRepositoryCustom {
     public List<TopicLearningRecord> queryTopicLearningRecordsInKeywords(Customer customer, List<Long> topicIdList);
+
+    public List<TopicLearningRecord> queryTopicLearningRecordsInQuestionCategory(Customer customer, Long questionCategoryId);
 }

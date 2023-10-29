@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Description.Controller;
+package Project.OpenBook.Domain.Question.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class DescriptionCommentAddDto {
+public class QuizChoiceWithIdDto {
+    private QuizChoiceDto quizChoiceDto;
     private Long id;
 }

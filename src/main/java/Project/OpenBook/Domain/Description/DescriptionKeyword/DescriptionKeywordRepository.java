@@ -1,7 +1,6 @@
-package Project.OpenBook.Domain.Description.Repository;
+package Project.OpenBook.Domain.Description.DescriptionKeyword;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import org.springframework.data.jpa.repository.JpaRepository;
 

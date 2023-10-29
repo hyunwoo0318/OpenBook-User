@@ -25,4 +25,13 @@ public class KeywordLearningRecordRepositoryCustomImpl implements KeywordLearnin
                 .where(keywordLearningRecord.keyword.id.in(keywordIdList))
                 .fetch();
     }
+
+    @Override
+    public List<KeywordLearningRecord> queryKeywordLearningRecordsInQuestionCategory(Customer customer, Long questionCategoryId) {
+        return queryFactory.selectFrom(keywordLearningRecord)
+                .leftJoin(keywordLearningRecord.keyword, keyword).fetchJoin()
+                .where(keywordLearningRecord.customer.eq(customer))
+                .where(keyword.topic.questionCategory.id.eq(questionCategoryId))
+                .fetch();
+    }
 }

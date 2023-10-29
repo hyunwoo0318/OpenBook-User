@@ -2,9 +2,13 @@ package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
+import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeywordRepository;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociation;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
@@ -12,15 +16,16 @@ import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -34,6 +39,9 @@ public class InitConfig {
 
     private final KeywordRepository keywordRepository;
     private final KeywordSearchRepository keywordSearchRepository;
+
+    private final ChoiceKeywordRepository choiceKeywordRepository;
+    private final DescriptionKeywordRepository descriptionKeywordRepository;
 
     private final CustomerRepository customerRepository;
     private final KeywordAssociationRepository keywordAssociationRepository;
@@ -80,11 +88,138 @@ public class InitConfig {
     }
 
     /**
-     * 키워드 연관성 관련 세팅     *
+     * 문제 분석 로직
      */
 
-    @Bean
-    public void initKeywordAssociation() {
+//    @Bean
+//    @Transactional
+//    public void initQuestionInfo() {
+//        //각 문제별 keywordList 생성
+//        Map<Long, List<Keyword>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsForInit();
+//        Map<Long, List<Keyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordsForInit();
+//        Map<Long, List<Keyword>> newKeywordMap = new HashMap<>(choiceKeywordMap);
+//        for (Long key : descriptionKeywordMap.keySet()) {
+//            List<Keyword> descKeywordList = descriptionKeywordMap.get(key);
+//            List<Keyword> keywordList = newKeywordMap.get(key);
+//            if (keywordList == null) {
+//                newKeywordMap.put(key, descKeywordList);
+//            }else{
+//                keywordList.addAll(descKeywordList);
+//                newKeywordMap.put(key, keywordList);
+//            }
+//        }
+//
+//        //보기/선지 출현 빈도 저장 로직
+//        initKeywordUsageCounts(newKeywordMap);
+//
+//        //키워드간 연관성 저장 로직
+//        initKeywordAssociations(newKeywordMap);
+//    }
+
+    private void initKeywordUsageCounts(Map<Long, List<Keyword>> newKeywordMap) {
+        Map<Keyword, Integer> keywordCountMap = new HashMap<>();
+
+        for (Long key : newKeywordMap.keySet()) {
+            List<Keyword> keywordList = newKeywordMap.get(key);
+            for (Keyword keyword : keywordList) {
+                Integer count = keywordCountMap.get(keyword);
+                if (count == null) {
+                    keywordCountMap.put(keyword, 1);
+                }else{
+                    keywordCountMap.put(keyword, count + 1);
+                }
+            }
+        }
+
+        for (Keyword keyword : keywordCountMap.keySet()) {
+            Integer count = keywordCountMap.get(keyword);
+            keyword.updateCount(count);
+        }
+    }
+
+    private void initKeywordAssociations(Map<Long, List<Keyword>> newKeywordMap) {
+        keywordAssociationRepository.deleteAllInBatch();
+
+        Map<KeywordComb, Integer> keywordCombMap = new HashMap<>();
+        Map<Long, Set<Keyword>> keywordMap = new HashMap<>();
+        List<KeywordAssociation> keywordAssociationList = new ArrayList<>();
+
+        newKeywordMap.forEach((key, value) -> {
+            keywordMap.merge(key, new HashSet<>(value), (existingSet, newSet) -> {
+                existingSet.addAll(newSet);
+                return existingSet;
+            });
+        });
+
+        //3. 각 문제 별로 돌면서 키워드 연관성 체크
+        for (Long id : keywordMap.keySet()) {
+            Set<Keyword> keywordSet = keywordMap.get(id);
+
+            List<List<Keyword>> combination = getCombination(keywordSet);
+            for (List<Keyword> keywords : combination) {
+                Keyword k1 = keywords.get(0);
+                Keyword k2 = keywords.get(1);
+
+                if(k1.getId() < k2.getId()){
+                    Keyword temp = null;
+                    temp = k1;
+                    k1 = k2;
+                    k2 = temp;
+                }
+                KeywordComb keywordComb = new KeywordComb(k1, k2);
+                Integer val = keywordCombMap.get(keywordComb);
+                if (val == null) {
+                    keywordCombMap.put(keywordComb, 1);
+                }else{
+                    keywordCombMap.put(keywordComb, val + 1);
+                }
+
+            }
+        }
+
+        //4. 저장
+        for (KeywordComb k : keywordCombMap.keySet()) {
+            Integer val = keywordCombMap.get(k);
+            KeywordAssociation keywordAssociation = new KeywordAssociation(k.getK1(), k.getK2(), val);
+            keywordAssociationList.add(keywordAssociation);
+        }
+
+        keywordAssociationRepository.saveAll(keywordAssociationList);
+    }
+
+    private List<List<Keyword>> getCombination(Set<Keyword> keywordSet) {
+        // Set<Keyword>을 List<Keyword>으로 변환
+        List<Keyword> keywordList = new ArrayList<>(keywordSet);
+
+        // 2차원 배열을 저장할 리스트
+        List<List<Keyword>> combinations = new ArrayList<>();
+
+        // 모든 2개씩 조합을 만들어서 combinations에 추가
+        for (int i = 0; i < keywordList.size(); i++) {
+            for (int j = i + 1; j < keywordList.size(); j++) {
+                List<Keyword> combination = new ArrayList<>();
+                combination.add(keywordList.get(i));
+                combination.add(keywordList.get(j));
+                combinations.add(combination);
+            }
+        }
+
+        // 2차원 배열로 변환
+        Keyword[][] combinationArray = new Keyword[combinations.size()][2];
+
+        for (int i = 0; i < combinations.size(); i++) {
+            combinationArray[i] = combinations.get(i).toArray(new Keyword[0]);
+        }
+
+        return combinations;
+    }
+
+    @AllArgsConstructor
+    @EqualsAndHashCode
+    @Getter
+    private class KeywordComb{
+        public Keyword k1;
+        public Keyword k2;
 
     }
 

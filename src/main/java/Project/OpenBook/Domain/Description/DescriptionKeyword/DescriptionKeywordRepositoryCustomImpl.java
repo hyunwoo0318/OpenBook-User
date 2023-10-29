@@ -1,8 +1,6 @@
-package Project.OpenBook.Domain.Description.Repository;
+package Project.OpenBook.Domain.Description.DescriptionKeyword;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
-import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import com.querydsl.core.group.GroupBy;
@@ -21,8 +19,7 @@ import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQues
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Round.Domain.QRound.round;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
-import static com.querydsl.core.group.GroupBy.*;
-import static com.querydsl.core.types.Projections.list;
+import static com.querydsl.core.group.GroupBy.groupBy;
 
 @Repository
 @RequiredArgsConstructor
@@ -84,9 +81,9 @@ public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywor
     }
 
     @Override
-    public Map<ExamQuestion, List<Keyword>> queryDescriptionKeywordsForInit() {
+    public Map<Long, List<Keyword>> queryDescriptionKeywordsForInit() {
         return queryFactory.from(descriptionKeyword)
-                .transform(groupBy(descriptionKeyword.description.examQuestion)
+                .transform(groupBy(descriptionKeyword.description.examQuestion.id)
                         .as(GroupBy.list(
                                 descriptionKeyword.keyword
                         )));

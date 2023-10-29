@@ -1,8 +1,9 @@
 package Project.OpenBook.Domain.Keyword.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
-import Project.OpenBook.Domain.Description.Service.DescriptionKeyword;
+import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
+import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociation;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,14 +31,19 @@ public class Keyword extends BaseEntity {
 
     private Integer number = 0;
 
+    private Integer usageCount = 0;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    @OneToMany(mappedBy = "keyword")
+    @OneToMany(mappedBy = "keyword2", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<KeywordAssociation> keywordAssociationList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "keyword",fetch = FetchType.LAZY)
     private List<DescriptionKeyword> descriptionKeywordList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "keyword", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "keyword", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<KeywordPrimaryDate> keywordPrimaryDateList = new ArrayList<>();
 
     public Keyword(Integer number, String name, String comment,String dateComment, Topic topic, String imageUrl) {
@@ -47,10 +53,15 @@ public class Keyword extends BaseEntity {
         this.dateComment = dateComment;
         this.topic = topic;
         this.imageUrl = imageUrl;
+        this.usageCount = 0;
     }
 
     public void updateNumber(Integer number) {
         this.number = number;
+    }
+
+    public void updateCount(Integer usageCount) {
+        this.usageCount = usageCount;
     }
 
     public void changeName(String name) {
