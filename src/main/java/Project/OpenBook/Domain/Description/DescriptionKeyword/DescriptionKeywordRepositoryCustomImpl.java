@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
+import static Project.OpenBook.Domain.Description.DescriptionKeyword.QDescriptionKeyword.descriptionKeyword;
 import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
-import static Project.OpenBook.Domain.Description.Service.QDescriptionKeyword.descriptionKeyword;
 import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Round.Domain.QRound.round;
