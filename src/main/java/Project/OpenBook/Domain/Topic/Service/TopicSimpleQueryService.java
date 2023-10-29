@@ -3,12 +3,10 @@ package Project.OpenBook.Domain.Topic.Service;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicUserDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
-import Project.OpenBook.Domain.Choice.Dto.ChoiceDto;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
-import Project.OpenBook.Domain.Description.Dto.DescriptionDto;
-import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
@@ -18,6 +16,7 @@ import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
+import Project.OpenBook.Domain.Topic.Service.dto.TopicQueryInQuestionCategoryDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
@@ -124,18 +123,10 @@ public class TopicSimpleQueryService {
         return keywordDtoList;
     }
 
-
     @Transactional(readOnly = true)
-    public List<DescriptionDto> queryTopicDescriptions(String topicTitle) {
-        return  topicValidator.checkTopic(topicTitle).getDescriptionList().stream()
-                .map(d -> new DescriptionDto(d.getId(), d.getContent()))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<ChoiceDto> queryTopicChoices(String topicTitle) {
-        return topicValidator.checkTopic(topicTitle).getChoiceList().stream()
-                .map(c -> new ChoiceDto(c.getContent(), c.getId()))
+    public List<TopicQueryInQuestionCategoryDto> queryTopicsInQuestionCategory(Long id) {
+        return topicRepository.queryTopicsInQuestionCategory(id).stream()
+                .map(TopicQueryInQuestionCategoryDto::new)
                 .collect(Collectors.toList());
     }
 }

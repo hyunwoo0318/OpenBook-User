@@ -18,8 +18,9 @@ public class QuestionCategoryLearningRecordRepositoryCustomImpl implements Quest
 
     @Override
     public List<QuestionCategoryLearningRecord> queryQuestionRecords(Customer customer) {
-        return queryFactory.selectFrom(questionCategoryLearningRecord)
+        return queryFactory.selectFrom(questionCategoryLearningRecord).distinct()
                 .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.topicList).fetchJoin()
                 .where(questionCategoryLearningRecord.customer.eq(customer))
                 .fetch();
     }

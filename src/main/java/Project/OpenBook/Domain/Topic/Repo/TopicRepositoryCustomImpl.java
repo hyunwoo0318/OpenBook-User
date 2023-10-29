@@ -85,4 +85,13 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
                 .leftJoin(topic.chapter, chapter).fetchJoin()
                 .fetch();
     }
+
+    @Override
+    public List<Topic> queryTopicsInQuestionCategory(Long questionCategoryId) {
+        return queryFactory.selectFrom(topic)
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.category, category).fetchJoin()
+                .where(topic.questionCategory.id.eq(questionCategoryId))
+                .fetch();
+    }
 }

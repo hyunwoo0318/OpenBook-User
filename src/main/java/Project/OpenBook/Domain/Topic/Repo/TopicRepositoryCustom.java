@@ -20,4 +20,7 @@ public interface  TopicRepositoryCustom {
 
     public List<Topic> queryTopicsWithChapter();
 
+    public List<Topic> queryTopicsInQuestionCategory(Long questionCategoryId);
+
+
 }

@@ -38,6 +38,7 @@ public class QuestionCategoryController {
         return new ResponseEntity<List<QuestionCategoryQueryCustomerDto>>(dtoList, HttpStatus.OK);
     }
 
+
     @Operation(summary = "관리자 페이지에서 question-category 생성")
     @PostMapping("/admin/question-categories")
     public ResponseEntity<Void> addQuestionCategory(@Validated @RequestBody QuestionCategoryAddUpdateDto dto) {

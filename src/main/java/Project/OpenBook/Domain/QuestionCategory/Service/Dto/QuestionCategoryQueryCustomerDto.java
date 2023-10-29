@@ -15,6 +15,7 @@ public class QuestionCategoryQueryCustomerDto {
     private String title;
     private Integer number;
     private Integer score;
+    private Integer topicCount;
 
     public QuestionCategoryQueryCustomerDto(QuestionCategoryLearningRecord record) {
         QuestionCategory questionCategory = record.getQuestionCategory();
@@ -22,6 +23,7 @@ public class QuestionCategoryQueryCustomerDto {
         this.title = questionCategory.getTitle();
         this.number = questionCategory.getNumber();
         this.score = (record.getAnswerCount() - record.getWrongCount());
+        this.topicCount = record.getQuestionCategory().getTopicList().size();
     }
 
 }

@@ -5,10 +5,7 @@ import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
 import Project.OpenBook.Domain.Topic.Service.TopicService;
 import Project.OpenBook.Domain.Topic.Service.TopicSimpleQueryService;
-import Project.OpenBook.Domain.Topic.Service.dto.TopicAddUpdateDto;
-import Project.OpenBook.Domain.Topic.Service.dto.TopicDetailDto;
-import Project.OpenBook.Domain.Topic.Service.dto.TopicNumberDto;
-import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
+import Project.OpenBook.Domain.Topic.Service.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -69,6 +66,13 @@ public class TopicController {
         List<ChapterTopicUserDto> dtoList = topicSimpleQueryService.queryChapterTopicsCustomer(num);
 
         return new ResponseEntity<List<ChapterTopicUserDto>>(dtoList, HttpStatus.OK);
+    }
+
+    @Operation(summary = "특정 question-category 내의 모든 topic조회")
+    @GetMapping("/question-categories/{id}/topics")
+    public ResponseEntity<List<TopicQueryInQuestionCategoryDto>> queryTopicsInQuestionCategory(@PathVariable("id") Long id) {
+        List<TopicQueryInQuestionCategoryDto> dtoList = topicSimpleQueryService.queryTopicsInQuestionCategory(id);
+        return new ResponseEntity<List<TopicQueryInQuestionCategoryDto>>(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "특정 토픽의 전체 키워드 조회")
