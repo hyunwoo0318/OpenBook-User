@@ -1,7 +1,6 @@
-package Project.OpenBook.Domain.TopicLearningRecord.Domain;
+package Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;

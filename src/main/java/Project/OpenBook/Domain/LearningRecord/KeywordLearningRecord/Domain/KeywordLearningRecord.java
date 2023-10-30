@@ -1,7 +1,7 @@
-package Project.OpenBook.Domain.TimelineLearningRecord.Domain;
+package Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.Timeline.Domain.Timeline;
+import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,16 +11,15 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "timeline_learning_record")
-public class TimelineLearningRecord {
+@Table(name = "keyword_learning_record")
+public class KeywordLearningRecord {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "timeline_id")
-    private Timeline timeline;
+    @JoinColumn(name = "keyword_id")
+    private Keyword keyword;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -30,21 +29,21 @@ public class TimelineLearningRecord {
 
     private Integer wrongCount = 0;
 
-    public TimelineLearningRecord(Timeline timeline, Customer customer) {
-        this.timeline = timeline;
+    public KeywordLearningRecord(Keyword keyword, Customer customer) {
+        this.keyword = keyword;
         this.customer = customer;
         answerCount = 0;
         wrongCount = 0;
     }
 
-    public TimelineLearningRecord(Timeline timeline, Customer customer, Integer answerCount, Integer wrongCount) {
-        this.timeline = timeline;
+    public KeywordLearningRecord(Keyword keyword, Customer customer, Integer answerCount, Integer wrongCount) {
+        this.keyword = keyword;
         this.customer = customer;
         this.answerCount = answerCount;
         this.wrongCount = wrongCount;
     }
 
-    public TimelineLearningRecord updateCount(Integer answerCount, Integer wrongCount) {
+    public KeywordLearningRecord updateCount(Integer answerCount, Integer wrongCount) {
         this.answerCount += answerCount;
         this.wrongCount += wrongCount;
         return this;

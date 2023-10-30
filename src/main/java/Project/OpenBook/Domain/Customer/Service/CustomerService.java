@@ -1,6 +1,8 @@
 package Project.OpenBook.Domain.Customer.Service;
 
-import Project.OpenBook.Constants.*;
+import Project.OpenBook.Constants.ErrorCode;
+import Project.OpenBook.Constants.Role;
+import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.JJH.JJHContent.JJHContentRepository;
@@ -10,17 +12,20 @@ import Project.OpenBook.Domain.JJH.JJHList.JJHListRepository;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgressRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.KeywordLearningRecord.Domain.KeywordLearningRecord;
-import Project.OpenBook.Domain.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
 import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
+import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
-import Project.OpenBook.Domain.TimelineLearningRecord.Domain.TimelineLearningRecord;
-import Project.OpenBook.Domain.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Domain.TopicLearningRecord.Domain.TopicLearningRecord;
-import Project.OpenBook.Domain.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
@@ -57,6 +62,7 @@ public class CustomerService implements UserDetailsService {
     private final TopicRepository topicRepository;
     private final QuestionCategoryRepository questionCategoryRepository;
     private final TimelineRepository timelineRepository;
+    private final RoundRepository roundRepository;
 
 
     private final JJHListProgressRepository jjhListProgressRepository;
@@ -65,6 +71,7 @@ public class CustomerService implements UserDetailsService {
     private final TopicLearningRecordRepository topicLearningRecordRepository;
     private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
     private final TimelineLearningRecordRepository timelineLearningRecordRepository;
+    private final RoundLearningRecordRepository roundLearningRecordRepository;
 
     private final AuthenticationManagerBuilder authenticationManager;
     private final WebClient.Builder webClientBuilder;
@@ -203,6 +210,9 @@ public class CustomerService implements UserDetailsService {
 
         //6. timeline 학습정도
         initTimelineLearningHistory(customer);
+
+        //7. examQuestion 학습정도
+        initExamQuestionLearningHistory(customer);
     }
 
     private void initJJHListProgress(Customer customer) {
@@ -265,6 +275,14 @@ public class CustomerService implements UserDetailsService {
                 .collect(Collectors.toList());
 
         timelineLearningRecordRepository.saveAll(recordList);
+    }
+
+    private void initExamQuestionLearningHistory(Customer customer) {
+        List<RoundLearningRecord> recordList = roundRepository.findAll().stream()
+                .map(r -> new RoundLearningRecord(r, customer))
+                .collect(Collectors.toList());
+
+        roundLearningRecordRepository.saveAll(recordList);
     }
 
 }

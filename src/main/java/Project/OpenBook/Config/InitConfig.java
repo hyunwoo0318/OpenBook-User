@@ -10,6 +10,8 @@ import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociation;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
+import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
@@ -39,6 +41,9 @@ public class InitConfig {
 
     private final KeywordRepository keywordRepository;
     private final KeywordSearchRepository keywordSearchRepository;
+
+    private final RoundRepository roundRepository;
+    private final RoundLearningRecordRepository roundLearningRecordRepository;
 
     private final ChoiceKeywordRepository choiceKeywordRepository;
     private final DescriptionKeywordRepository descriptionKeywordRepository;
@@ -222,5 +227,18 @@ public class InitConfig {
         public Keyword k2;
 
     }
+
+//    @Bean
+//    public void initRoundLearning() {
+//        List<Customer> customerList = customerRepository.findAll();
+//        for (Customer customer : customerList) {
+//            List<RoundLearningRecord> recordList = roundRepository.findAll().stream()
+//                    .map(r -> new RoundLearningRecord(r, customer))
+//                    .collect(Collectors.toList());
+//
+//            roundLearningRecordRepository.saveAll(recordList);
+//        }
+//
+//    }
 
 }

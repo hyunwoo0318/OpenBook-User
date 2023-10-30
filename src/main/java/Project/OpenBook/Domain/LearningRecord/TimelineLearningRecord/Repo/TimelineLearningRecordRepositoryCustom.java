@@ -1,7 +1,7 @@
-package Project.OpenBook.Domain.TimelineLearningRecord.Repo;
+package Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Repo;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.TimelineLearningRecord.Domain.TimelineLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
 
 import java.util.List;
 

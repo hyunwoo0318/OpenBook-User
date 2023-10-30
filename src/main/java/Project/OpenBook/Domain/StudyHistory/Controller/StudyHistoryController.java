@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.StudyHistory.Controller;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.StudyHistory.Service.Dto.ExamQuestionScoreDto;
 import Project.OpenBook.Domain.StudyHistory.Service.Dto.WrongCountAddDto;
 import Project.OpenBook.Domain.StudyHistory.Service.StudyHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,18 +34,26 @@ public class StudyHistoryController {
     })
     @PatchMapping("/timeline/wrong-count")
     public ResponseEntity<Void> saveTimelineWrongCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
-                                                             @Validated @RequestBody List<WrongCountAddDto> dtoList) {
-        studyHistoryService.saveTimelineWrongCount(customer, dtoList);
+                                                             @Validated @RequestBody WrongCountAddDto dto) {
+        studyHistoryService.saveTimelineWrongCount(customer, dto);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
-//
-//
+
+
     @Operation(summary = "키워드별 오답 횟수 저장")
     @PatchMapping("/keyword/wrong-count")
     public ResponseEntity<Void> saveKeywordWrongCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                                       @Validated @RequestBody List<WrongCountAddDto> dtoList) {
         studyHistoryService.saveKeywordWrongCount(customer, dtoList);
         return new ResponseEntity<Void> (HttpStatus.OK);
+    }
+
+    @Operation(summary = "모의고사 회차별 오답 횟수 저장")
+    @PatchMapping("/round/wrong-count")
+    public ResponseEntity<Void> saveRoundWrongCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+                                                           @Validated @RequestBody ExamQuestionScoreDto dto) {
+        studyHistoryService.saveRoundWrongCount(customer, dto);
+        return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
 

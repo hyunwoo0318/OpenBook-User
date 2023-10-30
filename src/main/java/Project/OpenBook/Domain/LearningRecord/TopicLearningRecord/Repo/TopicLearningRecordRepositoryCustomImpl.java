@@ -1,15 +1,16 @@
-package Project.OpenBook.Domain.TopicLearningRecord.Repo;
+package Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.TopicLearningRecord.Domain.TopicLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.QTopicLearningRecord.topicLearningRecord;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
-import static Project.OpenBook.Domain.TopicLearningRecord.Domain.QTopicLearningRecord.topicLearningRecord;
+
 
 @Repository
 @RequiredArgsConstructor

@@ -3,19 +3,24 @@ package Project.OpenBook.Domain.StudyHistory.Service;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.KeywordLearningRecord.Domain.KeywordLearningRecord;
-import Project.OpenBook.Domain.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
+import Project.OpenBook.Domain.Round.Domain.Round;
+import Project.OpenBook.Domain.Round.Repo.RoundRepository;
+import Project.OpenBook.Domain.StudyHistory.Service.Dto.ExamQuestionScoreDto;
 import Project.OpenBook.Domain.StudyHistory.Service.Dto.WrongCountAddDto;
 import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
-import Project.OpenBook.Domain.TimelineLearningRecord.Domain.TimelineLearningRecord;
-import Project.OpenBook.Domain.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.Domain.TopicLearningRecord.Domain.TopicLearningRecord;
-import Project.OpenBook.Domain.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,8 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static Project.OpenBook.Constants.ErrorCode.KEYWORD_NOT_FOUND;
-import static Project.OpenBook.Constants.ErrorCode.TIMELINE_NOT_FOUND;
+import static Project.OpenBook.Constants.ErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -38,9 +42,11 @@ public class StudyHistoryService {
     private final TopicLearningRecordRepository topicLearningRecordRepository;
     private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
     private final TimelineLearningRecordRepository timelineLearningRecordRepository;
+    private final RoundLearningRecordRepository roundLearningRecordRepository;
 
     private final KeywordRepository keywordRepository;
     private final TimelineRepository timelineRepository;
+    private final RoundRepository roundRepository;
 
 
     @Transactional
@@ -122,36 +128,39 @@ public class StudyHistoryService {
     }
 
     @Transactional
-    public void saveTimelineWrongCount(Customer customer, List<WrongCountAddDto> dtoList) {
-        List<Long> timelineIdList = dtoList.stream()
-                .map(d -> d.getId())
-                .collect(Collectors.toList());
+    public void saveTimelineWrongCount(Customer customer, WrongCountAddDto dto) {
+        Long timelineId = dto.getId();
+        Integer wrongCount = dto.getWrongCount();
+        Integer answerCount = dto.getCorrectCount();
 
-        Map<Long, Timeline> timelineMap = timelineRepository.findAllById(timelineIdList).stream()
-                .collect(Collectors.toMap(tl -> tl.getId(), tl -> tl));
+        Timeline timeline = timelineRepository.findById(timelineId).orElseThrow(() -> {
+            throw new CustomException(TIMELINE_NOT_FOUND);
+        });
 
-        Map<Timeline, TimelineLearningRecord> timelineRecordMap = timelineLearningRecordRepository.queryTimelineLearningRecordInKeywords(customer, timelineIdList).stream()
-                .collect(Collectors.toMap(tl -> tl.getTimeline(), tl -> tl));
+        TimelineLearningRecord record = timelineLearningRecordRepository.findByCustomerAndTimeline(customer, timeline).orElseGet(() -> {
+            TimelineLearningRecord newRecord = new TimelineLearningRecord(timeline, customer);
+            timelineLearningRecordRepository.save(newRecord);
+            return newRecord;
+        });
 
-        for (WrongCountAddDto dto : dtoList) {
-            Long timelineId = dto.getId();
-            Integer wrongCount = dto.getWrongCount();
-            Integer answerCount = dto.getCorrectCount();
+        record.updateCount(answerCount, wrongCount);
+    }
 
-            Timeline timeline = timelineMap.get(timelineId);
-            if (timeline == null) {
-                throw new CustomException(TIMELINE_NOT_FOUND);
-            }
+    @Transactional
+    public void saveRoundWrongCount(Customer customer, ExamQuestionScoreDto dto) {
+        Integer number = dto.getNumber();
+        Integer score = dto.getScore();
 
-            TimelineLearningRecord record = timelineRecordMap.get(timeline);
-            if (record == null) {
-                TimelineLearningRecord newRecord = new TimelineLearningRecord(timeline, customer, answerCount, wrongCount);
-                timelineLearningRecordRepository.save(newRecord);
-            }else{
-                record.updateCount(answerCount, wrongCount);
-            }
+        Round round = roundRepository.findRoundByNumber(number).orElseThrow(() -> {
+            throw new CustomException(ROUND_NOT_FOUND);
+        });
 
-        }
+        RoundLearningRecord record = roundLearningRecordRepository.findByCustomerAndRound(customer, round).orElseGet(() -> {
+            RoundLearningRecord newRecord = new RoundLearningRecord(round, customer);
+            roundLearningRecordRepository.save(newRecord);
+            return newRecord;
+        });
 
+        record.updateScore(score);
     }
 }

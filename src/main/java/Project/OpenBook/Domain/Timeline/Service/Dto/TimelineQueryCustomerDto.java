@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.Timeline.Service.Dto;
 
 import Project.OpenBook.Domain.Timeline.Domain.Timeline;
-import Project.OpenBook.Domain.TimelineLearningRecord.Domain.TimelineLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +24,6 @@ public class TimelineQueryCustomerDto {
         this.startDate = timeline.getStartDate();
         this.endDate = timeline.getEndDate();
         this.id = timeline.getId();
-        this.score = (record.getAnswerCount() - record.getWrongCount());
+        this.score = record.getAnswerCount();
     }
 }

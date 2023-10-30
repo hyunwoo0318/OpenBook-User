@@ -1,13 +1,16 @@
 package Project.OpenBook.Domain.Round.Service;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Domain.Round.Repo.RoundRepository;
+import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
 import Project.OpenBook.Domain.Round.Domain.Round;
+import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Round.RoundValidator;
 import Project.OpenBook.Domain.Round.dto.RoundDto;
 import Project.OpenBook.Domain.Round.dto.RoundInfoDto;
+import Project.OpenBook.Domain.Round.dto.RoundQueryCustomerDto;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,7 @@ import static Project.OpenBook.Constants.ErrorCode.ROUND_HAS_QUESTION;
 public class RoundService {
 
     private final RoundRepository roundRepository;
+    private final RoundLearningRecordRepository roundLearningRecordRepository;
     private final ExamQuestionRepository examQuestionRepository;
     private final RoundValidator roundValidator;
 
@@ -88,6 +92,14 @@ public class RoundService {
         Round round = roundValidator.checkRound(number);
         return round.getExamQuestionList().stream()
                 .map(ExamQuestion::getNumber)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<RoundQueryCustomerDto> queryRoundsCustomer(Customer customer) {
+        List<RoundLearningRecord> recordList = roundLearningRecordRepository.queryRoundLearningRecord(customer);
+        return recordList.stream()
+                .map(RoundQueryCustomerDto::new)
                 .collect(Collectors.toList());
     }
 }

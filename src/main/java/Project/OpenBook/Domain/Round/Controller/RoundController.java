@@ -1,14 +1,18 @@
 package Project.OpenBook.Domain.Round.Controller;
 
+import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Round.Service.RoundService;
 import Project.OpenBook.Domain.Round.dto.RoundDto;
 import Project.OpenBook.Domain.Round.dto.RoundInfoDto;
+import Project.OpenBook.Domain.Round.dto.RoundQueryCustomerDto;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +24,21 @@ public class RoundController {
 
     private final RoundService roundService;
 
-    @Operation(summary = "전체 회차 조회")
+    @Operation(summary = "관리자 페이지에서 전체 회차 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "전체 회차 조회 성공")
     })
-    @GetMapping("/rounds")
+    @GetMapping("/admin/rounds")
     public ResponseEntity<List<RoundDto>> getRounds() {
         List<RoundDto> dtoList = roundService.queryRounds();
         return new ResponseEntity<List<RoundDto>>(dtoList, HttpStatus.OK);
+    }
+
+    @Operation(summary = "사용자 페이지에서 전체 회차 조회")
+    @GetMapping("/rounds")
+    public ResponseEntity getRoundsCustomer(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
+        List<RoundQueryCustomerDto> dtoList = roundService.queryRoundsCustomer(customer);
+        return new ResponseEntity(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "특정 회차 조회")

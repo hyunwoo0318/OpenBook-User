@@ -1,7 +1,7 @@
-package Project.OpenBook.Domain.TimelineLearningRecord.Repo;
+package Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Repo;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.TimelineLearningRecord.Domain.TimelineLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static Project.OpenBook.Domain.Era.QEra.era;
+import static Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.QTimelineLearningRecord.timelineLearningRecord;
 import static Project.OpenBook.Domain.Timeline.Domain.QTimeline.timeline;
-import static Project.OpenBook.Domain.TimelineLearningRecord.Domain.QTimelineLearningRecord.timelineLearningRecord;
 
 @Repository
 @RequiredArgsConstructor

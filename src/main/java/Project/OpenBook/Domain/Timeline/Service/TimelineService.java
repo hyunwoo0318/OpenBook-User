@@ -8,7 +8,7 @@ import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
 import Project.OpenBook.Domain.Timeline.Service.Dto.TimelineAddUpdateDto;
 import Project.OpenBook.Domain.Timeline.Service.Dto.TimelineQueryAdminDto;
 import Project.OpenBook.Domain.Timeline.Service.Dto.TimelineQueryCustomerDto;
-import Project.OpenBook.Domain.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

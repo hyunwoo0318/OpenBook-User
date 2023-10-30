@@ -1,6 +1,6 @@
-package Project.OpenBook.Domain.TopicLearningRecord.Repo;
+package Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo;
 
-import Project.OpenBook.Domain.TopicLearningRecord.Domain.TopicLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 
 import java.util.List;

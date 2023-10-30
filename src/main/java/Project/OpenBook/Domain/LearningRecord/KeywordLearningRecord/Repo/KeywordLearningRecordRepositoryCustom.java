@@ -1,7 +1,7 @@
-package Project.OpenBook.Domain.KeywordLearningRecord.Repo;
+package Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.KeywordLearningRecord.Domain.KeywordLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 
 import java.util.List;
 
