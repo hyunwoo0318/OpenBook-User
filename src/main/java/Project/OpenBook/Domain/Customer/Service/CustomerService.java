@@ -1,9 +1,6 @@
 package Project.OpenBook.Domain.Customer.Service;
 
-import Project.OpenBook.Constants.ErrorCode;
-import Project.OpenBook.Constants.ProgressConst;
-import Project.OpenBook.Constants.Role;
-import Project.OpenBook.Constants.StateConst;
+import Project.OpenBook.Constants.*;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.JJH.JJHContent.JJHContentRepository;
@@ -212,7 +209,7 @@ public class CustomerService implements UserDetailsService {
         List<JJHListProgress> jjhListProgressList = jjhListRepository.findAll().stream()
                 .map(jl -> {
                     return jl.getNumber() == 1 ?
-                            new JJHListProgress(customer, jl, StateConst.OPEN, ProgressConst.NOT_STARTED) :
+                            new JJHListProgress(customer, jl, StateConst.IN_PROGRESS) :
                             new JJHListProgress(customer, jl);
                 })
                 .collect(Collectors.toList());
@@ -229,7 +226,7 @@ public class CustomerService implements UserDetailsService {
         List<JJHContentProgress> jjhContentProgressList = jjhContentRepository.findAll().stream()
                 .map(jc -> {
                     return jc.getNumber() == 1 ?
-                            new JJHContentProgress(customer, jc, StateConst.OPEN) :
+                            new JJHContentProgress(customer, jc, StateConst.IN_PROGRESS) :
                             new JJHContentProgress(customer, jc);
                 })
                 .collect(Collectors.toList());

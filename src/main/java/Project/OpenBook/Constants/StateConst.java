@@ -7,8 +7,9 @@ import lombok.Getter;
 @Getter
 public enum StateConst {
 
-    OPEN("Open"),
+    IN_PROGRESS("InProgress"),
     LOCKED("Locked"),
+    COMPLETE("Complete"),
     UPDATED("Updated")
 
     ;

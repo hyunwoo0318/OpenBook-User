@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.JJH.JJHListProgress;
 
-import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.JJH.JJHList.JJHList;
@@ -36,30 +35,22 @@ public class JJHListProgress {
     @Enumerated(EnumType.STRING)
     private StateConst state;
 
-    @Enumerated(EnumType.STRING)
-    private ProgressConst progress;
 
 
     public JJHListProgress(Customer customer, JJHList jjhList) {
         this.state = StateConst.LOCKED;
-        this.progress = ProgressConst.NOT_STARTED;
         this.customer = customer;
         this.jjhList = jjhList;
     }
 
-    public JJHListProgress(Customer customer, JJHList jjhList, StateConst state, ProgressConst progress) {
+    public JJHListProgress(Customer customer, JJHList jjhList, StateConst state) {
         this.customer = customer;
         this.jjhList = jjhList;
         this.state = state;
-        this.progress = progress;
     }
 
-    public void updateProgress(ProgressConst progress) {
-        this.progress = progress;
-    }
 
-    public void updateProgressState(StateConst state, ProgressConst progress) {
+    public void updateState(StateConst state) {
         this.state = state;
-        this.progress = progress;
     }
 }

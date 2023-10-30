@@ -11,6 +11,6 @@ public class ChapterJJHCustomerQueryDto {
     private String title;
     private Integer number;
     private String state;
-    private String progress;
     private Integer jjhNumber;
+    private String dateComment;
 }

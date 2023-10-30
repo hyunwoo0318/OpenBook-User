@@ -1,7 +1,6 @@
 package Project.OpenBook.Domain.JJH;
 
 import Project.OpenBook.Constants.ContentConst;
-import Project.OpenBook.Constants.ProgressConst;
 import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
@@ -76,11 +75,11 @@ public class JJHService {
 
             if (chapter != null && timeline == null) {
                 ChapterJJHCustomerQueryDto dto = new ChapterJJHCustomerQueryDto(chapter.getTitle(), chapter.getNumber(),
-                        progress.getState().getName(), progress.getProgress().getName(), jjhList.getNumber());
+                        progress.getState().getName(),  jjhList.getNumber(), chapter.getDateComment());
                 chapterList.add(dto);
             } else if (chapter == null && timeline != null) {
                 TimelineJJHCustomerQueryDto dto = new TimelineJJHCustomerQueryDto(timeline.getEra().getName(), timeline.getStartDate(), timeline.getEndDate(),
-                        progress.getState().getName(), progress.getProgress().getName(), jjhList.getNumber(), timeline.getId());
+                        progress.getState().getName(), jjhList.getNumber(), timeline.getId());
                 timelineList.add(dto);
             }
         }
@@ -100,16 +99,21 @@ public class JJHService {
             Timeline timeline = jjhContent.getTimeline();
             Topic topic = jjhContent.getTopic();
             String title = "";
+            String category = null;
+            String dateComment = null;
             if (chapter != null) {
                 title = chapter.getTitle();
+                dateComment = chapter.getDateComment();
             } else if (timeline != null) {
                 title = timeline.getTitle();
             } else if (topic != null) {
                 title = topic.getTitle();
+                category = topic.getQuestionCategory().getCategory().getName();
+                dateComment = topic.getDateComment();
             }
 
             JJHContentsTableQueryDto dto = new JJHContentsTableQueryDto(title, jjhContent.getContent().name(),
-                    progress.getState().getName(), jjhContent.getNumber());
+                    progress.getState().getName(), jjhContent.getNumber(),dateComment, category);
             dtoList.add(dto);
 
         }
@@ -261,7 +265,7 @@ public class JJHService {
             throw new CustomException(NOT_VALIDATE_CONTENT_NUMBER);
         });
 
-        if (nextProgress.getState() == StateConst.OPEN) return;
+        if (nextProgress.getState() != StateConst.LOCKED) return;
 
         ContentConst curContent = curProgress.getJjhContent().getContent();
         ContentConst nextContent = nextProgress.getJjhContent().getContent();
@@ -273,16 +277,17 @@ public class JJHService {
             JJHListProgress curListProgress = jjhListProgressRepository.findByCustomerAndJjhList(customer, curJJHList).orElseThrow(() -> {
                 throw new CustomException(NOT_VALIDATE_CONTENT_NUMBER);
             });
-            curListProgress.updateProgress(ProgressConst.COMPLETED);
+            curListProgress.updateState(StateConst.COMPLETE);
             //2. 다음 jjhListProgress의 state를 open으로 변경, progress는 진행중으로 변경
             JJHList nextJJHList = nextProgress.getJjhContent().getJjhList();
             JJHListProgress nextListProgress = jjhListProgressRepository.findByCustomerAndJjhList(customer, nextJJHList).orElseThrow(() -> {
                 throw new CustomException(NOT_VALIDATE_CONTENT_NUMBER);
             });
-            nextListProgress.updateProgressState(StateConst.OPEN, ProgressConst.IN_PROGRESS);
+            nextListProgress.updateState(StateConst.IN_PROGRESS);
 
         }
-        nextProgress.updateState(StateConst.OPEN);
+        curProgress.updateState(StateConst.COMPLETE);
+        nextProgress.updateState(StateConst.IN_PROGRESS);
     }
 
     private boolean checkJJHListEnd(ContentConst cur, ContentConst next) {
@@ -292,7 +297,7 @@ public class JJHService {
                         next.equals(ContentConst.TIMELINE_STUDY)
                 )) return true;
 
-        if (cur.equals(ContentConst.TIMELINE_QUESTION) && (
+        if (cur.equals(ContentConst.TIMELINE_STUDY) && (
                 next.equals(ContentConst.TOPIC_STUDY) ||
                         next.equals(ContentConst.CHAPTER_INFO)
                 )) return true;

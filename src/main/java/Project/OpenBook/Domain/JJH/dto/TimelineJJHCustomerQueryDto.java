@@ -12,7 +12,6 @@ public class TimelineJJHCustomerQueryDto {
     private Integer startDate;
     private Integer endDate;
     private String state;
-    private String progress;
     private Integer jjhNumber;
     private Long id;
 }

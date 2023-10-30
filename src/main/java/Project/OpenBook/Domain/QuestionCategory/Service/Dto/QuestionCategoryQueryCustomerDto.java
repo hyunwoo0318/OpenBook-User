@@ -19,7 +19,7 @@ public class QuestionCategoryQueryCustomerDto {
 
     public QuestionCategoryQueryCustomerDto(QuestionCategoryLearningRecord record) {
         QuestionCategory questionCategory = record.getQuestionCategory();
-        this.id = record.getId();
+        this.id = questionCategory.getId();
         this.title = questionCategory.getTitle();
         this.number = questionCategory.getNumber();
         this.score = (record.getAnswerCount() - record.getWrongCount());

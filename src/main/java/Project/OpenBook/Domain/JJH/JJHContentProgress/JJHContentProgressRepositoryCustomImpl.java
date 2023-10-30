@@ -10,11 +10,13 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static Project.OpenBook.Domain.Category.Domain.QCategory.category;
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Era.QEra.era;
 import static Project.OpenBook.Domain.JJH.JJHContent.QJJHContent.jJHContent;
 import static Project.OpenBook.Domain.JJH.JJHContentProgress.QJJHContentProgress.jJHContentProgress;
 import static Project.OpenBook.Domain.JJH.JJHList.QJJHList.jJHList;
+import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
 import static Project.OpenBook.Domain.Timeline.Domain.QTimeline.timeline;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
@@ -30,6 +32,8 @@ public class JJHContentProgressRepositoryCustomImpl implements JJHContentProgres
                 .leftJoin(jJHContentProgress.jjhContent, jJHContent).fetchJoin()
                 .leftJoin(jJHContent.jjhList, jJHList).fetchJoin()
                 .leftJoin(jJHContent.topic, topic).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.category, category).fetchJoin()
                 .leftJoin(jJHContent.chapter, chapter).fetchJoin()
                 .leftJoin(jJHContent.timeline, timeline).fetchJoin()
                 .leftJoin(timeline.era, era).fetchJoin()
@@ -54,7 +58,7 @@ public class JJHContentProgressRepositoryCustomImpl implements JJHContentProgres
         long totalCount = queryFactory.selectFrom(jJHContentProgress)
                 .stream().count();
         long openCount = queryFactory.selectFrom(jJHContentProgress)
-                .where(jJHContentProgress.state.eq(StateConst.OPEN))
+                .where(jJHContentProgress.state.ne(StateConst.LOCKED))
                 .stream().count();
         return new TotalProgressDto((openCount * 100) / totalCount);
     }

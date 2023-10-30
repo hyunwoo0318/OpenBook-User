@@ -12,4 +12,6 @@ public class JJHContentsTableQueryDto {
     private String content;
     private String state;
     private Integer contentNumber;
+    private String dateComment;
+    private String category;
 }
