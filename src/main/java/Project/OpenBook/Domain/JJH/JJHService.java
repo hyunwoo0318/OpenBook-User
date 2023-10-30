@@ -241,15 +241,6 @@ public class JJHService {
                 }else{
                     jjhContent.updateNumber(idx++);
                 }
-
-                //5. 연표문제 체크
-                JJHContent jjhContent2 = m.get(new jjhContentType(ContentConst.TIMELINE_QUESTION, timeline.getId()));
-                if (jjhContent2 == null) {
-                    JJHContent newJJHContent = new JJHContent(ContentConst.TIMELINE_QUESTION, idx++, jjhList, timeline);
-                    jjhContentRepository.save(newJJHContent);
-                }else{
-                    jjhContent2.updateNumber(idx++);
-                }
             }
         }
 
