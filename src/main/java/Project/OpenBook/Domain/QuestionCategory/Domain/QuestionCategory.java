@@ -50,4 +50,8 @@ public class QuestionCategory extends BaseEntity {
     public void updateNumber(Integer number) {
         this.number =number;
     }
+
+    public void updateTitle(String title) {
+        this.title = title;
+    }
 }

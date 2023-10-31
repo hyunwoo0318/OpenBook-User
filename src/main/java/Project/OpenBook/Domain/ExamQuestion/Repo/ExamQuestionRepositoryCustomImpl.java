@@ -1,19 +1,16 @@
 package Project.OpenBook.Domain.ExamQuestion.Repo;
 
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
-import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
 import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
-import static com.querydsl.core.group.GroupBy.groupBy;
 
 
 @Repository
@@ -53,10 +50,10 @@ public class ExamQuestionRepositoryCustomImpl implements ExamQuestionRepositoryC
     }
 
     @Override
-    public List<ExamQuestion> queryExamQuestionsWithDescriptionAndTopic(Integer roundNumber) {
-        return queryFactory.selectFrom(examQuestion)
+    public List<ExamQuestion> queryExamQuestionsForExamQuestionList(Integer roundNumber) {
+        return queryFactory.selectFrom(examQuestion).distinct()
                 .leftJoin(examQuestion.description, description).fetchJoin()
-                .leftJoin(description.topic, topic).fetchJoin()
+                .leftJoin(examQuestion.choiceList).fetchJoin()
                 .where(examQuestion.round.number.eq(roundNumber))
                 .orderBy(examQuestion.number.asc())
                 .fetch();

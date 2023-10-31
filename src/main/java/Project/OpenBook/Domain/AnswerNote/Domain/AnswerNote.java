@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.AnswerNote.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.Question.Domain.Question;
+import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,11 +23,11 @@ public class AnswerNote extends BaseEntity {
     private Customer customer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "question_id")
-    private Question question;
+    @JoinColumn(name = "exam_question_id")
+    private ExamQuestion examQuestion;
 
-    public AnswerNote(Customer customer,Question question) {
+    public AnswerNote(Customer customer,ExamQuestion examQuestion) {
         this.customer = customer;
-        this.question = question;
+        this.examQuestion = examQuestion;
     }
 }

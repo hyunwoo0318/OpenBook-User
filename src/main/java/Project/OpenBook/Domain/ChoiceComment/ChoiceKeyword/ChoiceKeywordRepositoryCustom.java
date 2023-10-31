@@ -16,5 +16,7 @@ public interface ChoiceKeywordRepositoryCustom {
 
       public List<ChoiceKeyword> queryChoiceKeywordsAdmin(String topicTitle);
 
+      public List<ChoiceKeyword> queryChoiceKeywordsForExamQuestion(Integer roundNumber);
+
       public Map<Long, List<Keyword>> queryChoiceKeywordsForInit();
 }

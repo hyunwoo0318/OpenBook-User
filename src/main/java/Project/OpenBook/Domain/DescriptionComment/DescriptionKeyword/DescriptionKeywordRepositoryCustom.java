@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Description.DescriptionKeyword;
+package Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface DescriptionKeywordRepositoryCustom {
 
     public List<DescriptionKeyword> queryDescriptionKeywordsAdmin(Description description);
+
+    public List<DescriptionKeyword> queryDescriptionKeywordForExamQuestion(Integer roundNumber);
 
     public List<ExamQuestionCommentDto> queryDescriptionCustomer(Description description);
 

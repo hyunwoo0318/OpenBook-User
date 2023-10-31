@@ -11,6 +11,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExamQuestionDto {
+    private Long id;
+    private Boolean savedAnswerNote;
     private Integer number;
     private String description;
     private List<ExamQuestionCommentDto> descriptionCommentList;
@@ -18,4 +20,6 @@ public class ExamQuestionDto {
     private String choiceType;
     private Integer score;
     private List<QuestionChoiceDto> choiceList;
+
+
 }

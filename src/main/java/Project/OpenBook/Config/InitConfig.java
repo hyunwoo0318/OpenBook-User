@@ -1,16 +1,19 @@
 package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.Role;
+import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
-import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeywordRepository;
+import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
+import Project.OpenBook.Domain.Era.EraRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociation;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
+import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
@@ -41,6 +44,10 @@ public class InitConfig {
 
     private final KeywordRepository keywordRepository;
     private final KeywordSearchRepository keywordSearchRepository;
+
+    private final QuestionCategoryRepository questionCategoryRepository;
+    private final EraRepository eraRepository;
+    private final CategoryRepository categoryRepository;
 
     private final RoundRepository roundRepository;
     private final RoundLearningRecordRepository roundLearningRecordRepository;
@@ -228,17 +235,6 @@ public class InitConfig {
 
     }
 
-//    @Bean
-//    public void initRoundLearning() {
-//        List<Customer> customerList = customerRepository.findAll();
-//        for (Customer customer : customerList) {
-//            List<RoundLearningRecord> recordList = roundRepository.findAll().stream()
-//                    .map(r -> new RoundLearningRecord(r, customer))
-//                    .collect(Collectors.toList());
-//
-//            roundLearningRecordRepository.saveAll(recordList);
-//        }
-//
-//    }
+
 
 }

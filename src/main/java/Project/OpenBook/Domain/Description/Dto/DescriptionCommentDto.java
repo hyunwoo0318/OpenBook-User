@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.DescriptionComment;
+package Project.OpenBook.Domain.Description.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

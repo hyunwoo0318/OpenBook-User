@@ -16,6 +16,7 @@ public class TimelineQueryCustomerDto {
     private Integer endDate;
     private Long id;
     private Integer score;
+    private Integer timelineCount;
 
     public TimelineQueryCustomerDto(TimelineLearningRecord record) {
         Timeline timeline = record.getTimeline();
@@ -25,5 +26,6 @@ public class TimelineQueryCustomerDto {
         this.endDate = timeline.getEndDate();
         this.id = timeline.getId();
         this.score = record.getAnswerCount();
+        this.timelineCount = 0;
     }
 }

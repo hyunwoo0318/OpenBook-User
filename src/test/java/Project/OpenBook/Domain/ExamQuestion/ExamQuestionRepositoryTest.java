@@ -208,7 +208,7 @@ public class ExamQuestionRepositoryTest {
 
                 //when
                 List<ExamQuestion> examQuestionList
-                        = examQuestionRepository.queryExamQuestionsWithDescriptionAndTopic(roundNumber);
+                        = examQuestionRepository.queryExamQuestionsForExamQuestionList(roundNumber);
 
                 //then
                 assertThat(examQuestionList.size()).isEqualTo(2);
@@ -243,7 +243,7 @@ public class ExamQuestionRepositoryTest {
 
                 //when
                 List<ExamQuestion> examQuestionList
-                        = examQuestionRepository.queryExamQuestionsWithDescriptionAndTopic(roundNumber);
+                        = examQuestionRepository.queryExamQuestionsForExamQuestionList(roundNumber);
 
                 //then
                 assertThat(examQuestionList.size()).isEqualTo(2);

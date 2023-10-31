@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.Description.Controller;
 
 import Project.OpenBook.Domain.Description.Dto.DescriptionCommentAddDto;
 import Project.OpenBook.Domain.Description.Dto.DescriptionUpdateDto;
-import Project.OpenBook.Domain.DescriptionComment.DescriptionCommentDto;
+import Project.OpenBook.Domain.Description.Dto.DescriptionCommentDto;
 import Project.OpenBook.Domain.Description.Service.DescriptionCommentService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;

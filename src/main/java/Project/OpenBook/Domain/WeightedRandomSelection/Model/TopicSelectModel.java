@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.WeightedRandomSelection;
+package Project.OpenBook.Domain.WeightedRandomSelection.Model;
 
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AllArgsConstructor;

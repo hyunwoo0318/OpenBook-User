@@ -13,7 +13,7 @@ public interface ExamQuestionRepositoryCustom {
 
     public Optional<ExamQuestion> queryExamQuestionWithDescription(Integer roundNumber, Integer questionNumber);
 
-    public List<ExamQuestion> queryExamQuestionsWithDescriptionAndTopic(Integer roundNumber);
+    public List<ExamQuestion> queryExamQuestionsForExamQuestionList(Integer roundNumber);
 
 
 }

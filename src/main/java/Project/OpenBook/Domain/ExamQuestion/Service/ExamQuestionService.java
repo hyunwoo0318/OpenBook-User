@@ -1,30 +1,39 @@
 package Project.OpenBook.Domain.ExamQuestion.Service;
 
 import Project.OpenBook.Constants.ChoiceType;
+import Project.OpenBook.Domain.AnswerNote.Domain.AnswerNote;
+import Project.OpenBook.Domain.AnswerNote.Repository.AnswerNoteRepository;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
+import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
+import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
+import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
-import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeyword;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.*;
+import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.ChoiceAddUpdateDto;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionInfoDto;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Question.Dto.QuestionChoiceDto;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Image.ImageService;
-import Project.OpenBook.Domain.Question.Dto.QuestionChoiceDto;
-import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
+import Project.OpenBook.Image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -39,6 +48,7 @@ public class ExamQuestionService {
     private final ChoiceRepository choiceRepository;
     private final ChoiceKeywordRepository choiceKeywordRepository;
     private final DescriptionKeywordRepository descriptionKeywordRepository;
+    private final AnswerNoteRepository answerNoteRepository;
     private final ImageService imageService;
 
     @Transactional(readOnly = true)
@@ -54,49 +64,81 @@ public class ExamQuestionService {
     }
 
     @Transactional(readOnly = true)
-    public List<ExamQuestionDto> getRoundQuestions(Integer roundNumber) {
+    public List<ExamQuestionDto> getRoundQuestions(Customer customer, Integer roundNumber) {
         List<ExamQuestionDto> examQuestionDtoList = new ArrayList<>();
         checkRound(roundNumber);
 
-        List<ExamQuestion> examQuestionList = examQuestionRepository.queryExamQuestionsWithDescriptionAndTopic(roundNumber);
-        for (ExamQuestion examQuestion : examQuestionList) {
+        List<ExamQuestion> examQuestionList = examQuestionRepository.queryExamQuestionsForExamQuestionList(roundNumber);
+        Map<Description, List<DescriptionKeyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordForExamQuestion(roundNumber).stream()
+                .collect(Collectors.groupingBy(dk -> dk.getDescription()));
+        Map<Choice, List<ChoiceKeyword>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsForExamQuestion(roundNumber).stream()
+                .collect(Collectors.groupingBy(ck -> ck.getChoice()));
+        Map<ExamQuestion, AnswerNote> answerNoteMap = answerNoteRepository.queryAnswerNotes(roundNumber, customer).stream()
+                .collect(Collectors.toMap(AnswerNote::getExamQuestion, an -> an));
 
+        for (ExamQuestion question : examQuestionList) {
+            //보기 -> 보기 키워드 구성
+            Description description = question.getDescription();
+            List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordMap.get(description);
             List<ExamQuestionCommentDto> descriptionCommentList = new ArrayList<>();
-            List<QuestionChoiceDto> choiceDtoList = new ArrayList<>();
-
-            List<Choice> choiceList = examQuestion.getChoiceList();
-            Description description = examQuestion.getDescription();
-            List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordRepository.queryDescriptionKeywordsAdmin(description);
-            for (DescriptionKeyword descriptionKeyword : descriptionKeywordList) {
-                Keyword keyword = descriptionKeyword.getKeyword();
-                Topic topic = keyword.getTopic();
-
-                ExamQuestionCommentDto dto
-                        = new ExamQuestionCommentDto(topic.getDateComment(), topic.getTitle(), keyword.getDateComment(),
-                        keyword.getName(), keyword.getComment());
-                descriptionCommentList.add(dto);
+            if (descriptionKeywordList != null) {
+                List<Keyword> keywordForDescriptionList = descriptionKeywordList.stream()
+                        .map(dk -> dk.getKeyword())
+                        .collect(Collectors.toList());
+                descriptionCommentList = makeDescriptionCommentList(keywordForDescriptionList);
             }
 
-            Map<Choice, List<ExamQuestionCommentDto>> choiceListMap = choiceKeywordRepository.queryChoiceKeywordsCustomer(choiceList);
+
+            //선지 -> 선지 키워드 구성
+            List<Choice> choiceList = question.getChoiceList();
+            List<QuestionChoiceDto> questionChoiceDtoList = new ArrayList<>();
             for (Choice choice : choiceList) {
-                List<ExamQuestionCommentDto> dtoList = choiceListMap.get(choice);
-                QuestionChoiceDto choiceDto = new QuestionChoiceDto(choice.getContent(), choice.getNumber(), dtoList);
-                choiceDtoList.add(choiceDto);
+                List<ChoiceKeyword> choiceKeywordList = choiceKeywordMap.get(choice);
+                QuestionChoiceDto dto;
+
+                if (choiceKeywordList != null) {
+                    List<Keyword> keywordForChoiceList = choiceKeywordList.stream()
+                            .map(ck -> ck.getKeyword())
+                            .collect(Collectors.toList());
+                    dto = makeQuestionChoiceDto(choice, keywordForChoiceList);
+                }else{
+                    dto = new QuestionChoiceDto(choice.getContent(), choice.getNumber(), new ArrayList<>());
+                }
+                questionChoiceDtoList.add(dto);
             }
 
-            choiceDtoList = choiceDtoList.stream()
-                    .sorted(Comparator.comparing(QuestionChoiceDto::getNumber))
-                    .collect(Collectors.toList());
+            //오답노트 구성
+            AnswerNote answerNote = answerNoteMap.get(question);
+            Boolean savedAnswerNote = false;
+            if (answerNote != null) {
+                savedAnswerNote = true;
+            }
 
-            ExamQuestionDto examQuestionDto = new ExamQuestionDto(examQuestion.getNumber(), description.getContent(), descriptionCommentList,
-                    examQuestion.getAnswer(), examQuestion.getChoiceType().name(), examQuestion.getScore(),
-                    choiceDtoList);
+            ExamQuestionDto examQuestionDto = new ExamQuestionDto(question.getId(), savedAnswerNote, question.getNumber(), description.getContent(),
+                    descriptionCommentList, question.getAnswer(), question.getChoiceType().name(), question.getScore(),
+                    questionChoiceDtoList);
             examQuestionDtoList.add(examQuestionDto);
 
         }
 
+
         return examQuestionDtoList;
 
+    }
+
+    private QuestionChoiceDto makeQuestionChoiceDto(Choice choice, List<Keyword> keywordList) {
+        List<ExamQuestionCommentDto> commentList = makeDescriptionCommentList(keywordList);
+        return new QuestionChoiceDto(choice.getContent(), choice.getNumber(), commentList);
+    }
+
+    private List<ExamQuestionCommentDto> makeDescriptionCommentList(List<Keyword> keywordList) {
+        return keywordList.stream()
+                .map(k -> {
+                    Topic topic = k.getTopic();
+                    return new ExamQuestionCommentDto(topic.getDateComment(), topic.getTitle(), k.getDateComment(), k.getName(),
+                            k.getComment());
+                })
+                .collect(Collectors.toList());
     }
 
 //    @Transactional(readOnly = true)

@@ -80,6 +80,16 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
     }
 
     @Override
+    public List<ChoiceKeyword> queryChoiceKeywordsForExamQuestion(Integer roundNumber) {
+         return queryFactory.selectFrom(choiceKeyword)
+                .leftJoin(choiceKeyword.choice, choice).fetchJoin()
+                .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .where(choice.examQuestion.round.number.eq(roundNumber))
+                 .fetch();
+    }
+
+    @Override
     public Map<Long, List<Keyword>> queryChoiceKeywordsForInit() {
         return queryFactory.from(choiceKeyword)
                 .transform(groupBy(choiceKeyword.choice.examQuestion.id)

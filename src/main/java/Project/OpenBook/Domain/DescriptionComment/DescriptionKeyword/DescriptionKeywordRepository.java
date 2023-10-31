@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Description.DescriptionKeyword;
+package Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;

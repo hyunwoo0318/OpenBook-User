@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.Keyword.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
-import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociation;
 import Project.OpenBook.Domain.Topic.Domain.Topic;

@@ -1,16 +1,17 @@
 package Project.OpenBook.Domain.ExamQuestion.Controller;
 
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ChoiceAddUpdateDto;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionChoiceDto;
+import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.ExamQuestion.Service.ExamQuestionService;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionInfoDto;
-import Project.OpenBook.Domain.ExamQuestion.Service.ExamQuestionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,9 @@ public class ExamQuestionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회차 번호입력")
     })
     @GetMapping("/rounds/{roundNumber}/questions")
-    public ResponseEntity<List<ExamQuestionDto>> getRoundQuestions(@PathVariable("roundNumber") Integer roundNumber) {
-        List<ExamQuestionDto> dtoList = examQuestionService.getRoundQuestions(roundNumber);
+    public ResponseEntity<List<ExamQuestionDto>> getRoundQuestions(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+                                                                    @PathVariable("roundNumber") Integer roundNumber) {
+        List<ExamQuestionDto> dtoList = examQuestionService.getRoundQuestions(customer, roundNumber);
         return new ResponseEntity<List<ExamQuestionDto>>(dtoList, HttpStatus.OK);
     }
 

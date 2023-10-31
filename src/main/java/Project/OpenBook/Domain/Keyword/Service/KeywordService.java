@@ -1,6 +1,6 @@
 package Project.OpenBook.Domain.Keyword.Service;
 
-import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeywordRepository;
+import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordIdNameDto;

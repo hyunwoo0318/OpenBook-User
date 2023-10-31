@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Description.DescriptionKeyword;
+package Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
-import static Project.OpenBook.Domain.Description.DescriptionKeyword.QDescriptionKeyword.descriptionKeyword;
 import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
+import static Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.QDescriptionKeyword.descriptionKeyword;
 import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Round.Domain.QRound.round;
@@ -34,6 +34,16 @@ public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywor
                 .leftJoin(topic.chapter, chapter).fetchJoin()
                 .where(descriptionKeyword.description.eq(description))
                 .fetch();
+    }
+
+    @Override
+    public List<DescriptionKeyword> queryDescriptionKeywordForExamQuestion(Integer roundNumber) {
+         return queryFactory.selectFrom(descriptionKeyword)
+                .leftJoin(descriptionKeyword.description, description).fetchJoin()
+                .leftJoin(descriptionKeyword.keyword, keyword).fetchJoin()
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .where(description.examQuestion.round.number.eq(roundNumber))
+                 .fetch();
     }
 
     @Override

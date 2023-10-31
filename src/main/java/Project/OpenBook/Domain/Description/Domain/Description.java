@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.Description.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
-import Project.OpenBook.Domain.Description.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
