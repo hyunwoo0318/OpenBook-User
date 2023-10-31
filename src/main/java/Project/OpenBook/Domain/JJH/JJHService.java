@@ -2,6 +2,8 @@ package Project.OpenBook.Domain.JJH;
 
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.StateConst;
+import Project.OpenBook.Domain.Bookmark.Domain.Bookmark;
+import Project.OpenBook.Domain.Bookmark.Repository.BookmarkRepository;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
@@ -40,6 +42,8 @@ public class JJHService {
 
     private final JJHContentRepository jjhContentRepository;
     private final JJHContentProgressRepository jjhContentProgressRepository;
+
+    private final BookmarkRepository bookmarkRepository;
 
     @Transactional(readOnly = true)
     public JJHListAdminQueryDto queryJJHAdmin() {
@@ -88,15 +92,64 @@ public class JJHService {
 
     @Transactional(readOnly = true)
     public List<JJHContentsTableQueryDto> queryJJHContentsTable(Customer customer, Integer jjhNumber) {
-        List<JJHContentsTableQueryDto> dtoList = new ArrayList<>();
+
+        JJHList jjhList = jjhListRepository.queryJJHList(jjhNumber).orElseThrow(() -> {
+            throw new CustomException(INVALID_PARAMETER);
+        });
 
         List<JJHContentProgress> jjhContentProgressList
                 = jjhContentProgressRepository.queryJJHContentProgressForCustomer(customer,jjhNumber);
 
+        /**
+         * 단원의 contents
+         */
+        if (jjhList.getChapter() != null) {
+           return makeContentsTableForChapter(customer, jjhContentProgressList, jjhList);
+        }
+        /**
+         * timeline의 contents
+         */
+        else if (jjhList.getTimeline() != null) {
+           return makeContentsTableForTimeline(customer, jjhContentProgressList, jjhList);
+        }else{
+            throw new CustomException(INVALID_PARAMETER);
+        }
+    }
+
+    private List<JJHContentsTableQueryDto> makeContentsTableForTimeline(Customer customer, List<JJHContentProgress> jjhContentProgressList, JJHList jjhList) {
+
+        List<JJHContentsTableQueryDto> dtoList = new ArrayList<>();
+        Boolean savedBookmark = false;
+
+        if(bookmarkRepository.findByCustomerAndTimeline(customer, jjhList.getTimeline()).isPresent()){
+            savedBookmark = true;
+        }
+        JJHContentProgress progress = jjhContentProgressList.get(0);
+        JJHContent jjhContent = progress.getJjhContent();
+        Timeline timeline = jjhContent.getTimeline();
+        String title = timeline.getTitle();
+        String category = null;
+        String dateComment = null;
+
+        JJHContentsTableQueryDto dto = new JJHContentsTableQueryDto(savedBookmark,title, jjhContent.getContent().name(),
+                progress.getState().getName(), jjhContent.getNumber(),dateComment, category);
+        dtoList.add(dto);
+
+
+        return dtoList;
+    }
+
+    private List<JJHContentsTableQueryDto> makeContentsTableForChapter(Customer customer, List<JJHContentProgress> jjhContentProgressList, JJHList jjhList) {
+
+        List<JJHContentsTableQueryDto> dtoList = new ArrayList<>();
+
+        Map<Topic, Bookmark> bookmarkMap = bookmarkRepository.queryBookmarks(customer, jjhList.getChapter().getTopicList()).stream()
+                .collect(Collectors.toMap(b -> b.getTopic(), b -> b));
+
         for (JJHContentProgress progress : jjhContentProgressList) {
+            Boolean savedBookmark = false;
             JJHContent jjhContent = progress.getJjhContent();
             Chapter chapter = jjhContent.getChapter();
-            Timeline timeline = jjhContent.getTimeline();
             Topic topic = jjhContent.getTopic();
             String title = "";
             String category = null;
@@ -104,18 +157,21 @@ public class JJHService {
             if (chapter != null) {
                 title = chapter.getTitle();
                 dateComment = chapter.getDateComment();
-            } else if (timeline != null) {
-                title = timeline.getTitle();
-            } else if (topic != null) {
+            }  else if (topic != null) {
                 title = topic.getTitle();
                 category = topic.getQuestionCategory().getCategory().getName();
                 dateComment = topic.getDateComment();
+                Bookmark bookmark = bookmarkMap.get(topic);
+                if (bookmark != null) {
+                    savedBookmark = true;
+                }
             }
 
-            JJHContentsTableQueryDto dto = new JJHContentsTableQueryDto(title, jjhContent.getContent().name(),
+
+
+            JJHContentsTableQueryDto dto = new JJHContentsTableQueryDto(savedBookmark,title, jjhContent.getContent().name(),
                     progress.getState().getName(), jjhContent.getNumber(),dateComment, category);
             dtoList.add(dto);
-
         }
         return dtoList;
     }

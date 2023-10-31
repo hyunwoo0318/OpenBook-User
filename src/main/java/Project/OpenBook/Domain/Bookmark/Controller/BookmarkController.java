@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.Bookmark.Controller;
 
+import Project.OpenBook.Domain.Bookmark.Dto.BookmarkDto;
 import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
-import Project.OpenBook.Domain.Bookmark.Domain.Bookmark;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,8 +27,8 @@ public class BookmarkController {
     })
     @PostMapping
     public ResponseEntity<Void> addBookmark(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
-                                      @RequestBody String topicTitle) {
-        Bookmark bookmark = bookmarkService.addBookmark(customer, topicTitle);
+                                            @RequestBody BookmarkDto dto) {
+        bookmarkService.addBookmark(customer, dto);
 
         return new ResponseEntity<Void>(HttpStatus.CREATED);
     }
@@ -40,8 +40,8 @@ public class BookmarkController {
     })
     @DeleteMapping
     public ResponseEntity<Void> deleteBookmark(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
-                                         @RequestBody String topicTitle) {
-        bookmarkService.deleteBookmark(customer, topicTitle);
+                                         @RequestBody BookmarkDto dto) {
+        bookmarkService.deleteBookmark(customer, dto);
 
         return new ResponseEntity<Void>(HttpStatus.OK);
     }

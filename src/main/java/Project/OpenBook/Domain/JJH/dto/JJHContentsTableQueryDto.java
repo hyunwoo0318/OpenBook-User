@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JJHContentsTableQueryDto {
+    private Boolean savedBookmark;
     private String title;
     private String content;
     private String state;
