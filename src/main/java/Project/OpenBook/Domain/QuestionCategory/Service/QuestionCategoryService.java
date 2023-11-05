@@ -11,7 +11,7 @@ import Project.OpenBook.Domain.QuestionCategory.Service.Dto.QuestionCategoryNumb
 import Project.OpenBook.Domain.QuestionCategory.Service.Dto.QuestionCategoryQueryAdminDto;
 import Project.OpenBook.Domain.QuestionCategory.Service.Dto.QuestionCategoryQueryCustomerDto;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
-import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -59,5 +59,13 @@ public class ExamQuestionRepositoryCustomImpl implements ExamQuestionRepositoryC
                 .fetch();
     }
 
-
+    @Override
+    public Optional<ExamQuestion> queryExamQuestion(Long examQuestionId) {
+        ExamQuestion findExamQuestion = queryFactory.selectFrom(examQuestion).distinct()
+                .leftJoin(examQuestion.description, description).fetchJoin()
+                .leftJoin(examQuestion.choiceList).fetchJoin()
+                .where(examQuestion.id.eq(examQuestionId))
+                .fetchOne();
+        return Optional.ofNullable(findExamQuestion);
+    }
 }

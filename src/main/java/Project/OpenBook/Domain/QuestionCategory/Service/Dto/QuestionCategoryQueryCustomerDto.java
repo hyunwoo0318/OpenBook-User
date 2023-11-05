@@ -1,7 +1,7 @@
 package Project.OpenBook.Domain.QuestionCategory.Service.Dto;
 
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
-import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -2,8 +2,6 @@ package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
-import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -47,26 +45,6 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
                         ))));
     }
 
-    @Override
-    public Map<Choice, List<ExamQuestionCommentDto>> queryChoiceKeywordsCustomer(List<Choice> choiceList) {
-        return queryFactory
-                .from(choiceKeyword)
-                .leftJoin(choiceKeyword.choice, choice)
-                .leftJoin(choiceKeyword.keyword, keyword)
-                .leftJoin(keyword.topic, topic)
-                .leftJoin(topic.chapter, chapter)
-                .where(choiceKeyword.choice.in(choiceList))
-                .distinct()
-                .transform(groupBy(choiceKeyword.choice)
-                        .as(list(Projections.constructor(
-                                ExamQuestionCommentDto.class,
-                                keyword.topic.dateComment.as("topicDateComment"),
-                                keyword.topic.title.as("topicTitle"),
-                                choiceKeyword.keyword.dateComment.as("keywordDateComment"),
-                                choiceKeyword.keyword.name.as("keywordName"),
-                                choiceKeyword.keyword.comment.as("keywordComment")
-                        ))));
-    }
 
     @Override
     public List<ChoiceKeyword> queryChoiceKeywordsAdmin(String topicTitle) {
@@ -90,11 +68,14 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
     }
 
     @Override
-    public Map<Long, List<Keyword>> queryChoiceKeywordsForInit() {
-        return queryFactory.from(choiceKeyword)
-                .transform(groupBy(choiceKeyword.choice.examQuestion.id)
-                        .as(list(
-                                choiceKeyword.keyword
-                        )));
+    public List<ChoiceKeyword> queryChoiceKeywordsForExamQuestion(Long examQuestionId) {
+        return queryFactory.selectFrom(choiceKeyword)
+                .leftJoin(choiceKeyword.choice, choice).fetchJoin()
+                .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .where(choice.examQuestion.id.eq(examQuestionId))
+                .fetch();
     }
+
+
 }

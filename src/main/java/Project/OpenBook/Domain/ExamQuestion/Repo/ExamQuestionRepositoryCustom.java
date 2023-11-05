@@ -15,5 +15,7 @@ public interface ExamQuestionRepositoryCustom {
 
     public List<ExamQuestion> queryExamQuestionsForExamQuestionList(Integer roundNumber);
 
+    public Optional<ExamQuestion> queryExamQuestion(Long examQuestionId);
+
 
 }

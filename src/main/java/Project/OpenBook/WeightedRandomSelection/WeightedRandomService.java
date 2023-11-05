@@ -1,10 +1,10 @@
-package Project.OpenBook.Domain.WeightedRandomSelection;
+package Project.OpenBook.WeightedRandomSelection;
 
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.Domain.WeightedRandomSelection.Model.AnswerKeywordSelectModel;
-import Project.OpenBook.Domain.WeightedRandomSelection.Model.TopicSelectModel;
-import Project.OpenBook.Domain.WeightedRandomSelection.Model.WrongKeywordSelectModel;
+import Project.OpenBook.WeightedRandomSelection.Model.AnswerKeywordSelectModel;
+import Project.OpenBook.WeightedRandomSelection.Model.TopicSelectModel;
+import Project.OpenBook.WeightedRandomSelection.Model.WrongKeywordSelectModel;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

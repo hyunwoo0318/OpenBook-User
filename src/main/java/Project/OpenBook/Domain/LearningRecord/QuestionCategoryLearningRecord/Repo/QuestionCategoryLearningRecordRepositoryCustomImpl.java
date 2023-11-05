@@ -1,15 +1,15 @@
-package Project.OpenBook.Domain.QuestionCategoryLearningRecord.Repo;
+package Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Repo;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QQuestionCategoryLearningRecord.questionCategoryLearningRecord;
 import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
-import static Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QQuestionCategoryLearningRecord.questionCategoryLearningRecord;
 
 @Repository
 @RequiredArgsConstructor

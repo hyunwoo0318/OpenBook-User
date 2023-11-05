@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.WeightedRandomSelection;
+package Project.OpenBook.WeightedRandomSelection;
 
 import java.util.ArrayList;
 import java.util.List;

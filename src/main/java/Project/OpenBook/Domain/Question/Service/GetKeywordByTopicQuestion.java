@@ -10,10 +10,10 @@ import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
-import Project.OpenBook.Domain.WeightedRandomSelection.Model.AnswerKeywordSelectModel;
-import Project.OpenBook.Domain.WeightedRandomSelection.Model.TopicSelectModel;
-import Project.OpenBook.Domain.WeightedRandomSelection.WeightedRandomService;
-import Project.OpenBook.Domain.WeightedRandomSelection.Model.WrongKeywordSelectModel;
+import Project.OpenBook.WeightedRandomSelection.Model.AnswerKeywordSelectModel;
+import Project.OpenBook.WeightedRandomSelection.Model.TopicSelectModel;
+import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
+import Project.OpenBook.WeightedRandomSelection.Model.WrongKeywordSelectModel;
 
 import java.util.*;
 

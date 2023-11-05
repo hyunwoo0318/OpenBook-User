@@ -1,10 +1,16 @@
 package Project.OpenBook.Domain.StudyHistory.Service;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
+import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
@@ -12,10 +18,9 @@ import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Repo.Timeli
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
-import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
-import Project.OpenBook.Domain.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
+import Project.OpenBook.Domain.StudyHistory.Service.Dto.ExamQuestionRecordDto;
 import Project.OpenBook.Domain.StudyHistory.Service.Dto.ExamQuestionScoreDto;
 import Project.OpenBook.Domain.StudyHistory.Service.Dto.WrongCountAddDto;
 import Project.OpenBook.Domain.Timeline.Domain.Timeline;
@@ -43,10 +48,12 @@ public class StudyHistoryService {
     private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
     private final TimelineLearningRecordRepository timelineLearningRecordRepository;
     private final RoundLearningRecordRepository roundLearningRecordRepository;
+    private final ExamQuestionLearningRecordRepository examQuestionLearningRecordRepository;
 
     private final KeywordRepository keywordRepository;
     private final TimelineRepository timelineRepository;
     private final RoundRepository roundRepository;
+    private final ExamQuestionRepository examQuestionRepository;
 
 
     @Transactional
@@ -162,5 +169,42 @@ public class StudyHistoryService {
         });
 
         record.updateScore(score);
+    }
+
+    @Transactional
+    public void saveQuestionWrongCount(Customer customer, List<ExamQuestionRecordDto> dtoList) {
+        List<Long> examQuestionIdList = dtoList.stream()
+                .map(dto -> dto.getId())
+                .collect(Collectors.toList());
+        Map<Long, ExamQuestionLearningRecord> recordMap = examQuestionLearningRecordRepository.queryExamQuestionLearningRecords(customer, examQuestionIdList).stream()
+                .collect(Collectors.toMap(record -> record.getExamQuestion().getId(), record -> record));
+
+        for (ExamQuestionRecordDto dto : dtoList) {
+            Long examQuestionId = dto.getId();
+            Integer checkedChoiceKey = dto.getCheckedChoiceKey();
+            Integer score = dto.getScore();
+
+            ExamQuestionLearningRecord findRecord = recordMap.get(examQuestionId);
+            if (findRecord == null) {
+                ExamQuestion examQuestion = examQuestionRepository.findById(examQuestionId).orElseThrow(() -> {
+                    throw new CustomException(QUESTION_NOT_FOUND);
+                });
+                findRecord = new ExamQuestionLearningRecord(customer, examQuestion);
+                examQuestionLearningRecordRepository.save(findRecord);
+            }
+
+            findRecord.updateInfo(checkedChoiceKey, score);
+
+            //틀린경우
+            if (score == 0) {
+                if (findRecord.getFirstSolve() && !findRecord.getAnswerNoted()) {
+                    findRecord.updateAnswerNoted(true);
+                }
+            }
+
+
+        }
+
+
     }
 }

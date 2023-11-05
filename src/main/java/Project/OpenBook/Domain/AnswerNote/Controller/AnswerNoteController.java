@@ -1,6 +1,6 @@
 package Project.OpenBook.Domain.AnswerNote.Controller;
 
-import Project.OpenBook.Domain.AnswerNote.Dto.AnswerNoteDto;
+import Project.OpenBook.Domain.AnswerNote.Service.Dto.AnswerNoteDto;
 import Project.OpenBook.Domain.AnswerNote.Service.AnswerNoteService;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,7 +25,7 @@ public class AnswerNoteController {
             @ApiResponse(responseCode = "201", description = "오답노트 추가 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 문제 아이디 입력")
     })
-    @PostMapping
+    @PatchMapping
     public ResponseEntity addAnswerNote(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                         @Validated @RequestBody AnswerNoteDto answerNoteDto) {
         answerNoteService.addAnswerNote(customer, answerNoteDto);

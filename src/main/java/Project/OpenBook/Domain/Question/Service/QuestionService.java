@@ -21,7 +21,7 @@ import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
-import Project.OpenBook.Domain.WeightedRandomSelection.WeightedRandomService;
+import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
 import Project.OpenBook.Handler.Exception.CustomException;
 import org.springframework.stereotype.Service;
 

@@ -25,11 +25,14 @@ public class TopicLearningRecord {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
+    private Boolean isBookmarked = false;
+
     private Integer answerCount = 0;
 
     private Integer wrongCount = 0;
 
     public TopicLearningRecord(Topic topic, Customer customer) {
+        this.isBookmarked = false;
         this.topic = topic;
         this.customer = customer;
         answerCount = 0;
@@ -37,6 +40,7 @@ public class TopicLearningRecord {
     }
 
     public TopicLearningRecord(Topic topic, Customer customer, Integer answerCount, Integer wrongCount) {
+        this.isBookmarked = false;
         this.topic = topic;
         this.customer = customer;
         this.answerCount = answerCount;
@@ -47,5 +51,9 @@ public class TopicLearningRecord {
         this.answerCount += answerCount;
         this.wrongCount += wrongCount;
         return this;
+    }
+
+    public void updateBookmark(Boolean isBookmarked) {
+        this.isBookmarked = isBookmarked;
     }
 }

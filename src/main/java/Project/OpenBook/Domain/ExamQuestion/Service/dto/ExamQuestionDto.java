@@ -20,6 +20,5 @@ public class ExamQuestionDto {
     private String choiceType;
     private Integer score;
     private List<QuestionChoiceDto> choiceList;
-
-
+    private Integer checkedChoiceKey;
 }

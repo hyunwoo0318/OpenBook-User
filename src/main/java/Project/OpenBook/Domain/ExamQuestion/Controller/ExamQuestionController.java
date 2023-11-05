@@ -36,6 +36,14 @@ public class ExamQuestionController {
         return new ResponseEntity<List<ExamQuestionDto>>(dtoList, HttpStatus.OK);
     }
 
+    @Operation(summary = "특정 문제 조회")
+    @GetMapping("/questions/{id}")
+    public ResponseEntity<ExamQuestionDto> getRoundQuestion(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+                                                                   @PathVariable("id") Long examQuestionId) {
+        ExamQuestionDto questionDto = examQuestionService.getQuestion(customer, examQuestionId);
+        return new ResponseEntity<ExamQuestionDto>(questionDto, HttpStatus.OK);
+    }
+
     @Operation(summary = "모의고사 문제 정보 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),

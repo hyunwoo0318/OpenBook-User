@@ -32,8 +32,8 @@ public class KeywordLearningRecord {
     public KeywordLearningRecord(Keyword keyword, Customer customer) {
         this.keyword = keyword;
         this.customer = customer;
-        answerCount = 0;
-        wrongCount = 0;
+        this.answerCount = 0;
+        this.wrongCount = 0;
     }
 
     public KeywordLearningRecord(Keyword keyword, Customer customer, Integer answerCount, Integer wrongCount) {

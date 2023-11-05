@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.StudyHistory.Controller;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
+import Project.OpenBook.Domain.StudyHistory.Service.Dto.ExamQuestionRecordDto;
 import Project.OpenBook.Domain.StudyHistory.Service.Dto.ExamQuestionScoreDto;
 import Project.OpenBook.Domain.StudyHistory.Service.Dto.WrongCountAddDto;
 import Project.OpenBook.Domain.StudyHistory.Service.StudyHistoryService;
@@ -53,6 +54,14 @@ public class StudyHistoryController {
     public ResponseEntity<Void> saveRoundWrongCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                                            @Validated @RequestBody ExamQuestionScoreDto dto) {
         studyHistoryService.saveRoundWrongCount(customer, dto);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "모의고사 문제별 정보 저장")
+    @PatchMapping("/questions/record")
+    public ResponseEntity<Void> saveQuestionWrongCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+                                                       @Validated @RequestBody List<ExamQuestionRecordDto> dtoList) {
+        studyHistoryService.saveQuestionWrongCount(customer, dtoList);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
