@@ -37,6 +37,7 @@ public class TopicLearningRecordRepositoryCustomImpl implements TopicLearningRec
                 .leftJoin(topicLearningRecord.topic, topic).fetchJoin()
                 .leftJoin(topic.chapter, chapter).fetchJoin()
                 .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(topic.topicPrimaryDateList).fetchJoin()
                 .leftJoin(questionCategory.category,category).fetchJoin()
                 .leftJoin(questionCategory.era,era).fetchJoin()
                 .where(topicLearningRecord.isBookmarked.isTrue())

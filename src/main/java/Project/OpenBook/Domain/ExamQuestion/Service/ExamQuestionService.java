@@ -78,7 +78,7 @@ public class ExamQuestionService {
 
         for (ExamQuestion question : examQuestionList) {
             //보기 -> 보기 키워드 구성
-            Description description = question.getDescription();
+            Description description = question.getDescriptionList().get(0);
             List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordMap.get(description);
             List<ExamQuestionCommentDto> descriptionCommentList = new ArrayList<>();
             if (descriptionKeywordList != null) {
@@ -127,7 +127,7 @@ public class ExamQuestionService {
         });
 
         //보기 - 키워드
-        Description description = question.getDescription();
+        Description description = question.getDescriptionList().get(0);
         List<ExamQuestionCommentDto> descriptionCommentList = makeDescriptionCommentList(descriptionKeywordList);
 
         //선지 - 키워드
@@ -274,7 +274,7 @@ public class ExamQuestionService {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
 
-        Description description = examQuestion.getDescription();
+        Description description = examQuestion.getDescriptionList().get(0);
         descriptionRepository.delete(description);
 
         List<Choice> choiceList = examQuestion.getChoiceList();

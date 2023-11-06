@@ -55,8 +55,7 @@ public class TopicSimpleQueryService {
     public List<TopicListQueryDto> queryChapterTopicsCustomer(int chapterNum) {
         List<Topic> topicList = topicRepository.queryTopicsWithCategory(chapterNum);
 
-
-        return getTopicListQueryDtoList(topicList, chapterNum);
+        return getTopicListQueryDtoList(topicList, makeMapSet(chapterNum));
     }
 
 
@@ -113,21 +112,24 @@ public class TopicSimpleQueryService {
         List<TopicLearningRecord> recordList = topicLearningRecordRepository.queryTopicLearningRecordsBookmarked(customer);
         Map<Chapter, List<TopicLearningRecord>> chapterTopicRecordMap = recordList.stream()
                 .collect(Collectors.groupingBy(r -> r.getTopic().getChapter()));
+        List<Topic> totalTopicList = recordList.stream()
+                .map(TopicLearningRecord::getTopic)
+                .collect(Collectors.toList());
+        MapSet mapSet = makeMapSet(totalTopicList);
 
         for (Chapter chapter : chapterTopicRecordMap.keySet()) {
             List<Topic> topicList = chapterTopicRecordMap.get(chapter).stream()
                     .map(TopicLearningRecord::getTopic)
                     .collect(Collectors.toList());
 
-            List<TopicListQueryDto> topicDtoList = getTopicListQueryDtoList(topicList);
+            List<TopicListQueryDto> topicDtoList = getTopicListQueryDtoList(topicList,mapSet);
             BookmarkedTopicQueryDto dto = new BookmarkedTopicQueryDto(chapter.getTitle(), topicDtoList);
             dtoList.add(dto);
         }
         return dtoList;
     }
 
-    private List<TopicListQueryDto> getTopicListQueryDtoList(List<Topic> topicList, int chapterNum) {
-        MapSet mapSet = makeMapSet(chapterNum);
+    private List<TopicListQueryDto> getTopicListQueryDtoList(List<Topic> topicList, MapSet mapSet) {
         Map<Keyword, List<DescriptionKeyword>> descriptionKeywordMap = mapSet.getDescriptionKeywordMap();
         Map<Keyword, List<ChoiceKeyword>> choiceKeywordMap = mapSet.getChoiceKeywordMap();
         Map<Topic, List<Keyword>> topicKeywordMap = mapSet.getTopicKeywordMap();
@@ -145,25 +147,7 @@ public class TopicSimpleQueryService {
         return topicDtoList;
     }
 
-    private List<TopicListQueryDto> getTopicListQueryDtoList(List<Topic> topicList) {
 
-        MapSet mapSet = makeMapSet(topicList);
-        Map<Keyword, List<DescriptionKeyword>> descriptionKeywordMap = mapSet.getDescriptionKeywordMap();
-        Map<Keyword, List<ChoiceKeyword>> choiceKeywordMap = mapSet.getChoiceKeywordMap();
-        Map<Topic, List<Keyword>> topicKeywordMap = mapSet.getTopicKeywordMap();
-
-        List<TopicListQueryDto> topicDtoList = new ArrayList<>();
-        for (Topic topic : topicList) {
-            List<Keyword> keywordList = topicKeywordMap.get(topic);
-            List<KeywordDto> keywordDtoList = new ArrayList<>();
-            if (keywordList != null) {
-                keywordDtoList = makeKeywordDtoList(keywordList, descriptionKeywordMap, choiceKeywordMap);
-            }
-            TopicListQueryDto dto = new TopicListQueryDto(topic, keywordDtoList);
-            topicDtoList.add(dto);
-        }
-        return topicDtoList;
-    }
 
     private List<KeywordDto> makeKeywordDtoList(List<Keyword> keywordList, Map<Keyword, List<DescriptionKeyword>> descriptionKeywordMap,
                                                 Map<Keyword, List<ChoiceKeyword>> choiceKeywordMap) {
