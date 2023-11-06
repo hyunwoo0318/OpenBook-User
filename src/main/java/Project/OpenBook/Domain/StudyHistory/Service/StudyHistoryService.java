@@ -42,7 +42,6 @@ import static Project.OpenBook.Constants.ErrorCode.*;
 @Service
 @RequiredArgsConstructor
 public class StudyHistoryService {
-
     private final KeywordLearningRecordRepository keywordLearningRecordRepository;
     private final TopicLearningRecordRepository topicLearningRecordRepository;
     private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;

@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Keyword.Repository;
 
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,8 @@ public interface KeywordRepositoryCustom {
     public List<Keyword> queryWrongKeywords(String answerTopicTitle);
 
     public List<Keyword> queryKeywordsInTopicWithPrimaryDate(String topicTitle);
+    public List<Keyword> queryKeywordsInTopicWithPrimaryDate(Integer chapterNum);
+    public List<Keyword> queryKeywordsInTopicWithPrimaryDate(List<Topic> topicList);
 
     public List<Keyword> queryKeywordsWithChapter();
 

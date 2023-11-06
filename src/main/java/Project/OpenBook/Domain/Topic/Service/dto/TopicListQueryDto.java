@@ -1,7 +1,9 @@
 package Project.OpenBook.Domain.Topic.Service.dto;
 
 import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -10,15 +12,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
-public class TopicWithKeywordDto {
-
+public class TopicListQueryDto {
+    private String title;
+    private String dateComment;
     private String category;
+    private String era;
     private List<PrimaryDateDto> extraDateList;
     private List<KeywordDto> keywordList;
 
-    public TopicWithKeywordDto(Topic topic, List<KeywordDto> keywordList) {
-        this.category = topic.getQuestionCategory().getCategory().getName();
+    public TopicListQueryDto(Topic topic, List<KeywordDto> keywordList) {
+        QuestionCategory questionCategory = topic.getQuestionCategory();
+        this.title = topic.getTitle();
+        this.dateComment = topic.getDateComment();
+        this.category = questionCategory.getCategory().getName();
+        this.era = questionCategory.getEra().getName();
         this.extraDateList = topic.getTopicPrimaryDateList().stream()
                 .map(pd -> new PrimaryDateDto(pd.getExtraDate(), pd.getExtraDateComment()))
                 .sorted(Comparator.comparing(PrimaryDateDto::getExtraDate))

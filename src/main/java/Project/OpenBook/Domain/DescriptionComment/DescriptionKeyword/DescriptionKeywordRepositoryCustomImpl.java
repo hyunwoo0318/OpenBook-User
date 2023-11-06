@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword;
 
 import Project.OpenBook.Domain.Description.Domain.Description;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -21,7 +22,7 @@ public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywor
 
     private final JPAQueryFactory queryFactory;
     @Override
-    public List<DescriptionKeyword> queryDescriptionKeywordsAdmin(Description description) {
+    public List<DescriptionKeyword> queryDescriptionKeywordsForTopicList(Description description) {
         return queryFactory.selectFrom(descriptionKeyword)
                 .leftJoin(descriptionKeyword.keyword, keyword).fetchJoin()
                 .leftJoin(keyword.topic, topic).fetchJoin()
@@ -41,7 +42,7 @@ public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywor
     }
 
     @Override
-    public List<DescriptionKeyword> queryDescriptionKeywordsAdmin(String topicTitle) {
+    public List<DescriptionKeyword> queryDescriptionKeywordsForTopicList(String topicTitle) {
         return queryFactory.selectFrom(descriptionKeyword)
                 .leftJoin(descriptionKeyword.keyword,keyword).fetchJoin()
                 .leftJoin(descriptionKeyword.description, description).fetchJoin()
@@ -51,6 +52,27 @@ public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywor
                 .fetch();
     }
 
+    @Override
+    public List<DescriptionKeyword> queryDescriptionKeywordsForTopicList(Integer chapterNum) {
+        return queryFactory.selectFrom(descriptionKeyword)
+                .leftJoin(descriptionKeyword.keyword,keyword).fetchJoin()
+                .leftJoin(descriptionKeyword.description, description).fetchJoin()
+                .leftJoin(description.examQuestion, examQuestion).fetchJoin()
+                .leftJoin(examQuestion.round, round).fetchJoin()
+                .where(keyword.topic.chapter.number.eq(chapterNum))
+                .fetch();
+    }
+
+    @Override
+    public List<DescriptionKeyword> queryDescriptionKeywordsForTopicList(List<Topic> topicList) {
+        return queryFactory.selectFrom(descriptionKeyword)
+                .leftJoin(descriptionKeyword.keyword,keyword).fetchJoin()
+                .leftJoin(descriptionKeyword.description, description).fetchJoin()
+                .leftJoin(description.examQuestion, examQuestion).fetchJoin()
+                .leftJoin(examQuestion.round, round).fetchJoin()
+                .where(keyword.topic.in(topicList))
+                .fetch();
+    }
 
     @Override
     public List<DescriptionKeyword> queryDescriptionKeywords(Long examQuestionId) {

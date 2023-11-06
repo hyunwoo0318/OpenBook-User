@@ -23,4 +23,5 @@ public interface  TopicRepositoryCustom {
     public List<Topic> queryTopicsInQuestionCategory(Long questionCategoryId);
 
 
+    public List<Topic> queryTopicsWithCategory(int num);
 }

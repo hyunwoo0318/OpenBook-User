@@ -9,13 +9,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChapterTopicUserDto {
+public class ChapterTopicCustomerDto {
     private String title;
     private String category;
     private String dateComment;
     private String era;
 
-    public ChapterTopicUserDto(Topic topic) {
+    public ChapterTopicCustomerDto(Topic topic) {
         QuestionCategory questionCategory = topic.getQuestionCategory();
         this.title = topic.getTitle();
         this.dateComment = topic.getDateComment();

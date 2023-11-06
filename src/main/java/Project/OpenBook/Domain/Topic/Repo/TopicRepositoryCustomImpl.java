@@ -73,7 +73,8 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
         Topic findTopic = queryFactory.selectFrom(topic)
                 .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
                 .leftJoin(questionCategory.category, category).fetchJoin()
-                .leftJoin(topic.keywordList).fetchJoin()
+                .leftJoin(questionCategory.era,era).fetchJoin()
+                .leftJoin(topic.topicPrimaryDateList).fetchJoin()
                 .where(topic.title.eq(topicTitle))
                 .fetchOne();
         return Optional.ofNullable(findTopic);
@@ -92,6 +93,17 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
                 .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
                 .leftJoin(questionCategory.category, category).fetchJoin()
                 .where(topic.questionCategory.id.eq(questionCategoryId))
+                .fetch();
+    }
+
+    @Override
+    public List<Topic> queryTopicsWithCategory(int num) {
+        return queryFactory.selectFrom(topic)
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.category, category).fetchJoin()
+                .leftJoin(questionCategory.era, era).fetchJoin()
+                .leftJoin(topic.topicPrimaryDateList).fetchJoin()
+                .where(topic.chapter.number.eq(num))
                 .fetch();
     }
 }

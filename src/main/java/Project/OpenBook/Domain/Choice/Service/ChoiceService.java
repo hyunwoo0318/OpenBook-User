@@ -164,7 +164,7 @@ public class ChoiceService {
         });
 
         List<Choice> choiceList = examQuestion.getChoiceList();
-        Map<Choice, List<ChoiceCommentInfoDto>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsAdmin(choiceList);
+        Map<Choice, List<ChoiceCommentInfoDto>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsForAdmin(choiceList);
 
         for (Choice choice : choiceList) {
             List<ChoiceCommentInfoDto> commentList = new ArrayList<>();

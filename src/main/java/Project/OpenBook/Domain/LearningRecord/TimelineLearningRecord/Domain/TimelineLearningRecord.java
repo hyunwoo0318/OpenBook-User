@@ -26,14 +26,11 @@ public class TimelineLearningRecord {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    private Boolean isBookmarked = false;
-
     private Integer answerCount = 0;
 
     private Integer wrongCount = 0;
 
     public TimelineLearningRecord(Timeline timeline, Customer customer) {
-        this.isBookmarked = false;
         this.timeline = timeline;
         this.customer = customer;
         this.answerCount = 0;
@@ -41,7 +38,6 @@ public class TimelineLearningRecord {
     }
 
     public TimelineLearningRecord(Timeline timeline, Customer customer, Integer answerCount, Integer wrongCount) {
-        this.isBookmarked = false;
         this.timeline = timeline;
         this.customer = customer;
         this.answerCount = answerCount;
@@ -54,7 +50,4 @@ public class TimelineLearningRecord {
         return this;
     }
 
-    public void updateBookmark(Boolean isBookmarked) {
-        this.isBookmarked = isBookmarked;
-    }
 }

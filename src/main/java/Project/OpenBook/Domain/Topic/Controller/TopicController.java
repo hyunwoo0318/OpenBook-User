@@ -1,17 +1,19 @@
 package Project.OpenBook.Domain.Topic.Controller;
 
-import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicUserDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
+import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
 import Project.OpenBook.Domain.Topic.Service.TopicService;
 import Project.OpenBook.Domain.Topic.Service.TopicSimpleQueryService;
 import Project.OpenBook.Domain.Topic.Service.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -62,10 +64,10 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
     })
     @GetMapping("/chapters/{num}/topics")
-    public ResponseEntity<List<ChapterTopicUserDto>> queryChapterTopicsCustomer(@PathVariable("num") int num){
-        List<ChapterTopicUserDto> dtoList = topicSimpleQueryService.queryChapterTopicsCustomer(num);
+    public ResponseEntity<List<TopicListQueryDto>> queryChapterTopicsCustomer(@PathVariable("num") int num){
+        List<TopicListQueryDto> dtoList = topicSimpleQueryService.queryChapterTopicsCustomer(num);
 
-        return new ResponseEntity<List<ChapterTopicUserDto>>(dtoList, HttpStatus.OK);
+        return new ResponseEntity<List<TopicListQueryDto>>(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "특정 question-category 내의 모든 topic조회")
@@ -85,6 +87,18 @@ public class TopicController {
         List<KeywordDto> dtoList = topicSimpleQueryService.queryTopicKeywords(topicTitle);
 
         return new ResponseEntity<List<KeywordDto>>(dtoList, HttpStatus.OK);
+    }
+
+    @Operation(summary = "북마크한 토픽 전체 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "특정 토픽의 전체 키워드 조회 성공"),
+            @ApiResponse(responseCode = "404", description = "존재하지 않는 토픽 제목 입력")
+    })
+    @GetMapping("/topics/bookmarked")
+    public ResponseEntity<List<BookmarkedTopicQueryDto>> queryBookmarkedTopics(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
+        List<BookmarkedTopicQueryDto> dtoList = topicSimpleQueryService.queryBookmarkedTopics(customer);
+
+        return new ResponseEntity<List<BookmarkedTopicQueryDto>>(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "새로운 상세정보 입력")

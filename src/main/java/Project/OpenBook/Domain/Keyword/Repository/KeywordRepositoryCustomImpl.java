@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Keyword.Repository;
 
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -77,8 +78,29 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
     public List<Keyword> queryKeywordsInTopicWithPrimaryDate(String topicTitle) {
         return queryFactory.select(keyword).distinct()
                 .from(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
                 .leftJoin(keyword.keywordPrimaryDateList).fetchJoin()
                 .where(keyword.topic.title.eq(topicTitle))
+                .fetch();
+    }
+
+    @Override
+    public List<Keyword> queryKeywordsInTopicWithPrimaryDate(Integer chapterNum) {
+        return queryFactory.select(keyword).distinct()
+                .from(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .leftJoin(keyword.keywordPrimaryDateList).fetchJoin()
+                .where(keyword.topic.chapter.number.eq(chapterNum))
+                .fetch();
+    }
+
+    @Override
+    public List<Keyword> queryKeywordsInTopicWithPrimaryDate(List<Topic> topicList) {
+        return queryFactory.select(keyword).distinct()
+                .from(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .leftJoin(keyword.keywordPrimaryDateList).fetchJoin()
+                .where(keyword.topic.in(topicList))
                 .fetch();
     }
 

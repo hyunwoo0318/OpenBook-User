@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywordsAdmin(List<Choice> choiceList) {
+    public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywordsForAdmin(List<Choice> choiceList) {
         return queryFactory
                 .from(choiceKeyword)
                 .leftJoin(choiceKeyword.choice, choice)
@@ -47,13 +48,24 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
 
 
     @Override
-    public List<ChoiceKeyword> queryChoiceKeywordsAdmin(String topicTitle) {
+    public List<ChoiceKeyword> queryChoiceKeywordsForTopicList(String topicTitle) {
         return queryFactory.selectFrom(choiceKeyword)
                 .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
                 .leftJoin(choiceKeyword.choice, choice).fetchJoin()
                 .leftJoin(choice.examQuestion, examQuestion).fetchJoin()
                 .leftJoin(examQuestion.round, round).fetchJoin()
                 .where(choiceKeyword.keyword.topic.title.eq(topicTitle))
+                .fetch();
+    }
+
+    @Override
+    public List<ChoiceKeyword> queryChoiceKeywordsForTopicList(Integer chapterNumber) {
+        return queryFactory.selectFrom(choiceKeyword)
+                .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
+                .leftJoin(choiceKeyword.choice, choice).fetchJoin()
+                .leftJoin(choice.examQuestion, examQuestion).fetchJoin()
+                .leftJoin(examQuestion.round, round).fetchJoin()
+                .where(keyword.topic.chapter.number.eq(chapterNumber))
                 .fetch();
     }
 
@@ -65,6 +77,17 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
                 .leftJoin(keyword.topic, topic).fetchJoin()
                 .where(choice.examQuestion.round.number.eq(roundNumber))
                  .fetch();
+    }
+
+    @Override
+    public List<ChoiceKeyword> queryChoiceKeywordsForTopicList(List<Topic> topicList) {
+        return queryFactory.selectFrom(choiceKeyword)
+                .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
+                .leftJoin(choiceKeyword.choice, choice).fetchJoin()
+                .leftJoin(choice.examQuestion, examQuestion).fetchJoin()
+                .leftJoin(examQuestion.round, round).fetchJoin()
+                .where(choiceKeyword.keyword.topic.in(topicList))
+                .fetch();
     }
 
     @Override

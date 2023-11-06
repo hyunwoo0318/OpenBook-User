@@ -12,6 +12,4 @@ import lombok.Setter;
 public class BookmarkDto {
 
     private String topicTitle;
-
-    private Long id;
 }

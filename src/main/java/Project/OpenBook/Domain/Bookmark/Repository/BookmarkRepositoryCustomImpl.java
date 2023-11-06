@@ -11,7 +11,12 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
-import static Project.OpenBook.Domain.Bookmark.Domain.QBookmark.*;
+import static Project.OpenBook.Domain.Bookmark.Domain.QBookmark.bookmark;
+import static Project.OpenBook.Domain.Category.Domain.QCategory.category;
+import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
+import static Project.OpenBook.Domain.Era.QEra.era;
+import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
+import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 
 @Repository
@@ -31,7 +36,13 @@ public class BookmarkRepositoryCustomImpl implements BookmarkRepositoryCustom{
 
     @Override
     public List<Bookmark> queryBookmarks(Long customerId) {
-        return queryFactory.selectFrom(bookmark)
+        return queryFactory.selectFrom(bookmark).distinct()
+                .leftJoin(bookmark.topic, topic).fetchJoin()
+                .leftJoin(topic.chapter, chapter).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.category, category).fetchJoin()
+                .leftJoin(questionCategory.era, era).fetchJoin()
+                .leftJoin(topic.keywordList).fetchJoin()
                 .where(bookmark.customer.id.eq(customerId))
                 .fetch();
     }

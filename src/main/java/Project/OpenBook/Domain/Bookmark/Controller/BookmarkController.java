@@ -25,7 +25,7 @@ public class BookmarkController {
             @ApiResponse(responseCode = "201", description = "북마크 추가 성공"),
             @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
-    @PostMapping
+    @PatchMapping
     public ResponseEntity<Void> addBookmark(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                             @RequestBody BookmarkDto dto) {
         bookmarkService.addBookmark(customer, dto);
