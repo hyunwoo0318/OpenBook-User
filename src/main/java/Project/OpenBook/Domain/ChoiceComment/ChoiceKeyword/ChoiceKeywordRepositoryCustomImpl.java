@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
+import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -77,6 +78,16 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
                 .leftJoin(keyword.topic, topic).fetchJoin()
                 .where(choice.examQuestion.round.number.eq(roundNumber))
                  .fetch();
+    }
+
+    @Override
+    public List<ChoiceKeyword> queryChoiceKeywordsForExamQuestion(List<ExamQuestion> questionList) {
+        return queryFactory.selectFrom(choiceKeyword)
+                .leftJoin(choiceKeyword.choice, choice).fetchJoin()
+                .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .where(choiceKeyword.choice.examQuestion.in(questionList))
+                .fetch();
     }
 
     @Override

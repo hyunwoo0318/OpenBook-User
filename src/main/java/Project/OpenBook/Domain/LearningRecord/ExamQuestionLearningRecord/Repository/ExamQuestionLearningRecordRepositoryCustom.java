@@ -11,6 +11,7 @@ public interface ExamQuestionLearningRecordRepositoryCustom {
 //    public Optional<AnswerNote> queryAnswerNote(Long customerId, Long questionId);
 //
     public List<ExamQuestionLearningRecord> queryExamQuestionLearningRecords(Integer roundNumber, Customer customer);
+    public List<ExamQuestionLearningRecord> queryExamQuestionLearningRecords(Customer customer);
 
     public List<ExamQuestionLearningRecord> queryExamQuestionLearningRecords(Customer customer, List<Long> examQuestionIdList);
 }

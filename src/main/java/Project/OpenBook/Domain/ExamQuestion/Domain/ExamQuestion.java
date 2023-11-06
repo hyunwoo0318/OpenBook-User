@@ -34,8 +34,8 @@ public class ExamQuestion extends BaseEntity {
     @OneToMany(mappedBy = "examQuestion",fetch = FetchType.LAZY)
     private List<Choice> choiceList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "examQuestion", fetch = FetchType.LAZY)
-    private List<Description> descriptionList = new ArrayList<>();
+    @OneToOne(mappedBy = "examQuestion", fetch = FetchType.LAZY)
+    private Description description;
 
     @Enumerated(EnumType.STRING)
     private ChoiceType choiceType;

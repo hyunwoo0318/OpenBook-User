@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
 import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.QExamQuestionLearningRecord.examQuestionLearningRecord;
+import static Project.OpenBook.Domain.Round.Domain.QRound.round;
 
 
 @Repository
@@ -28,6 +30,17 @@ public class ExamQuestionLearningRecordRepositoryCustomImpl implements ExamQuest
                 .fetch();
     }
 
+    @Override
+    public List<ExamQuestionLearningRecord> queryExamQuestionLearningRecords(Customer customer) {
+        return queryFactory.selectFrom(examQuestionLearningRecord).distinct()
+                .leftJoin(examQuestionLearningRecord.examQuestion, examQuestion).fetchJoin()
+                .leftJoin(examQuestion.round, round).fetchJoin()
+                .leftJoin(examQuestion.description, description).fetchJoin()
+                .leftJoin(examQuestion.choiceList).fetchJoin()
+                .where(examQuestionLearningRecord.customer.eq(customer))
+                .where(examQuestionLearningRecord.answerNoted.isTrue())
+                .fetch();
+    }
 
     @Override
     public List<ExamQuestionLearningRecord> queryExamQuestionLearningRecords(Customer customer, List<Long> examQuestionIdList) {

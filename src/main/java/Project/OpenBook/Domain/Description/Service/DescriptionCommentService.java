@@ -40,7 +40,7 @@ public class DescriptionCommentService {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
 
-        Description description = examQuestion.getDescriptionList().get(0);
+        Description description = examQuestion.getDescription();
 
         List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordRepository.queryDescriptionKeywordsForTopicList(description);
 

@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.ExamQuestion.Controller;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.ExamQuestion.Service.ExamQuestionService;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.AnswerNotedTopicQueryDto;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionInfoDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +36,14 @@ public class ExamQuestionController {
         List<ExamQuestionDto> dtoList = examQuestionService.getRoundQuestions(customer, roundNumber);
         return new ResponseEntity<List<ExamQuestionDto>>(dtoList, HttpStatus.OK);
     }
+
+    @Operation(summary = "오답 노트 내의 모든 문제 조회")
+    @GetMapping("/questions/answer-notes")
+    public ResponseEntity<List<AnswerNotedTopicQueryDto>> getAnswerNotedQuestions(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
+        List<AnswerNotedTopicQueryDto> dtoList = examQuestionService.getAnswerNotedQuestions(customer);
+        return new ResponseEntity<List<AnswerNotedTopicQueryDto>>(dtoList, HttpStatus.OK);
+    }
+
 
     @Operation(summary = "특정 문제 조회")
     @GetMapping("/questions/{id}")

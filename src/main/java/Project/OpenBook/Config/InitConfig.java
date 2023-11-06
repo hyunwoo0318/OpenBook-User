@@ -8,10 +8,12 @@ import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Era.EraRepository;
+import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociation;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
@@ -54,6 +56,9 @@ public class InitConfig {
 
     private final ChoiceKeywordRepository choiceKeywordRepository;
     private final DescriptionKeywordRepository descriptionKeywordRepository;
+
+    private final ExamQuestionLearningRecordRepository examQuestionLearningRecordRepository;
+    private final ExamQuestionRepository examQuestionRepository;
 
     private final CustomerRepository customerRepository;
     private final KeywordAssociationRepository keywordAssociationRepository;
@@ -225,6 +230,21 @@ public class InitConfig {
 
         return combinations;
     }
+
+
+//    @Bean
+//    public void initExamQuestionLearningRecord() {
+//        List<Customer> customerList = customerRepository.findAll();
+//        examQuestionLearningRecordRepository.deleteAllInBatch();
+//
+//        for (Customer customer : customerList) {
+//            List<ExamQuestionLearningRecord> recordList = examQuestionRepository.findAll().stream()
+//                    .map(r -> new ExamQuestionLearningRecord(customer, r))
+//                    .collect(Collectors.toList());
+//
+//            examQuestionLearningRecordRepository.saveAll(recordList);
+//        }
+//    }
 
     @AllArgsConstructor
     @EqualsAndHashCode

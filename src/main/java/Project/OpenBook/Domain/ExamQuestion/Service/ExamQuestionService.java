@@ -1,8 +1,6 @@
 package Project.OpenBook.Domain.ExamQuestion.Service;
 
 import Project.OpenBook.Constants.ChoiceType;
-import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
-import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
@@ -14,11 +12,10 @@ import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.Description
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ChoiceAddUpdateDto;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
-import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionInfoDto;
+import Project.OpenBook.Domain.ExamQuestion.Service.dto.*;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
 import Project.OpenBook.Domain.Question.Dto.QuestionChoiceDto;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
@@ -31,9 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -65,20 +60,80 @@ public class ExamQuestionService {
 
     @Transactional(readOnly = true)
     public List<ExamQuestionDto> getRoundQuestions(Customer customer, Integer roundNumber) {
-        List<ExamQuestionDto> examQuestionDtoList = new ArrayList<>();
         checkRound(roundNumber);
 
         List<ExamQuestion> examQuestionList = examQuestionRepository.queryExamQuestionsForExamQuestionList(roundNumber);
         Map<Description, List<DescriptionKeyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordForExamQuestion(roundNumber).stream()
-                .collect(Collectors.groupingBy(dk -> dk.getDescription()));
+                .collect(Collectors.groupingBy(DescriptionKeyword::getDescription));
         Map<Choice, List<ChoiceKeyword>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsForExamQuestion(roundNumber).stream()
-                .collect(Collectors.groupingBy(ck -> ck.getChoice()));
+                .collect(Collectors.groupingBy(ChoiceKeyword::getChoice));
         Map<ExamQuestion, ExamQuestionLearningRecord> answerNoteMap = examQuestionLearningRecordRepository.queryExamQuestionLearningRecords(roundNumber, customer).stream()
                 .collect(Collectors.toMap(ExamQuestionLearningRecord::getExamQuestion, an -> an));
 
+        return getExamQuestionDtoList(examQuestionList, descriptionKeywordMap, choiceKeywordMap, answerNoteMap);
+    }
+
+    private List<AnswerNotedTopicQueryDto> makeAnswerNotedTopicQueryDtoList(List<ExamQuestion> examQuestionList, Map<Description, List<DescriptionKeyword>> descriptionKeywordMap, Map<Choice, List<ChoiceKeyword>> choiceKeywordMap, Map<ExamQuestion, ExamQuestionLearningRecord> answerNoteMap) {
+        List<AnswerNotedTopicQueryDto> dtoList = new ArrayList<>();
+        Map<Integer, List<AnswerNotedQuestionInfoDto>> questionInfoListMap = new HashMap<>();
+
+        for (ExamQuestion question : examQuestionList) {
+            Integer roundNumber = question.getRound().getNumber();
+            Integer answerNumber = question.getAnswer();
+            //보기 -> 보기 키워드 구성
+            Description description = question.getDescription();
+            List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordMap.get(description);
+            List<ExamQuestionCommentDto> descriptionCommentList = new ArrayList<>();
+            if (descriptionKeywordList != null) {
+                descriptionCommentList = makeDescriptionCommentList(descriptionKeywordList);
+            }
+
+
+            //선지 -> 선지 키워드 구성
+            List<Choice> choiceList = question.getChoiceList();
+            List<ExamQuestionCommentListDto> correctCommentList = new ArrayList<>();
+            List<ExamQuestionCommentListDto> wrongCommentList = new ArrayList<>();
+            for (Choice choice : choiceList) {
+                List<ChoiceKeyword> choiceKeywordList = choiceKeywordMap.get(choice);
+                if (choiceKeywordList != null) {
+                    List<Keyword> keywordList = choiceKeywordList.stream()
+                            .map(ck -> ck.getKeyword())
+                            .collect(Collectors.toList());
+                    List<ExamQuestionCommentDto> commentList = makeCommentList(keywordList);
+                    ExamQuestionCommentListDto commentListDto = new ExamQuestionCommentListDto(commentList);
+                    if (answerNumber == choice.getNumber()) {
+                        correctCommentList.add(commentListDto);
+                    }else{
+                        wrongCommentList.add(commentListDto);
+                    }
+                }
+            }
+
+            //전체 ExamQuestionDto 구성
+            AnswerNotedQuestionInfoDto dto = new AnswerNotedQuestionInfoDto(question, descriptionCommentList, correctCommentList, wrongCommentList);
+            List<AnswerNotedQuestionInfoDto> questionInfoList = questionInfoListMap.get(roundNumber);
+            if (questionInfoList == null) {
+                questionInfoList = new ArrayList<>();
+            }
+
+            questionInfoList.add(dto);
+            questionInfoListMap.put(roundNumber, questionInfoList);
+
+        }
+
+        for (Integer roundNumber : questionInfoListMap.keySet()) {
+            dtoList.add(new AnswerNotedTopicQueryDto(roundNumber, questionInfoListMap.get(roundNumber)));
+        }
+        return  dtoList;
+    }
+
+
+    private List<ExamQuestionDto> getExamQuestionDtoList(List<ExamQuestion> examQuestionList, Map<Description, List<DescriptionKeyword>> descriptionKeywordMap, Map<Choice, List<ChoiceKeyword>> choiceKeywordMap, Map<ExamQuestion, ExamQuestionLearningRecord> answerNoteMap) {
+        List<ExamQuestionDto> examQuestionDtoList = new ArrayList<>();
+
         for (ExamQuestion question : examQuestionList) {
             //보기 -> 보기 키워드 구성
-            Description description = question.getDescriptionList().get(0);
+            Description description = question.getDescription();
             List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordMap.get(description);
             List<ExamQuestionCommentDto> descriptionCommentList = new ArrayList<>();
             if (descriptionKeywordList != null) {
@@ -108,9 +163,24 @@ public class ExamQuestionService {
                     questionChoiceDtoList, examQuestionLearningRecord.getCheckedNumber());
             examQuestionDtoList.add(examQuestionDto);
         }
+        return  examQuestionDtoList;
+    }
 
+    @Transactional(readOnly = true)
+    public List<AnswerNotedTopicQueryDto> getAnswerNotedQuestions(Customer customer) {
 
-        return examQuestionDtoList;
+        List<ExamQuestionLearningRecord> recordList = examQuestionLearningRecordRepository.queryExamQuestionLearningRecords(customer);
+        Map<ExamQuestion, ExamQuestionLearningRecord> answerNoteMap = recordList.stream()
+                .collect(Collectors.toMap(ExamQuestionLearningRecord::getExamQuestion, an -> an));
+        List<ExamQuestion> questionList = recordList.stream()
+                .map(ExamQuestionLearningRecord::getExamQuestion)
+                .collect(Collectors.toList());
+        Map<Description, List<DescriptionKeyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordForExamQuestion(questionList).stream()
+                .collect(Collectors.groupingBy(DescriptionKeyword::getDescription));
+        Map<Choice, List<ChoiceKeyword>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsForExamQuestion(questionList).stream()
+                .collect(Collectors.groupingBy(ChoiceKeyword::getChoice));
+
+        return makeAnswerNotedTopicQueryDtoList(questionList, descriptionKeywordMap, choiceKeywordMap, answerNoteMap);
     }
 
     public ExamQuestionDto getQuestion(Customer customer, Long examQuestionId) {
@@ -127,7 +197,7 @@ public class ExamQuestionService {
         });
 
         //보기 - 키워드
-        Description description = question.getDescriptionList().get(0);
+        Description description = question.getDescription();
         List<ExamQuestionCommentDto> descriptionCommentList = makeDescriptionCommentList(descriptionKeywordList);
 
         //선지 - 키워드
@@ -254,15 +324,6 @@ public class ExamQuestionService {
         }
         ExamQuestion updatedExamQuestion = examQuestion.updateExamQuestion(newQuestionNumber, examQuestionInfoDto.getScore(),examQuestionInfoDto.getAnswer() ,choiceType);
 
-//        //보기 변경
-//        Description description = examQuestion.getDescription();
-//        String descriptionUrl = examQuestionInfoDto.getDescription();
-//        if (!descriptionUrl.startsWith("https")) {
-//            imageService.checkBase64(descriptionUrl);
-//            descriptionUrl = imageService.storeFile(descriptionUrl);
-//        }
-//        description.updateContent(descriptionUrl, examQuestionInfoDto.getDescriptionComment());
-
         return updatedExamQuestion;
     }
 
@@ -274,7 +335,7 @@ public class ExamQuestionService {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
 
-        Description description = examQuestion.getDescriptionList().get(0);
+        Description description = examQuestion.getDescription();
         descriptionRepository.delete(description);
 
         List<Choice> choiceList = examQuestion.getChoiceList();
