@@ -31,6 +31,8 @@ public interface KeywordRepositoryCustom {
 
     public List<Keyword> queryWrongKeywords(List<String> keywordNameList, String answerTopicTitle);
 
+    public List<Keyword> queryKeywordsInTopic(String topicTitle);
+
     public List<Keyword> queryKeywordsInTopicWithPrimaryDate(String topicTitle);
     public List<Keyword> queryKeywordsInTopicWithPrimaryDate(Integer chapterNum);
     public List<Keyword> queryKeywordsInTopicWithPrimaryDate(List<Topic> topicList);
@@ -40,6 +42,8 @@ public interface KeywordRepositoryCustom {
     public List<Keyword> queryKeywordsForUpdateHistory(List<Long> keywordIdList);
 
     public List<Keyword> queryKeywordsInQuestionCategory(QuestionCategory questionCategory);
+
+//    public List<Keyword> queryTotalAnswerKeywordsInJJH(String pivTopicTitle);
 
     //public List<KeywordDto> queryKeywordDtoList(String topicTitle);
 }

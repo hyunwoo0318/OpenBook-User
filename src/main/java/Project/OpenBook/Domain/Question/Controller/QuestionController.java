@@ -40,8 +40,8 @@ public class QuestionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 주제 이름 입력")
     })
     @GetMapping("/questions/get-keywords")
-    public ResponseEntity<List<QuestionDto>> queryGetKeywordsQuestion(@RequestParam("title") String topicTitle, Integer questionCount) {
-        List<QuestionDto> questionDtoList = questionService.queryGetKeywordsQuestion(topicTitle, questionCount);
+    public ResponseEntity<List<QuestionDto>> queryGetKeywordsQuestion(@RequestParam("title") String topicTitle) {
+        List<QuestionDto> questionDtoList = questionService.queryGetKeywordsQuestion(topicTitle);
 
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }

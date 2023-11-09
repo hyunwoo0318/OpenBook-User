@@ -3,23 +3,15 @@ package Project.OpenBook.Domain.Question.Service;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
-import Project.OpenBook.Domain.Question.Dto.QuizChoiceDto;
-import Project.OpenBook.Domain.Question.Dto.QuizChoiceWithIdDto;
-import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
-import Project.OpenBook.WeightedRandomSelection.Model.TopicSelectModel;
-import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
 import Project.OpenBook.WeightedRandomSelection.Model.KeywordSelectModel;
-import Project.OpenBook.Handler.Exception.CustomException;
+import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
 
 
 @Component
@@ -30,9 +22,7 @@ public class BaseQuestionComponentFactory {
     private final KeywordRepository keywordRepository;
     private final WeightedRandomService weightedRandomService;
 
-    public List<Keyword> getKeywordsByAnswerTopic(String topicTitle, int limit) {
-        return keywordRepository.queryKeywordsInTopicWithLimit(topicTitle, limit);
-    }
+
 
     /**
      * 해당 토픽을 제외한 Q.C가 같은 모든 키워드 리턴
@@ -54,33 +44,37 @@ public class BaseQuestionComponentFactory {
         return weightedRandomService.selectWrongKeywords(modelList, limit);
     }
 
-    public List<Keyword> getKeywordInQuestionCategory(QuestionCategory questionCategory) {
-        return keywordRepository.queryKeywordsInQuestionCategory(questionCategory);
+
+    public List<Topic> getWrongTopic(List<Topic> wrongTopicList, int limit) {
+        List<Topic> topicList = new ArrayList<>();
+        Set<Integer> randomIndexSet = getRandomIndex(limit, wrongTopicList.size());
+        for (Integer i : randomIndexSet) {
+            topicList.add(wrongTopicList.get(i));
+        }
+        return topicList;
     }
 
 
-
-    public List<QuizChoiceDto> getWrongKeywordsByTopic(String topicTitle, int limit) {
-        return keywordRepository.queryWrongKeywords(topicTitle, limit).stream()
-                .map(k -> new QuizChoiceDto(k.getName(), k.getTopic().getTitle()))
+    public Keyword selectAnotherKeyword(Topic answerTopic, Keyword answerKeyword, List<Keyword> totalKeywordList) {
+        Keyword anotherAnswerKeyword = null;
+        List<Keyword> keywordList = totalKeywordList.stream()
+                .filter(k -> {
+                    if (k.getTopic() == answerTopic && k != answerKeyword) return true;
+                    else return false;
+                })
                 .collect(Collectors.toList());
-    }
+        if(keywordList.isEmpty()) return anotherAnswerKeyword;
+        Set<Integer> randomIndexSet = getRandomIndex(1, keywordList.size());
 
-
-    public List<Topic> getWrongTopic(Topic answerTopic, int limit) {
-        return topicRepository.queryWrongTopic(answerTopic,limit);
-    }
-
-    public List<QuizChoiceWithIdDto> toQuestionChoiceDtoByKeyword(List<Keyword> keywordList) {
-        return keywordList.stream()
-                .map(k -> new QuizChoiceWithIdDto(new QuizChoiceDto(k.getName(), k.getTopic().getTitle()), k.getId()))
-                .collect(Collectors.toList());
+        for (Integer i : randomIndexSet) {
+            anotherAnswerKeyword =  keywordList.get(i);
+        }
+        return anotherAnswerKeyword;
     }
 
 
     public List<Keyword> getTotalKeywordByAnswerTopic(String topicTitle) {
-        Topic topic = checkTopic(topicTitle);
-        return topic.getKeywordList();
+        return keywordRepository.queryKeywordsInTopic(topicTitle);
     }
 
     /**
@@ -101,37 +95,8 @@ public class BaseQuestionComponentFactory {
         return ret;
     }
 
-    private Topic checkTopic(String topicTitle) {
-        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
-    }
-
-//    public Topic selectAnswerTopic(List<TopicSelectModel> topicSelectModelList) {
-//        return weightedRandomService.selectAnswerTopic(topicSelectModelList);
-//    }
-
     public Keyword selectAnswerKeyword(List<KeywordSelectModel> answerKeywordSelectModelList) {
         return weightedRandomService.selectAnswerKeywords(answerKeywordSelectModelList);
-    }
-
-    public List<Keyword> selectWrongKeywordList(List<KeywordSelectModel> keywordSelectModelList, int count) {
-        return weightedRandomService.selectWrongKeywords(keywordSelectModelList, count);
-    }
-
-
-    public List<TopicSelectModel> makeTopicSelectModelList(Map<Topic, TopicLearningRecord> topicRecordMap,QuestionCategory questionCategory) {
-        List<Topic> topicList = questionCategory.getTopicList();
-        List<TopicSelectModel> topicSelectModelList = new ArrayList<>();
-        for (Topic topic : topicList) {
-            TopicLearningRecord record = topicRecordMap.get(topic);
-            Integer recordCount = 0;
-            if (record != null) {
-                recordCount = (record.getWrongCount());
-            }
-            topicSelectModelList.add(new TopicSelectModel(topic, recordCount + 1));
-        }
-        return topicSelectModelList;
     }
 
     public List<KeywordSelectModel> makeAnswerKeywordSelectModelList(Map<Keyword, KeywordLearningRecord> keywordRecordMap,
@@ -149,24 +114,5 @@ public class BaseQuestionComponentFactory {
         return wrongKeywordModelList;
     }
 
-//    public List<KeywordSelectModel> makeWrongKeywordSelectModelList(Map<Keyword, KeywordLearningRecord> keywordRecordMap, Topic answerTopic, List<Keyword> answerKeywordList) {
-//        List<Keyword> keywordList = keywordRepository.queryWrongKeywords(answerTopic.getTitle());
-//        List<KeywordSelectModel> keywordSelectModelList = new ArrayList<>();
-//
-//        for (Keyword keyword : keywordList) {
-//            KeywordSelectModel model = new KeywordSelectModel();
-//            KeywordLearningRecord record = keywordRecordMap.get(keyword);
-//
-//            model.setKeyword(keyword);
-//            model.setUsageCount(keyword.getQuestionProb() + 1);
-//            if (record == null) {
-//                model.setRecord(1);
-//            }else{
-//                model.setRecord(record.getWrongCount() + 1);
-//            }
-//            keywordSelectModelList.add(model);
-//        }
-//        return keywordSelectModelList;
-//    }
 
 }

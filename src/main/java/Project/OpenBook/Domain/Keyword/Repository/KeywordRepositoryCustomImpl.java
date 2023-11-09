@@ -77,6 +77,14 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
     }
 
     @Override
+    public List<Keyword> queryKeywordsInTopic(String topicTitle) {
+        return queryFactory.selectFrom(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .where(keyword.topic.title.eq(topicTitle))
+                .fetch();
+    }
+
+    @Override
     public List<Keyword> queryKeywordsInTopicWithPrimaryDate(String topicTitle) {
         return queryFactory.select(keyword).distinct()
                 .from(keyword)
@@ -130,4 +138,11 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
                 .where(keyword.topic.questionCategory.eq(questionCategory))
                 .fetch();
     }
+
+//    @Override
+//    public List<Keyword> queryTotalAnswerKeywordsInJJH(String pivTopicTitle) {
+//        return queryFactory.selectFrom(keyword)
+//                .leftJoin(keyword.topic,topic).fetchJoin()
+//                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+//    }
 }

@@ -102,14 +102,20 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
         //questionCount보다 모든 키워드 개수가 적은 경우 앞 컨텐츠에서 랜덤하게 keyword에서 골라서 생성
         Integer leftQuestionCount = questionCount - answerKeywordList.size();
         if (leftQuestionCount > 0) {
-            //1. 앞 컨텐츠에서 (jjhContentNumber가 작은 topic에 속해있는 keyword중 랜덤하게 선택)
 
-            //2. 정답 키워드와 같은 q.c내부에 있는 키워드, (topic, name)이 다른 오답 키워드중
-            //questionProb에 비례해서 문제 생성
 
         }
         return questionList;
     }
+
+//    private List<QuestionDto> getAdditionalQuestions(String answerTopicTitle, int count) {
+//        getTotalAnswerKeywordsInJJH(answerTopicTitle);
+//        //1. 앞 컨텐츠에서 (jjhContentNumber가 작은 topic에 속해있는 keyword중 랜덤하게 선택)
+//
+//
+//        //2. 정답 키워드와 같은 q.c내부에 있는 키워드, (topic, name)이 다른 오답 키워드중
+//        //questionProb에 비례해서 문제 생성
+//    }
 
     private QuestionDto toQuestionDto(String topicTitle, List<Keyword> answerKeywordList, List<Keyword> wrongKeywordList) {
         List<QuizChoiceDto> choiceList = new ArrayList<>();

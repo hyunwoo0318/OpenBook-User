@@ -117,8 +117,8 @@ public class QuestionService {
 
 
     @Transactional
-    public List<QuestionDto> queryGetKeywordsQuestion(String topicTitle, int questionCount) {
-        return type1.getJJHQuestion(topicTitle, questionCount);
+    public List<QuestionDto> queryGetKeywordsQuestion(String topicTitle) {
+        return type1.getJJHQuestion(topicTitle, 0);
     }
 
 

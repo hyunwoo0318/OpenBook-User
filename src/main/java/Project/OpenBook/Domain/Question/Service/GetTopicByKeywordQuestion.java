@@ -6,12 +6,14 @@ import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.QuizChoiceDto;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.WeightedRandomSelection.Model.KeywordSelectModel;
 import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.QuestionConst.GET_TOPIC_BY_KEYWORD_TYPE;
 
@@ -26,6 +28,10 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
                                          List<Keyword> totalKeywordList, Integer questionCount){
         List<QuestionDto> questionList = new ArrayList<>();
 
+        Set<Topic> totalTopicSet = totalKeywordList.stream()
+                .map(Keyword::getTopic)
+                .collect(Collectors.toSet());
+
         while(questionList.size() != questionCount){
 
             //2. 정답 키워드 선정
@@ -33,12 +39,11 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
                     = makeAnswerKeywordSelectModelList(keywordRecordMap, totalKeywordList);
             Keyword answerKeyword = selectAnswerKeyword(answerKeywordSelectModelList);
             Topic answerTopic = answerKeyword.getTopic();
-            //TODO : answerKeyword와 같은 topic을 가진 키워드 1개 조회
-            Keyword answerKeyword2 = null;
+            Keyword answerKeyword2 = selectAnotherKeyword(answerTopic, answerKeyword, totalKeywordList);
 
             //3. 오답 주제 선정
-            //TODO : 미리 한번에 꺼내둬서 map으로 뽑아쓰기
-            List<Topic> wrongTopicList = getWrongTopic(answerTopic, 3);
+            totalTopicSet.remove(answerTopic);
+            List<Topic> wrongTopicList = getWrongTopic(new ArrayList<>(totalTopicSet), 3);
 
             QuestionDto questionDto = toQuestionDto(answerTopic, Arrays.asList(answerKeyword, answerKeyword2), wrongTopicList);
             questionList.add(questionDto);
@@ -46,16 +51,18 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
         return  questionList;
     }
 
+
+
     public List<QuestionDto> getJJHQuestion(List<Topic> topicList) {
         List<QuestionDto> questionList = new ArrayList<>();
-        //TODO : 전체 토픽에 대해서 가능한 모든 keywordList 꺼내오기
-        Map<Topic, List<Topic>> totalWrongKeywordMap = new HashMap<>();
+        Map<QuestionCategory, List<Topic>> questionCategoryTopicMap = topicList.stream()
+                .collect(Collectors.groupingBy(Topic::getQuestionCategory));
 
         //각 토픽에 대해서 문제 생성
         for (Topic answerTopic : topicList) {
+            QuestionCategory answerQuestionCategory = answerTopic.getQuestionCategory();
             List<Keyword> answerTotalKeywordList = answerTopic.getKeywordList();
             List<Keyword> answerKeywordList = new ArrayList<>();
-            List<Topic> wrongTopicList = new ArrayList<>();
             //1. 2개의 정답 키워드를 랜덤하게 선정
             Set<Integer> randomIndex = getRandomIndex(2, answerTotalKeywordList.size());
             for (Integer index : randomIndex) {
@@ -63,8 +70,11 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
             }
 
             //2. 3개의 오답 주제 선정 -> questionCategory는 같은경우
-            //TODO : 변경사항 -> map에서 꺼내서 사용하기
-            wrongTopicList = getWrongTopic(answerTopic, 3);
+            List<Topic> questionCategoryTopicList = questionCategoryTopicMap.get(answerQuestionCategory);
+            List<Topic> wrongTotalTopicList = questionCategoryTopicList.stream()
+                    .filter(t -> t != answerTopic)
+                    .collect(Collectors.toList());
+            List<Topic> wrongTopicList = getWrongTopic(wrongTotalTopicList, 3);
 
             //3. dto변환
             QuestionDto question = toQuestionDto(answerTopic, answerKeywordList, wrongTopicList);
