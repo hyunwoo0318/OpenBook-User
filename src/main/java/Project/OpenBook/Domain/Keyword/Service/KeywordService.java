@@ -2,19 +2,19 @@ package Project.OpenBook.Domain.Keyword.Service;
 
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordIdNameDto;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordNumberDto;
-import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
+import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordCreateDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordNumberDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordUserDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordWithTopicDto;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Image.ImageService;
 import Project.OpenBook.Handler.Exception.CustomException;
+import Project.OpenBook.Image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,9 +41,9 @@ public class KeywordService {
 
 
     @Transactional(readOnly = true)
-    public List<KeywordIdNameDto> queryTotalKeywords() {
-        return keywordRepository.findAll().stream()
-                .map(k -> new KeywordIdNameDto(k.getName(), k.getId()))
+    public List<KeywordWithTopicDto> queryTotalKeywords() {
+        return keywordRepository.queryKeywordsWithTopic().stream()
+                .map(k -> new KeywordWithTopicDto(k.getName(), k.getTopic().getTitle(), k.getId()))
                 .collect(Collectors.toList());
     }
 

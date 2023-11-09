@@ -1,10 +1,10 @@
 package Project.OpenBook.Domain.Keyword.Controller;
 
-import Project.OpenBook.Domain.Keyword.Dto.KeywordIdNameDto;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordNumberDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordCreateDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordNumberDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordUserDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordWithTopicDto;
 import Project.OpenBook.Domain.Keyword.Service.KeywordService;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordCreateDto;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordUserDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -28,8 +28,8 @@ public class KeywordController {
             @ApiResponse(responseCode = "200", description = "키워드 전체 조회 성공"),
     })
     @GetMapping("/admin/keywords")
-    public ResponseEntity<List<KeywordIdNameDto>> queryTotalKeywords() {
-        List<KeywordIdNameDto> dtoList
+    public ResponseEntity<List<KeywordWithTopicDto>> queryTotalKeywords() {
+        List<KeywordWithTopicDto> dtoList
                 = keywordService.queryTotalKeywords();
         return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }

@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.Topic.Controller;
 
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordDto;
 import Project.OpenBook.Domain.Topic.Service.TopicService;
 import Project.OpenBook.Domain.Topic.Service.TopicSimpleQueryService;
 import Project.OpenBook.Domain.Topic.Service.dto.*;

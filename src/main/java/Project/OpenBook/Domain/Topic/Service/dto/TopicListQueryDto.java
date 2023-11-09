@@ -1,6 +1,6 @@
 package Project.OpenBook.Domain.Topic.Service.dto;
 
-import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordDto;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AllArgsConstructor;

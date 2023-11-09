@@ -139,7 +139,14 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
                 .fetch();
     }
 
-//    @Override
+    @Override
+    public List<Keyword> queryKeywordsWithTopic() {
+        return queryFactory.selectFrom(keyword)
+                .leftJoin(keyword.topic,topic).fetchJoin()
+                .fetch();
+    }
+
+    //    @Override
 //    public List<Keyword> queryTotalAnswerKeywordsInJJH(String pivTopicTitle) {
 //        return queryFactory.selectFrom(keyword)
 //                .leftJoin(keyword.topic,topic).fetchJoin()

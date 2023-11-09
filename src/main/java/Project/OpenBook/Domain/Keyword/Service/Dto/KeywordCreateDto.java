@@ -1,10 +1,9 @@
-package Project.OpenBook.Domain.Keyword.Dto;
+package Project.OpenBook.Domain.Keyword.Service.Dto;
 
 import Project.OpenBook.Domain.Topic.Service.dto.PrimaryDateDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;

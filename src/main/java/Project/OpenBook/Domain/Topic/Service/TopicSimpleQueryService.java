@@ -10,8 +10,8 @@ import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.Description
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import Project.OpenBook.Domain.Keyword.Dto.KeywordDto;
-import Project.OpenBook.Domain.Keyword.Dto.QuestionNumberDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordDto;
+import Project.OpenBook.Domain.Keyword.Service.Dto.QuestionNumberDto;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;

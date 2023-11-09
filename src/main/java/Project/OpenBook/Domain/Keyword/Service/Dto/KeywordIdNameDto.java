@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Keyword.Dto;
+package Project.OpenBook.Domain.Keyword.Service.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
