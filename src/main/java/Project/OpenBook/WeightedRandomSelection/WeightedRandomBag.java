@@ -1,8 +1,6 @@
 package Project.OpenBook.WeightedRandomSelection;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class WeightedRandomBag<T extends Object> {
 
@@ -11,7 +9,7 @@ public class WeightedRandomBag<T extends Object> {
         T object;
     }
 
-    private List<Entry> entries = new ArrayList<>();
+    private Set<Entry> entries = new HashSet<>();
     private double accumulatedWeight;
     private Random rand = new Random();
 
@@ -21,6 +19,11 @@ public class WeightedRandomBag<T extends Object> {
         e.object = object;
         e.accumulatedWeight = accumulatedWeight;
         entries.add(e);
+    }
+
+    public void removeEntry(T object, double weight) {
+//        accumulatedWeight -= weight;
+//        entries.remove(object);
     }
 
     public T getRandom() {

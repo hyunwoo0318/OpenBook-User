@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Keyword.Repository;
 
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
@@ -60,7 +61,7 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
     }
 
     @Override
-    public List<Keyword> queryWrongKeywords(String answerTopicTitle) {
+    public List<Keyword> queryWrongKeywords(List<String> keywordNameList, String answerTopicTitle) {
         return queryFactory.selectFrom(keyword)
                 .leftJoin(keyword.topic, topic).fetchJoin()
                 .where(
@@ -71,6 +72,7 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
                         )
                 )
                 .where(keyword.topic.title.ne(answerTopicTitle))
+                .where(keyword.name.notIn(keywordNameList))
                 .fetch();
     }
 
@@ -118,6 +120,14 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
                 .leftJoin(keyword.topic, topic).fetchJoin()
                 .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
                 .where(keyword.id.in(keywordIdList))
+                .fetch();
+    }
+
+    @Override
+    public List<Keyword> queryKeywordsInQuestionCategory(QuestionCategory questionCategory) {
+        return queryFactory.selectFrom(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .where(keyword.topic.questionCategory.eq(questionCategory))
                 .fetch();
     }
 }

@@ -22,6 +22,14 @@ import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywordRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
+    @Override
+    public List<DescriptionKeyword> queryDescriptionKeywordsForInit() {
+        return queryFactory.selectFrom(descriptionKeyword)
+                .leftJoin(descriptionKeyword.keyword, keyword).fetchJoin()
+                .fetch();
+    }
+
     @Override
     public List<DescriptionKeyword> queryDescriptionKeywordsForTopicList(Description description) {
         return queryFactory.selectFrom(descriptionKeyword)

@@ -10,6 +10,7 @@ import java.util.Map;
 
 public interface ChoiceKeywordRepositoryCustom {
 
+      public List<ChoiceKeyword> queryChoiceKeywordsForInit();
       public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywordsForAdmin(List<Choice> choiceList);
       public List<ChoiceKeyword> queryChoiceKeywordsForTopicList(String topicTitle);
       public List<ChoiceKeyword> queryChoiceKeywordsForTopicList(Integer chapterNumber);

@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Keyword.Domain;
 
+import Project.OpenBook.Constants.KeywordUsageConst;
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
@@ -31,8 +32,8 @@ public class Keyword extends BaseEntity {
 
     private Integer number = 0;
 
-    private Integer usageCount = 0;
-
+    private Integer questionProb;
+    
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
@@ -53,15 +54,15 @@ public class Keyword extends BaseEntity {
         this.dateComment = dateComment;
         this.topic = topic;
         this.imageUrl = imageUrl;
-        this.usageCount = 0;
+        this.questionProb = KeywordUsageConst.KEYWORD_USAGE_DEFAULT;
     }
 
     public void updateNumber(Integer number) {
         this.number = number;
     }
 
-    public void updateCount(Integer usageCount) {
-        this.usageCount = usageCount;
+    public void updateCount(Integer questionProb) {
+        this.questionProb = questionProb;
     }
 
     public void changeName(String name) {

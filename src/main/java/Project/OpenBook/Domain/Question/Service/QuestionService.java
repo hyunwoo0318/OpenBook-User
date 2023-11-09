@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.Question.Service;
 
-import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
@@ -9,6 +8,7 @@ import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrim
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
@@ -19,10 +19,8 @@ import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
-import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
-import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
-import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
 import Project.OpenBook.Handler.Exception.CustomException;
+import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -67,13 +65,6 @@ public class QuestionService {
         this.type1 = new GetKeywordByTopicQuestion(this.topicRepository, this.keywordRepository, this.weightedRandomService);
         this.type2 = new GetTopicByKeywordQuestion(this.topicRepository, this.keywordRepository, this.weightedRandomService);
     }
-
-    private Topic checkTopic(String topicTitle) {
-        return topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
-    }
-
 
     @Transactional
     public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Long timelineId) {
@@ -126,30 +117,18 @@ public class QuestionService {
 
 
     @Transactional
-    public List<QuestionDto> queryGetKeywordsQuestion(String topicTitle) {
-        return type1.getJJHQuestion(topicTitle);
+    public List<QuestionDto> queryGetKeywordsQuestion(String topicTitle, int questionCount) {
+        return type1.getJJHQuestion(topicTitle, questionCount);
     }
 
 
     @Transactional
     public List<QuestionDto> queryGetTopicsByKeywordQuestion(Integer num) {
-        List<QuestionDto> questionList = new ArrayList<>();
-
-        Chapter chapter = chapterRepository.findOneByNumber(num).orElseThrow(() -> {
+        List<Topic> topicList = topicRepository.queryTopicsWithKeywordList(num);
+        if (topicList.isEmpty()) {
             throw new CustomException(CHAPTER_NOT_FOUND);
-        });
-
-        List<String> topicTitleList = chapter.getTopicList().stream()
-                .map(Topic::getTitle)
-                .collect(Collectors.toList());
-        for (String topicTitle : topicTitleList) {
-            QuestionDto dto = type2.getJJHQuestion(topicTitle);
-            if (dto != null) {
-                questionList.add(dto);
-            }
         }
-
-        return questionList;
+        return type2.getJJHQuestion(topicList);
     }
 
 
@@ -162,17 +141,16 @@ public class QuestionService {
                     throw new CustomException(QUESTION_CATEGORY_NOT_FOUND);
                 });
 
-        Map<Topic, TopicLearningRecord> topicRecordMap = topicLearningRecordRepository.queryTopicLearningRecordsInQuestionCategory(customer, questionCategoryId).stream()
-                .collect(Collectors.toMap(t -> t.getTopic(), t -> t));
         Map<Keyword, KeywordLearningRecord> keywordRecordMap = keywordLearningRecordRepository.queryKeywordLearningRecordsInQuestionCategory(customer, questionCategoryId).stream()
-                .collect(Collectors.toMap(k -> k.getKeyword(), k -> k));
+                .collect(Collectors.toMap(KeywordLearningRecord::getKeyword, k -> k));
 
+        List<Keyword> totalKeywordList = keywordRepository.queryKeywordsInQuestionCategory(questionCategory);
 
         Integer count1, count2 = 0;
         count1 = questionCount / 2;
         count2 = questionCount - count1;
-        List<QuestionDto> type1QuestionList = type1.getQuestion(topicRecordMap, keywordRecordMap, questionCategory, count1);
-        List<QuestionDto> type2QuestionList = type2.getQuestion(topicRecordMap, keywordRecordMap, questionCategory, count2);
+        List<QuestionDto> type1QuestionList = type1.getQuestion(keywordRecordMap, totalKeywordList, count1);
+        List<QuestionDto> type2QuestionList = type2.getQuestion(keywordRecordMap, totalKeywordList, count2);
 
         questionList.addAll(type1QuestionList);
         questionList.addAll(type2QuestionList);

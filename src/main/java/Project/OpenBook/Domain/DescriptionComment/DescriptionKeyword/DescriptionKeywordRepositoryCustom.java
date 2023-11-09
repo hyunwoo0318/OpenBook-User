@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface DescriptionKeywordRepositoryCustom {
 
+    public List<DescriptionKeyword> queryDescriptionKeywordsForInit();
+
     public List<DescriptionKeyword> queryDescriptionKeywordsForTopicList(Description description);
 
     public List<DescriptionKeyword> queryDescriptionKeywordForExamQuestion(Integer roundNumber);

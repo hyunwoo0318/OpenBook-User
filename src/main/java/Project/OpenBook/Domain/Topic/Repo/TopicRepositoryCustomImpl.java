@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Topic.Repo;
 
 import Project.OpenBook.Domain.Topic.Domain.Topic;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -23,19 +24,27 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<String> queryWrongTopicTitle(String topicTitle,int size) {
-         return queryFactory.select(topic.title)
-                 .from(topic)
+    public List<Topic> queryWrongTopic(Topic answerTopic, int size) {
+         return queryFactory.selectFrom(topic)
                  .where(
                          topic.questionCategory.eq(
                                  JPAExpressions.select(topic.questionCategory)
                                          .from(topic)
-                                         .where(topic.title.eq(topicTitle))
+                                         .where(topic.eq(answerTopic))
                          )
                  )
-                 .where(topic.title.ne(topicTitle))
+                 .where(topic.ne(answerTopic))
+                 .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
                  .limit(size)
                  .fetch();
+    }
+
+    @Override
+    public List<Topic> queryTopicsWithKeywordList(int chapterNum) {
+        return queryFactory.selectFrom(topic).distinct()
+                .leftJoin(topic.keywordList).fetchJoin()
+                .where(topic.chapter.number.eq(chapterNum))
+                .fetch();
     }
 
     @Override

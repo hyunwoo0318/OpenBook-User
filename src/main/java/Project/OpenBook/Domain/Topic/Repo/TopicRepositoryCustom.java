@@ -7,7 +7,9 @@ import java.util.Optional;
 
 public interface  TopicRepositoryCustom {
 
-    public List<String> queryWrongTopicTitle(String topicTitle, int size);
+    public List<Topic> queryWrongTopic(Topic answerTopic,  int size);
+
+    public List<Topic> queryTopicsWithKeywordList(int chapterNum);
 
     public List<Topic> queryTopicsByTopicTitleList(List<String> topicTitleList);
 

@@ -1,10 +1,7 @@
 package Project.OpenBook.WeightedRandomSelection;
 
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
-import Project.OpenBook.WeightedRandomSelection.Model.AnswerKeywordSelectModel;
-import Project.OpenBook.WeightedRandomSelection.Model.TopicSelectModel;
-import Project.OpenBook.WeightedRandomSelection.Model.WrongKeywordSelectModel;
+import Project.OpenBook.WeightedRandomSelection.Model.KeywordSelectModel;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,83 +22,39 @@ public class WeightedRandomService {
     private Double RECORD_WEIGHT_FOR_WRONG_KEYWORD = 0.3;
     private Double ASSOCIATION_WEIGHT_FOR_WRONG_KEYWORD = 0.3;
 
-    public Topic selectAnswerTopic(List<TopicSelectModel> topicSelectModelList) {
-        WeightedRandomBag<Topic> bag = new WeightedRandomBag<>();
-        for (TopicSelectModel model : topicSelectModelList) {
-            bag.addEntry(model.getTopic(), model.getRecord() * RECORD_WEIGHT_FOR_ANSWER_TOPIC + DEFAULT_WEIGHT);
+
+    public Keyword selectAnswerKeywords(List<KeywordSelectModel> answerKeywordSelectModelList) {
+        WeightedRandomBag<Keyword> bag = new WeightedRandomBag<>();
+
+        for (KeywordSelectModel model : answerKeywordSelectModelList) {
+            if(model.getQuestionProb() != 0) bag.addEntry(model.getKeyword(), model.getQuestionProb());
         }
+
         return bag.getRandom();
     }
 
-    public List<Keyword> selectAnswerKeywords(List<AnswerKeywordSelectModel> answerKeywordSelectModelList, int count) {
+    public List<Keyword> selectWrongKeywords(List<KeywordSelectModel> keywordSelectModelList, int limit) {
 
-        if (count >= answerKeywordSelectModelList.size()) {
-            return answerKeywordSelectModelList.stream()
-                    .map(m -> m.getKeyword())
-                    .collect(Collectors.toList());
-        }
-        WeightedRandomBag<Keyword> bag = new WeightedRandomBag<>();
-
-        for (AnswerKeywordSelectModel model : answerKeywordSelectModelList) {
-            Double totalScore = USAGE_WEIGHT_FOR_ANSWER_KEYWORD * model.getUsageCount()
-                    + RECORD_WEIGHT_FOR_ANSWER_KEYWORD * model.getRecord()
-                    + DEFAULT_WEIGHT;
-            bag.addEntry(model.getKeyword(), totalScore);
-        }
-
-        Set<Keyword> keywordSet = new HashSet<>();
-        while (keywordSet.size() < count) {
-            keywordSet.add(bag.getRandom());
-        }
-
-        return new ArrayList<Keyword>(keywordSet);
-
-    }
-
-    public List<Keyword> selectWrongKeywords(List<WrongKeywordSelectModel> wrongKeywordSelectModelList, int count) {
-
-        if (count >= wrongKeywordSelectModelList.size()) {
-            return wrongKeywordSelectModelList.stream()
-                    .map(m -> m.getKeyword())
+        if (limit >= keywordSelectModelList.size()) {
+            return keywordSelectModelList.stream()
+                    .map(KeywordSelectModel::getKeyword)
                     .collect(Collectors.toList());
         }
 
         WeightedRandomBag<Keyword> bag = new WeightedRandomBag<>();
 
-        for (WrongKeywordSelectModel model : wrongKeywordSelectModelList) {
-            Double totalScore = USAGE_WEIGHT_FOR_WRONG_KEYWORD * model.getUsageCount()
-                     + RECORD_WEIGHT_FOR_WRONG_KEYWORD * model.getRecord()
-           //TODO        // + ASSOCIATION_WEIGHT_FOR_WRONG_KEYWORD * model.getAssociation()
-                    + DEFAULT_WEIGHT;
-            bag.addEntry(model.getKeyword(), totalScore);
+        for (KeywordSelectModel model : keywordSelectModelList) {
+            bag.addEntry(model.getKeyword(), Double.valueOf(model.getQuestionProb()));
         }
 
         Set<Keyword> keywordSet = new HashSet<>();
-        while (keywordSet.size() < count) {
+        while (keywordSet.size() < limit) {
+            //TODO : remove구현후 사용한 keyword는 제외하기
             keywordSet.add(bag.getRandom());
         }
 
         return new ArrayList<Keyword>(keywordSet);
     }
 
-    public List<Topic> selectWrongTopics(List<TopicSelectModel> topicSelectModelList, int count) {
-
-        if (count >= topicSelectModelList.size()) {
-            return topicSelectModelList.stream()
-                    .map(m -> m.getTopic())
-                    .collect(Collectors.toList());
-        }
-        WeightedRandomBag<Topic> bag = new WeightedRandomBag<>();
-        for (TopicSelectModel model : topicSelectModelList) {
-            bag.addEntry(model.getTopic(), model.getRecord() * RECORD_WEIGHT_FOR_ANSWER_TOPIC
-                                            + DEFAULT_WEIGHT);
-        }
-
-        Set<Topic> topicSet = new HashSet<>();
-        while (topicSet.size() < count) {
-            topicSet.add(bag.getRandom());
-        }
-        return new ArrayList<Topic>(topicSet);
-    }
 
 }

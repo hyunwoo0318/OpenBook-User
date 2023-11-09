@@ -28,6 +28,13 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
     private final JPAQueryFactory queryFactory;
 
     @Override
+    public List<ChoiceKeyword> queryChoiceKeywordsForInit() {
+        return queryFactory.selectFrom(choiceKeyword)
+                .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
+                .fetch();
+    }
+
+    @Override
     public Map<Choice, List<ChoiceCommentInfoDto>> queryChoiceKeywordsForAdmin(List<Choice> choiceList) {
         return queryFactory
                 .from(choiceKeyword)

@@ -6,16 +6,16 @@ import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.QuizChoiceDto;
-import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
-import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
-import Project.OpenBook.WeightedRandomSelection.Model.AnswerKeywordSelectModel;
-import Project.OpenBook.WeightedRandomSelection.Model.TopicSelectModel;
+import Project.OpenBook.WeightedRandomSelection.Model.KeywordSelectModel;
 import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
-import Project.OpenBook.WeightedRandomSelection.Model.WrongKeywordSelectModel;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.QuestionConst.GET_KEYWORD_TYPE;
 import static Project.OpenBook.Constants.QuestionConst.WRONG_KEYWORD_NUM;
@@ -32,26 +32,31 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
 
 
     @Override
-    public List<QuestionDto> getQuestion(Map<Topic, TopicLearningRecord> topicRecordMap, Map<Keyword, KeywordLearningRecord> keywordRecordMap,
-                                         QuestionCategory questionCategory, Integer questionCount) {
+    public List<QuestionDto> getQuestion(Map<Keyword, KeywordLearningRecord> keywordRecordMap,
+                                         List<Keyword> totalKeywordList, Integer questionCount) {
         List<QuestionDto> questionList = new ArrayList<>();
 
-        List<TopicSelectModel> topicSelectModelList = makeTopicSelectModelList(topicRecordMap, questionCategory);
-        for (int i = 0; i < questionCount; i++) {
-            //1. 정답 주제 선정
-            Topic answerTopic = selectAnswerTopic(topicSelectModelList);
+        while(questionList.size() != questionCount) {
+            //1. 정답 키워드 선정
+            List<KeywordSelectModel> answerKeywordSelectModelList
+                    = makeAnswerKeywordSelectModelList(keywordRecordMap, totalKeywordList);
+            Keyword answerKeyword = selectAnswerKeyword(answerKeywordSelectModelList);
+            if(answerKeyword == null) continue;
+            Topic answerTopic = answerKeyword.getTopic();
 
-            //2. 정답 키워드 선정
-            List<AnswerKeywordSelectModel> answerKeywordSelectModelList
-                    = makeAnswerKeywordSelectModelList(keywordRecordMap, answerTopic);
-            List<Keyword> answerKeywordList = selectAnswerKeywordList(answerKeywordSelectModelList, 1);
+            //2. 오답 키워드 선정
+            List<Keyword> totalWrongKeywordList = totalKeywordList.stream()
+                    .filter(k -> k.getTopic() != answerTopic)
+                    .collect(Collectors.toList());
 
-            //3. 오답 키워드 선정
-            List<WrongKeywordSelectModel> wrongKeywordSelectModelList = makeWrongKeywordSelectModelList(keywordRecordMap, answerTopic, answerKeywordList);
-            List<Keyword> wrongKeywordList = selectWrongKeywordList(wrongKeywordSelectModelList, 3);
+            //questionProb의 확률에 기반해서 3개의 오답 키워드 선정
+            List<Keyword> wrongKeywordList = getWrongKeywords(totalWrongKeywordList, WRONG_KEYWORD_NUM);
 
-            QuestionDto questionDto = toQuestionDto(answerTopic, answerKeywordList, wrongKeywordList);
-            questionList.add(questionDto);
+            //Dto 변환
+            if(!wrongKeywordList.isEmpty()){
+                QuestionDto question = toQuestionDto(answerTopic.getTitle(), Arrays.asList(answerKeyword), wrongKeywordList);
+                questionList.add(question);
+            }
         }
 
         return questionList;
@@ -68,36 +73,47 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
      * @param topicTitle
      * @return
      */
-    public List<QuestionDto> getJJHQuestion(String topicTitle) {
-        List<QuestionDto> questionList = new ArrayList<>();
-        List<Keyword> keywordList = getTotalKeywordByAnswerTopic(topicTitle);
-        List<Keyword> totalWrongKeywordList = getTotalWrongKeywords(topicTitle);
-        int wrongKeywordListSize = totalWrongKeywordList.size();
-        for (Keyword k : keywordList) {
-            List<QuizChoiceDto> choiceList = new ArrayList<>();
 
-            //랜덤하게 3개의 숫자 골라서 저장
-            Set<Integer> idxSet = getRandomIndex(WRONG_KEYWORD_NUM, wrongKeywordListSize);
-            for (Integer idx : idxSet) {
-                Keyword keyword = totalWrongKeywordList.get(idx);
-                choiceList.add(new QuizChoiceDto(keyword.getName(), keyword.getTopic().getTitle()));
-            }
+    public List<QuestionDto> getJJHQuestion(String topicTitle, int questionCount) {
+        List<QuestionDto> questionList = new ArrayList<>();
+
+        //해당 토픽의 전체 키워드 조회
+        List<Keyword> answerKeywordList = getTotalKeywordByAnswerTopic(topicTitle);
+        List<String> answerKeywordNameList = answerKeywordList.stream()
+                .map(Keyword::getName)
+                .collect(Collectors.toList());
+
+        //오답 키워드가 가능한 모든 키워드 조회
+        List<Keyword> totalWrongKeywordList = getTotalWrongKeywords(answerKeywordNameList,topicTitle);
+
+        //해당 토픽의 전체 키워드에 대해서 각각 문제 생성
+        for (Keyword answerKeyword : answerKeywordList) {
+            //questionProb의 확률에 기반해서 3개의 오답 키워드 선정
+            List<Keyword> wrongKeywordList = getWrongKeywords(totalWrongKeywordList, WRONG_KEYWORD_NUM);
 
             //Dto 변환
-            if(!choiceList.isEmpty()){
-                choiceList.add(new QuizChoiceDto(k.getName(), k.getTopic().getTitle()));
-                QuestionDto dto = toQuestionDto(topicTitle, choiceList, Arrays.asList(k.getId()));
-                questionList.add(dto);
+            if(!wrongKeywordList.isEmpty()){
+                QuestionDto question = toQuestionDto(topicTitle, Arrays.asList(answerKeyword), wrongKeywordList);
+                questionList.add(question);
             }
+        }
+
+
+        //questionCount보다 모든 키워드 개수가 적은 경우 앞 컨텐츠에서 랜덤하게 keyword에서 골라서 생성
+        Integer leftQuestionCount = questionCount - answerKeywordList.size();
+        if (leftQuestionCount > 0) {
+            //1. 앞 컨텐츠에서 (jjhContentNumber가 작은 topic에 속해있는 keyword중 랜덤하게 선택)
+
+            //2. 정답 키워드와 같은 q.c내부에 있는 키워드, (topic, name)이 다른 오답 키워드중
+            //questionProb에 비례해서 문제 생성
+
         }
         return questionList;
     }
 
-    private QuestionDto toQuestionDto(Topic answerTopic, List<Keyword> answerKeywordList, List<Keyword> wrongKeywordList) {
+    private QuestionDto toQuestionDto(String topicTitle, List<Keyword> answerKeywordList, List<Keyword> wrongKeywordList) {
         List<QuizChoiceDto> choiceList = new ArrayList<>();
         List<Long> keywordList = new ArrayList<>();
-
-        String topicTitle = answerTopic.getTitle();
 
         for (Keyword keyword : answerKeywordList) {
             choiceList.add(new QuizChoiceDto(keyword.getName(), keyword.getTopic().getTitle()));
@@ -115,16 +131,6 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
                 .build();
     }
 
-    private QuestionDto toQuestionDto(String topicTitle, List<QuizChoiceDto> quizChoiceList, List<Long> keywordIdList) {
 
-        return QuestionDto.builder()
-                .questionType(GET_KEYWORD_TYPE)
-                .choiceType(ChoiceType.String.name())
-                .description(Arrays.asList(topicTitle))
-                .answer(topicTitle)
-                .choiceList(quizChoiceList)
-                .keywordIdList(keywordIdList)
-                .build();
-    }
 
 }
