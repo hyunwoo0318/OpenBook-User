@@ -37,9 +37,18 @@ public class ExamQuestionController {
         return new ResponseEntity<List<ExamQuestionDto>>(dtoList, HttpStatus.OK);
     }
 
+    @Operation(summary = "특정 회차 문제 풀이 기록 초기화")
+    @PatchMapping("/rounds/{roundNumber}/clear")
+    public ResponseEntity<Void> clearRoundQuestionRecord(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+                                                         @PathVariable("roundNumber") Integer roundNumber){
+        examQuestionService.clearRoundQuestionRecord(customer, roundNumber);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
     @Operation(summary = "오답 노트 내의 모든 문제 조회")
     @GetMapping("/questions/answer-notes")
     public ResponseEntity<List<AnswerNotedTopicQueryDto>> getAnswerNotedQuestions(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
+
         List<AnswerNotedTopicQueryDto> dtoList = examQuestionService.getAnswerNotedQuestions(customer);
         return new ResponseEntity<List<AnswerNotedTopicQueryDto>>(dtoList, HttpStatus.OK);
     }

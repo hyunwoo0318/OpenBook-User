@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Topic.Service;
 
+import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
@@ -10,9 +11,9 @@ import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.Description
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordDto;
 import Project.OpenBook.Domain.Keyword.Service.Dto.QuestionNumberDto;
-import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -45,6 +46,7 @@ public class TopicSimpleQueryService {
 
     private final TopicLearningRecordRepository topicLearningRecordRepository;
 
+    private final BookmarkService bookmarkService;
     public List<ChapterTopicWithCountDto> queryChapterTopicsAdmin(int num) {
         return topicRepository.queryTopicsWithQuestionCategory(num).stream()
                 .sorted(Comparator.comparing(Topic::getNumber))
@@ -52,13 +54,11 @@ public class TopicSimpleQueryService {
                 .collect(Collectors.toList());
     }
 
-    public List<TopicListQueryDto> queryChapterTopicsCustomer(int chapterNum) {
+    public List<TopicListQueryDto> queryChapterTopicsCustomer(Customer customer, int chapterNum) {
         List<Topic> topicList = topicRepository.queryTopicsWithCategory(chapterNum);
 
-        return getTopicListQueryDtoList(topicList, makeMapSet(chapterNum));
+        return getTopicListQueryDtoList(customer, topicList, makeMapSet(chapterNum));
     }
-
-
 
 
     @Transactional(readOnly = true)
@@ -99,10 +99,9 @@ public class TopicSimpleQueryService {
     }
 
     @Transactional(readOnly = true)
-    public List<TopicQueryInQuestionCategoryDto> queryTopicsInQuestionCategory(Long id) {
-        return topicRepository.queryTopicsInQuestionCategory(id).stream()
-                .map(TopicQueryInQuestionCategoryDto::new)
-                .collect(Collectors.toList());
+    public List<TopicListQueryDto> queryTopicsInQuestionCategory(Customer customer, Long id) {
+        List<Topic> topicList = topicRepository.queryTopicsInQuestionCategory(id);
+        return getTopicListQueryDtoList(customer, topicList, makeMapSet(topicList));
     }
 
 
@@ -120,28 +119,36 @@ public class TopicSimpleQueryService {
         for (Chapter chapter : chapterTopicRecordMap.keySet()) {
             List<Topic> topicList = chapterTopicRecordMap.get(chapter).stream()
                     .map(TopicLearningRecord::getTopic)
+                    .sorted(Comparator.comparing(Topic::getNumber))
                     .collect(Collectors.toList());
 
-            List<TopicListQueryDto> topicDtoList = getTopicListQueryDtoList(topicList,mapSet);
-            BookmarkedTopicQueryDto dto = new BookmarkedTopicQueryDto(chapter.getTitle(), topicDtoList);
+            List<TopicListQueryDto> topicDtoList = getTopicListQueryDtoList(customer, topicList,mapSet);
+            BookmarkedTopicQueryDto dto = new BookmarkedTopicQueryDto(chapter.getNumber(), chapter.getTitle(), topicDtoList);
             dtoList.add(dto);
         }
-        return dtoList;
+        List<BookmarkedTopicQueryDto> sortedDtoList = dtoList.stream()
+                .sorted(Comparator.comparing(BookmarkedTopicQueryDto::getChapterNumber))
+                .collect(Collectors.toList());
+        return sortedDtoList;
     }
 
-    private List<TopicListQueryDto> getTopicListQueryDtoList(List<Topic> topicList, MapSet mapSet) {
+    private List<TopicListQueryDto> getTopicListQueryDtoList(Customer customer, List<Topic> topicList, MapSet mapSet) {
         Map<Keyword, List<DescriptionKeyword>> descriptionKeywordMap = mapSet.getDescriptionKeywordMap();
         Map<Keyword, List<ChoiceKeyword>> choiceKeywordMap = mapSet.getChoiceKeywordMap();
         Map<Topic, List<Keyword>> topicKeywordMap = mapSet.getTopicKeywordMap();
+        Map<Topic, Boolean> bookmarkMap = bookmarkService.queryBookmarks(customer, topicList);
 
         List<TopicListQueryDto> topicDtoList = new ArrayList<>();
-        for (Topic topic : topicList) {
+        List<Topic> sortedTopicList = topicList.stream()
+                .sorted(Comparator.comparing(Topic::getNumber))
+                .collect(Collectors.toList());
+        for (Topic topic : sortedTopicList) {
             List<Keyword> keywordList = topicKeywordMap.get(topic);
             List<KeywordDto> keywordDtoList = new ArrayList<>();
             if (keywordList != null) {
                 keywordDtoList = makeKeywordDtoList(keywordList, descriptionKeywordMap, choiceKeywordMap);
             }
-            TopicListQueryDto dto = new TopicListQueryDto(topic, keywordDtoList);
+            TopicListQueryDto dto = new TopicListQueryDto(bookmarkMap.get(topic), topic, keywordDtoList);
             topicDtoList.add(dto);
         }
         return topicDtoList;

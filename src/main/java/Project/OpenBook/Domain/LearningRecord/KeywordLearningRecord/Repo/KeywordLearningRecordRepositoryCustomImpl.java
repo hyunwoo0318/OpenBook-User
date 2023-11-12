@@ -8,8 +8,11 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static Project.OpenBook.Domain.Customer.Domain.QCustomer.customer;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.QKeywordLearningRecord.keywordLearningRecord;
+import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
+import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 
 @Repository
@@ -35,4 +38,15 @@ public class KeywordLearningRecordRepositoryCustomImpl implements KeywordLearnin
                 .where(keyword.topic.questionCategory.id.eq(questionCategoryId))
                 .fetch();
     }
+
+    @Override
+    public List<KeywordLearningRecord> queryAllForInit() {
+        return queryFactory.selectFrom(keywordLearningRecord)
+                .leftJoin(keywordLearningRecord.keyword, keyword).fetchJoin()
+                .leftJoin(keywordLearningRecord.customer, customer).fetchJoin()
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .fetch();
+    }
+
 }

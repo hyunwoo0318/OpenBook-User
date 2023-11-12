@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static Project.OpenBook.Domain.Customer.Domain.QCustomer.customer;
 import static Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QQuestionCategoryLearningRecord.questionCategoryLearningRecord;
 import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
 
@@ -31,6 +32,14 @@ public class QuestionCategoryLearningRecordRepositoryCustomImpl implements Quest
                 .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory).fetchJoin()
                 .where(questionCategoryLearningRecord.customer.eq(customer))
                 .where(questionCategoryLearningRecord.questionCategory.id.in(questionCategoryIdList))
+                .fetch();
+    }
+
+    @Override
+    public List<QuestionCategoryLearningRecord> queryQuestionRecordsForInit() {
+        return queryFactory.selectFrom(questionCategoryLearningRecord)
+                .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategoryLearningRecord.customer, customer).fetchJoin()
                 .fetch();
     }
 }

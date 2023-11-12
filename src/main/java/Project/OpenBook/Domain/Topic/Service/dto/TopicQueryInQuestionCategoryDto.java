@@ -11,8 +11,10 @@ public class TopicQueryInQuestionCategoryDto {
     private String category;
     private String dateComment;
     private Integer number;
+    private Boolean isBookmarked;
 
-    public TopicQueryInQuestionCategoryDto(Topic topic) {
+    public TopicQueryInQuestionCategoryDto(Boolean isBookmarked, Topic topic) {
+        this.isBookmarked = isBookmarked;
         this.title = topic.getTitle();
         this.category = topic.getQuestionCategory().getCategory().getName();
         this.dateComment = topic.getDateComment();

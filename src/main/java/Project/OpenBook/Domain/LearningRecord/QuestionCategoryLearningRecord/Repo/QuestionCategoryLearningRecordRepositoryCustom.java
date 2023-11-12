@@ -10,4 +10,6 @@ public interface QuestionCategoryLearningRecordRepositoryCustom {
     public List<QuestionCategoryLearningRecord> queryQuestionRecords(Customer customer);
 
     public List<QuestionCategoryLearningRecord> queryQuestionRecordsInKeywords(Customer customer, List<Long> questionCategoryIdList);
+
+    public List<QuestionCategoryLearningRecord> queryQuestionRecordsForInit();
 }

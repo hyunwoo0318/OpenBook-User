@@ -11,6 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookmarkedTopicQueryDto {
+    private Integer chapterNumber;
     private String chapterTitle;
     private List<TopicListQueryDto> topicList = new ArrayList<>();
 }

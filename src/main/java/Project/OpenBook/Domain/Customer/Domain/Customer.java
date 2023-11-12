@@ -4,6 +4,7 @@ import Project.OpenBook.Domain.BaseEntity;
 
 import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgress;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
@@ -73,6 +74,9 @@ public class Customer extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<TimelineLearningRecord> timelineLearningRecordList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<ExamQuestionLearningRecord> examQuestionLearningRecordList = new ArrayList<>();
 
     @Builder
     public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId, Boolean isSubscribed) {

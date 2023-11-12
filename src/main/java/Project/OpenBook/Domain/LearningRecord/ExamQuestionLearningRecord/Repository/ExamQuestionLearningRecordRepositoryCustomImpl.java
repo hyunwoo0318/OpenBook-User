@@ -46,6 +46,7 @@ public class ExamQuestionLearningRecordRepositoryCustomImpl implements ExamQuest
     public List<ExamQuestionLearningRecord> queryExamQuestionLearningRecords(Customer customer, List<Long> examQuestionIdList) {
         return queryFactory.selectFrom(examQuestionLearningRecord)
                 .leftJoin(examQuestionLearningRecord.examQuestion, examQuestion).fetchJoin()
+                .leftJoin(examQuestion.round, round).fetchJoin()
                 .where(examQuestionLearningRecord.customer.eq(customer))
                 .where(examQuestionLearningRecord.examQuestion.id.in(examQuestionIdList))
                 .fetch();

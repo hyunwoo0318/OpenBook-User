@@ -28,15 +28,16 @@ public class ExamQuestionLearningRecord extends BaseEntity {
     private ExamQuestion examQuestion;
 
     private Boolean answerNoted;
-
-    private Boolean firstSolve;
+    private Boolean solved;
+    private Boolean isRemovedAnswerNote;
 
     private Integer checkedNumber;
 
     private Integer score;
 
     public ExamQuestionLearningRecord(Customer customer, ExamQuestion examQuestion) {
-        this.firstSolve = true;
+        this.solved = false;
+        this.isRemovedAnswerNote = false;
         this.answerNoted = false;
         this.score = 0;
         this.customer = customer;
@@ -45,7 +46,7 @@ public class ExamQuestionLearningRecord extends BaseEntity {
 
     public void updateAnswerNoted(boolean answerNoted) {
         if (answerNoted == false) {
-            this.firstSolve = false;
+            this.isRemovedAnswerNote = true;
         }
         this.answerNoted = answerNoted;
     }
@@ -53,5 +54,14 @@ public class ExamQuestionLearningRecord extends BaseEntity {
     public void updateInfo(Integer checkedNumber, Integer score) {
         this.score = score;
         this.checkedNumber = checkedNumber;
+        this.solved = true;
+    }
+
+    public void clear() {
+        this.solved = false;
+        this.isRemovedAnswerNote = false;
+        this.answerNoted = false;
+        this.score = 0;
+        this.checkedNumber = 0;
     }
 }

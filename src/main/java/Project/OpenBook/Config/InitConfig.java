@@ -16,14 +16,14 @@ import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
-import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
-import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
-import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +49,8 @@ public class InitConfig {
 
     private final KeywordRepository keywordRepository;
     private final KeywordSearchRepository keywordSearchRepository;
+    private final KeywordLearningRecordRepository keywordLearningRecordRepository;
+    private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
 
     private final QuestionCategoryRepository questionCategoryRepository;
     private final EraRepository eraRepository;
@@ -71,29 +73,29 @@ public class InitConfig {
      * ElasticSearch를 위한 init
      * 각 topic의 title, id를 저장
      */
-    @Bean
-    public void initElasticSearchIndex() {
-        chapterSearchRepository.deleteAll();
-        topicSearchRepository.deleteAll();
-        keywordSearchRepository.deleteAll();
-
-        List<ChapterSearch> chapterSearchList = chapterRepository.findAll().stream()
-                .map(ChapterSearch::new)
-                .collect(Collectors.toList());
-
-        List<TopicSearch> topicSearchList = topicRepository.queryTopicsWithChapter().stream()
-                .map(TopicSearch::new)
-                .collect(Collectors.toList());
-
-        List<KeywordSearch> keywordSearchList = keywordRepository.queryKeywordsWithChapter().stream()
-                .map(KeywordSearch::new)
-                .collect(Collectors.toList());
-
-        chapterSearchRepository.saveAll(chapterSearchList);
-        topicSearchRepository.saveAll(topicSearchList);
-        keywordSearchRepository.saveAll(keywordSearchList);
-
-    }
+//    @Bean
+//    public void initElasticSearchIndex() {
+//        chapterSearchRepository.deleteAll();
+//        topicSearchRepository.deleteAll();
+//        keywordSearchRepository.deleteAll();
+//
+//        List<ChapterSearch> chapterSearchList = chapterRepository.findAll().stream()
+//                .map(ChapterSearch::new)
+//                .collect(Collectors.toList());
+//
+//        List<TopicSearch> topicSearchList = topicRepository.queryTopicsWithChapter().stream()
+//                .map(TopicSearch::new)
+//                .collect(Collectors.toList());
+//
+//        List<KeywordSearch> keywordSearchList = keywordRepository.queryKeywordsWithChapter().stream()
+//                .map(KeywordSearch::new)
+//                .collect(Collectors.toList());
+//
+//        chapterSearchRepository.saveAll(chapterSearchList);
+//        topicSearchRepository.saveAll(topicSearchList);
+//        keywordSearchRepository.saveAll(keywordSearchList);
+//
+//    }
 
     /**
      * 기본 관리자 아이디 세팅
@@ -136,6 +138,8 @@ public class InitConfig {
         //보기/선지 출현 빈도 저장 로직
         initKeywordUsageCounts(newKeywordMap);
 
+        initScore();
+
         //키워드간 연관성 저장 로직
         //initKeywordAssociations(newKeywordMap);
     }
@@ -159,6 +163,27 @@ public class InitConfig {
             Integer count = keywordCountMap.get(keyword);
             keyword.updateCount(KeywordUsageConst.getKeywordProb(count));
         }
+    }
+
+
+    private void initScore() {
+//        Map<Customer, List<KeywordLearningRecord>> customerKeywordRecordMap = keywordLearningRecordRepository.queryAllForInit().stream()
+//                .collect(Collectors.groupingBy(record -> record.getCustomer()));
+        Map<QuestionCategory, List<Keyword>> qcKeywordMap = keywordRepository.queryKeywordsForInit().stream()
+                .collect(Collectors.groupingBy(k -> k.getTopic().getQuestionCategory()));
+//        Map<Customer, List<QuestionCategoryLearningRecord>> customerQCRecordMap = questionCategoryLearningRecordRepository.queryQuestionRecordsForInit().stream()
+//                .collect(Collectors.groupingBy(record -> record.getCustomer()));
+
+        for (QuestionCategory questionCategory : qcKeywordMap.keySet()) {
+            List<Keyword> keywordList = qcKeywordMap.get(questionCategory);
+            int totalQuestionProb = 0;
+            for (Keyword keyword : keywordList) {
+                totalQuestionProb += keyword.getQuestionProb();
+            }
+            questionCategory.updateTotalQuestionProb(totalQuestionProb);
+        }
+
+
     }
 
 //    private void initKeywordAssociations(Map<Long, List<Keyword>> newKeywordMap) {

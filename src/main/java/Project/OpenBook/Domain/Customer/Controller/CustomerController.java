@@ -1,11 +1,11 @@
 package Project.OpenBook.Domain.Customer.Controller;
 
+import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Dto.AdminDto;
 import Project.OpenBook.Domain.Customer.Dto.CustomerNicknameDto;
-import Project.OpenBook.Jwt.TokenDto;
-import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
+import Project.OpenBook.Jwt.TokenDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -44,17 +43,17 @@ public class CustomerController {
 //        return new ResponseEntity<Void>(HttpStatus.OK);
 //    }
 
-    @Operation(summary = "특정 회원의 북마크 리스트 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "성공적인 조회"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
-    })
-    @GetMapping("/customer-infos/bookmarks")
-    public ResponseEntity<List<String>> queryBookmarks(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer){
-        List<String> titleList = bookmarkService.queryBookmarks(customer);
-
-        return new ResponseEntity<List<String>>(titleList, HttpStatus.OK);
-    }
+//    @Operation(summary = "특정 회원의 북마크 리스트 조회")
+//    @ApiResponses(value = {
+//            @ApiResponse(responseCode = "200", description = "성공적인 조회"),
+//            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원 아이디 입력")
+//    })
+//    @GetMapping("/customer-infos/bookmarks")
+//    public ResponseEntity<List<String>> queryBookmarks(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer){
+//        List<String> titleList = bookmarkService.queryBookmarks(customer);
+//
+//        return new ResponseEntity<List<String>>(titleList, HttpStatus.OK);
+//    }
 
 //    @ApiOperation("특정 회원의 오답노트 리스트 조회")
 //    @ApiResponses(value = {

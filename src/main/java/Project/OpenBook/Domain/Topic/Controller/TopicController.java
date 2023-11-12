@@ -64,17 +64,19 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
     })
     @GetMapping("/chapters/{num}/topics")
-    public ResponseEntity<List<TopicListQueryDto>> queryChapterTopicsCustomer(@PathVariable("num") int num){
-        List<TopicListQueryDto> dtoList = topicSimpleQueryService.queryChapterTopicsCustomer(num);
+    public ResponseEntity<List<TopicListQueryDto>> queryChapterTopicsCustomer(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+                                                                                @PathVariable("num") int num){
+        List<TopicListQueryDto> dtoList = topicSimpleQueryService.queryChapterTopicsCustomer(customer,num);
 
         return new ResponseEntity<List<TopicListQueryDto>>(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "특정 question-category 내의 모든 topic조회")
     @GetMapping("/question-categories/{id}/topics")
-    public ResponseEntity<List<TopicQueryInQuestionCategoryDto>> queryTopicsInQuestionCategory(@PathVariable("id") Long id) {
-        List<TopicQueryInQuestionCategoryDto> dtoList = topicSimpleQueryService.queryTopicsInQuestionCategory(id);
-        return new ResponseEntity<List<TopicQueryInQuestionCategoryDto>>(dtoList, HttpStatus.OK);
+    public ResponseEntity<List<TopicListQueryDto>> queryTopicsInQuestionCategory(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+                                                                                               @PathVariable("id") Long id) {
+        List<TopicListQueryDto> dtoList = topicSimpleQueryService.queryTopicsInQuestionCategory(customer ,id);
+        return new ResponseEntity<List<TopicListQueryDto>>(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "특정 토픽의 전체 키워드 조회")

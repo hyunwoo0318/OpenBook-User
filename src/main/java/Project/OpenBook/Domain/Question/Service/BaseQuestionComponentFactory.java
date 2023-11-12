@@ -80,13 +80,20 @@ public class BaseQuestionComponentFactory {
     /**
      * 랜덤한 숫자를 고르는 로직
      * @param count 골라야할 랜덤한 숫자 개수
-     * @param maxNum 골라야할 랜덤한 숫자의 최대값
+     * @param maxNum 골라야할 랜덤한 숫자의 최대값 + 1
      * @return 랜덤한 숫자를 가지고 있는 집합
      */
 
     public Set<Integer> getRandomIndex(Integer count, Integer maxNum) {
         Set<Integer> ret = new HashSet<>();
         Random random = new Random();
+
+        if (maxNum <= count) {
+            for (int i = 0; i < maxNum; i++) {
+                ret.add(i);
+            }
+            return ret;
+        }
 
         while (ret.size() < count) {
             int randIdx = random.nextInt(maxNum);

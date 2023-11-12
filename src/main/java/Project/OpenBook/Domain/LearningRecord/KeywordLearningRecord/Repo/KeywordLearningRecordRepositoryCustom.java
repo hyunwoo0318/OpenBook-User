@@ -10,5 +10,7 @@ public interface KeywordLearningRecordRepositoryCustom {
 
     public List<KeywordLearningRecord> queryKeywordLearningRecordsInQuestionCategory(Customer customer, Long questionCategoryId);
 
+    public List<KeywordLearningRecord> queryAllForInit();
+
 
 }

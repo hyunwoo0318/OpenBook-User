@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 import static Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.QRoundLearningRecord.roundLearningRecord;
 import static Project.OpenBook.Domain.Round.Domain.QRound.round;
@@ -20,5 +21,16 @@ public class RoundLearningRecordRepositoryCustomImpl implements RoundLearningRec
                 .leftJoin(roundLearningRecord.round, round).fetchJoin()
                 .where(roundLearningRecord.customer.eq(customer))
                 .fetch();
+    }
+
+    @Override
+    public Optional<RoundLearningRecord> queryRoundLearningRecord(Customer customer, Integer roundNumber) {
+        RoundLearningRecord record = queryFactory.selectFrom(roundLearningRecord).distinct()
+                .leftJoin(roundLearningRecord.round, round).fetchJoin()
+                .leftJoin(round.examQuestionList).fetchJoin()
+                .where(roundLearningRecord.customer.eq(customer))
+                .where(roundLearningRecord.round.number.eq(roundNumber))
+                .fetchOne();
+        return Optional.ofNullable(record);
     }
 }

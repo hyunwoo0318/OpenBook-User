@@ -30,14 +30,14 @@ public class QuestionCategoryLearningRecord {
 
     private Integer wrongCount = 0;
 
-    private Integer score = 0;
+    private Double score;
 
     public QuestionCategoryLearningRecord(QuestionCategory questionCategory, Customer customer) {
         this.questionCategory = questionCategory;
         this.customer = customer;
         this.answerCount = 0;
         this.wrongCount = 0;
-        this.score = 0;
+        this.score = 0.0;
     }
 
     public QuestionCategoryLearningRecord(QuestionCategory questionCategory, Customer customer, Integer answerCount, Integer wrongCount) {
@@ -45,7 +45,7 @@ public class QuestionCategoryLearningRecord {
         this.customer = customer;
         this.answerCount = answerCount;
         this.wrongCount = wrongCount;
-        this.score = 0;
+        this.score = 0.0;
     }
 
     public QuestionCategoryLearningRecord updateCount(Integer answerCount, Integer wrongCount) {

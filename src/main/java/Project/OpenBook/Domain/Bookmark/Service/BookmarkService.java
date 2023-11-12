@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,7 +49,7 @@ public class BookmarkService {
         String topicTitle = dto.getTopicTitle();
 
         TopicLearningRecord record = getTopicLearningRecord(customer, topicTitle);
-        record.updateBookmark(true);
+        record.updateBookmark(false);
     }
 
 
@@ -78,5 +79,21 @@ public class BookmarkService {
         }
 
         return null;
+    }
+
+    public Map<Topic, Boolean> queryBookmarks(Customer customer, List<Topic> topicList){
+        Map<Topic, TopicLearningRecord> recordMap = topicLearningRecordRepository.queryTopicLearningRecordsBookmarked(customer, topicList)
+                .stream()
+                .collect(Collectors.toMap(record -> record.getTopic(), record -> record));
+        Map<Topic, Boolean> bookmarkMap = new HashMap<>();
+        for (Topic topic : topicList) {
+            TopicLearningRecord record = recordMap.get(topic);
+            if (record == null) {
+                record = new TopicLearningRecord(topic, customer);
+                topicLearningRecordRepository.save(record);
+            }
+            bookmarkMap.put(topic, record.getIsBookmarked());
+        }
+        return bookmarkMap;
     }
 }

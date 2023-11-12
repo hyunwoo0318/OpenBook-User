@@ -3,6 +3,7 @@ package Project.OpenBook.Domain.StudyHistory.Controller;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.StudyHistory.Service.Dto.ExamQuestionRecordDto;
 import Project.OpenBook.Domain.StudyHistory.Service.Dto.ExamQuestionScoreDto;
+import Project.OpenBook.Domain.StudyHistory.Service.Dto.QuestionCategoryScoreAscentDto;
 import Project.OpenBook.Domain.StudyHistory.Service.Dto.WrongCountAddDto;
 import Project.OpenBook.Domain.StudyHistory.Service.StudyHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,10 +44,10 @@ public class StudyHistoryController {
 
     @Operation(summary = "키워드별 오답 횟수 저장")
     @PatchMapping("/keyword/wrong-count")
-    public ResponseEntity<Void> saveKeywordWrongCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
-                                                      @Validated @RequestBody List<WrongCountAddDto> dtoList) {
-        studyHistoryService.saveKeywordWrongCount(customer, dtoList);
-        return new ResponseEntity<Void> (HttpStatus.OK);
+    public ResponseEntity<List<QuestionCategoryScoreAscentDto>> saveKeywordWrongCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+                                                                                      @Validated @RequestBody List<WrongCountAddDto> dtoList) {
+        List<QuestionCategoryScoreAscentDto> returnDtoList = studyHistoryService.saveKeywordWrongCount(customer, dtoList);
+        return new ResponseEntity<List<QuestionCategoryScoreAscentDto>> (returnDtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "모의고사 회차별 오답 횟수 저장")

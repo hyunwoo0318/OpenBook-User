@@ -21,8 +21,10 @@ public class TopicListQueryDto {
     private String era;
     private List<PrimaryDateDto> extraDateList;
     private List<KeywordDto> keywordList;
+    private Boolean isBookmarked;
 
-    public TopicListQueryDto(Topic topic, List<KeywordDto> keywordList) {
+    public TopicListQueryDto(Boolean isBookmarked, Topic topic, List<KeywordDto> keywordList) {
+        this.isBookmarked = isBookmarked;
         QuestionCategory questionCategory = topic.getQuestionCategory();
         this.title = topic.getTitle();
         this.dateComment = topic.getDateComment();

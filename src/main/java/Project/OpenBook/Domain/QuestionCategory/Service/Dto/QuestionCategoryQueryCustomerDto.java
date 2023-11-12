@@ -22,7 +22,7 @@ public class QuestionCategoryQueryCustomerDto {
         this.id = questionCategory.getId();
         this.title = questionCategory.getTitle();
         this.number = questionCategory.getNumber();
-        this.score = record.getAnswerCount();
+        this.score = record.getAnswerCount() * 100 / questionCategory.getTotalQuestionProb();
         this.topicCount = record.getQuestionCategory().getTopicList().size();
     }
 

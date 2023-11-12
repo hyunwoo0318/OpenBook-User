@@ -24,6 +24,9 @@ public class QuestionCategory extends BaseEntity {
 
     private Integer number;
 
+    private Integer totalQuestionProb;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
@@ -35,6 +38,7 @@ public class QuestionCategory extends BaseEntity {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "questionCategory")
     private List<Topic> topicList = new ArrayList<>();
     public QuestionCategory(String title, Category category, Era era) {
+        this.totalQuestionProb = 0;
         this.title = title;
         this.category = category;
         this.era = era;
@@ -49,6 +53,10 @@ public class QuestionCategory extends BaseEntity {
 
     public void updateNumber(Integer number) {
         this.number =number;
+    }
+
+    public void updateTotalQuestionProb(Integer totalQuestionProb) {
+        this.totalQuestionProb = totalQuestionProb;
     }
 
     public void updateTitle(String title) {

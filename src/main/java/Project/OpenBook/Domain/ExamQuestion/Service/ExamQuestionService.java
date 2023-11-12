@@ -16,6 +16,8 @@ import Project.OpenBook.Domain.ExamQuestion.Service.dto.*;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
 import Project.OpenBook.Domain.Question.Dto.QuestionChoiceDto;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
@@ -38,6 +40,7 @@ import static Project.OpenBook.Constants.ErrorCode.*;
 public class ExamQuestionService {
     private final ExamQuestionRepository examQuestionRepository;
     private final RoundRepository roundRepository;
+    private final RoundLearningRecordRepository roundLearningRecordRepository;
     private final TopicRepository topicRepository;
     private final DescriptionRepository descriptionRepository;
     private final ChoiceRepository choiceRepository;
@@ -380,5 +383,21 @@ public class ExamQuestionService {
     }
 
 
+    @Transactional
+    public void clearRoundQuestionRecord(Customer customer, Integer roundNumber) {
+        Optional<RoundLearningRecord> roundRecordOptional
+                = roundLearningRecordRepository.queryRoundLearningRecord(customer, roundNumber);
+        if (roundRecordOptional.isPresent()) {
+            RoundLearningRecord roundRecord = roundRecordOptional.get();
+            List<Long> examQuestionIdList = roundRecord.getRound().getExamQuestionList().stream()
+                            .map(e -> e.getId())
+                                    .collect(Collectors.toList());
+            roundRecord.updateScore(0);
 
+            List<ExamQuestionLearningRecord> questionRecordList
+                    = examQuestionLearningRecordRepository.queryExamQuestionLearningRecords(customer, examQuestionIdList);
+            questionRecordList.forEach(q -> q.clear());
+        }
+
+    }
 }

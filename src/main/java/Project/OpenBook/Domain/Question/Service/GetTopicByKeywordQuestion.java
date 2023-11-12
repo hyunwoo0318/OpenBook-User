@@ -42,8 +42,9 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
             Keyword answerKeyword2 = selectAnotherKeyword(answerTopic, answerKeyword, totalKeywordList);
 
             //3. 오답 주제 선정
-            totalTopicSet.remove(answerTopic);
-            List<Topic> wrongTopicList = getWrongTopic(new ArrayList<>(totalTopicSet), 3);
+            Set<Topic> totalWrongTopicSet = new HashSet<>(totalTopicSet);
+            totalWrongTopicSet.remove(answerTopic);
+            List<Topic> wrongTopicList = getWrongTopic(new ArrayList<>(totalWrongTopicSet), 3);
 
             QuestionDto questionDto = toQuestionDto(answerTopic, Arrays.asList(answerKeyword, answerKeyword2), wrongTopicList);
             questionList.add(questionDto);

@@ -2,8 +2,7 @@ package Project.OpenBook.Domain.JJH;
 
 import Project.OpenBook.Constants.ContentConst;
 import Project.OpenBook.Constants.StateConst;
-import Project.OpenBook.Domain.Bookmark.Domain.Bookmark;
-import Project.OpenBook.Domain.Bookmark.Repository.BookmarkRepository;
+import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
@@ -16,6 +15,7 @@ import Project.OpenBook.Domain.JJH.JJHList.JJHListRepository;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgressRepository;
 import Project.OpenBook.Domain.JJH.dto.*;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -43,7 +43,8 @@ public class JJHService {
     private final JJHContentRepository jjhContentRepository;
     private final JJHContentProgressRepository jjhContentProgressRepository;
 
-    private final BookmarkRepository bookmarkRepository;
+    private final TopicLearningRecordRepository topicLearningRecordRepository;
+    private final BookmarkService bookmarkService;
 
     @Transactional(readOnly = true)
     public JJHListAdminQueryDto queryJJHAdmin() {
@@ -119,11 +120,6 @@ public class JJHService {
     private List<JJHContentsTableQueryDto> makeContentsTableForTimeline(Customer customer, List<JJHContentProgress> jjhContentProgressList, JJHList jjhList) {
 
         List<JJHContentsTableQueryDto> dtoList = new ArrayList<>();
-        Boolean savedBookmark = false;
-
-        if(bookmarkRepository.findByCustomerAndTimeline(customer, jjhList.getTimeline()).isPresent()){
-            savedBookmark = true;
-        }
         JJHContentProgress progress = jjhContentProgressList.get(0);
         JJHContent jjhContent = progress.getJjhContent();
         Timeline timeline = jjhContent.getTimeline();
@@ -131,7 +127,7 @@ public class JJHService {
         String category = null;
         String dateComment = null;
 
-        JJHContentsTableQueryDto dto = new JJHContentsTableQueryDto(savedBookmark,title, jjhContent.getContent().name(),
+        JJHContentsTableQueryDto dto = new JJHContentsTableQueryDto(null,title, jjhContent.getContent().name(),
                 progress.getState().getName(), jjhContent.getNumber(),dateComment, category);
         dtoList.add(dto);
 
@@ -143,11 +139,9 @@ public class JJHService {
 
         List<JJHContentsTableQueryDto> dtoList = new ArrayList<>();
 
-        Map<Topic, Bookmark> bookmarkMap = bookmarkRepository.queryBookmarks(customer, jjhList.getChapter().getTopicList()).stream()
-                .collect(Collectors.toMap(b -> b.getTopic(), b -> b));
+        Map<Topic, Boolean> bookmarkMap = bookmarkService.queryBookmarks(customer, jjhList.getChapter().getTopicList());
 
         for (JJHContentProgress progress : jjhContentProgressList) {
-            Boolean savedBookmark = false;
             JJHContent jjhContent = progress.getJjhContent();
             Chapter chapter = jjhContent.getChapter();
             Topic topic = jjhContent.getTopic();
@@ -161,15 +155,9 @@ public class JJHService {
                 title = topic.getTitle();
                 category = topic.getQuestionCategory().getCategory().getName();
                 dateComment = topic.getDateComment();
-                Bookmark bookmark = bookmarkMap.get(topic);
-                if (bookmark != null) {
-                    savedBookmark = true;
-                }
             }
 
-
-
-            JJHContentsTableQueryDto dto = new JJHContentsTableQueryDto(savedBookmark,title, jjhContent.getContent().name(),
+            JJHContentsTableQueryDto dto = new JJHContentsTableQueryDto(bookmarkMap.get(topic),title, jjhContent.getContent().name(),
                     progress.getState().getName(), jjhContent.getNumber(),dateComment, category);
             dtoList.add(dto);
         }
