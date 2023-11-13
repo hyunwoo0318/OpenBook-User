@@ -50,7 +50,9 @@ public class WeightedRandomService {
         Set<Keyword> keywordSet = new HashSet<>();
         while (keywordSet.size() < limit) {
             //TODO : remove구현후 사용한 keyword는 제외하기
-            keywordSet.add(bag.getRandom());
+            WeightedRandomBag<Keyword>.Entry randomEntry = bag.getRandomEntry();
+            keywordSet.add(randomEntry.object);
+            bag.removeEntry(randomEntry);
         }
 
         return new ArrayList<Keyword>(keywordSet);

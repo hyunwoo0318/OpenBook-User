@@ -156,6 +156,7 @@ public class QuestionService {
         questionList.addAll(type2QuestionList);
 
 
+        Collections.shuffle(questionList);
         return questionList;
     }
 }

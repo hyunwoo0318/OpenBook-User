@@ -245,13 +245,17 @@ public class JJHService {
             Timeline timeline = jjhList.getTimeline();
             if (chapter != null) {
                 //1. 단원학습 체크
+                JJHContent chapterInfoJJHContent = m.get(new jjhContentType(ContentConst.CHAPTER_INFO, chapter.getId()));
                 if (chapter.getContent() != null) {
-                    JJHContent jjhContent = m.get(new jjhContentType(ContentConst.CHAPTER_INFO, chapter.getId()));
-                    if (jjhContent == null) {
+                    if (chapterInfoJJHContent == null) {
                         JJHContent newJJHContent = new JJHContent(ContentConst.CHAPTER_INFO,idx++, jjhList, chapter);
                         jjhContentRepository.save(newJJHContent);
                     }else{
-                        jjhContent.updateNumber(idx++);
+                        chapterInfoJJHContent.updateNumber(idx++);
+                    }
+                }else{
+                    if (chapterInfoJJHContent != null) {
+                        jjhContentRepository.delete(chapterInfoJJHContent);
                     }
                 }
 
@@ -278,12 +282,12 @@ public class JJHService {
 
             } else if (timeline != null) {
                 //4. 연표학습 체크
-                JJHContent jjhContent = m.get(new jjhContentType(ContentConst.TIMELINE_STUDY, timeline.getId()));
-                if (jjhContent == null) {
+                JJHContent timelineJJHContent = m.get(new jjhContentType(ContentConst.TIMELINE_STUDY, timeline.getId()));
+                if (timelineJJHContent == null) {
                     JJHContent newJJHContent = new JJHContent(ContentConst.TIMELINE_STUDY, idx++, jjhList, timeline);
                     jjhContentRepository.save(newJJHContent);
                 }else{
-                    jjhContent.updateNumber(idx++);
+                    timelineJJHContent.updateNumber(idx++);
                 }
             }
         }

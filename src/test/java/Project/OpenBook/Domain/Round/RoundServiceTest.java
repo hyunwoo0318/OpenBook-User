@@ -1,16 +1,10 @@
 package Project.OpenBook.Domain.Round;
 
-import Project.OpenBook.Domain.Category.Domain.Category;
-import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
-import Project.OpenBook.Domain.Category.Service.CategoryService;
-import Project.OpenBook.Domain.Category.Service.Dto.CategoryDto;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
-import Project.OpenBook.Domain.Round.RoundValidator;
 import Project.OpenBook.Domain.Round.Service.RoundService;
-import Project.OpenBook.Domain.Round.dto.RoundDto;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
+import Project.OpenBook.Domain.Round.Service.dto.RoundDto;
 import Project.OpenBook.Handler.Exception.CustomException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

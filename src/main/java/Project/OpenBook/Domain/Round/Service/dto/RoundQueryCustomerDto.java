@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Round.dto;
+package Project.OpenBook.Domain.Round.Service.dto;
 
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
 import Project.OpenBook.Domain.Round.Domain.Round;

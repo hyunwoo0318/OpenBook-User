@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.JJH.JJHList;
 
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.JJH.JJHContent.JJHContent;
+import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class JJHList {
 
     @OneToMany(mappedBy = "jjhList", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<JJHContent> jjhContentList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "jjhList",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<JJHListProgress> jjhListProgressList = new ArrayList<>();
 
 
     public JJHList(Integer number, Chapter chapter) {

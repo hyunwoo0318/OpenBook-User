@@ -34,7 +34,7 @@ public class RoundLearningRecord {
     }
 
     public void updateScore(Integer score) {
-        this.score = score;
+        this.score += score;
     }
 }
 

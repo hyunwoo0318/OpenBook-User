@@ -2,9 +2,10 @@ package Project.OpenBook.Domain.Round.Controller;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Round.Service.RoundService;
-import Project.OpenBook.Domain.Round.dto.RoundDto;
-import Project.OpenBook.Domain.Round.dto.RoundInfoDto;
-import Project.OpenBook.Domain.Round.dto.RoundQueryCustomerDto;
+import Project.OpenBook.Domain.Round.Service.dto.RoundAnswerNotedCountDto;
+import Project.OpenBook.Domain.Round.Service.dto.RoundDto;
+import Project.OpenBook.Domain.Round.Service.dto.RoundInfoDto;
+import Project.OpenBook.Domain.Round.Service.dto.RoundQueryCustomerDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,6 +41,15 @@ public class RoundController {
         List<RoundQueryCustomerDto> dtoList = roundService.queryRoundsCustomer(customer);
         return new ResponseEntity(dtoList, HttpStatus.OK);
     }
+
+    @Operation(summary = "사용자 페이지에서 회차별 오답노트 count 조회")
+    @GetMapping("/rounds/answer-notes")
+    public ResponseEntity<List<RoundAnswerNotedCountDto>> getRoundsAnswerNotedCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer
+                                                    ) {
+        List<RoundAnswerNotedCountDto> dtoList = roundService.queryRoundsAnswerNotedCount(customer);
+        return new ResponseEntity<List<RoundAnswerNotedCountDto>>(dtoList, HttpStatus.OK);
+    }
+
 
     @Operation(summary = "특정 회차 조회")
     @ApiResponses(value = {

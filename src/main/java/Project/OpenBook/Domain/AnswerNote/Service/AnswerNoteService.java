@@ -22,7 +22,7 @@ public class AnswerNoteService {
 
     @Transactional
     public void addAnswerNote(Customer customer, AnswerNoteDto answerNoteDto) {
-        Long questionId = answerNoteDto.getId();
+        Long questionId = answerNoteDto.getQuestionId();
 
         ExamQuestion examQuestion = examQuestionRepository.findById(questionId).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
@@ -39,7 +39,7 @@ public class AnswerNoteService {
 
     @Transactional
     public void deleteAnswerNote(Customer customer, AnswerNoteDto answerNoteDto) {
-        Long questionId = answerNoteDto.getId();
+        Long questionId = answerNoteDto.getQuestionId();
 
         ExamQuestion examQuestion = examQuestionRepository.findById(questionId).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);

@@ -25,8 +25,19 @@ public class ExamQuestionLearningRecordRepositoryCustomImpl implements ExamQuest
     public List<ExamQuestionLearningRecord> queryExamQuestionLearningRecords(Integer roundNumber, Customer customer) {
         return queryFactory.selectFrom(examQuestionLearningRecord)
                 .leftJoin(examQuestionLearningRecord.examQuestion, examQuestion).fetchJoin()
+                .leftJoin(examQuestion.round, round).fetchJoin()
                 .where(examQuestionLearningRecord.customer.eq(customer))
                 .where(examQuestion.round.number.eq(roundNumber))
+                .fetch();
+    }
+
+    @Override
+    public List<ExamQuestionLearningRecord> queryExamQuestionLearningRecordsAnswerNoted(Customer customer) {
+        return queryFactory.selectFrom(examQuestionLearningRecord)
+                .leftJoin(examQuestionLearningRecord.examQuestion, examQuestion).fetchJoin()
+                .leftJoin(examQuestion.round, round).fetchJoin()
+                .where(examQuestionLearningRecord.customer.eq(customer))
+                .where(examQuestionLearningRecord.answerNoted.isTrue())
                 .fetch();
     }
 

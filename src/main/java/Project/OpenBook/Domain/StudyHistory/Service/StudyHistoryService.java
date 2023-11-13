@@ -225,7 +225,7 @@ public class StudyHistoryService {
 
             //틀린경우
             if (score == 0) {
-                if (findRecord.getIsRemovedAnswerNote() && !findRecord.getAnswerNoted()) {
+                if (!findRecord.getIsRemovedAnswerNote() && !findRecord.getAnswerNoted()) {
                     findRecord.updateAnswerNoted(true);
                 }
             }
