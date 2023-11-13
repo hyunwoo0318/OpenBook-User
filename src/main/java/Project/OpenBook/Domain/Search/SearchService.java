@@ -2,6 +2,10 @@ package Project.OpenBook.Domain.Search;
 
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
+import Project.OpenBook.Domain.Search.Dto.ChapterSearchResultDto;
+import Project.OpenBook.Domain.Search.Dto.KeywordSearchResultDto;
+import Project.OpenBook.Domain.Search.Dto.SearchResultDto;
+import Project.OpenBook.Domain.Search.Dto.TopicSearchResultDto;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
@@ -24,7 +28,8 @@ public class SearchService {
     @Transactional
     public SearchResultDto searchByInput(String input) {
         List<TopicSearch> topicSearchList = topicSearchRepository.queryTopicSearchNameByInput(input);
-        List<KeywordSearch> keywordSearchList = keywordSearchRepository.queryKeywordSearchNameByInput(input);
+        List<KeywordSearch> keywordNameSearchList = keywordSearchRepository.queryKeywordSearchNameByInput(input);
+        List<KeywordSearch> keywordCommentSearchList = keywordSearchRepository.queryKeywordSearchCommentByInput(input);
         List<ChapterSearch> chapterSearchList = chapterSearchRepository.queryChapterSearchNameByInput(input);
 
         List<ChapterSearchResultDto> chapterList = chapterSearchList.stream()
@@ -37,12 +42,18 @@ public class SearchService {
                 .sorted(Comparator.comparing(TopicSearchResultDto::getChapterNumber))
                 .collect(Collectors.toList());
 
-        List<KeywordSearchResultDto> keywordList = keywordSearchList.stream()
+        List<KeywordSearchResultDto> keywordNameList = keywordNameSearchList.stream()
                 .map(ks -> new KeywordSearchResultDto(ks.getChapterNumber(), ks.getChapterTitle(), ks.getTopicTitle(),
                         ks.getName(), ks.getComment()))
                 .sorted(Comparator.comparing(KeywordSearchResultDto::getChapterNumber))
                 .collect(Collectors.toList());
 
-        return new SearchResultDto(chapterList, topicList, keywordList);
+        List<KeywordSearchResultDto> keywordCommentList = keywordCommentSearchList.stream()
+                .map(ks -> new KeywordSearchResultDto(ks.getChapterNumber(), ks.getChapterTitle(), ks.getTopicTitle(),
+                        ks.getName(), ks.getComment()))
+                .sorted(Comparator.comparing(KeywordSearchResultDto::getChapterNumber))
+                .collect(Collectors.toList());
+
+        return new SearchResultDto(chapterList, topicList, keywordNameList, keywordCommentList);
     }
 }

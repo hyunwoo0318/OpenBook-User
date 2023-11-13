@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Search;
 
+import Project.OpenBook.Domain.Search.Dto.SearchResultDto;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

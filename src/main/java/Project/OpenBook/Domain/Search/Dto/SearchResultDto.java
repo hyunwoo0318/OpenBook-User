@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Search;
+package Project.OpenBook.Domain.Search.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,5 +13,6 @@ import java.util.List;
 public class SearchResultDto {
     private List<ChapterSearchResultDto> chapterList = new ArrayList<>();
     private List<TopicSearchResultDto> topicList = new ArrayList<>();
-    private List<KeywordSearchResultDto> keywordList = new ArrayList<>();
+    private List<KeywordSearchResultDto> keywordNameList = new ArrayList<>();
+    private List<KeywordSearchResultDto> keywordCommentList = new ArrayList<>();
 }

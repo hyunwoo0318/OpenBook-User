@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.Search;
+package Project.OpenBook.Domain.Search.Dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
