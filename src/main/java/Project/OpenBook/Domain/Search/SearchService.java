@@ -29,7 +29,6 @@ public class SearchService {
     public SearchResultDto searchByInput(String input) {
         List<TopicSearch> topicSearchList = topicSearchRepository.queryTopicSearchNameByInput(input);
         List<KeywordSearch> keywordNameSearchList = keywordSearchRepository.queryKeywordSearchNameByInput(input);
-        List<KeywordSearch> keywordCommentSearchList = keywordSearchRepository.queryKeywordSearchCommentByInput(input);
         List<ChapterSearch> chapterSearchList = chapterSearchRepository.queryChapterSearchNameByInput(input);
 
         List<ChapterSearchResultDto> chapterList = chapterSearchList.stream()
@@ -48,12 +47,6 @@ public class SearchService {
                 .sorted(Comparator.comparing(KeywordSearchResultDto::getChapterNumber))
                 .collect(Collectors.toList());
 
-        List<KeywordSearchResultDto> keywordCommentList = keywordCommentSearchList.stream()
-                .map(ks -> new KeywordSearchResultDto(ks.getChapterNumber(), ks.getChapterTitle(), ks.getTopicTitle(),
-                        ks.getName(), ks.getComment()))
-                .sorted(Comparator.comparing(KeywordSearchResultDto::getChapterNumber))
-                .collect(Collectors.toList());
-
-        return new SearchResultDto(chapterList, topicList, keywordNameList, keywordCommentList);
+        return new SearchResultDto(chapterList, topicList, keywordNameList);
     }
 }

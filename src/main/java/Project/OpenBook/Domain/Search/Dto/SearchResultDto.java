@@ -13,6 +13,5 @@ import java.util.List;
 public class SearchResultDto {
     private List<ChapterSearchResultDto> chapterList = new ArrayList<>();
     private List<TopicSearchResultDto> topicList = new ArrayList<>();
-    private List<KeywordSearchResultDto> keywordNameList = new ArrayList<>();
-    private List<KeywordSearchResultDto> keywordCommentList = new ArrayList<>();
+    private List<KeywordSearchResultDto> keywordList = new ArrayList<>();
 }
