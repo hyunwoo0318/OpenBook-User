@@ -15,8 +15,17 @@ public class KeywordSearchRepositoryCustomImpl implements KeywordSearchRepositor
     private final ElasticsearchOperations elasticsearchOperations;
     @Override
     public List<KeywordSearch> queryKeywordSearchNameByInput(String input) {
-        Criteria criteria = Criteria.where("name").contains(input)
-                .or(Criteria.where("comment").contains(input));
+        Criteria criteria = Criteria.where("name").contains(input);
+        CriteriaQuery query = new CriteriaQuery(criteria);
+        SearchHits<KeywordSearch> search = elasticsearchOperations.search(query, KeywordSearch.class);
+        return search.stream()
+                .map(t -> t.getContent())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<KeywordSearch> queryKeywordSearchCommentByInput(String input) {
+        Criteria criteria = Criteria.where("comment").contains(input);
         CriteriaQuery query = new CriteriaQuery(criteria);
         SearchHits<KeywordSearch> search = elasticsearchOperations.search(query, KeywordSearch.class);
         return search.stream()
