@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.*;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
@@ -79,7 +80,7 @@ public class ChoiceService {
 //    }
 
     @Transactional
-    public void createChoice(Integer roundNumber, Integer questionNumber, ChoiceInfoDto dto) {
+    public void createChoice(Integer roundNumber, Integer questionNumber, ChoiceInfoDto dto) throws IOException {
         ExamQuestion examQuestion = examQuestionRepository.queryExamQuestion(roundNumber, questionNumber).orElseThrow(() -> {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
@@ -97,7 +98,7 @@ public class ChoiceService {
     }
 
     @Transactional
-    public void updateChoice(Long choiceId, ChoiceInfoDto dto) {
+    public void updateChoice(Long choiceId, ChoiceInfoDto dto) throws IOException {
         Choice choice = choiceRepository.findById(choiceId).orElseThrow(() -> {
             throw new CustomException(CHOICE_NOT_FOUND);
         });

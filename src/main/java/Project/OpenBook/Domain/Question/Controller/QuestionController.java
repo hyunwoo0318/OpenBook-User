@@ -68,7 +68,7 @@ public class QuestionController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @GetMapping("/questions/random")
-public ResponseEntity<List<QuestionDto>> queryRandomQuestion(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+    public ResponseEntity<List<QuestionDto>> queryRandomQuestion(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                                              @RequestParam("id") Long questionCategoryId, @RequestParam("count") Integer questionCount) {
         List<QuestionDto> questionDtoList = questionService.queryRandomQuestion(customer, questionCategoryId, questionCount);
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);

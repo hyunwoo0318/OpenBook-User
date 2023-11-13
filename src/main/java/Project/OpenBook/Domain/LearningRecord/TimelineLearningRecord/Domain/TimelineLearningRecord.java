@@ -30,10 +30,13 @@ public class TimelineLearningRecord {
 
     private Integer wrongCount = 0;
 
+    private Integer score = 0;
+
     public TimelineLearningRecord(Timeline timeline, Customer customer) {
         this.timeline = timeline;
         this.customer = customer;
         this.answerCount = 0;
+        this.score = 0;
         this.wrongCount = 0;
     }
 
@@ -47,6 +50,13 @@ public class TimelineLearningRecord {
     public TimelineLearningRecord updateCount(Integer answerCount, Integer wrongCount) {
         this.answerCount += answerCount;
         this.wrongCount += wrongCount;
+        return this;
+    }
+
+    public TimelineLearningRecord updateScore() {
+        if (score <= 90) {
+            score += 10;
+        }
         return this;
     }
 

@@ -4,10 +4,12 @@ import Project.OpenBook.Constants.KeywordUsageConst;
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
+import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
+import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Era.EraRepository;
@@ -26,6 +28,8 @@ import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import Project.OpenBook.Image.ImageService;
+import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -56,6 +60,10 @@ public class InitConfig {
     private final EraRepository eraRepository;
     private final CategoryRepository categoryRepository;
 
+    private final DescriptionRepository descriptionRepository;
+    private final ChoiceRepository choiceRepository;
+    private final ImageService imageService;
+
     private final RoundRepository roundRepository;
     private final RoundLearningRecordRepository roundLearningRecordRepository;
 
@@ -68,6 +76,10 @@ public class InitConfig {
     private final CustomerRepository customerRepository;
     private final KeywordAssociationRepository keywordAssociationRepository;
     private final PasswordEncoder passwordEncoder;
+
+    private final AmazonS3Client amazonS3;
+
+
 
     /**
      * ElasticSearch를 위한 init
@@ -185,6 +197,47 @@ public class InitConfig {
 
 
     }
+
+//    @Bean
+//    public void resizeImage() throws IOException {
+//        List<Description> descriptionList = descriptionRepository.findAll();
+//        List<Choice> choiceList = choiceRepository.findAll();
+//        for (Description description : descriptionList) {
+//            String content = description.getContent();
+//            if (content != null) {
+//                String[] splitDot = content.split("[.]");
+//                String ext = splitDot[splitDot.length-1];
+//
+//                String[] splitSlash = content.split("[/]");
+//                String fileName = splitSlash[splitSlash.length-1];
+//                byte[] bytes = imageService.downloadFile(fileName);
+//                imageService.deleteFile(fileName);
+//                InputStream inputStream = imageService.resizePicture(ext, bytes);
+//                String newName = content + "/v2";
+//                imageService.saveImage(newName, inputStream);
+//                description.updateContent(newName);
+//            }
+//        }
+//        for (Choice choice : choiceList) {
+//            ChoiceType type = choice.getType();
+//            if (type == ChoiceType.Image) {
+//                String content = choice.getContent();
+//                if (content != null) {
+//                    String[] splitDot = content.split("[.]");
+//                    String ext = splitDot[splitDot.length-1];
+//
+//                    String[] splitSlash = content.split("[/]");
+//                    String fileName = splitSlash[splitSlash.length-1];
+//                    byte[] bytes = imageService.downloadFile(fileName);
+//                    imageService.deleteFile(fileName);
+//                    InputStream inputStream = imageService.resizePicture(ext, bytes);
+//                    String newName = content + "/v2";
+//                    imageService.saveImage(newName, inputStream);
+//                    choice.updateContent(newName);
+//                }
+//            }
+//        }
+//    }
 
 //    private void initKeywordAssociations(Map<Long, List<Keyword>> newKeywordMap) {
 //        keywordAssociationRepository.deleteAllInBatch();

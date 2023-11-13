@@ -36,5 +36,9 @@ public class RoundLearningRecord {
     public void updateScore(Integer score) {
         this.score += score;
     }
+
+    public void clearScore() {
+        this.score = 0;
+    }
 }
 

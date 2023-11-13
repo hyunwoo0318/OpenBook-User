@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 public class DescriptionController {
@@ -45,7 +47,7 @@ public class DescriptionController {
     @Operation(summary = "보기 이미지 수정")
     @PatchMapping("/descriptions/{id}")
     public ResponseEntity updateDescription(@PathVariable("id") Long descriptionId,
-                                            @Validated @RequestBody DescriptionUpdateDto descriptionUpdateDto){
+                                            @Validated @RequestBody DescriptionUpdateDto descriptionUpdateDto) throws IOException {
         descriptionCommentService.updateDescription(descriptionId, descriptionUpdateDto);
         return new ResponseEntity(HttpStatus.OK);
     }

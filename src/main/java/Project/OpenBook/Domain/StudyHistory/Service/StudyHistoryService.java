@@ -158,8 +158,6 @@ public class StudyHistoryService {
     @Transactional
     public void saveTimelineWrongCount(Customer customer, WrongCountAddDto dto) {
         Long timelineId = dto.getId();
-        Integer wrongCount = dto.getWrongCount();
-        Integer answerCount = dto.getCorrectCount();
 
         Timeline timeline = timelineRepository.findById(timelineId).orElseThrow(() -> {
             throw new CustomException(TIMELINE_NOT_FOUND);
@@ -171,7 +169,7 @@ public class StudyHistoryService {
             return newRecord;
         });
 
-        record.updateCount(answerCount, wrongCount);
+        record.updateScore();
     }
 
     @Transactional
@@ -229,15 +227,6 @@ public class StudyHistoryService {
                     findRecord.updateAnswerNoted(true);
                 }
             }
-
-
         }
-
-
     }
-
-
-
-
-
 }

@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,7 +118,7 @@ public class ChapterController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
     })
     @PatchMapping("/admin/chapters/{num}/info")
-    public ResponseEntity<ChapterInfoDto> updateChapterInfo(@PathVariable("num") Integer num, @Validated @RequestBody ChapterInfoDto inputChapterInfoDto){
+    public ResponseEntity<ChapterInfoDto> updateChapterInfo(@PathVariable("num") Integer num, @Validated @RequestBody ChapterInfoDto inputChapterInfoDto) throws IOException {
         ChapterInfoDto chapterInfoDto = chapterService.updateChapterInfo(num, inputChapterInfoDto.getContent());
 
         return new ResponseEntity<ChapterInfoDto>(chapterInfoDto, HttpStatus.OK);

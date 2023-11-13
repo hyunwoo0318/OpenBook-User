@@ -62,4 +62,8 @@ public class Choice extends BaseEntity {
         this.content = content;
         return this;
     }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 }

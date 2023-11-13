@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -87,7 +88,7 @@ public class DescriptionCommentService {
     }
 
     @Transactional
-    public void updateDescription(Long id, DescriptionUpdateDto dto) {
+    public void updateDescription(Long id, DescriptionUpdateDto dto) throws IOException {
         Description description = checkDescription(id);
         String encodedFile = dto.getDescription();
         String imageUrl="";

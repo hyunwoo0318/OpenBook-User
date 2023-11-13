@@ -1,10 +1,9 @@
 package Project.OpenBook.Domain.Chapter.Service;
 
-import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
+import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterAddUpdateDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterInfoDto;
-import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterNumberUpdateDto;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
@@ -15,11 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.security.cert.CertificateNotYetValidException;
+import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
 
-import static Project.OpenBook.Constants.ErrorCode.*;
+import static Project.OpenBook.Constants.ErrorCode.CHAPTER_HAS_TOPIC;
+import static Project.OpenBook.Constants.ErrorCode.CHAPTER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -104,7 +103,7 @@ public class ChapterService {
      * @return 변경된 chapterInfo를 가지는 chapterInfoDto
      */
     @Transactional
-    public ChapterInfoDto updateChapterInfo(Integer num, String content) {
+    public ChapterInfoDto updateChapterInfo(Integer num, String content) throws IOException {
         Chapter chapter = chapterValidator.checkChapter(num);
 
         if(content != null && content.isBlank()){

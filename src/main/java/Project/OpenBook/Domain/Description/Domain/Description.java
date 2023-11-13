@@ -52,4 +52,8 @@ public class Description extends BaseEntity {
         this.comment = comment;
         return this;
     }
+
+    public void updateContent(String s) {
+        this.content = s;
+    }
 }

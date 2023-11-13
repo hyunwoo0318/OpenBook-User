@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -32,7 +33,7 @@ public class ChoiceCommentController {
     @PostMapping("/admin/rounds/{roundNumber}/questions/{questionNumber}/choice-info")
     public ResponseEntity insertChoiceInfo(@PathVariable("roundNumber") Integer roundNumber,
                                            @PathVariable("questionNumber") Integer questionNumber,
-                                           @Validated @RequestBody ChoiceInfoDto dto) {
+                                           @Validated @RequestBody ChoiceInfoDto dto) throws IOException {
         choiceService.createChoice(roundNumber, questionNumber, dto);
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -40,7 +41,7 @@ public class ChoiceCommentController {
     @Operation(summary = "문제 선지 정보 수정")
     @PatchMapping("/admin/choices/{choiceId}/choice-info")
     public ResponseEntity insertChoiceInfo(@PathVariable("choiceId")Long choiceId,
-                                           @Validated @RequestBody ChoiceInfoDto dto) {
+                                           @Validated @RequestBody ChoiceInfoDto dto) throws IOException {
         choiceService.updateChoice(choiceId, dto);
         return new ResponseEntity(HttpStatus.OK);
     }

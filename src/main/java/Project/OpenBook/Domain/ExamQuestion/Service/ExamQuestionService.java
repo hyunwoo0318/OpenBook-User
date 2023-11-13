@@ -392,7 +392,7 @@ public class ExamQuestionService {
             List<Long> examQuestionIdList = roundRecord.getRound().getExamQuestionList().stream()
                             .map(e -> e.getId())
                                     .collect(Collectors.toList());
-            roundRecord.updateScore(0);
+            roundRecord.clearScore();
 
             List<ExamQuestionLearningRecord> questionRecordList
                     = examQuestionLearningRecordRepository.queryExamQuestionLearningRecords(customer, examQuestionIdList);
