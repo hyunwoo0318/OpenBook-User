@@ -24,8 +24,11 @@ import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningR
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
+import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
+import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
+import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Image.ImageService;
@@ -85,29 +88,29 @@ public class InitConfig {
      * ElasticSearch를 위한 init
      * 각 topic의 title, id를 저장
      */
-//    @Bean
-//    public void initElasticSearchIndex() {
-//        chapterSearchRepository.deleteAll();
-//        topicSearchRepository.deleteAll();
-//        keywordSearchRepository.deleteAll();
-//
-//        List<ChapterSearch> chapterSearchList = chapterRepository.findAll().stream()
-//                .map(ChapterSearch::new)
-//                .collect(Collectors.toList());
-//
-//        List<TopicSearch> topicSearchList = topicRepository.queryTopicsWithChapter().stream()
-//                .map(TopicSearch::new)
-//                .collect(Collectors.toList());
-//
-//        List<KeywordSearch> keywordSearchList = keywordRepository.queryKeywordsWithChapter().stream()
-//                .map(KeywordSearch::new)
-//                .collect(Collectors.toList());
-//
-//        chapterSearchRepository.saveAll(chapterSearchList);
-//        topicSearchRepository.saveAll(topicSearchList);
-//        keywordSearchRepository.saveAll(keywordSearchList);
-//
-//    }
+    @Bean
+    public void initElasticSearchIndex() {
+        chapterSearchRepository.deleteAll();
+        topicSearchRepository.deleteAll();
+        keywordSearchRepository.deleteAll();
+
+        List<ChapterSearch> chapterSearchList = chapterRepository.findAll().stream()
+                .map(ChapterSearch::new)
+                .collect(Collectors.toList());
+
+        List<TopicSearch> topicSearchList = topicRepository.queryTopicsWithChapter().stream()
+                .map(TopicSearch::new)
+                .collect(Collectors.toList());
+
+        List<KeywordSearch> keywordSearchList = keywordRepository.queryKeywordsWithChapter().stream()
+                .map(KeywordSearch::new)
+                .collect(Collectors.toList());
+
+        chapterSearchRepository.saveAll(chapterSearchList);
+        topicSearchRepository.saveAll(topicSearchList);
+        keywordSearchRepository.saveAll(keywordSearchList);
+
+    }
 
     /**
      * 기본 관리자 아이디 세팅
