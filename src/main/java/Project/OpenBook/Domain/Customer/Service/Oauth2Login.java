@@ -8,5 +8,5 @@ import java.io.UnsupportedEncodingException;
 @Component
 public interface Oauth2Login {
 
-    public String login(String code, String redirectUrl) throws JsonProcessingException, UnsupportedEncodingException;
+    public String login(String code, String redirectUrl, String protocol) throws JsonProcessingException, UnsupportedEncodingException;
 }

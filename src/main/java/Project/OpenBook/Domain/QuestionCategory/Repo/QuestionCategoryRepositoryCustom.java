@@ -9,4 +9,5 @@ public interface QuestionCategoryRepositoryCustom {
     public List<QuestionCategory> queryQuestionCategoriesForAdmin();
 
     public Optional<QuestionCategory> queryQuestionCategoriesWithTopicList(Long id);
+
 }

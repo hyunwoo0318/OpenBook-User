@@ -11,5 +11,6 @@ public interface QuestionCategoryLearningRecordRepositoryCustom {
 
     public List<QuestionCategoryLearningRecord> queryQuestionRecordsInKeywords(Customer customer, List<Long> questionCategoryIdList);
 
+    public QuestionCategoryLearningRecord queryQuestionCategoryLowScore(Customer customer);
     public List<QuestionCategoryLearningRecord> queryQuestionRecordsForInit();
 }

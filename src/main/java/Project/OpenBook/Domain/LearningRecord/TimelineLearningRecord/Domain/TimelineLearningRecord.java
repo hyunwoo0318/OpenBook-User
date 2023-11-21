@@ -53,9 +53,13 @@ public class TimelineLearningRecord {
         return this;
     }
 
-    public TimelineLearningRecord updateScore() {
-        if (score <= 90) {
-            score += 10;
+    public TimelineLearningRecord updateScore(Integer wrongCount) {
+        Integer ascScore = 10 - wrongCount;
+        if(ascScore < 0) ascScore = 0;
+
+        this.score += ascScore;
+        if (this.score > 100) {
+            this.score = 100;
         }
         return this;
     }

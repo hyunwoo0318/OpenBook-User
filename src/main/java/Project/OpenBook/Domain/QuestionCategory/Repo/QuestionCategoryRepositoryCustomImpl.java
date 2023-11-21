@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.QuestionCategory.Repo;
 
+import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

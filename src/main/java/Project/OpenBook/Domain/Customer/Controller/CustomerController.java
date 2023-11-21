@@ -69,9 +69,9 @@ public class CustomerController {
     @Operation(summary = "소셜 로그인")
     @GetMapping("login/{providerName}")
     public ResponseEntity<CustomerNicknameDto> socialLogin(@PathVariable("providerName") String providerName, @RequestParam("code") String code,
-                                              @RequestParam("url") String redirectUrl,
+                                              @RequestParam("url") String redirectUrl,@RequestParam("protocol") String protocol,
                                               HttpServletResponse response) throws Exception{
-        TokenDto tokenDto = customerService.loginOauth2(providerName, code, redirectUrl);
+        TokenDto tokenDto = customerService.loginOauth2(providerName, code, redirectUrl, protocol);
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
         headers.set("Refresh-Token", tokenDto.getRefreshToken());

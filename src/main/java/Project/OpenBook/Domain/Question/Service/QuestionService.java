@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Question.Service;
 
+import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
@@ -8,6 +9,7 @@ import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrim
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.TimeFlowQuestionDto;
@@ -43,6 +45,8 @@ public class QuestionService {
     private TopicLearningRecordRepository topicLearningRecordRepository;
     private KeywordLearningRecordRepository keywordLearningRecordRepository;
 
+    private QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
+
     private WeightedRandomService weightedRandomService;
 
     private GetKeywordByTopicQuestion type1 ;
@@ -50,7 +54,8 @@ public class QuestionService {
 
     public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository,TimelineRepository timelineRepository,
                            QuestionCategoryRepository questionCategoryRepository, KeywordPrimaryDateRepository keywordPrimaryDateRepository, TopicPrimaryDateRepository topicPrimaryDateRepository,
-                           TopicLearningRecordRepository topicLearningRecordRepository, KeywordLearningRecordRepository keywordLearningRecordRepository, WeightedRandomService weightedRandomService) {
+                           TopicLearningRecordRepository topicLearningRecordRepository, KeywordLearningRecordRepository keywordLearningRecordRepository, WeightedRandomService weightedRandomService
+                            ,QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository){
         this.topicRepository = topicRepository;
         this.chapterRepository = chapterRepository;
         this.keywordRepository = keywordRepository;
@@ -61,6 +66,7 @@ public class QuestionService {
         this.topicLearningRecordRepository = topicLearningRecordRepository;
         this.keywordLearningRecordRepository = keywordLearningRecordRepository;
         this.weightedRandomService = weightedRandomService;
+        this.questionCategoryLearningRecordRepository = questionCategoryLearningRecordRepository;
 
         this.type1 = new GetKeywordByTopicQuestion(this.topicRepository, this.keywordRepository, this.weightedRandomService);
         this.type2 = new GetTopicByKeywordQuestion(this.topicRepository, this.keywordRepository, this.weightedRandomService);
@@ -94,18 +100,25 @@ public class QuestionService {
         }
 
         for (KeywordPrimaryDate kp : keywordPrimaryDateList) {
+            Topic topic = kp.getKeyword().getTopic();
             TimeFlowQuestionDto dto
-                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(), kp.getKeyword().getName(),null);
+                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(),Arrays.asList(topic.getChapter().getTitle(), topic.getTitle()));
             timeFlowQuestionDtoList.add(dto);
         }
 
         for (TopicPrimaryDate tp : topicPrimaryDateList) {
+            Chapter chapter = tp.getTopic().getChapter();
+            List<String> keywordWithChapterList = new ArrayList<>();
+
             List<String> keywordList = tp.getTopic().getKeywordList().stream()
                     .sorted(Comparator.comparing(Keyword::getNumber))
                     .map(Keyword::getName)
                     .collect(Collectors.toList());
+
+            keywordWithChapterList.add(chapter.getTitle());
+            keywordWithChapterList.addAll(keywordList);
             TimeFlowQuestionDto dto
-                    = new TimeFlowQuestionDto(tp.getExtraDate(), tp.getExtraDateComment(), tp.getTopic().getTitle(), keywordList);
+                    = new TimeFlowQuestionDto(tp.getExtraDate(), tp.getExtraDateComment(), keywordWithChapterList);
             timeFlowQuestionDtoList.add(dto);
         }
 
@@ -135,11 +148,17 @@ public class QuestionService {
     @Transactional
     public List<QuestionDto> queryRandomQuestion(Customer customer, Long questionCategoryId, Integer questionCount) {
         List<QuestionDto> questionList = new ArrayList<>();
+        QuestionCategory questionCategory = null;
+        if (questionCategoryId == -1L) {
+            questionCategory = questionCategoryLearningRecordRepository.queryQuestionCategoryLowScore(customer).getQuestionCategory();
+        }else{
+            questionCategory = questionCategoryRepository.queryQuestionCategoriesWithTopicList(questionCategoryId)
+                    .orElseThrow(() -> {
+                        throw new CustomException(QUESTION_CATEGORY_NOT_FOUND);
+                    });
+        }
 
-        QuestionCategory questionCategory = questionCategoryRepository.queryQuestionCategoriesWithTopicList(questionCategoryId)
-                .orElseThrow(() -> {
-                    throw new CustomException(QUESTION_CATEGORY_NOT_FOUND);
-                });
+
 
         Map<Keyword, KeywordLearningRecord> keywordRecordMap = keywordLearningRecordRepository.queryKeywordLearningRecordsInQuestionCategory(customer, questionCategoryId).stream()
                 .collect(Collectors.toMap(KeywordLearningRecord::getKeyword, k -> k));

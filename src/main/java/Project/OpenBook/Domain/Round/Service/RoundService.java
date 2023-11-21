@@ -2,7 +2,6 @@ package Project.OpenBook.Domain.Round.Service;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
-import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
@@ -33,7 +32,6 @@ public class RoundService {
 
     private final RoundRepository roundRepository;
     private final RoundLearningRecordRepository roundLearningRecordRepository;
-    private final ExamQuestionRepository examQuestionRepository;
     private final ExamQuestionLearningRecordRepository examQuestionLearningRecordRepository;
     private final RoundValidator roundValidator;
 
@@ -106,12 +104,12 @@ public class RoundService {
         List<RoundLearningRecord> recordList = roundLearningRecordRepository.queryRoundLearningRecord(customer);
         return recordList.stream()
                 .map(RoundQueryCustomerDto::new)
+                .sorted(Comparator.comparing(RoundQueryCustomerDto::getNumber).reversed())
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public List<RoundAnswerNotedCountDto> queryRoundsAnswerNotedCount(Customer customer) {
-
         List<RoundAnswerNotedCountDto> dtoList = new ArrayList<>();
         Map<Round, List<ExamQuestionLearningRecord>> roundRecordMap = examQuestionLearningRecordRepository.queryExamQuestionLearningRecordsAnswerNoted(customer).stream()
                 .collect(Collectors.groupingBy(q -> q.getExamQuestion().getRound()));
@@ -121,6 +119,5 @@ public class RoundService {
             dtoList.add(new RoundAnswerNotedCountDto(round.getNumber(), recordList.size()));
         }
         return dtoList;
-
     }
 }

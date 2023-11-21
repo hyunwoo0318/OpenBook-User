@@ -26,7 +26,7 @@ public class NaverLogin implements Oauth2Login {
     @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
     private String naverClientSecret;
     @Override
-    public String login(String code, String redirectUrl) throws UnsupportedEncodingException, JsonProcessingException {
+    public String login(String code, String redirectUrl, String protocol) throws UnsupportedEncodingException, JsonProcessingException {
         String state = URLEncoder.encode("https://nid.naver.com/oauth2.0/token", StandardCharsets.UTF_8.toString());
 
         Map<String, String> map = webClientBuilder.build()

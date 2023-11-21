@@ -33,6 +33,9 @@ public class Timeline extends BaseEntity {
     @OneToMany(mappedBy = "timeline",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<JJHList> jjhLists = new ArrayList<>();
 
+//    @OneToMany(mappedBy = "timeline",fetch = FetchType.LAZY)
+//    private List<QuestionCategory> questionCategoryList = new ArrayList<>();
+
     public Timeline(String title, Integer startDate, Integer endDate, Era era) {
         this.title = title;
         this.startDate = startDate;

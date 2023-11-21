@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.Customer.Service;
 
-import Project.OpenBook.Constants.KakaoConst;
 import Project.OpenBook.Handler.Exception.CustomException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,8 +18,8 @@ public class KakaoLogin implements Oauth2Login{
 
     private String kakaoKey = "ca80f14a6e6b6c34ea821c46af0cc10c";
     @Override
-    public String login(String code, String redirectURL) throws JsonProcessingException {
-        String kakaoUri = "http://" + redirectURL;
+    public String login(String code, String redirectURL, String protocol) throws JsonProcessingException {
+        String kakaoUri = protocol + "://" + redirectURL;
         Map<String, String> map = webClientBuilder.build()
                 .post()
                 .uri(uriBuilder -> uriBuilder

@@ -169,7 +169,8 @@ public class StudyHistoryService {
             return newRecord;
         });
 
-        record.updateScore();
+        //TODO : 10 - wrongCount를 뺀만큼 올리기
+        record.updateScore(dto.getWrongCount());
     }
 
     @Transactional

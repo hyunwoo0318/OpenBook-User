@@ -12,6 +12,5 @@ import java.util.List;
 public class TimeFlowQuestionDto {
     private Integer date;
     private String comment;
-    private String topicTitle;
     private List<String> keywordList;
 }

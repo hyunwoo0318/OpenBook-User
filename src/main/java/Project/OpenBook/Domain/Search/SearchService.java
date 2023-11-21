@@ -27,6 +27,7 @@ public class SearchService {
 
     @Transactional
     public SearchResultDto searchByInput(String input) {
+        input = input.replaceAll(" ", "");
         List<TopicSearch> topicSearchList = topicSearchRepository.queryTopicSearchNameByInput(input);
         List<KeywordSearch> keywordNameSearchList = keywordSearchRepository.queryKeywordSearchNameByInput(input);
         List<ChapterSearch> chapterSearchList = chapterSearchRepository.queryChapterSearchNameByInput(input);

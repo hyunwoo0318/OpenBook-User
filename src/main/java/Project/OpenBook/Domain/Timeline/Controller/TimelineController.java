@@ -27,7 +27,7 @@ public class TimelineController {
         return new ResponseEntity(dtoList, HttpStatus.OK);
     }
 
-    //TODO
+    //TODO : timeline count 조회
     @GetMapping("/time-lines")
     public ResponseEntity queryTimelinesCustomer(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
         List<TimelineQueryCustomerDto> dtoList = timelineService.queryTimelinesCustomer(customer);

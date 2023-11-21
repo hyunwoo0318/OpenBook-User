@@ -151,13 +151,13 @@ public class CustomerService implements UserDetailsService {
      * Oauth2
      */
     @Transactional
-    public TokenDto loginOauth2(String providerName, String code, String redirectUrl) throws Exception{
+    public TokenDto loginOauth2(String providerName, String code, String redirectUrl, String protocol) throws Exception{
 
         Oauth2Login oauth2LoginStrategy;
         oauth2LoginStrategy = getOauth2LoginStrategy(providerName);
 
         //카카오 or 네이버 로그인 완료 후 해당 oauthId return
-        String oauthId = oauth2LoginStrategy.login(code,redirectUrl);
+        String oauthId = oauth2LoginStrategy.login(code,redirectUrl, protocol);
 
         Customer customer;
         Optional<Customer> customerOptional = customerRepository.queryCustomer(oauthId, providerName);

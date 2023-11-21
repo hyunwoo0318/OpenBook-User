@@ -36,6 +36,17 @@ public class QuestionCategoryLearningRecordRepositoryCustomImpl implements Quest
     }
 
     @Override
+    public QuestionCategoryLearningRecord queryQuestionCategoryLowScore(Customer customer) {
+        return queryFactory.selectFrom(questionCategoryLearningRecord).distinct()
+                .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.topicList).fetchJoin()
+                .where(questionCategoryLearningRecord.customer.eq(customer))
+                .orderBy(questionCategoryLearningRecord.score.asc())
+                .limit(1)
+                .fetchOne();
+    }
+
+    @Override
     public List<QuestionCategoryLearningRecord> queryQuestionRecordsForInit() {
         return queryFactory.selectFrom(questionCategoryLearningRecord)
                 .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory).fetchJoin()
