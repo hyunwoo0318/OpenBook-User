@@ -2,11 +2,13 @@ package Project.OpenBook.Domain.Round.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,6 +27,10 @@ public class Round extends BaseEntity {
 
     @OneToMany(mappedBy = "round", fetch = FetchType.LAZY)
     private List<ExamQuestion> examQuestionList;
+
+    @OneToMany(mappedBy = "round", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<RoundLearningRecord> roundLearningRecordList = new ArrayList<>();
+
 
     public Round(Integer date, Integer number) {
         this.date = date;

@@ -1,6 +1,7 @@
 package Project.OpenBook.Domain.Chapter.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
+import Project.OpenBook.Domain.JJH.JJHContent.JJHContent;
 import Project.OpenBook.Domain.JJH.JJHList.JJHList;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
@@ -24,6 +25,9 @@ public class Chapter extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private int number;
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<JJHContent> jjhContentList = new ArrayList<>();
 
 
     private String dateComment;

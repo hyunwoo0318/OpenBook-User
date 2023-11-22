@@ -4,7 +4,9 @@ import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
+import Project.OpenBook.Domain.JJH.JJHContent.JJHContent;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import lombok.Builder;
@@ -65,6 +67,12 @@ public class Topic extends BaseEntity implements Serializable {
 
     @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
     private List<Description> descriptionList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<TopicLearningRecord> topicLearningRecordList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<JJHContent> jjhContentList = new ArrayList<>();
 
     @Builder
     public Topic(Integer number, String title, int questionNum, int choiceNum, String dateComment, String detail, Chapter chapter, QuestionCategory questionCategory) {

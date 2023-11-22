@@ -18,7 +18,6 @@ import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
-import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
@@ -87,7 +86,6 @@ public class InitConfig {
     private final ExamQuestionRepository examQuestionRepository;
 
     private final CustomerRepository customerRepository;
-    private final KeywordAssociationRepository keywordAssociationRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final AmazonS3Client amazonS3;

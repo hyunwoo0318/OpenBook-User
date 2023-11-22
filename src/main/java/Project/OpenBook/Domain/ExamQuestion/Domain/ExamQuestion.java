@@ -4,6 +4,7 @@ import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -33,6 +34,9 @@ public class ExamQuestion extends BaseEntity {
 
     @OneToMany(mappedBy = "examQuestion",fetch = FetchType.LAZY)
     private List<Choice> choiceList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "examQuestion",fetch = FetchType.LAZY)
+    private List<ExamQuestionLearningRecord> examQuestionLearningRecordList = new ArrayList<>();
 
     @OneToOne(mappedBy = "examQuestion", fetch = FetchType.LAZY)
     private Description description;

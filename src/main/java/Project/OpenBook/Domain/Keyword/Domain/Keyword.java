@@ -4,7 +4,7 @@ import Project.OpenBook.Constants.KeywordUsageConst;
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
-import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociation;
+import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,14 +38,15 @@ public class Keyword extends BaseEntity {
     @JoinColumn(name = "topic_id")
     private Topic topic;
 
-    @OneToMany(mappedBy = "keyword2", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<KeywordAssociation> keywordAssociationList = new ArrayList<>();
 
     @OneToMany(mappedBy = "keyword",fetch = FetchType.LAZY)
     private List<DescriptionKeyword> descriptionKeywordList = new ArrayList<>();
 
     @OneToMany(mappedBy = "keyword", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<KeywordPrimaryDate> keywordPrimaryDateList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "keyword", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<KeywordLearningRecord> keywordLearningRecordList = new ArrayList<>();
 
     public Keyword(Integer number, String name, String comment,String dateComment, Topic topic, String imageUrl) {
         this.number = number;

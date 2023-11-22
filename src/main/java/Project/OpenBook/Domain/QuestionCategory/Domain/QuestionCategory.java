@@ -3,6 +3,7 @@ package Project.OpenBook.Domain.QuestionCategory.Domain;
 import Project.OpenBook.Domain.BaseEntity;
 import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Era.Era;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -37,6 +38,9 @@ public class QuestionCategory extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "questionCategory")
     private List<Topic> topicList = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "questionCategory", cascade = CascadeType.REMOVE)
+    private List<QuestionCategoryLearningRecord> questionCategoryLearningRecordList = new ArrayList<>();
     public QuestionCategory(String title, Category category, Era era) {
         this.totalQuestionProb = 0;
         this.title = title;
