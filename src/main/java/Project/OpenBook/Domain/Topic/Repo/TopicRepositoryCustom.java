@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Topic.Repo;
 
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 
 import java.util.List;
@@ -26,4 +27,6 @@ public interface  TopicRepositoryCustom {
 
 
     public List<Topic> queryTopicsWithCategory(int num);
+
+    public List<Topic> queryTopicsInQuestionCategories(List<QuestionCategory> questionCategoryList);
 }

@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Question.Service;
 
+import Project.OpenBook.Constants.QuestionConst;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
@@ -131,7 +132,7 @@ public class QuestionService {
 
     @Transactional
     public List<QuestionDto> queryGetKeywordsQuestion(String topicTitle) {
-        return type1.getJJHQuestion(topicTitle, 0);
+        return type1.getJJHQuestion(topicTitle);
     }
 
 
@@ -151,6 +152,7 @@ public class QuestionService {
         QuestionCategory questionCategory = null;
         if (questionCategoryId == -1L) {
             questionCategory = questionCategoryLearningRecordRepository.queryQuestionCategoryLowScore(customer).getQuestionCategory();
+            questionCategoryId = questionCategory.getId();
         }else{
             questionCategory = questionCategoryRepository.queryQuestionCategoriesWithTopicList(questionCategoryId)
                     .orElseThrow(() -> {
@@ -163,13 +165,11 @@ public class QuestionService {
         Map<Keyword, KeywordLearningRecord> keywordRecordMap = keywordLearningRecordRepository.queryKeywordLearningRecordsInQuestionCategory(customer, questionCategoryId).stream()
                 .collect(Collectors.toMap(KeywordLearningRecord::getKeyword, k -> k));
 
-        List<Keyword> totalKeywordList = keywordRepository.queryKeywordsInQuestionCategory(questionCategory);
+        List<Keyword> totalKeywordList = new ArrayList<>(keywordRecordMap.keySet());
 
-        Integer count1, count2 = 0;
-        count1 = questionCount / 2;
-        count2 = questionCount - count1;
-        List<QuestionDto> type1QuestionList = type1.getQuestion(keywordRecordMap, totalKeywordList, count1);
-        List<QuestionDto> type2QuestionList = type2.getQuestion(keywordRecordMap, totalKeywordList, count2);
+
+        List<QuestionDto> type1QuestionList = type1.getQuestion(keywordRecordMap, totalKeywordList, QuestionConst.GET_TOPIC_QUESTION_COUNT);
+        List<QuestionDto> type2QuestionList = type2.getQuestion(keywordRecordMap, totalKeywordList, QuestionConst.GET_KEYWORD_QUESTION_COUNT);
 
         questionList.addAll(type1QuestionList);
         questionList.addAll(type2QuestionList);

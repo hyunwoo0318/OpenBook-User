@@ -25,6 +25,7 @@ public class Timeline extends BaseEntity {
 
     private Integer endDate;
 
+    private Integer count;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "era_id")
@@ -33,10 +34,13 @@ public class Timeline extends BaseEntity {
     @OneToMany(mappedBy = "timeline",cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<JJHList> jjhLists = new ArrayList<>();
 
+
+
 //    @OneToMany(mappedBy = "timeline",fetch = FetchType.LAZY)
 //    private List<QuestionCategory> questionCategoryList = new ArrayList<>();
 
     public Timeline(String title, Integer startDate, Integer endDate, Era era) {
+        this.count = 0;
         this.title = title;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -48,6 +52,10 @@ public class Timeline extends BaseEntity {
         this.startDate = startDate;
         this.endDate = endDate;
         this.era = era;
+    }
+
+    public void updateCount() {
+        this.count++;
     }
 
 

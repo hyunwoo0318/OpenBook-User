@@ -3,6 +3,7 @@ package Project.OpenBook.Domain.Question.Service;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.WeightedRandomSelection.Model.KeywordSelectModel;
@@ -44,6 +45,10 @@ public class BaseQuestionComponentFactory {
         return weightedRandomService.selectWrongKeywords(modelList, limit);
     }
 
+    public List<Topic> getTopicsInQuestionCategories(List<QuestionCategory> questionCategoryList) {
+        return topicRepository.queryTopicsInQuestionCategories(questionCategoryList);
+    }
+
 
     public List<Topic> getWrongTopic(List<Topic> wrongTopicList, int limit) {
         List<Topic> topicList = new ArrayList<>();
@@ -54,6 +59,13 @@ public class BaseQuestionComponentFactory {
         return topicList;
     }
 
+    public List<Keyword> getRandomOpenedKeywords(Topic answerTopic, Integer count) {
+        return keywordRepository.queryRandomOpenedKeywords(answerTopic, count);
+    }
+
+    public List<Keyword> getRandomWrongKeywords(List<Keyword> keywordList) {
+        return keywordRepository.queryKeywordsInQuestionCategories(keywordList);
+    }
 
     public Keyword selectAnotherKeyword(Topic answerTopic, Keyword answerKeyword, List<Keyword> totalKeywordList) {
         Keyword anotherAnswerKeyword = null;

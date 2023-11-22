@@ -32,7 +32,8 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
                 .map(Keyword::getTopic)
                 .collect(Collectors.toSet());
 
-        while(questionList.size() != questionCount){
+        int count = 0;
+        while(questionList.size() != questionCount && count < 10){
 
             //2. 정답 키워드 선정
             List<KeywordSelectModel> answerKeywordSelectModelList
@@ -48,6 +49,8 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
 
             QuestionDto questionDto = toQuestionDto(answerTopic, Arrays.asList(answerKeyword, answerKeyword2), wrongTopicList);
             questionList.add(questionDto);
+
+            count++;
         }
         return  questionList;
     }
@@ -56,30 +59,38 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
 
     public List<QuestionDto> getJJHQuestion(List<Topic> topicList) {
         List<QuestionDto> questionList = new ArrayList<>();
-        Map<QuestionCategory, List<Topic>> questionCategoryTopicMap = topicList.stream()
+        List<QuestionCategory> questionCategoryList = topicList.stream()
+                .map(Topic::getQuestionCategory)
+                .collect(Collectors.toList());
+        Map<QuestionCategory, List<Topic>> questionCategoryTopicMap = getTopicsInQuestionCategories(questionCategoryList).stream()
                 .collect(Collectors.groupingBy(Topic::getQuestionCategory));
 
         //각 토픽에 대해서 문제 생성
         for (Topic answerTopic : topicList) {
             QuestionCategory answerQuestionCategory = answerTopic.getQuestionCategory();
             List<Keyword> answerTotalKeywordList = answerTopic.getKeywordList();
-            List<Keyword> answerKeywordList = new ArrayList<>();
-            //1. 2개의 정답 키워드를 랜덤하게 선정
-            Set<Integer> randomIndex = getRandomIndex(2, answerTotalKeywordList.size());
-            for (Integer index : randomIndex) {
-                answerKeywordList.add(answerTotalKeywordList.get(index));
+            int answerTotalKeywordSize = answerTotalKeywordList.size();
+            Collections.shuffle(answerTotalKeywordList);
+
+            for (int i=0;i<answerTotalKeywordSize-1;i+=2) {
+                //1. 2개의 정답 키워드 선정
+                List<Keyword> answerKeywordList = new ArrayList<>();
+                if (answerTotalKeywordSize != 1) {
+                    answerKeywordList.add(answerTotalKeywordList.get(i+1));
+                }
+                answerKeywordList.add(answerTotalKeywordList.get(i));
+
+                //2. 3개의 오답 주제 선정 -> questionCategory는 같은경우
+                List<Topic> questionCategoryTopicList = questionCategoryTopicMap.get(answerQuestionCategory);
+                List<Topic> wrongTotalTopicList = questionCategoryTopicList.stream()
+                        .filter(t -> t != answerTopic)
+                        .collect(Collectors.toList());
+                List<Topic> wrongTopicList = getWrongTopic(wrongTotalTopicList, 3);
+
+                //3. dto변환
+                QuestionDto question = toQuestionDto(answerTopic, answerKeywordList, wrongTopicList);
+                questionList.add(question);
             }
-
-            //2. 3개의 오답 주제 선정 -> questionCategory는 같은경우
-            List<Topic> questionCategoryTopicList = questionCategoryTopicMap.get(answerQuestionCategory);
-            List<Topic> wrongTotalTopicList = questionCategoryTopicList.stream()
-                    .filter(t -> t != answerTopic)
-                    .collect(Collectors.toList());
-            List<Topic> wrongTopicList = getWrongTopic(wrongTotalTopicList, 3);
-
-            //3. dto변환
-            QuestionDto question = toQuestionDto(answerTopic, answerKeywordList, wrongTopicList);
-            questionList.add(question);
         }
         return questionList;
     }

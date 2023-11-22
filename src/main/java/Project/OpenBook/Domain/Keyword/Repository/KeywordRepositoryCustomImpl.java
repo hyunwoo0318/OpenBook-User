@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Keyword.Repository;
 
+import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -9,6 +10,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,6 +82,7 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
     public List<Keyword> queryKeywordsInTopic(String topicTitle) {
         return queryFactory.selectFrom(keyword)
                 .leftJoin(keyword.topic, topic).fetchJoin()
+                .leftJoin(topic.chapter, chapter).fetchJoin()
                 .where(keyword.topic.title.eq(topicTitle))
                 .fetch();
     }
@@ -151,6 +154,43 @@ public class KeywordRepositoryCustomImpl implements KeywordRepositoryCustom{
         return queryFactory.selectFrom(keyword)
                 .leftJoin(keyword.topic,topic).fetchJoin()
                 .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .fetch();
+    }
+
+    @Override
+    public List<Keyword> queryRandomOpenedKeywords(Topic answerTopic, Integer count) {
+        Chapter answerChapter = answerTopic.getChapter();
+        return queryFactory.selectFrom(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .where(topic.chapter.number.lt(answerChapter.getNumber())
+                        .or(topic.chapter.number.eq(answerChapter.getNumber())
+                                .and(topic.number.lt(answerTopic.getNumber()))
+                        )
+                )
+                .orderBy(Expressions.numberTemplate(Double.class, "function('rand')").asc())
+                .limit(count)
+                .fetch();
+    }
+
+    @Override
+    public List<Keyword> queryKeywordsInQuestionCategories(List<Keyword> keywordList) {
+        List<QuestionCategory> questionCategoryList = new ArrayList<>();
+        List<String> keywordNameList = new ArrayList<>();
+        List<Topic> keywordTopicList = new ArrayList<>();
+
+        for (Keyword k : keywordList) {
+            Topic t = k.getTopic();
+            questionCategoryList.add(t.getQuestionCategory());
+            keywordNameList.add(t.getTitle());
+            keywordTopicList.add(t);
+        }
+        return queryFactory.selectFrom(keyword)
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .where(keyword.topic.questionCategory.in(questionCategoryList))
+                .where(keyword.topic.notIn(keywordTopicList))
+                .where(keyword.name.notIn(keywordNameList))
                 .fetch();
     }
 

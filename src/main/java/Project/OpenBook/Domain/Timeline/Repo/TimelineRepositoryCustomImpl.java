@@ -50,4 +50,11 @@ public class TimelineRepositoryCustomImpl implements TimelineRepositoryCustom {
                 .fetchOne();
         return Optional.ofNullable(findTimelineId);
     }
+
+    @Override
+    public List<Timeline> queryAllForInit() {
+        return queryFactory.selectFrom(timeline)
+                .leftJoin(timeline.era,era).fetchJoin()
+                .fetch();
+    }
 }

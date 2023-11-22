@@ -26,6 +26,6 @@ public class TimelineQueryCustomerDto {
         this.endDate = timeline.getEndDate();
         this.id = timeline.getId();
         this.score = record.getAnswerCount();
-        this.timelineCount = 0;
+        this.timelineCount = timeline.getCount();
     }
 }

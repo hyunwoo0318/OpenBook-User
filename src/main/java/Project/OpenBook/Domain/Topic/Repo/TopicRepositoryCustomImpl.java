@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Topic.Repo;
 
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.JPAExpressions;
@@ -42,6 +43,7 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
     @Override
     public List<Topic> queryTopicsWithKeywordList(int chapterNum) {
         return queryFactory.selectFrom(topic).distinct()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
                 .leftJoin(topic.keywordList).fetchJoin()
                 .where(topic.chapter.number.eq(chapterNum))
                 .fetch();
@@ -113,6 +115,14 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
                 .leftJoin(questionCategory.era, era).fetchJoin()
                 .leftJoin(topic.topicPrimaryDateList).fetchJoin()
                 .where(topic.chapter.number.eq(num))
+                .fetch();
+    }
+
+    @Override
+    public List<Topic> queryTopicsInQuestionCategories(List<QuestionCategory> questionCategoryList) {
+        return queryFactory.selectFrom(topic)
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .where(topic.questionCategory.in(questionCategoryList))
                 .fetch();
     }
 }

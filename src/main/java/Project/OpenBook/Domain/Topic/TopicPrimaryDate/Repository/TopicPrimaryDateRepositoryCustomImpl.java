@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
+import static Project.OpenBook.Domain.Era.QEra.era;
+import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 import static Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.QTopicPrimaryDate.topicPrimaryDate;
 
@@ -51,5 +53,14 @@ public class TopicPrimaryDateRepositoryCustomImpl implements TopicPrimaryDateRep
                 .where(topicPrimaryDate.extraDate.loe(endDate))
                 .fetch();
 
+    }
+
+    @Override
+    public List<TopicPrimaryDate> queryAllForInit() {
+        return queryFactory.selectFrom(topicPrimaryDate).distinct()
+                .leftJoin(topicPrimaryDate.topic, topic).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.era, era).fetchJoin()
+                .fetch();
     }
 }

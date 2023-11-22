@@ -9,4 +9,6 @@ public interface TopicPrimaryDateRepositoryCustom {
     public List<TopicPrimaryDate> queryTopicPrimaryDateInChapter(Integer chapterNum);
 
     public List<TopicPrimaryDate> queryTopicPrimaryDateInTimeline(Long eraId, Integer startDate, Integer endDate);
+
+    public List<TopicPrimaryDate> queryAllForInit();
 }

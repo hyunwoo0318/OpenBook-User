@@ -14,4 +14,7 @@ public interface TimelineRepositoryCustom {
     public Optional<Timeline> queryTimelineWithEra(Long id);
 
     public Optional<Long> queryRandomTimeline();
+
+    public List<Timeline> queryAllForInit();
+
 }

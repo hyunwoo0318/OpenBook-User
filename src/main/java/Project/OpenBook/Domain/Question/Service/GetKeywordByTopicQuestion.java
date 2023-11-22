@@ -6,15 +6,13 @@ import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.Question.Dto.QuestionDto;
 import Project.OpenBook.Domain.Question.Dto.QuizChoiceDto;
+import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.WeightedRandomSelection.Model.KeywordSelectModel;
 import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.QuestionConst.GET_KEYWORD_TYPE;
@@ -30,13 +28,16 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
         super(topicRepository, keywordRepository, weightedRandomService);
     }
 
+    private final Integer QUESTION_COUNT = 5;
+
 
     @Override
     public List<QuestionDto> getQuestion(Map<Keyword, KeywordLearningRecord> keywordRecordMap,
                                          List<Keyword> totalKeywordList, Integer questionCount) {
         List<QuestionDto> questionList = new ArrayList<>();
 
-        while(questionList.size() != questionCount) {
+        int count = 0;
+        while(questionList.size() != questionCount && count < 10) {
             //1. 정답 키워드 선정
             List<KeywordSelectModel> answerKeywordSelectModelList
                     = makeAnswerKeywordSelectModelList(keywordRecordMap, totalKeywordList);
@@ -57,6 +58,7 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
                 QuestionDto question = toQuestionDto(answerTopic.getTitle(), Arrays.asList(answerKeyword), wrongKeywordList);
                 questionList.add(question);
             }
+            count++;
         }
 
         return questionList;
@@ -74,11 +76,12 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
      * @return
      */
 
-    public List<QuestionDto> getJJHQuestion(String topicTitle, int questionCount) {
+    public List<QuestionDto> getJJHQuestion(String topicTitle) {
         List<QuestionDto> questionList = new ArrayList<>();
 
         //해당 토픽의 전체 키워드 조회
         List<Keyword> answerKeywordList = getTotalKeywordByAnswerTopic(topicTitle);
+        Topic answerTopic = answerKeywordList.get(0).getTopic();
         List<String> answerKeywordNameList = answerKeywordList.stream()
                 .map(Keyword::getName)
                 .collect(Collectors.toList());
@@ -100,12 +103,34 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
 
 
         //questionCount보다 모든 키워드 개수가 적은 경우 앞 컨텐츠에서 랜덤하게 keyword에서 골라서 생성
-        Integer leftQuestionCount = questionCount - answerKeywordList.size();
+        Integer leftQuestionCount = QUESTION_COUNT - answerKeywordList.size();
         if (leftQuestionCount > 0) {
-
-
+            List<QuestionDto> additionalQuestionList = getAdditionalQuestions(answerTopic, leftQuestionCount);
+            questionList.addAll(additionalQuestionList);
         }
         return questionList;
+    }
+
+    private List<QuestionDto> getAdditionalQuestions(Topic pivTopic, Integer leftQuestionCount) {
+        List<QuestionDto> questionDtoList = new ArrayList<>();
+        //1. 앞 컨텐츠에서 랜덤하게 leftQuestionCount만큼 키워드 쿼리
+        List<Keyword> totalAnswerKeywordList = getRandomOpenedKeywords(pivTopic, leftQuestionCount);
+
+        //2. 꺼낸 키워드와 questionCategory가 같은 키워드 쿼리
+        Map<QuestionCategory, List<Keyword>> questionCategoryKeywordMap = getRandomWrongKeywords(totalAnswerKeywordList).stream()
+                .collect(Collectors.groupingBy(k -> k.getTopic().getQuestionCategory()));
+
+        //3. 문제 생성
+        for (Keyword answerKeyword : totalAnswerKeywordList) {
+            Topic answerTopic = answerKeyword.getTopic();
+            QuestionCategory answerQuestionCategory = answerTopic.getQuestionCategory();
+            List<Keyword> wrongTotalKeywordList = questionCategoryKeywordMap.get(answerQuestionCategory);
+            Collections.shuffle(wrongTotalKeywordList);
+            List<Keyword> wrongKeywordList = wrongTotalKeywordList.subList(0, 3);
+            QuestionDto questionDto = toQuestionDto(answerTopic.getTitle(), Arrays.asList(answerKeyword), wrongKeywordList);
+            questionDtoList.add(questionDto);
+        }
+        return questionDtoList;
     }
 
 //    private List<QuestionDto> getAdditionalQuestions(String answerTopicTitle, int count) {

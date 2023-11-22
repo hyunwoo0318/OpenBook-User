@@ -47,7 +47,8 @@ public interface KeywordRepositoryCustom {
 
     public List<Keyword> queryKeywordsForInit();
 
-//    public List<Keyword> queryTotalAnswerKeywordsInJJH(String pivTopicTitle);
+    public List<Keyword> queryRandomOpenedKeywords(Topic answerTopic, Integer count);
 
-    //public List<KeywordDto> queryKeywordDtoList(String topicTitle);
+    public List<Keyword> queryKeywordsInQuestionCategories(List<Keyword> keywordList);
+
 }

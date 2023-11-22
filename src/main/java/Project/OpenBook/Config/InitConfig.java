@@ -15,6 +15,8 @@ import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.Description
 import Project.OpenBook.Domain.Era.EraRepository;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
+import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.KeywordAssociation.KeywordAssociationRepository;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
@@ -30,7 +32,11 @@ import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearch;
 import Project.OpenBook.Domain.Search.KeywordSearch.KeywordSearchRepository;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
+import Project.OpenBook.Domain.Timeline.Domain.Timeline;
+import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
+import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Image.ImageService;
 import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +64,10 @@ public class InitConfig {
     private final KeywordSearchRepository keywordSearchRepository;
     private final KeywordLearningRecordRepository keywordLearningRecordRepository;
     private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
+
+    private final TimelineRepository timelineRepository;
+    private final KeywordPrimaryDateRepository keywordPrimaryDateRepository;
+    private final TopicPrimaryDateRepository topicPrimaryDateRepository;
 
     private final QuestionCategoryRepository questionCategoryRepository;
     private final EraRepository eraRepository;
@@ -109,6 +119,38 @@ public class InitConfig {
         chapterSearchRepository.saveAll(chapterSearchList);
         topicSearchRepository.saveAll(topicSearchList);
         keywordSearchRepository.saveAll(keywordSearchList);
+
+    }
+
+    /**
+     * 연표 속해있는 날짜 개수 세팅
+     */
+    @Bean
+    public void initTimelineCounts() {
+        List<Timeline> timelineList = timelineRepository.queryAllForInit();
+        List<KeywordPrimaryDate> keywordPrimaryDateList = keywordPrimaryDateRepository.queryAllForInit();
+        List<TopicPrimaryDate> topicPrimaryDateList = topicPrimaryDateRepository.queryAllForInit();
+        for (TopicPrimaryDate date : topicPrimaryDateList) {
+            for (Timeline timeline : timelineList) {
+                if(timeline.getEra() == date.getTopic().getQuestionCategory().getEra() &&
+                    timeline.getStartDate() <= date.getExtraDate() &&
+                    timeline.getEndDate() >= date.getExtraDate()){
+                    timeline.updateCount();
+                    break;
+                }
+            }
+        }
+
+        for (KeywordPrimaryDate date : keywordPrimaryDateList) {
+            for (Timeline timeline : timelineList) {
+                if(timeline.getEra() == date.getKeyword().getTopic().getQuestionCategory().getEra() &&
+                        timeline.getStartDate() <= date.getExtraDate() &&
+                        timeline.getEndDate() >= date.getExtraDate()){
+                    timeline.updateCount();
+                    break;
+                }
+            }
+        }
 
     }
 

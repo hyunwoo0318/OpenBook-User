@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository;
 
-import Project.OpenBook.Domain.Chapter.Domain.QChapter;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
+import static Project.OpenBook.Domain.Era.QEra.era;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.QKeywordPrimaryDate.keywordPrimaryDate;
+import static Project.OpenBook.Domain.QuestionCategory.Domain.QQuestionCategory.questionCategory;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 @Repository
@@ -45,6 +46,17 @@ public class KeywordPrimaryDateRepositoryCustomImpl implements KeywordPrimaryDat
                 .where(topic.questionCategory.era.id.eq(eraId))
                 .where(keywordPrimaryDate.extraDate.goe(startDate))
                 .where(keywordPrimaryDate.extraDate.loe(endDate))
+                .fetch();
+    }
+
+    @Override
+    public List<KeywordPrimaryDate> queryAllForInit() {
+        return queryFactory.selectFrom(keywordPrimaryDate)
+                .leftJoin(keywordPrimaryDate.keyword, keyword).fetchJoin()
+                .leftJoin(keyword.topic, topic).fetchJoin()
+                .leftJoin(topic.chapter, chapter).fetchJoin()
+                .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
+                .leftJoin(questionCategory.era, era).fetchJoin()
                 .fetch();
     }
 }

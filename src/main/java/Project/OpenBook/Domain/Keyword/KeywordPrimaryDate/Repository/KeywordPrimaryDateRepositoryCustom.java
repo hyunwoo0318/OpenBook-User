@@ -9,4 +9,6 @@ public interface KeywordPrimaryDateRepositoryCustom {
     public List<KeywordPrimaryDate> queryKeywordPrimaryDateInChapter(Integer chapterNum);
 
     public List<KeywordPrimaryDate> queryKeywordPrimaryDateInTimeline(Long eraId, Integer startDate, Integer endDate);
+
+    public List<KeywordPrimaryDate> queryAllForInit();
 }
