@@ -21,4 +21,11 @@ public class ExamQuestionDto {
     private Integer score;
     private List<QuestionChoiceDto> choiceList;
     private Integer checkedChoiceKey;
+
+    public ExamQuestionDto setByCustomerRecord(Boolean savedAnswerNote, Integer score, Integer checkedChoiceKey) {
+        this.savedAnswerNote = savedAnswerNote;
+        this.score = score;
+        this.checkedChoiceKey = checkedChoiceKey;
+        return this;
+    }
 }

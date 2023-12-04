@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static Project.OpenBook.Constants.JJHForFreeConst.JJH_NUMBER_FREE_LIMIT;
+
 @RestController
 @RequiredArgsConstructor
 public class JJHController {
@@ -41,17 +43,27 @@ public class JJHController {
 
     @Operation(summary = "사용자 페이지에서 정주행 리스트 조회")
     @GetMapping("/jjh")
-    public ResponseEntity<JJHListCustomerQueryDto> queryJJHCustomer(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer){
-        JJHListCustomerQueryDto dto = jjhService.queryJJHCustomer(customer);
+    public ResponseEntity<JJHListCustomerQueryDto> queryJJHCustomer(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer){
+        JJHListCustomerQueryDto dto = null;
+        if (customer == null) {
+            dto = jjhService.queryJJHCustomerForFree();
+        }else{
+            dto = jjhService.queryJJHCustomer(customer);
+        }
         return new ResponseEntity<JJHListCustomerQueryDto>(dto, HttpStatus.OK);
     }
 
 
     @Operation(summary = "해당 jjhNumber를 가진 contents들 조회")
     @GetMapping("/jjh/{jjhNumber}/contents-table")
-    public ResponseEntity<List<JJHContentsTableQueryDto>> queryJJHContentsTable(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+    public ResponseEntity<List<JJHContentsTableQueryDto>> queryJJHContentsTable(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
                                                 @PathVariable Integer jjhNumber) {
-        List<JJHContentsTableQueryDto> dtoList = jjhService.queryJJHContentsTable(customer, jjhNumber);
+        List<JJHContentsTableQueryDto> dtoList = null;
+        if (customer == null && jjhNumber < JJH_NUMBER_FREE_LIMIT) {
+            dtoList = jjhService.queryJJHContentsTableForFree(jjhNumber);
+        }else{
+            dtoList = jjhService.queryJJHContentsTable(customer, jjhNumber);
+        }
         return new ResponseEntity<List<JJHContentsTableQueryDto>>(dtoList, HttpStatus.OK);
     }
 

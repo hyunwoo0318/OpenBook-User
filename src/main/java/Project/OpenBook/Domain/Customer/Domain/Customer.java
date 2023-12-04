@@ -57,6 +57,8 @@ public class Customer extends BaseEntity implements UserDetails {
     @Column(name = "is_subscribed", columnDefinition = "TINYINT(1)")
     private boolean isSubscribed = true;
 
+    private boolean isValidated = false;
+
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<JJHListProgress> jjhListProgressList = new ArrayList<>();
 
@@ -79,7 +81,7 @@ public class Customer extends BaseEntity implements UserDetails {
     private List<ExamQuestionLearningRecord> examQuestionLearningRecordList = new ArrayList<>();
 
     @Builder
-    public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId, Boolean isSubscribed) {
+    public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId) {
         this.nickName = nickName;
         this.solvedNum = 0;
         this.age = age;
@@ -89,6 +91,7 @@ public class Customer extends BaseEntity implements UserDetails {
         this.oAuthId = oAuthId;
         this.code = UUID.randomUUID().toString().substring(0,16);
         this.isSubscribed = true;
+        this.isValidated = false;
     }
 
     public Customer(String nickName,String password, String roles){

@@ -364,13 +364,25 @@ public class InitConfig {
 //    public void initExamQuestionLearningRecord() {
 //        List<Customer> customerList = customerRepository.findAll();
 //        examQuestionLearningRecordRepository.deleteAllInBatch();
+//        roundLearningRecordRepository.deleteAllInBatch();
+//        keywordLearningRecordRepository.deleteAllInBatch();
 //
 //        for (Customer customer : customerList) {
 //            List<ExamQuestionLearningRecord> recordList = examQuestionRepository.findAll().stream()
 //                    .map(r -> new ExamQuestionLearningRecord(customer, r))
 //                    .collect(Collectors.toList());
 //
+//            List<RoundLearningRecord> rrecordList = roundRepository.findAll().stream()
+//                    .map(r -> new RoundLearningRecord(r, customer))
+//                    .collect(Collectors.toList());
+//
+//            List<KeywordLearningRecord> krecordList = keywordRepository.findAll().stream()
+//                    .map(r -> new KeywordLearningRecord(r, customer))
+//                    .collect(Collectors.toList());
+//
 //            examQuestionLearningRecordRepository.saveAll(recordList);
+//            roundLearningRecordRepository.saveAll(rrecordList);
+//            keywordLearningRecordRepository.saveAll(krecordList);
 //        }
 //    }
 

@@ -25,6 +25,8 @@ import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import Project.OpenBook.Image.ImageService;
+import Project.OpenBook.Redis.RedisService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,6 +50,7 @@ public class ExamQuestionService {
     private final DescriptionKeywordRepository descriptionKeywordRepository;
     private final ExamQuestionLearningRecordRepository examQuestionLearningRecordRepository;
     private final ImageService imageService;
+    private final RedisService redisService;
 
     @Transactional(readOnly = true)
     public ExamQuestionInfoDto getExamQuestionInfo(Integer roundNumber, Integer questionNumber) {
@@ -62,8 +65,15 @@ public class ExamQuestionService {
     }
 
     @Transactional(readOnly = true)
-    public List<ExamQuestionDto> getRoundQuestions(Customer customer, Integer roundNumber) {
+    public List<ExamQuestionDto> getRoundQuestions(Customer customer, Integer roundNumber) throws JsonProcessingException {
         checkRound(roundNumber);
+
+//        try {
+//            List<ExamQuestionDto> questionListFromRedis = redisService.getQuestionListFromRedis(roundNumber);
+//        } catch (JsonProcessingException e) {
+//            //해당 값 삭제 로직
+//        }
+
 
         List<ExamQuestion> examQuestionList = examQuestionRepository.queryExamQuestionsForExamQuestionList(roundNumber);
         Map<Description, List<DescriptionKeyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordForExamQuestion(roundNumber).stream()

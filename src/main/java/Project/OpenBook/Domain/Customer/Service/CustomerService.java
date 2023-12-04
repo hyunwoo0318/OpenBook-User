@@ -173,7 +173,6 @@ public class CustomerService implements UserDetailsService {
 
             //단원전체진도, 단원섹션별 진도, 주제학습 레코드 생성
             initCustomerData(customer);
-
         }else{
             customer = customerOptional.get();
         }
@@ -213,6 +212,16 @@ public class CustomerService implements UserDetailsService {
 
         //7. examQuestion 학습정도
         initExamQuestionLearningHistory(customer);
+
+        //8. round 학습정도
+        initRoundLearningHistory(customer);
+    }
+
+    private void initRoundLearningHistory(Customer customer) {
+        List<RoundLearningRecord> recordList = roundRepository.findAll().stream()
+                .map(r -> new RoundLearningRecord(r, customer))
+                .collect(Collectors.toList());
+        roundLearningRecordRepository.saveAll(recordList);
     }
 
     private void initJJHListProgress(Customer customer) {

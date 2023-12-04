@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.*;
+import static Project.OpenBook.Constants.JJHForFreeConst.JJH_NUMBER_FREE_LIMIT;
 
 @Service
 @RequiredArgsConstructor
@@ -115,6 +116,52 @@ public class JJHService {
         }else{
             throw new CustomException(INVALID_PARAMETER);
         }
+    }
+
+    public List<JJHContentsTableQueryDto> queryJJHContentsTableForFree(Integer jjhNumber) {
+        JJHList jjhList = jjhListRepository.queryJJHList(jjhNumber).orElseThrow(() -> {
+            throw new CustomException(INVALID_PARAMETER);
+        });
+
+        Chapter chapter = jjhList.getChapter();
+        Timeline timeline = jjhList.getTimeline();
+        if (chapter != null) {
+            return makeContentsTableForChapterForFree(chapter);
+        } else if (timeline != null){
+            return makeContentsTableForTimelineForFree(timeline);
+        }else{
+            throw new CustomException(INVALID_PARAMETER);
+        }
+    }
+
+    private List<JJHContentsTableQueryDto> makeContentsTableForTimelineForFree(Timeline timeline) {
+        List<JJHContentsTableQueryDto> dtoList = new ArrayList<>();
+        String title = timeline.getTitle();
+        String category = null;
+        String dateComment = null;
+
+        JJHContentsTableQueryDto dto1 = new JJHContentsTableQueryDto(null,title, ContentConst.TIMELINE_STUDY.name(),
+                StateConst.COMPLETE.getName(),null,dateComment, category);
+        dtoList.add(dto1);
+
+        return dtoList;
+    }
+
+    private List<JJHContentsTableQueryDto> makeContentsTableForChapterForFree(Chapter chapter) {
+        List<JJHContentsTableQueryDto> dtoList = new ArrayList<>();
+
+        List<Topic> topicList = chapter.getTopicList();
+        for (Topic topic : topicList) {
+            JJHContentsTableQueryDto dto = new JJHContentsTableQueryDto(null, topic.getTitle(), ContentConst.TOPIC_STUDY.name(), StateConst.COMPLETE.getName(), null,
+                    topic.getDateComment(), topic.getQuestionCategory().getCategory().getName());
+            dtoList.add(dto);
+        }
+
+        dtoList.add(new JJHContentsTableQueryDto(null, chapter.getTitle(), ContentConst.CHAPTER_COMPLETE_QUESTION.name(), StateConst.COMPLETE.getName(),
+                null,chapter.getDateComment(),null));
+
+
+        return dtoList;
     }
 
     private List<JJHContentsTableQueryDto> makeContentsTableForTimeline(Customer customer, List<JJHContentProgress> jjhContentProgressList, JJHList jjhList) {
@@ -348,6 +395,40 @@ public class JJHService {
     public TotalProgressDto queryTotalProgress(Customer customer) {
         return jjhContentProgressRepository.queryTotalProgressDto(customer);
     }
+
+    @Transactional(readOnly = true)
+    public JJHListCustomerQueryDto queryJJHCustomerForFree() {
+        List<ChapterJJHCustomerQueryDto> chapterList = chapterRepository.queryChaptersWithjjhList().stream()
+                .map(c -> {
+                    Integer jjhNumber = c.getJjhLists().get(0).getNumber();
+                    if (jjhNumber <= JJH_NUMBER_FREE_LIMIT) {
+                        return new ChapterJJHCustomerQueryDto(c.getTitle(), c.getNumber(), StateConst.COMPLETE.getName(),
+                                jjhNumber,c.getDateComment());
+                    }else{
+                        return new ChapterJJHCustomerQueryDto(c.getTitle(), c.getNumber(), StateConst.LOCKED.getName(),
+                                jjhNumber,c.getDateComment());
+                    }
+                })
+                .sorted(Comparator.comparing(ChapterJJHCustomerQueryDto::getJjhNumber))
+                .collect(Collectors.toList());
+        List<TimelineJJHCustomerQueryDto> timelineList = timelineRepository.queryTimelinesWithEraAndjjhList().stream()
+                .map(t -> {
+                    Integer jjhNumber = t.getJjhLists().get(0).getNumber();
+                    if (jjhNumber <= JJH_NUMBER_FREE_LIMIT) {
+                        return new TimelineJJHCustomerQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(),
+                                StateConst.COMPLETE.getName(), jjhNumber, t.getId());
+                    }else{
+                        return new TimelineJJHCustomerQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(),
+                                StateConst.LOCKED.getName(), jjhNumber, t.getId());
+                    }
+                    })
+                .sorted(Comparator.comparing(TimelineJJHCustomerQueryDto::getJjhNumber))
+                .collect(Collectors.toList());
+
+        return new JJHListCustomerQueryDto(chapterList, timelineList);
+    }
+
+
 
 
     @AllArgsConstructor

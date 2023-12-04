@@ -4,6 +4,7 @@ import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.ExamQuestion.Service.ExamQuestionService;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionDto;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionInfoDto;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,7 +32,7 @@ public class ExamQuestionController {
     })
     @GetMapping("/rounds/{roundNumber}/questions")
     public ResponseEntity<List<ExamQuestionDto>> getRoundQuestions(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
-                                                                    @PathVariable("roundNumber") Integer roundNumber) {
+                                                                    @PathVariable("roundNumber") Integer roundNumber) throws JsonProcessingException {
         List<ExamQuestionDto> dtoList = examQuestionService.getRoundQuestions(customer, roundNumber);
         return new ResponseEntity<List<ExamQuestionDto>>(dtoList, HttpStatus.OK);
     }
