@@ -103,7 +103,7 @@ public class RoundService {
                 .map(RoundQueryCustomerDto::new)
                 .sorted(Comparator.comparing(RoundQueryCustomerDto::getNumber).reversed())
                 .collect(Collectors.toList());
-        Collections.reverse(recordList);
+        Collections.reverse(roundList);
         return roundList;
     }
 
