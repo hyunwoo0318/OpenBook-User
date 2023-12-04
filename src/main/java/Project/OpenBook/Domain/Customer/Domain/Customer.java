@@ -1,7 +1,6 @@
 package Project.OpenBook.Domain.Customer.Domain;
 
 import Project.OpenBook.Domain.BaseEntity;
-
 import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgress;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
@@ -9,22 +8,22 @@ import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.Keywo
 import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Customer extends BaseEntity implements UserDetails {
 
     @Id
@@ -91,6 +90,10 @@ public class Customer extends BaseEntity implements UserDetails {
         this.oAuthId = oAuthId;
         this.code = UUID.randomUUID().toString().substring(0,16);
         this.isSubscribed = true;
+        this.isValidated = true;
+    }
+
+    public Customer() {
         this.isValidated = false;
     }
 
@@ -107,6 +110,18 @@ public class Customer extends BaseEntity implements UserDetails {
         this.age = age;
         this.expertise = expertise;
         this.isNew = false;
+    }
+
+
+    public Customer setInfo(String nickName, String roles, String provider, String oAuthId) {
+        this.nickName = nickName;
+        this.solvedNum = 0;
+        this.roles = roles;
+        this.provider = provider;
+        this.oAuthId = oAuthId;
+        this.code = UUID.randomUUID().toString().substring(0,16);
+        this.isValidated = true;
+        return this;
     }
 
     @Override

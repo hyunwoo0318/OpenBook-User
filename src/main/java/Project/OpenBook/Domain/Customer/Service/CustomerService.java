@@ -14,6 +14,8 @@ import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgressRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
@@ -21,8 +23,6 @@ import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Repo.Timeli
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
-import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
-import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
@@ -31,6 +31,7 @@ import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -163,16 +164,23 @@ public class CustomerService implements UserDetailsService {
         Optional<Customer> customerOptional = customerRepository.queryCustomer(oauthId, providerName);
         if (customerOptional.isEmpty()) {
             //회원가입이 되어있지 않음 -> 회원가입 시킴
-            customer = Customer.builder()
-                    .oAuthId(oauthId)
-                    .provider(providerName)
-                    .roles(Role.USER)
-                    .nickName(UUID.randomUUID().toString())
-                    .build();
-            customerRepository.save(customer);
+            List<Customer> customerList = customerRepository.queryCustomersNotValidated();
+            if (customerList.isEmpty()) {
+                customer = Customer.builder()
+                        .oAuthId(oauthId)
+                        .provider(providerName)
+                        .roles(Role.USER)
+                        .nickName(UUID.randomUUID().toString())
+                        .build();
+                customerRepository.save(customer);
 
-            //단원전체진도, 단원섹션별 진도, 주제학습 레코드 생성
-            initCustomerData(customer);
+                //단원전체진도, 단원섹션별 진도, 주제학습 레코드 생성
+                initCustomerData(customer);
+            }else{
+                customer = customerList.get(0);
+                customer.setInfo(UUID.randomUUID().toString(), Role.USER, providerName, oauthId);
+            }
+
         }else{
             customer = customerOptional.get();
         }
@@ -292,6 +300,18 @@ public class CustomerService implements UserDetailsService {
                 .collect(Collectors.toList());
 
         roundLearningRecordRepository.saveAll(recordList);
+    }
+
+    @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
+    @Transactional
+    public void makePreparedCustomer() {
+        List<Customer> preparedCustomerList = customerRepository.queryCustomersNotValidated();
+        int customerSize = preparedCustomerList.size();
+        for (int i = customerSize; i <= 50; i++) {
+            Customer customer = new Customer();
+            customerRepository.save(customer);
+            initCustomerData(customer);
+        }
     }
 
 }

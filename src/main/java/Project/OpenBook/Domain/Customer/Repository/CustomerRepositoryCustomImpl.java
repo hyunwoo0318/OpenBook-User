@@ -5,6 +5,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import static Project.OpenBook.Domain.Customer.Domain.QCustomer.customer;
@@ -22,6 +23,13 @@ public class CustomerRepositoryCustomImpl implements CustomerRepositoryCustom {
                 .where(customer.provider.eq(provider))
                 .fetchOne();
         return Optional.ofNullable(findCustomer);
+    }
+
+    @Override
+    public List<Customer> queryCustomersNotValidated() {
+        return queryFactory.selectFrom(customer)
+                .where(customer.isValidated.isFalse())
+                .fetch();
     }
 
     @Override

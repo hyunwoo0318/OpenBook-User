@@ -41,6 +41,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +52,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Configuration
+@EnableScheduling
 @RequiredArgsConstructor
 public class InitConfig {
 
@@ -394,6 +396,7 @@ public class InitConfig {
 //        public Keyword k2;
 //
 //    }
+
 
 
 
