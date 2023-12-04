@@ -18,10 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static Project.OpenBook.Constants.ErrorCode.ROUND_HAS_QUESTION;
@@ -102,10 +99,12 @@ public class RoundService {
     @Transactional(readOnly = true)
     public List<RoundQueryCustomerDto> queryRoundsCustomer(Customer customer) {
         List<RoundLearningRecord> recordList = roundLearningRecordRepository.queryRoundLearningRecord(customer);
-        return recordList.stream()
+        List<RoundQueryCustomerDto> roundList = recordList.stream()
                 .map(RoundQueryCustomerDto::new)
                 .sorted(Comparator.comparing(RoundQueryCustomerDto::getNumber).reversed())
                 .collect(Collectors.toList());
+        Collections.reverse(recordList);
+        return roundList;
     }
 
     @Transactional
