@@ -18,6 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -64,9 +65,14 @@ public class TopicController {
             @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력"),
     })
     @GetMapping("/chapters/{num}/topics")
-    public ResponseEntity<List<TopicListQueryDto>> queryChapterTopicsCustomer(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+    public ResponseEntity<List<TopicListQueryDto>> queryChapterTopicsCustomer(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
                                                                                 @PathVariable("num") int num){
-        List<TopicListQueryDto> dtoList = topicSimpleQueryService.queryChapterTopicsCustomer(customer,num);
+        List<TopicListQueryDto> dtoList = new ArrayList<>();
+        if (customer == null) {
+            dtoList = topicSimpleQueryService.queryChapterTopicsForFree(num);
+        }else{
+            dtoList = topicSimpleQueryService.queryChapterTopicsCustomer(customer,num);
+        }
 
         return new ResponseEntity<List<TopicListQueryDto>>(dtoList, HttpStatus.OK);
     }

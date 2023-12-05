@@ -1,14 +1,13 @@
 package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.KeywordUsageConst;
-import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
-import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
+import Project.OpenBook.Domain.Customer.Service.CustomerService;
 import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
@@ -45,7 +44,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +53,8 @@ import java.util.stream.Collectors;
 @EnableScheduling
 @RequiredArgsConstructor
 public class InitConfig {
+
+    private final CustomerService customerService;
 
     private final TopicSearchRepository topicSearchRepository;
     private final TopicRepository topicRepository;
@@ -157,14 +157,14 @@ public class InitConfig {
     /**
      * 기본 관리자 아이디 세팅
      */
-    @Bean
-    public void initAdmin(){
-        if(customerRepository.findByNickName("admin1").isEmpty()){
-            Customer admin1 = new Customer("admin1", passwordEncoder.encode("admin1"), Role.ADMIN);
-            Customer admin2 = new Customer("admin2", passwordEncoder.encode("admin2"), Role.ADMIN);
-            customerRepository.saveAll(Arrays.asList(admin1, admin2));
-        }
-    }
+//    @Bean
+//    public void initAdmin(){
+//        if(customerRepository.findByNickName("admin1").isEmpty()){
+//            Customer admin1 = new Customer("admin1", passwordEncoder.encode("admin1"), Role.ADMIN);
+//            Customer admin2 = new Customer("admin2", passwordEncoder.encode("admin2"), Role.ADMIN);
+//            customerRepository.saveAll(Arrays.asList(admin1, admin2));
+//        }
+//    }
 
     /**
      * 문제 분석 로직
@@ -397,6 +397,25 @@ public class InitConfig {
 //
 //    }
 
+//    @Bean
+//    public void makePreparedCustomer() {
+//        List<Customer> preparedCustomerList = customerRepository.queryCustomersNotValidated();
+//        int customerSize = preparedCustomerList.size();
+//        for (int i = customerSize; i <= 50; i++) {
+//            Customer customer = new Customer("mock" + i);
+//            customerRepository.save(customer);
+//            customerService.initCustomerData(customer);
+//        }
+//    }@Bean
+//    public void makePreparedCustomer() {
+//        List<Customer> preparedCustomerList = customerRepository.queryCustomersNotValidated();
+//        int customerSize = preparedCustomerList.size();
+//        for (int i = customerSize; i <= 50; i++) {
+//            Customer customer = new Customer("mock" + i);
+//            customerRepository.save(customer);
+//            customerService.initCustomerData(customer);
+//        }
+//    }
 
 
 

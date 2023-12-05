@@ -59,7 +59,7 @@ public class JJHController {
     public ResponseEntity<List<JJHContentsTableQueryDto>> queryJJHContentsTable(@Parameter(hidden = true) @AuthenticationPrincipal Customer customer,
                                                 @PathVariable Integer jjhNumber) {
         List<JJHContentsTableQueryDto> dtoList = null;
-        if (customer == null && jjhNumber < JJH_NUMBER_FREE_LIMIT) {
+        if (customer == null && jjhNumber <= JJH_NUMBER_FREE_LIMIT) {
             dtoList = jjhService.queryJJHContentsTableForFree(jjhNumber);
         }else{
             dtoList = jjhService.queryJJHContentsTable(customer, jjhNumber);

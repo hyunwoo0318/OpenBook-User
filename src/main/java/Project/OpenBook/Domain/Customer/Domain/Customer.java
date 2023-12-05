@@ -6,10 +6,12 @@ import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +26,7 @@ import java.util.UUID;
 @Entity
 @Getter
 @EntityListeners(AuditingEntityListener.class)
+@NoArgsConstructor
 public class Customer extends BaseEntity implements UserDetails {
 
     @Id
@@ -33,7 +36,7 @@ public class Customer extends BaseEntity implements UserDetails {
     @Column(columnDefinition = "BINARY(16)")
     private String code;
 
-    @Column(nullable = false, unique = true)
+//    @Column(nullable = false, unique = true)
     private String nickName;
 
     private Integer solvedNum;
@@ -50,11 +53,9 @@ public class Customer extends BaseEntity implements UserDetails {
     @Column(name = "oAuth_id", length = 1000)
     private String oAuthId;
 
-    @Column(name = "is_new", columnDefinition = "TINYINT(1)")
-    private boolean isNew = true;
+    private boolean isNew;
 
-    @Column(name = "is_subscribed", columnDefinition = "TINYINT(1)")
-    private boolean isSubscribed = true;
+    private boolean isSubscribed;
 
     private boolean isValidated = false;
 
@@ -79,6 +80,9 @@ public class Customer extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     private List<ExamQuestionLearningRecord> examQuestionLearningRecordList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<RoundLearningRecord> roundLearningRecordList = new ArrayList<>();
+
     @Builder
     public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId) {
         this.nickName = nickName;
@@ -93,7 +97,8 @@ public class Customer extends BaseEntity implements UserDetails {
         this.isValidated = true;
     }
 
-    public Customer() {
+    public Customer(String nickName) {
+        this.nickName = nickName;
         this.isValidated = false;
     }
 
@@ -101,6 +106,11 @@ public class Customer extends BaseEntity implements UserDetails {
         this.nickName = nickName;
         this.password = password;
         this.roles = roles;
+    }
+
+    public Customer updateIsNew(Boolean isNew) {
+        this.isNew = isNew;
+        return this;
     }
 
 

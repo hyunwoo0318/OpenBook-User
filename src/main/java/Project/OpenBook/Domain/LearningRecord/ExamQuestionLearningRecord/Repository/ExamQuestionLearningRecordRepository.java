@@ -12,4 +12,5 @@ public interface ExamQuestionLearningRecordRepository extends JpaRepository<Exam
 
     public Optional<ExamQuestionLearningRecord> findByCustomerAndExamQuestion(Customer customer, ExamQuestion examQuestion);
 
+    public void deleteAllByCustomer(Customer customer);
 }

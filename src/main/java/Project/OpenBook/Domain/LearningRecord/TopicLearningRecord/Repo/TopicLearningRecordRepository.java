@@ -15,4 +15,6 @@ public interface TopicLearningRecordRepository extends JpaRepository<TopicLearni
     public List<TopicLearningRecord> findAllByCustomerAndTopicIn(Customer customer, List<Topic> topicList);
 
     public Optional<TopicLearningRecord> findByCustomerAndTopic(Customer customer, Topic topic);
+
+    public void deleteAllByCustomer(Customer customer);
 }

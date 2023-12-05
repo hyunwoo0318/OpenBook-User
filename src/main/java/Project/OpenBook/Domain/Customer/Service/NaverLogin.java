@@ -4,7 +4,6 @@ import Project.OpenBook.Handler.Exception.CustomException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.UnsupportedEncodingException;
@@ -20,11 +19,11 @@ public class NaverLogin implements Oauth2Login {
     private final WebClient.Builder webClientBuilder;
     private final ObjectMapper objectMapper;
 
-    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
-    private String naverClientId;
+//    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
+    private final String naverClientId = "DlnbhpvSk3xCo23xuois";
 
-    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
-    private String naverClientSecret;
+//    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
+    private final String naverClientSecret = "zjUwJfFK8W";
     @Override
     public String login(String code, String redirectUrl, String protocol) throws UnsupportedEncodingException, JsonProcessingException {
         String state = URLEncoder.encode("https://nid.naver.com/oauth2.0/token", StandardCharsets.UTF_8.toString());
@@ -75,10 +74,6 @@ public class NaverLogin implements Oauth2Login {
                 .block();
 
 
-        String message = objectMapper.readTree("message").toString();
-        if(!message.equals("success")){
-            throw new CustomException(LOGIN_FAIL);
-        }
         String naverId = objectMapper.readTree(body).get("response").get("id").toString();
 
         return naverId;

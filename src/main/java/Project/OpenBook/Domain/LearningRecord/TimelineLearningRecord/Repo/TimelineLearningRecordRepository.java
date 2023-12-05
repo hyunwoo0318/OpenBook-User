@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface TimelineLearningRecordRepository extends JpaRepository<TimelineLearningRecord, Long>, TimelineLearningRecordRepositoryCustom {
 
     public Optional<TimelineLearningRecord> findByCustomerAndTimeline(Customer customer, Timeline timeline);
+
+    public void deleteAllByCustomer(Customer customer);
 }

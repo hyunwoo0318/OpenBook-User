@@ -102,8 +102,17 @@ public class QuestionService {
 
         for (KeywordPrimaryDate kp : keywordPrimaryDateList) {
             Topic topic = kp.getKeyword().getTopic();
+            String keywordComment = kp.getKeyword().getComment();
+            List<String> commentList = new ArrayList<>();
+            commentList.add(topic.getChapter().getTitle()+ " - " +  topic.getTitle());
+            if (!keywordComment.isBlank()) {
+                List<String> splitCommentList = Arrays.stream(keywordComment.split("[.]")).collect(Collectors.toList());
+                commentList.addAll(splitCommentList);
+            }
             TimeFlowQuestionDto dto
-                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(),Arrays.asList(topic.getChapter().getTitle(), topic.getTitle()));
+                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(),commentList);
+
+
             timeFlowQuestionDtoList.add(dto);
         }
 

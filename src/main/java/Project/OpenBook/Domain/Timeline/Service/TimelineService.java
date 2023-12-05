@@ -41,7 +41,13 @@ public class TimelineService {
         return timelineLearningRecordRepository.queryTimelineLearningRecord(customer).stream()
                 .map(TimelineQueryCustomerDto::new)
                 .collect(Collectors.toList());
+    }
 
+    @Transactional(readOnly = true)
+    public List<TimelineQueryCustomerDto> queryTimelinesForFree() {
+        return timelineRepository.findAll().stream()
+                .map(TimelineQueryCustomerDto::new)
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -73,7 +79,6 @@ public class TimelineService {
     public void deleteTimeline(Long id) {
         timelineRepository.deleteById(id);
     }
-
 
 
 }

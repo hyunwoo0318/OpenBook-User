@@ -5,6 +5,7 @@ import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
+import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.JJH.JJHContent.JJHContentRepository;
 import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgress;
 import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgressRepository;
@@ -12,6 +13,8 @@ import Project.OpenBook.Domain.JJH.JJHList.JJHListRepository;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgressRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
@@ -31,7 +34,6 @@ import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -64,6 +66,7 @@ public class CustomerService implements UserDetailsService {
     private final QuestionCategoryRepository questionCategoryRepository;
     private final TimelineRepository timelineRepository;
     private final RoundRepository roundRepository;
+    private final ExamQuestionRepository examQuestionRepository;
 
 
     private final JJHListProgressRepository jjhListProgressRepository;
@@ -73,6 +76,7 @@ public class CustomerService implements UserDetailsService {
     private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
     private final TimelineLearningRecordRepository timelineLearningRecordRepository;
     private final RoundLearningRecordRepository roundLearningRecordRepository;
+    private final ExamQuestionLearningRecordRepository examQuestionLearningRecordRepository;
 
     private final AuthenticationManagerBuilder authenticationManager;
     private final WebClient.Builder webClientBuilder;
@@ -115,6 +119,14 @@ public class CustomerService implements UserDetailsService {
 
     @Transactional
     public void deleteCustomer(Customer customer) {
+//        jjhListProgressRepository.deleteAllByCustomer(customer);
+//        jjhContentProgressRepository.deleteAllByCustomer(customer);
+//        keywordLearningRecordRepository.deleteAllByCustomer(customer);
+//        topicLearningRecordRepository.deleteAllByCustomer(customer);
+//        timelineLearningRecordRepository.deleteAllByCustomer(customer);
+//        questionCategoryLearningRecordRepository.deleteAllByCustomer(customer);
+//        roundLearningRecordRepository.deleteAllByCustomer(customer);
+//        examQuestionLearningRecordRepository.deleteAllByCustomer(customer);
         customerRepository.delete(customer);
     }
 
@@ -199,7 +211,7 @@ public class CustomerService implements UserDetailsService {
         }
     }
 
-    private void initCustomerData(Customer customer){
+    public void initCustomerData(Customer customer){
         //1. 정주행 리스트 progress
         initJJHListProgress(customer);
 
@@ -295,23 +307,35 @@ public class CustomerService implements UserDetailsService {
     }
 
     private void initExamQuestionLearningHistory(Customer customer) {
-        List<RoundLearningRecord> recordList = roundRepository.findAll().stream()
-                .map(r -> new RoundLearningRecord(r, customer))
+        List<ExamQuestionLearningRecord> recordList = examQuestionRepository.findAll().stream()
+                .map(r -> new ExamQuestionLearningRecord(customer, r))
                 .collect(Collectors.toList());
 
-        roundLearningRecordRepository.saveAll(recordList);
+        examQuestionLearningRecordRepository.saveAll(recordList);
     }
 
-    @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
     @Transactional
-    public void makePreparedCustomer() {
-        List<Customer> preparedCustomerList = customerRepository.queryCustomersNotValidated();
-        int customerSize = preparedCustomerList.size();
-        for (int i = customerSize; i <= 50; i++) {
-            Customer customer = new Customer();
-            customerRepository.save(customer);
-            initCustomerData(customer);
-        }
+    public void resetCustomerRecord(Customer customer) {
+        //전체 초기화 로직
     }
+
+    @Transactional
+    public void isPolicyAgreed(Customer customer) {
+        Customer newCustomer = customer.updateIsNew(false);
+        customerRepository.save(newCustomer);
+        System.out.println(newCustomer.isNew());
+    }
+
+//    @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")
+//    @Transactional
+//    public void makePreparedCustomer() {
+//        List<Customer> preparedCustomerList = customerRepository.queryCustomersNotValidated();
+//        int customerSize = preparedCustomerList.size();
+//        for (int i = customerSize; i <= 50; i++) {
+//            Customer customer = new Customer("mock" + i);
+//            customerRepository.save(customer);
+//            initCustomerData(customer);
+//        }
+//    }
 
 }

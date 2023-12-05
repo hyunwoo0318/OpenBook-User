@@ -13,4 +13,5 @@ public class TokenDto {
     private String refreshToken;
     private Long customerId;
     private String nickname;
+    private Boolean isNew;
 }

@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface RoundLearningRecordRepository extends JpaRepository<RoundLearningRecord, Long>, RoundLearningRecordRepositoryCustom {
 
     public Optional<RoundLearningRecord> findByCustomerAndRound(Customer customer, Round round);
+
+    public void deleteAllByCustomer(Customer customer);
 }

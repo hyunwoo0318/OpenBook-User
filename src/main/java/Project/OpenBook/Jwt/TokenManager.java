@@ -59,6 +59,7 @@ public class TokenManager {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .nickname(customer.getNickName())
+                .isNew(customer.isNew())
                 .build();
     }
 

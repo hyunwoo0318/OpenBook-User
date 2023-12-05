@@ -60,6 +60,12 @@ public class TopicSimpleQueryService {
         return getTopicListQueryDtoList(customer, topicList, makeMapSet(chapterNum));
     }
 
+    public List<TopicListQueryDto> queryChapterTopicsForFree(int chapterNum) {
+        List<Topic> topicList = topicRepository.queryTopicsWithCategory(chapterNum);
+
+        return getTopicListQueryDtoListForFree(topicList, makeMapSet(chapterNum));
+    }
+
 
     @Transactional(readOnly = true)
     public TopicDetailDto queryTopicsAdmin(String topicTitle) {
@@ -154,6 +160,27 @@ public class TopicSimpleQueryService {
         return topicDtoList;
     }
 
+    private List<TopicListQueryDto> getTopicListQueryDtoListForFree(List<Topic> topicList, MapSet mapSet) {
+        Map<Keyword, List<DescriptionKeyword>> descriptionKeywordMap = mapSet.getDescriptionKeywordMap();
+        Map<Keyword, List<ChoiceKeyword>> choiceKeywordMap = mapSet.getChoiceKeywordMap();
+        Map<Topic, List<Keyword>> topicKeywordMap = mapSet.getTopicKeywordMap();
+
+        List<TopicListQueryDto> topicDtoList = new ArrayList<>();
+        List<Topic> sortedTopicList = topicList.stream()
+                .sorted(Comparator.comparing(Topic::getNumber))
+                .collect(Collectors.toList());
+        for (Topic topic : sortedTopicList) {
+            List<Keyword> keywordList = topicKeywordMap.get(topic);
+            List<KeywordDto> keywordDtoList = new ArrayList<>();
+            if (keywordList != null) {
+                keywordDtoList = makeKeywordDtoList(keywordList, descriptionKeywordMap, choiceKeywordMap);
+            }
+            TopicListQueryDto dto = new TopicListQueryDto(null, topic, keywordDtoList);
+            topicDtoList.add(dto);
+        }
+        return topicDtoList;
+    }
+
 
 
     private List<KeywordDto> makeKeywordDtoList(List<Keyword> keywordList, Map<Keyword, List<DescriptionKeyword>> descriptionKeywordMap,
@@ -226,6 +253,8 @@ public class TopicSimpleQueryService {
                 .collect(Collectors.groupingBy(Keyword::getTopic));
         return new MapSet(descriptionKeywordMap, choiceKeywordMap, topicKeywordMap);
     }
+
+
 
     @Getter
     @AllArgsConstructor

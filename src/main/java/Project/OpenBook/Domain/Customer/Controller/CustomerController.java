@@ -80,7 +80,7 @@ public class CustomerController {
 
         ResponseEntity<CustomerNicknameDto> responseEntity = ResponseEntity.ok()
                 .headers(headers)
-                .body(new CustomerNicknameDto(tokenDto.getNickname()));
+                .body(new CustomerNicknameDto(tokenDto.getNickname(), tokenDto.getIsNew()));
 
         return responseEntity;
     }
@@ -97,6 +97,20 @@ public class CustomerController {
     public ResponseEntity<Void> deleteCustomer(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer){
 
         customerService.deleteCustomer(customer);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "회원 정보 초기화")
+    @DeleteMapping("/customers/reset")
+    public ResponseEntity<Void> resetRecord(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
+        customerService.resetCustomerRecord(customer);
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @Operation(summary = "회원 약관 동의 여부")
+    @PatchMapping("/customers/policy-agree")
+    public ResponseEntity<Void> isPolicyAgreed(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
+        customerService.isPolicyAgreed(customer);
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
@@ -149,7 +163,7 @@ public class CustomerController {
 
         ResponseEntity<CustomerNicknameDto> responseEntity = ResponseEntity.ok()
                 .headers(headers)
-                .body(new CustomerNicknameDto(tokenDto.getNickname()));
+                .body(new CustomerNicknameDto(tokenDto.getNickname(), tokenDto.getIsNew()));
 
         return responseEntity;
     }

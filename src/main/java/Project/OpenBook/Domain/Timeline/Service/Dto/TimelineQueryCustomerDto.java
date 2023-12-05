@@ -28,4 +28,14 @@ public class TimelineQueryCustomerDto {
         this.score = record.getAnswerCount();
         this.timelineCount = timeline.getCount();
     }
+
+    public TimelineQueryCustomerDto(Timeline timeline) {
+        this.title = timeline.getTitle();
+        this.era = timeline.getEra().getName();
+        this.startDate = timeline.getStartDate();
+        this.endDate = timeline.getEndDate();
+        this.id = timeline.getId();
+        this.score = 0;
+        this.timelineCount = timeline.getCount();
+    }
 }

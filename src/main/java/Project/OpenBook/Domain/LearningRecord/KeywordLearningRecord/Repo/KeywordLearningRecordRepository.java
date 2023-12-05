@@ -9,4 +9,6 @@ import java.util.List;
 public interface KeywordLearningRecordRepository extends JpaRepository<KeywordLearningRecord, Long> , KeywordLearningRecordRepositoryCustom{
 
     public List<KeywordLearningRecord> findAllByCustomer(Customer customer);
+
+    public void deleteAllByCustomer(Customer customer);
 }
