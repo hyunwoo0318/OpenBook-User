@@ -40,5 +40,9 @@ public class RoundLearningRecord {
     public void clearScore() {
         this.score = 0;
     }
+
+    public void reset() {
+        this.score = 0;
+    }
 }
 

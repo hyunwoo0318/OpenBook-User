@@ -317,13 +317,78 @@ public class CustomerService implements UserDetailsService {
     @Transactional
     public void resetCustomerRecord(Customer customer) {
         //전체 초기화 로직
+        //1. 정주행 리스트 progress
+        resetJJHListProgress(customer);
+
+        //2. 정주행 콘텐츠 progress
+        resetJJHContentProgress(customer);
+
+        //3. keyword 학습정도
+        resetKeywordLearningHistory(customer);
+
+        //4. topic 학습정도
+        resetTopicLearningHistory(customer);
+
+        //5. questionCategory 학습정도
+        resetQuestionCategoryLearningHistory(customer);
+
+        //6. timeline 학습정도
+        resetTimelineLearningHistory(customer);
+
+        //7. examQuestion 학습정도
+        resetExamQuestionLearningHistory(customer);
+
+        //8. round 학습정도
+        resetRoundLearningHistory(customer);
     }
+
+    private void resetRoundLearningHistory(Customer customer) {
+        roundLearningRecordRepository.findAllByCustomer(customer)
+                .forEach(RoundLearningRecord::reset);
+    }
+
+    private void resetExamQuestionLearningHistory(Customer customer) {
+        examQuestionLearningRecordRepository.findAllByCustomer(customer)
+                .forEach(ExamQuestionLearningRecord::reset);
+    }
+
+    private void resetTimelineLearningHistory(Customer customer) {
+        timelineLearningRecordRepository.findAllByCustomer(customer)
+                .forEach(TimelineLearningRecord::reset);
+
+    }
+
+    private void resetQuestionCategoryLearningHistory(Customer customer) {
+        questionCategoryLearningRecordRepository.findAllByCustomer(customer)
+                .forEach(QuestionCategoryLearningRecord::reset);
+    }
+
+    private void resetTopicLearningHistory(Customer customer) {
+        topicLearningRecordRepository.findAllByCustomer(customer)
+                .forEach(TopicLearningRecord::reset);
+    }
+
+    private void resetKeywordLearningHistory(Customer customer) {
+        keywordLearningRecordRepository.findAllByCustomer(customer)
+                .forEach(KeywordLearningRecord::reset);
+    }
+
+    private void resetJJHContentProgress(Customer customer) {
+        jjhContentProgressRepository.findAllByCustomer(customer)
+                .forEach(JJHContentProgress::reset);
+    }
+
+    private void resetJJHListProgress(Customer customer) {
+        jjhListProgressRepository.findAllByCustomer(customer)
+                .forEach(JJHListProgress::reset);
+    }
+
+
 
     @Transactional
     public void isPolicyAgreed(Customer customer) {
         Customer newCustomer = customer.updateIsNew(false);
         customerRepository.save(newCustomer);
-        System.out.println(newCustomer.isNew());
     }
 
 //    @Scheduled(cron = "0 0 4 * * *", zone = "Asia/Seoul")

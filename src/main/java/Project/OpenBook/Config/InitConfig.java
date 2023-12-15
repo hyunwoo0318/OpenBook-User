@@ -6,23 +6,42 @@ import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
 import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
+import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
 import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Era.EraRepository;
+import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
+import Project.OpenBook.Domain.JJH.JJHContent.JJHContent;
+import Project.OpenBook.Domain.JJH.JJHContent.JJHContentRepository;
+import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgress;
+import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgressRepository;
+import Project.OpenBook.Domain.JJH.JJHList.JJHList;
+import Project.OpenBook.Domain.JJH.JJHList.JJHListRepository;
+import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
+import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgressRepository;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Repository.KeywordPrimaryDateRepository;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
+import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Repository.ExamQuestionLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Repo.KeywordLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Repo.QuestionCategoryLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
+import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
+import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearchRepository;
@@ -32,6 +51,7 @@ import Project.OpenBook.Domain.Search.TopicSearch.TopicSearch;
 import Project.OpenBook.Domain.Search.TopicSearch.TopicSearchRepository;
 import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
+import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
@@ -44,9 +64,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -58,6 +76,7 @@ public class InitConfig {
 
     private final TopicSearchRepository topicSearchRepository;
     private final TopicRepository topicRepository;
+    private final TopicLearningRecordRepository topicLearningRecordRepository;
     private final ChapterRepository chapterRepository;
     private final ChapterSearchRepository chapterSearchRepository;
 
@@ -67,8 +86,12 @@ public class InitConfig {
     private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
 
     private final TimelineRepository timelineRepository;
+    private final TimelineLearningRecordRepository timelineLearningRecordRepository;
     private final KeywordPrimaryDateRepository keywordPrimaryDateRepository;
     private final TopicPrimaryDateRepository topicPrimaryDateRepository;
+
+    private final JJHListRepository jjhListRepository;
+    private final JJHContentRepository jjhContentRepository;
 
     private final QuestionCategoryRepository questionCategoryRepository;
     private final EraRepository eraRepository;
@@ -77,6 +100,9 @@ public class InitConfig {
     private final DescriptionRepository descriptionRepository;
     private final ChoiceRepository choiceRepository;
     private final ImageService imageService;
+
+    private final JJHListProgressRepository jjhListProgressRepository;
+    private final JJHContentProgressRepository jjhContentProgressRepository;
 
     private final RoundRepository roundRepository;
     private final RoundLearningRecordRepository roundLearningRecordRepository;
@@ -199,6 +225,176 @@ public class InitConfig {
 
         //키워드간 연관성 저장 로직
         //initKeywordAssociations(newKeywordMap);
+    }
+
+    /**
+     * 추가된 내용에 대한 기존 회원에 대한 record 생성
+     */
+
+    @Bean
+    @Transactional
+    public void checkRecords() {
+        List<Customer> customerList = customerRepository.findAll();
+
+
+        List<JJHList> jjhLists = jjhListRepository.findAll();
+        List<JJHContent> jjhContents = jjhContentRepository.findAll();
+        List<Topic> topicList = topicRepository.findAll();
+        List<Keyword> keywordList = keywordRepository.findAll();
+        List<QuestionCategory> questionCategoryList = questionCategoryRepository.findAll();
+        List<Round> roundList = roundRepository.findAll();
+        List<ExamQuestion> examQuestionList = examQuestionRepository.findAll();
+        List<Timeline> timelineList = timelineRepository.findAll();
+
+        Map<Customer, List<JJHListProgress>> jjhListProgressMap = jjhListProgressRepository.queryAllJJHList().stream()
+                .collect(Collectors.groupingBy(JJHListProgress::getCustomer));
+        Map<Customer, List<JJHContentProgress>> jjhContentProgressMap = jjhContentProgressRepository.findAll().stream()
+                .collect(Collectors.groupingBy(JJHContentProgress::getCustomer));
+        Map<Customer, List<TopicLearningRecord>> topicProgressMap = topicLearningRecordRepository.findAll().stream()
+                .collect(Collectors.groupingBy(TopicLearningRecord::getCustomer));
+        Map<Customer, List<KeywordLearningRecord>> keywordProgressMap = keywordLearningRecordRepository.findAll().stream()
+                .collect(Collectors.groupingBy(KeywordLearningRecord::getCustomer));
+        Map<Customer, List<QuestionCategoryLearningRecord>> qcProgressMap = questionCategoryLearningRecordRepository.findAll().stream()
+                .collect(Collectors.groupingBy(QuestionCategoryLearningRecord::getCustomer));
+        Map<Customer, List<RoundLearningRecord>> roundProgressMap = roundLearningRecordRepository.findAll().stream()
+                .collect(Collectors.groupingBy(RoundLearningRecord::getCustomer));
+        Map<Customer, List<ExamQuestionLearningRecord>> examQuestionProgressMap = examQuestionLearningRecordRepository.findAll().stream()
+                .collect(Collectors.groupingBy(ExamQuestionLearningRecord::getCustomer));
+        Map<Customer, List<TimelineLearningRecord>> timelineProgressMap = timelineLearningRecordRepository.findAll().stream()
+                .collect(Collectors.groupingBy(TimelineLearningRecord::getCustomer));
+
+        for (Customer customer : customerList) {
+            //1. jjhList
+            List<JJHListProgress> jjhListProgressList = jjhListProgressMap.get(customer);
+            Map<JJHList, JJHListProgress> jjhListCustomerProgressMap = new HashMap<>();
+            if (jjhListProgressList != null) {
+                jjhListCustomerProgressMap = jjhListProgressList.stream()
+                        .collect(Collectors.toMap(JJHListProgress::getJjhList, j -> j));
+            }
+
+
+            for (JJHList j : jjhLists) {
+                JJHListProgress progress = jjhListCustomerProgressMap.get(j);
+                if (progress == null) {
+                    JJHListProgress newProgress = new JJHListProgress(customer, j);
+                    jjhListProgressRepository.save(newProgress);
+                }
+            }
+
+            //2.jjhContent
+            List<JJHContentProgress> jjhContentProgressList = jjhContentProgressMap.get(customer);
+            Map<JJHContent, JJHContentProgress> jjhContentCustomerProgressMap = new HashMap<>();
+            if (jjhContentProgressList != null) {
+                jjhContentCustomerProgressMap = jjhContentProgressList.stream()
+                        .collect(Collectors.toMap(JJHContentProgress::getJjhContent, j -> j));
+            }
+
+
+            for (JJHContent j : jjhContents) {
+                JJHContentProgress progress = jjhContentCustomerProgressMap.get(j);
+                if (progress == null) {
+                    JJHContentProgress newProgress = new JJHContentProgress(customer, j);
+                    jjhContentProgressRepository.save(newProgress);
+                }
+            }
+
+            //3. topic
+            List<TopicLearningRecord> topicRecordList = topicProgressMap.get(customer);
+            Map<Topic, TopicLearningRecord> topicCustomerRecordMap = new HashMap<>();
+            if (topicRecordList != null) {
+                topicCustomerRecordMap = topicRecordList.stream()
+                        .collect(Collectors.toMap(TopicLearningRecord::getTopic, t -> t));
+            }
+
+            for (Topic t : topicList) {
+                TopicLearningRecord record = topicCustomerRecordMap.get(t);
+                if (record == null) {
+                    TopicLearningRecord newRecord = new TopicLearningRecord(t, customer);
+                    topicLearningRecordRepository.save(newRecord);
+                }
+            }
+
+            //4. Keyword
+            List<KeywordLearningRecord> keywordRecordList = keywordProgressMap.get(customer);
+            Map<Keyword, KeywordLearningRecord> keywordLearningRecordMap = new HashMap<>();
+            if (keywordRecordList != null) {
+                keywordLearningRecordMap = keywordRecordList.stream()
+                        .collect(Collectors.toMap(KeywordLearningRecord::getKeyword, k -> k));
+            }
+
+            for (Keyword k : keywordList) {
+                KeywordLearningRecord record = keywordLearningRecordMap.get(k);
+                if (record == null) {
+                    KeywordLearningRecord newRecord = new KeywordLearningRecord(k, customer);
+                    keywordLearningRecordRepository.save(newRecord);
+                }
+            }
+
+            //5. Timeline
+            List<TimelineLearningRecord> timelineRecordList = timelineProgressMap.get(customer);
+            Map<Timeline, TimelineLearningRecord> timelineLearningRecordMap = new HashMap<>();
+            if (timelineRecordList != null) {
+                timelineLearningRecordMap = timelineRecordList.stream()
+                        .collect(Collectors.toMap(TimelineLearningRecord::getTimeline, t -> t));
+            }
+
+            for (Timeline t : timelineList) {
+                TimelineLearningRecord record = timelineLearningRecordMap.get(t);
+                if (record == null) {
+                    TimelineLearningRecord newRecord = new TimelineLearningRecord(t, customer);
+                    timelineLearningRecordRepository.save(newRecord);
+                }
+            }
+
+            //6. QuestionCategory
+            List<QuestionCategoryLearningRecord> qcLearningRecordList = qcProgressMap.get(customer);
+            Map<QuestionCategory, QuestionCategoryLearningRecord> qcLearningRecordMap = new HashMap<>();
+            if (qcLearningRecordList != null) {
+                qcLearningRecordMap = qcLearningRecordList.stream()
+                        .collect(Collectors.toMap(QuestionCategoryLearningRecord::getQuestionCategory, qc -> qc));
+            }
+
+            for (QuestionCategory qc : questionCategoryList) {
+                QuestionCategoryLearningRecord record = qcLearningRecordMap.get(qc);
+                if (record == null) {
+                    QuestionCategoryLearningRecord newRecord = new QuestionCategoryLearningRecord(qc, customer);
+                    questionCategoryLearningRecordRepository.save(newRecord);
+                }
+            }
+
+            //7. Round
+            List<RoundLearningRecord> roundRecordList = roundProgressMap.get(customer);
+            Map<Round, RoundLearningRecord> roundLearningRecordMap = new HashMap<>();
+            if (roundRecordList != null) {
+                roundLearningRecordMap = roundRecordList.stream()
+                        .collect(Collectors.toMap(RoundLearningRecord::getRound, r -> r));
+            }
+
+            for (Round r : roundList) {
+                RoundLearningRecord record = roundLearningRecordMap.get(r);
+                if (record == null) {
+                    RoundLearningRecord newRecord = new RoundLearningRecord(r, customer);
+                    roundLearningRecordRepository.save(newRecord);
+                }
+            }
+
+            //8. ExamQuestion
+            List<ExamQuestionLearningRecord> examQuestionRecordList = examQuestionProgressMap.get(customer);
+            Map<ExamQuestion, ExamQuestionLearningRecord> examQuestionLearningRecordMap = new HashMap<>();
+            if (examQuestionList != null) {
+                examQuestionLearningRecordMap = examQuestionRecordList.stream()
+                        .collect(Collectors.toMap(ExamQuestionLearningRecord::getExamQuestion, e -> e));
+            }
+
+            for (ExamQuestion ex : examQuestionList) {
+                ExamQuestionLearningRecord record = examQuestionLearningRecordMap.get(ex);
+                if (record == null) {
+                    ExamQuestionLearningRecord newRecord = new ExamQuestionLearningRecord(customer, ex);
+                    examQuestionLearningRecordRepository.save(newRecord);
+                }
+            }
+
+        }
     }
 
     private void initKeywordUsageCounts(Map<Long, List<Keyword>> newKeywordMap) {

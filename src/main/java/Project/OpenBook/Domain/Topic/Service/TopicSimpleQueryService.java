@@ -105,9 +105,24 @@ public class TopicSimpleQueryService {
     }
 
     @Transactional(readOnly = true)
-    public List<TopicListQueryDto> queryTopicsInQuestionCategory(Customer customer, Long id) {
-        List<Topic> topicList = topicRepository.queryTopicsInQuestionCategory(id);
-        return getTopicListQueryDtoList(customer, topicList, makeMapSet(topicList));
+    public List<BookmarkedTopicQueryDto> queryTopicsInQuestionCategory(Customer customer, Long id) {
+        List<BookmarkedTopicQueryDto> dtoList = new ArrayList<>();
+        List<Topic> totalTopicList = topicRepository.queryTopicsInQuestionCategory(id);
+
+        Map<Chapter, List<Topic>> chapterTopicListMap = totalTopicList.stream()
+                .collect(Collectors.groupingBy(Topic::getChapter));
+        MapSet mapSet = makeMapSet(totalTopicList);
+
+        for (Chapter chapter : chapterTopicListMap.keySet()) {
+            List<Topic> topicList = chapterTopicListMap.get(chapter);
+            List<TopicListQueryDto> topicDtoList = getTopicListQueryDtoList(customer, topicList,mapSet);
+            BookmarkedTopicQueryDto dto = new BookmarkedTopicQueryDto(chapter.getNumber(), chapter.getTitle(), topicDtoList);
+            dtoList.add(dto);
+        }
+        List<BookmarkedTopicQueryDto> sortedDtoList = dtoList.stream()
+                .sorted(Comparator.comparing(BookmarkedTopicQueryDto::getChapterNumber))
+                .collect(Collectors.toList());
+        return sortedDtoList;
     }
 
 

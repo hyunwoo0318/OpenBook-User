@@ -19,6 +19,9 @@ public class KakaoLogin implements Oauth2Login{
     private String kakaoKey = "ca80f14a6e6b6c34ea821c46af0cc10c";
     @Override
     public String login(String code, String redirectURL, String protocol) throws JsonProcessingException {
+        if (protocol == null || protocol.equals("undefined")) {
+            protocol = "http";
+        }
         String kakaoUri = protocol + "://" + redirectURL;
         Map<String, String> map = webClientBuilder.build()
                 .post()

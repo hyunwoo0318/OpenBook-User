@@ -64,4 +64,10 @@ public class TimelineLearningRecord {
         return this;
     }
 
+    public void reset() {
+        this.answerCount = 0;
+        this.wrongCount = 0;
+        this.score= 0;
+    }
+
 }

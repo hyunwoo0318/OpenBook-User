@@ -63,4 +63,12 @@ public class ExamQuestionLearningRecord extends BaseEntity {
         this.score = 0;
         this.checkedNumber = 0;
     }
+
+    public void reset() {
+        this.solved = false;
+        this.isRemovedAnswerNote = false;
+        this.answerNoted = false;
+        this.score = 0;
+        this.checkedNumber = 0;
+    }
 }

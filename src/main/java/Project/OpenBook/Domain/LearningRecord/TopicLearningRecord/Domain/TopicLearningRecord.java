@@ -56,4 +56,10 @@ public class TopicLearningRecord {
     public void updateBookmark(Boolean isBookmarked) {
         this.isBookmarked = isBookmarked;
     }
+
+    public void reset(){
+        this.isBookmarked = false;
+        this.answerCount = 0;
+        this.wrongCount = 0;
+    }
 }

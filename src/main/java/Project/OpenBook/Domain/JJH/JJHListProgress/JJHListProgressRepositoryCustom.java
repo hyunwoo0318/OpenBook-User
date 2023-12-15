@@ -7,4 +7,6 @@ import java.util.List;
 public interface JJHListProgressRepositoryCustom {
 
     public List<JJHListProgress> queryJJHListProgressWithJJHList(Customer customer);
+
+    public List<JJHListProgress> queryAllJJHList();
 }

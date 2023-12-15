@@ -53,4 +53,12 @@ public class JJHListProgress {
     public void updateState(StateConst state) {
         this.state = state;
     }
+
+    public void reset() {
+        if (this.jjhList.getNumber() == 1) {
+            this.state = StateConst.IN_PROGRESS;
+        }else{
+            this.state = StateConst.LOCKED;
+        }
+    }
 }

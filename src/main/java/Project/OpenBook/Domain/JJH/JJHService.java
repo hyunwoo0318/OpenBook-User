@@ -85,7 +85,7 @@ public class JJHService {
                 chapterList.add(dto);
             } else if (chapter == null && timeline != null) {
                 TimelineJJHCustomerQueryDto dto = new TimelineJJHCustomerQueryDto(timeline.getEra().getName(), timeline.getStartDate(), timeline.getEndDate(),
-                        progress.getState().getName(), jjhList.getNumber(), timeline.getId());
+                        progress.getState().getName(), jjhList.getNumber(), timeline.getId(), timeline.getTitle());
                 timelineList.add(dto);
             }
         }
@@ -416,10 +416,10 @@ public class JJHService {
                     Integer jjhNumber = t.getJjhLists().get(0).getNumber();
                     if (jjhNumber <= JJH_NUMBER_FREE_LIMIT) {
                         return new TimelineJJHCustomerQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(),
-                                StateConst.COMPLETE.getName(), jjhNumber, t.getId());
+                                StateConst.COMPLETE.getName(), jjhNumber, t.getId(),t.getTitle());
                     }else{
                         return new TimelineJJHCustomerQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(),
-                                StateConst.LOCKED.getName(), jjhNumber, t.getId());
+                                StateConst.LOCKED.getName(), jjhNumber, t.getId(), t.getTitle());
                     }
                     })
                 .sorted(Comparator.comparing(TimelineJJHCustomerQueryDto::getJjhNumber))

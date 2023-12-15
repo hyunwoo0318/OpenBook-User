@@ -14,4 +14,5 @@ public class TimelineJJHCustomerQueryDto {
     private String state;
     private Integer jjhNumber;
     private Long id;
+    private String title;
 }

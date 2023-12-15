@@ -53,4 +53,10 @@ public class QuestionCategoryLearningRecord {
         this.wrongCount += wrongCount;
         return this;
     }
+
+    public void reset() {
+        this.answerCount = 0;
+        this.wrongCount = 0;
+        this.score = 0.0;
+    }
 }

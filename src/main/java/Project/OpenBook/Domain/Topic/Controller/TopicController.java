@@ -79,10 +79,10 @@ public class TopicController {
 
     @Operation(summary = "특정 question-category 내의 모든 topic조회")
     @GetMapping("/question-categories/{id}/topics")
-    public ResponseEntity<List<TopicListQueryDto>> queryTopicsInQuestionCategory(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+    public ResponseEntity<List<BookmarkedTopicQueryDto>> queryTopicsInQuestionCategory(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
                                                                                                @PathVariable("id") Long id) {
-        List<TopicListQueryDto> dtoList = topicSimpleQueryService.queryTopicsInQuestionCategory(customer ,id);
-        return new ResponseEntity<List<TopicListQueryDto>>(dtoList, HttpStatus.OK);
+        List<BookmarkedTopicQueryDto> dtoList = topicSimpleQueryService.queryTopicsInQuestionCategory(customer ,id);
+        return new ResponseEntity<List<BookmarkedTopicQueryDto>>(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "특정 토픽의 전체 키워드 조회")
