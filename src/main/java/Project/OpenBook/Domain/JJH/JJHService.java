@@ -401,8 +401,11 @@ public class JJHService {
         List<ChapterJJHCustomerQueryDto> chapterList = chapterRepository.queryChaptersWithjjhList().stream()
                 .map(c -> {
                     Integer jjhNumber = c.getJjhLists().get(0).getNumber();
-                    if (jjhNumber <= JJH_NUMBER_FREE_LIMIT) {
+                    if (jjhNumber < JJH_NUMBER_FREE_LIMIT) {
                         return new ChapterJJHCustomerQueryDto(c.getTitle(), c.getNumber(), StateConst.COMPLETE.getName(),
+                                jjhNumber,c.getDateComment());
+                    }else if (jjhNumber == JJH_NUMBER_FREE_LIMIT) {
+                        return new ChapterJJHCustomerQueryDto(c.getTitle(), c.getNumber(), StateConst.IN_PROGRESS.getName(),
                                 jjhNumber,c.getDateComment());
                     }else{
                         return new ChapterJJHCustomerQueryDto(c.getTitle(), c.getNumber(), StateConst.LOCKED.getName(),
@@ -414,9 +417,12 @@ public class JJHService {
         List<TimelineJJHCustomerQueryDto> timelineList = timelineRepository.queryTimelinesWithEraAndjjhList().stream()
                 .map(t -> {
                     Integer jjhNumber = t.getJjhLists().get(0).getNumber();
-                    if (jjhNumber <= JJH_NUMBER_FREE_LIMIT) {
+                    if (jjhNumber < JJH_NUMBER_FREE_LIMIT) {
                         return new TimelineJJHCustomerQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(),
                                 StateConst.COMPLETE.getName(), jjhNumber, t.getId(),t.getTitle());
+                    }else if (jjhNumber == JJH_NUMBER_FREE_LIMIT) {
+                        return new TimelineJJHCustomerQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(),
+                                StateConst.IN_PROGRESS.getName(), jjhNumber, t.getId(),t.getTitle());
                     }else{
                         return new TimelineJJHCustomerQueryDto(t.getEra().getName(), t.getStartDate(), t.getEndDate(),
                                 StateConst.LOCKED.getName(), jjhNumber, t.getId(), t.getTitle());

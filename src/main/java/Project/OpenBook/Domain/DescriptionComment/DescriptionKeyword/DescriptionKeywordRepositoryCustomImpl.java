@@ -46,6 +46,7 @@ public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywor
                 .leftJoin(descriptionKeyword.description, description).fetchJoin()
                 .leftJoin(descriptionKeyword.keyword, keyword).fetchJoin()
                 .leftJoin(keyword.topic, topic).fetchJoin()
+                 .leftJoin(topic.chapter, chapter).fetchJoin()
                 .where(description.examQuestion.round.number.eq(roundNumber))
                  .fetch();
     }

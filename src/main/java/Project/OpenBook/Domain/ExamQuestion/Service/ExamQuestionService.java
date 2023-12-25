@@ -253,7 +253,7 @@ public class ExamQuestionService {
         return keywordList.stream()
                 .map(k -> {
                     Topic topic = k.getTopic();
-                    return new ExamQuestionCommentDto(topic.getDateComment(), topic.getTitle(), k.getDateComment(), k.getName(),
+                    return new ExamQuestionCommentDto(topic.getDateComment(), topic.getChapter().getTitle() + " - " + topic.getTitle(), k.getDateComment(), k.getName(),
                             k.getComment());
                 })
                 .collect(Collectors.toList());

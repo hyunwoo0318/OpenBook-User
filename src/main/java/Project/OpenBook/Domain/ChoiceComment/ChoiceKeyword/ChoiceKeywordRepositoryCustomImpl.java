@@ -83,6 +83,7 @@ public class ChoiceKeywordRepositoryCustomImpl implements ChoiceKeywordRepositor
                 .leftJoin(choiceKeyword.choice, choice).fetchJoin()
                 .leftJoin(choiceKeyword.keyword, keyword).fetchJoin()
                 .leftJoin(keyword.topic, topic).fetchJoin()
+                 .leftJoin(topic.chapter, chapter).fetchJoin()
                 .where(choice.examQuestion.round.number.eq(roundNumber))
                  .fetch();
     }
