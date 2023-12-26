@@ -146,20 +146,37 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
         List<QuizChoiceDto> choiceList = new ArrayList<>();
         List<Long> keywordList = new ArrayList<>();
 
+        Boolean imageFlag = false;
+
         for (Keyword keyword : answerKeywordList) {
-            choiceList.add(new QuizChoiceDto(keyword.getName(), keyword.getTopic().getTitle()));
+            if (keyword.getImageUrl() != null) {
+                imageFlag  = true;
+            }
+            choiceList.add(new QuizChoiceDto(keyword.getName(), keyword.getTopic().getTitle(),keyword.getImageUrl()));
             keywordList.add(keyword.getId());
         }
 
-        wrongKeywordList.forEach(k -> choiceList.add(new QuizChoiceDto(k.getName(), k.getTopic().getTitle())));
-        return QuestionDto.builder()
-                .questionType(GET_KEYWORD_TYPE)
-                .choiceType(ChoiceType.String.name())
-                .description(Arrays.asList(topicTitle))
-                .answer(topicTitle)
-                .choiceList(choiceList)
-                .keywordIdList(keywordList)
-                .build();
+        wrongKeywordList.forEach(k -> choiceList.add(new QuizChoiceDto(k.getName(), k.getTopic().getTitle(),k.getImageUrl())));
+        if(!imageFlag){
+            return QuestionDto.builder()
+                    .questionType(GET_KEYWORD_TYPE)
+                    .choiceType(ChoiceType.String.name())
+                    .description(Arrays.asList(topicTitle))
+                    .answer(topicTitle)
+                    .choiceList(choiceList)
+                    .keywordIdList(keywordList)
+                    .build();
+        }else{
+            return QuestionDto.builder()
+                    .questionType(GET_KEYWORD_TYPE)
+                    .choiceType(ChoiceType.Image.name())
+                    .description(Arrays.asList(topicTitle))
+                    .answer(topicTitle)
+                    .choiceList(choiceList)
+                    .keywordIdList(keywordList)
+                    .build();
+        }
+
     }
 
 

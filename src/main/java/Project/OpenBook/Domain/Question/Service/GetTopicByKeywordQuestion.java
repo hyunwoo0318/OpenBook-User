@@ -106,22 +106,43 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
         List<QuizChoiceDto> choiceList = new ArrayList<>();
         List<Long> keywordList = new ArrayList<>();
         List<String> descriptionList = new ArrayList<>();
+        List<String> descriptionFileList = new ArrayList<>();
         String topicTitle = answerTopic.getTitle();
-        choiceList.add(new QuizChoiceDto(topicTitle, topicTitle));
+        choiceList.add(new QuizChoiceDto(topicTitle, topicTitle, null));
+
+        Boolean imageFlag = false;
+
         for (Keyword keyword : answerKeywordList) {
+            if (keyword.getImageUrl() != null) {
+                imageFlag = true;
+                descriptionFileList.add(keyword.getImageUrl());
+            }
             keywordList.add(keyword.getId());
             descriptionList.add(keyword.getName());
         }
-        wrongTopicList.forEach(t -> choiceList.add(new QuizChoiceDto(t.getTitle(), t.getTitle())));
+        wrongTopicList.forEach(t -> choiceList.add(new QuizChoiceDto(t.getTitle(), t.getTitle(), null)));
 
-        return QuestionDto.builder()
-                .questionType(GET_TOPIC_BY_KEYWORD_TYPE)
-                .choiceType(ChoiceType.String.name())
-                .answer(topicTitle)
-                .choiceList(choiceList)
-                .description(descriptionList)
-                .keywordIdList(keywordList)
-                .build();
+        if(!imageFlag){
+            return QuestionDto.builder()
+                    .questionType(GET_TOPIC_BY_KEYWORD_TYPE)
+                    .choiceType(ChoiceType.String.name())
+                    .answer(topicTitle)
+                    .choiceList(choiceList)
+                    .description(descriptionList)
+                    .keywordIdList(keywordList)
+                    .build();
+        }else{
+            return QuestionDto.builder()
+                    .questionType(GET_TOPIC_BY_KEYWORD_TYPE)
+                    .choiceType(ChoiceType.Image.name())
+                    .answer(topicTitle)
+                    .choiceList(choiceList)
+                    .description(descriptionList)
+                    .descriptionFileList(descriptionFileList)
+                    .keywordIdList(keywordList)
+                    .build();
+        }
+
     }
 
 

@@ -14,16 +14,19 @@ public class QuestionDto {
     private String questionType;
     private String choiceType;
     private List<String> description;
+    private List<String> descriptionFile;
     private List<QuizChoiceDto> choiceList;
     private List<Long> keywordIdList;
 
     @Builder
-    public QuestionDto(String answer, String questionType, String choiceType, List<String> description, List<QuizChoiceDto> choiceList, List<Long> keywordIdList) {
+    public QuestionDto(String answer, String questionType, String choiceType, List<String> description, List<String> descriptionFileList,
+                       List<QuizChoiceDto> choiceList, List<Long> keywordIdList) {
         this.answer = answer;
         this.questionType = questionType;
         this.choiceType = choiceType;
         this.description = description;
         this.choiceList = choiceList;
         this.keywordIdList = keywordIdList;
+        this.descriptionFile = descriptionFileList;
     }
 }

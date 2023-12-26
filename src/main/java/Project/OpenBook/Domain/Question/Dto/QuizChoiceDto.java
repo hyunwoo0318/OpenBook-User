@@ -10,10 +10,12 @@ public class QuizChoiceDto {
 
     private String choice;
     private String key;
+    private String file;
 
     @Builder
-    public QuizChoiceDto(String choice, String key) {
+    public QuizChoiceDto(String choice, String key, String file) {
         this.choice = choice;
         this.key = key;
+        this.file = file;
     }
 }
