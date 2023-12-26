@@ -47,7 +47,13 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
             totalWrongTopicSet.remove(answerTopic);
             List<Topic> wrongTopicList = getWrongTopic(new ArrayList<>(totalWrongTopicSet), 3);
 
-            QuestionDto questionDto = toQuestionDto(answerTopic, Arrays.asList(answerKeyword, answerKeyword2), wrongTopicList);
+            QuestionDto questionDto = null;
+            if (answerKeyword2 == null) {
+                questionDto = toQuestionDto(answerTopic, Arrays.asList(answerKeyword), wrongTopicList);
+            }else{
+                questionDto = toQuestionDto(answerTopic, Arrays.asList(answerKeyword, answerKeyword2), wrongTopicList);
+
+            }
             questionList.add(questionDto);
 
             count++;

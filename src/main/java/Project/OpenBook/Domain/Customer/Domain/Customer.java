@@ -84,7 +84,7 @@ public class Customer extends BaseEntity implements UserDetails {
     private List<RoundLearningRecord> roundLearningRecordList = new ArrayList<>();
 
     @Builder
-    public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId) {
+    public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId, Boolean isNew) {
         this.nickName = nickName;
         this.solvedNum = 0;
         this.age = age;
@@ -95,6 +95,7 @@ public class Customer extends BaseEntity implements UserDetails {
         this.code = UUID.randomUUID().toString().substring(0,16);
         this.isSubscribed = true;
         this.isValidated = true;
+        this.isNew = true;
     }
 
     public Customer(String nickName) {

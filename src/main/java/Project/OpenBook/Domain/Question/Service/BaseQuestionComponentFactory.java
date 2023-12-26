@@ -76,6 +76,7 @@ public class BaseQuestionComponentFactory {
                 })
                 .collect(Collectors.toList());
         if(keywordList.isEmpty()) return anotherAnswerKeyword;
+
         Set<Integer> randomIndexSet = getRandomIndex(1, keywordList.size());
 
         for (Integer i : randomIndexSet) {

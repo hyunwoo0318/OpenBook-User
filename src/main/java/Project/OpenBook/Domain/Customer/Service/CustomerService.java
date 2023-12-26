@@ -182,6 +182,7 @@ public class CustomerService implements UserDetailsService {
                         .oAuthId(oauthId)
                         .provider(providerName)
                         .roles(Role.USER)
+                        .isNew(true)
                         .nickName(UUID.randomUUID().toString())
                         .build();
                 customerRepository.save(customer);
