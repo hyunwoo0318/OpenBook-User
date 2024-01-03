@@ -63,7 +63,4 @@ public class QuestionCategory extends BaseEntity {
         this.totalQuestionProb = totalQuestionProb;
     }
 
-    public void updateTitle(String title) {
-        this.title = title;
-    }
 }

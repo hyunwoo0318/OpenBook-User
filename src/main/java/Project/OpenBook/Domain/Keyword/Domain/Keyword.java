@@ -57,25 +57,7 @@ public class Keyword extends BaseEntity {
         this.imageUrl = imageUrl;
         this.questionProb = KeywordUsageConst.KEYWORD_USAGE_DEFAULT;
     }
-
-    public void updateNumber(Integer number) {
-        this.number = number;
-    }
-
     public void updateCount(Integer questionProb) {
         this.questionProb = questionProb;
-    }
-
-    public void changeName(String name) {
-        this.name = name;
-    }
-
-    public Keyword updateKeyword(Integer number, String name, String comment,String dateComment, String imageUrl) {
-        this.number = number;
-        this.name = name;
-        this.comment = comment;
-        this.dateComment = dateComment;
-        this.imageUrl = imageUrl;
-        return this;
     }
 }

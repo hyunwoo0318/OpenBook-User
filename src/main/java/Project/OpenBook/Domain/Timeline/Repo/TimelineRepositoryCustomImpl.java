@@ -17,12 +17,6 @@ import static Project.OpenBook.Domain.Timeline.Domain.QTimeline.timeline;
 public class TimelineRepositoryCustomImpl implements TimelineRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
-    @Override
-    public List<Timeline> queryTimelinesWithEra() {
-        return queryFactory.selectFrom(timeline)
-                .leftJoin(timeline.era, era).fetchJoin()
-                .fetch();
-    }
 
     @Override
     public List<Timeline> queryTimelinesWithEraAndjjhList() {

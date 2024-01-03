@@ -47,13 +47,5 @@ public class Description extends BaseEntity {
         this.examQuestion = examQuestion;
     }
 
-    public Description updateContent(String content, String comment){
-        this.content  = content;
-        this.comment = comment;
-        return this;
-    }
 
-    public void updateContent(String s) {
-        this.content = s;
-    }
 }

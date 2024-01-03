@@ -54,22 +54,6 @@ public class Chapter extends BaseEntity {
     private List<Topic> topicList = new ArrayList<>();
 
 
-    public Chapter updateChapter(String title, int number, String dateComment) {
-        this.title = title;
-        this.number = number;
-        this.dateComment = dateComment;
-        return this;
-    }
-
-    public Chapter updateContent(String content) {
-        this.content = content;
-        return this;
-    }
-
-    public Chapter updateNumber(Integer number) {
-        this.number = number;
-        return this;
-    }
 
 
 }

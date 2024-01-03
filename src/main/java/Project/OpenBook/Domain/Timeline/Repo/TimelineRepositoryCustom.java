@@ -7,7 +7,6 @@ import java.util.Optional;
 
 public interface TimelineRepositoryCustom {
 
-    public List<Timeline> queryTimelinesWithEra();
 
     public List<Timeline> queryTimelinesWithEraAndjjhList();
 

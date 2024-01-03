@@ -51,12 +51,6 @@ public class Timeline extends BaseEntity {
         this.era = era;
     }
 
-    public void updateTimeline(String title, Integer startDate, Integer endDate, Era era) {
-        this.title = title;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.era = era;
-    }
 
     public void updateCount() {
         this.count++;

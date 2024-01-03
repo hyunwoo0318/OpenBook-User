@@ -27,7 +27,6 @@ public class StudyHistoryController {
 
     private final StudyHistoryService studyHistoryService;
 
-    //TODO
     @Operation(summary = "연표 문제 풀이 정보 입력 - 오답")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "단원 학습 정보 입력 성공"),

@@ -50,20 +50,10 @@ public class Choice extends BaseEntity {
         this.examQuestion = examQuestion;
     }
 
-    public Choice updateChoice(String content, String comment, Topic topic) {
-        this.content = content;
-        this.comment = comment;
-        this.topic = topic;
-        return this;
-    }
-
     public Choice updateChoice(Integer number, String content){
         this.number = number;
         this.content = content;
         return this;
     }
 
-    public void updateContent(String content) {
-        this.content = content;
-    }
 }

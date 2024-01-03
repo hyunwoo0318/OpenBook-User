@@ -115,15 +115,6 @@ public class Customer extends BaseEntity implements UserDetails {
     }
 
 
-
-    public void addDetails(String nickName, Integer age, Integer expertise) {
-        this.nickName= nickName;
-        this.age = age;
-        this.expertise = expertise;
-        this.isNew = false;
-    }
-
-
     public Customer setInfo(String nickName, String roles, String provider, String oAuthId) {
         this.nickName = nickName;
         this.solvedNum = 0;

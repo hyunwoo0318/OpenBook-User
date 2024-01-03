@@ -32,13 +32,7 @@ public class CustomerRepositoryCustomImpl implements CustomerRepositoryCustom {
                 .fetch();
     }
 
-    @Override
-    public Optional<Customer> queryCustomer(String code) {
-        Customer findCustomer = queryFactory.selectFrom(customer)
-                .where(customer.code.eq(code))
-                .fetchOne();
-        return Optional.ofNullable(findCustomer);
-    }
+
 
 
 }

@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword;
 
-import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -30,15 +29,6 @@ public class DescriptionKeywordRepositoryCustomImpl implements DescriptionKeywor
                 .fetch();
     }
 
-    @Override
-    public List<DescriptionKeyword> queryDescriptionKeywordsForTopicList(Description description) {
-        return queryFactory.selectFrom(descriptionKeyword)
-                .leftJoin(descriptionKeyword.keyword, keyword).fetchJoin()
-                .leftJoin(keyword.topic, topic).fetchJoin()
-                .leftJoin(topic.chapter, chapter).fetchJoin()
-                .where(descriptionKeyword.description.eq(description))
-                .fetch();
-    }
 
     @Override
     public List<DescriptionKeyword> queryDescriptionKeywordForExamQuestion(Integer roundNumber) {

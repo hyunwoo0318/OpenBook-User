@@ -2,7 +2,6 @@ package Project.OpenBook.Domain.Topic.Service;
 
 import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
-import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTopicWithCountDto;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
@@ -47,12 +46,7 @@ public class TopicSimpleQueryService {
     private final TopicLearningRecordRepository topicLearningRecordRepository;
 
     private final BookmarkService bookmarkService;
-    public List<ChapterTopicWithCountDto> queryChapterTopicsAdmin(int num) {
-        return topicRepository.queryTopicsWithQuestionCategory(num).stream()
-                .sorted(Comparator.comparing(Topic::getNumber))
-                .map(ChapterTopicWithCountDto::new)
-                .collect(Collectors.toList());
-    }
+
 
     public List<TopicListQueryDto> queryChapterTopicsCustomer(Customer customer, int chapterNum) {
         List<Topic> topicList = topicRepository.queryTopicsWithCategory(chapterNum);
@@ -67,13 +61,7 @@ public class TopicSimpleQueryService {
     }
 
 
-    @Transactional(readOnly = true)
-    public TopicDetailDto queryTopicsAdmin(String topicTitle) {
-        Topic topic = topicRepository.queryTopicWithQuestionCategory(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
-        return new TopicDetailDto(topic);
-    }
+
 
     @Transactional(readOnly = true)
     public TopicWithKeywordDto queryTopicsCustomer(String topicTitle) {

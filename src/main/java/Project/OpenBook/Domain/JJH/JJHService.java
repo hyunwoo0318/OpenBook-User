@@ -15,7 +15,6 @@ import Project.OpenBook.Domain.JJH.JJHList.JJHListRepository;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgressRepository;
 import Project.OpenBook.Domain.JJH.dto.*;
-import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
@@ -44,28 +43,8 @@ public class JJHService {
     private final JJHContentRepository jjhContentRepository;
     private final JJHContentProgressRepository jjhContentProgressRepository;
 
-    private final TopicLearningRecordRepository topicLearningRecordRepository;
     private final BookmarkService bookmarkService;
 
-    @Transactional(readOnly = true)
-    public JJHListAdminQueryDto queryJJHAdmin() {
-        List<ChapterJJHAdminQueryDto> chapterList = chapterRepository.queryChaptersWithjjhList().stream()
-                .map(c -> {
-                    Integer jjhNumber = (!c.getJjhLists().isEmpty()) ? c.getJjhLists().get(0).getNumber() : 1000;
-                    return new ChapterJJHAdminQueryDto(c.getNumber(), c.getTitle(),jjhNumber, c.getId());
-                })
-                .sorted(Comparator.comparing(ChapterJJHAdminQueryDto::getJjhNumber))
-                .collect(Collectors.toList());
-        List<TimelineJJHAdminQueryDto> timelineList = timelineRepository.queryTimelinesWithEraAndjjhList().stream()
-                .map(t -> {
-                    Integer jjhNumber = (!t.getJjhLists().isEmpty()) ? t.getJjhLists().get(0).getNumber() : 1000;
-                    return new TimelineJJHAdminQueryDto(t.getTitle(),t.getEra().getName(), t.getStartDate(), t.getEndDate(), jjhNumber, t.getId());
-                })
-                .sorted(Comparator.comparing(TimelineJJHAdminQueryDto::getJjhNumber))
-                .collect(Collectors.toList());
-
-        return new JJHListAdminQueryDto(chapterList, timelineList);
-    }
 
     @Transactional(readOnly = true)
     public JJHListCustomerQueryDto queryJJHCustomer(Customer customer) {
@@ -211,64 +190,6 @@ public class JJHService {
         return dtoList;
     }
 
-    @Transactional
-    public void updateJJHList(JJHListUpdateDto dto) {
-
-        Integer chapterType= -1;
-        Integer timelineType = 1;
-        Map<jjhListType, JJHList> m = new HashMap<>();
-
-        List<JJHUpdateDto> chapterList = dto.getChapterList();
-        List<JJHUpdateDto> timelineList = dto.getTimelineList();
-
-        List<JJHList> jjhLists = jjhListRepository.queryJJHListsWithChapterAndTimeline();
-        for (JJHList jjhList : jjhLists) {
-            if (jjhList.getChapter() == null && jjhList.getTimeline() != null) {
-                m.put(new jjhListType(timelineType, jjhList.getTimeline().getId()), jjhList);
-            } else if (jjhList.getTimeline() == null && jjhList.getChapter() != null) {
-                m.put(new jjhListType(chapterType, jjhList.getChapter().getId()), jjhList);
-            } else {
-                jjhListRepository.delete(jjhList);
-            }
-        }
-
-        for (JJHUpdateDto jjhUpdateDto : chapterList) {
-            Long chapterId = jjhUpdateDto.getId();
-            Integer jjhNumber = jjhUpdateDto.getJjhNumber();
-            jjhNumber += 1;
-            JJHList jjhList = m.get(new jjhListType(chapterType, jjhUpdateDto.getId()));
-            if (jjhList == null) {
-                Chapter chapter = chapterRepository.findById(chapterId).orElseThrow(() -> {
-                    throw new CustomException(CHAPTER_NOT_FOUND);
-                });
-                JJHList newJJHList = new JJHList(jjhNumber, chapter);
-                jjhListRepository.save(newJJHList);
-            }else {
-                jjhList.updateNumber(jjhNumber);
-            }
-        }
-
-        for (JJHUpdateDto jjhUpdateDto : timelineList) {
-            Long timelineId = jjhUpdateDto.getId();
-            Integer jjhNumber = jjhUpdateDto.getJjhNumber();
-            jjhNumber += 1;
-            JJHList jjhList = m.get(new jjhListType(timelineType, jjhUpdateDto.getId()));
-            if (jjhList == null) {
-                Timeline timeline = timelineRepository.findById(timelineId).orElseThrow(() -> {
-                    throw new CustomException(TIMELINE_NOT_FOUND);
-                });
-                JJHList newJJHList = new JJHList(jjhNumber, timeline);
-                jjhListRepository.save(newJJHList);
-            } else {
-                jjhList.updateNumber(jjhNumber);
-            }
-        }
-
-        jjhLists.sort(Comparator.comparing(JJHList::getNumber));
-
-        updateJJHContent();
-
-    }
 
     public void updateJJHContent() {
         Integer idx = 1;
@@ -432,16 +353,6 @@ public class JJHService {
                 .collect(Collectors.toList());
 
         return new JJHListCustomerQueryDto(chapterList, timelineList);
-    }
-
-
-
-
-    @AllArgsConstructor
-    @EqualsAndHashCode
-    private class jjhListType{
-        public Integer type;
-        public Long id;
     }
 
     @AllArgsConstructor

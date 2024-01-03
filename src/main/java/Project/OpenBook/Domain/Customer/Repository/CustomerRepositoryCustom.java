@@ -11,6 +11,5 @@ public interface CustomerRepositoryCustom {
 
     public List<Customer> queryCustomersNotValidated();
 
-    public Optional<Customer> queryCustomer(String code);
 
 }

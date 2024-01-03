@@ -33,13 +33,6 @@ public class RoundService {
     private final RoundValidator roundValidator;
 
 
-    @Transactional(readOnly = true)
-    public List<RoundDto> queryRounds() {
-        return roundRepository.findAll().stream()
-                .sorted(Comparator.comparing(Round::getNumber))
-                .map(r -> new RoundDto(r.getNumber(), r.getDate()))
-                .collect(Collectors.toList());
-    }
 
     @Transactional
     public Round createRound(RoundDto roundDto) {
@@ -88,13 +81,7 @@ public class RoundService {
         return new RoundInfoDto(round.getDate());
     }
 
-    @Transactional(readOnly = true)
-    public List<Integer> queryRoundQuestions(Integer number) {
-        Round round = roundValidator.checkRound(number);
-        return round.getExamQuestionList().stream()
-                .map(ExamQuestion::getNumber)
-                .collect(Collectors.toList());
-    }
+
 
     @Transactional(readOnly = true)
     public List<RoundQueryCustomerDto> queryRoundsCustomer(Customer customer) {

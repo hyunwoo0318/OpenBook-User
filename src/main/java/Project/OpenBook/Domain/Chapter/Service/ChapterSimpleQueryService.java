@@ -2,8 +2,10 @@ package Project.OpenBook.Domain.Chapter.Service;
 
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Domain.Chapter.Service.dto.*;
-import Project.OpenBook.Domain.Topic.Domain.Topic;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterDateDto;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterDetailDto;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterInfoDto;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTitleDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,13 +21,6 @@ public class ChapterSimpleQueryService {
 
     private final ChapterRepository chapterRepository;
     private final ChapterValidator chapterValidator;
-
-    public List<ChapterQueryAdminDto> queryChaptersAdmin() {
-        return chapterRepository.findAll().stream()
-                .map(c -> new ChapterQueryAdminDto(c.getTitle(), c.getNumber(), c.getDateComment(), c.getId()))
-                .sorted(Comparator.comparing(ChapterQueryAdminDto::getNumber))
-                .collect(Collectors.toList());
-    }
 
     public List<ChapterDetailDto> queryChaptersTotalInfo() {
         return chapterRepository.findAll().stream()

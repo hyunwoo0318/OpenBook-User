@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.Customer.Service;
 
-import Project.OpenBook.Constants.ErrorCode;
 import Project.OpenBook.Constants.Role;
 import Project.OpenBook.Constants.StateConst;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
@@ -34,11 +33,7 @@ import Project.OpenBook.Jwt.TokenDto;
 import Project.OpenBook.Jwt.TokenManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -83,39 +78,7 @@ public class CustomerService implements UserDetailsService {
     private final TokenManager tokenManager;
     private final ObjectMapper objectMapper;
 
-//    public Customer addDetails(Long customerId, CustomerAddDetailDto customerAddDetailDto) {
-//        Customer customer = customerRepository.findById(customerId).orElseThrow(() -> new CustomException(CUSTOMER_NOT_FOUND));
-//        String nickname = customerAddDetailDto.getNickname();
-//        checkDupNickname(nickname);
-//
-//        customer.addDetails(nickname, customerAddDetailDto.getAge(), customerAddDetailDto.getExpertise());
-//        return customer;
-//    }
 
-//    private void checkDupNickname(String nickname) {
-//        customerRepository.findByNickName(nickname).ifPresent(c ->{
-//           throw new CustomException(DUP_NICKNAME);
-//        });
-//    }
-//
-//    public CustomerCodeList queryCustomers() {
-//        List<String> codeList = customerRepository.findAll().stream().map(c -> c.getCode()).collect(Collectors.toList());
-//        return new CustomerCodeList(codeList);
-//    }
-//
-//    public CustomerDetailDto queryCustomerDetail(String code) {
-//        Customer customer = customerRepository.queryCustomer(code)
-//                .orElseThrow(() -> {
-//                    throw new CustomException(CUSTOMER_NOT_FOUND);
-//                });
-//        return CustomerDetailDto.builder()
-//                .age(customer.getAge())
-//                .log(null)
-//                .expertise(customer.getExpertise())
-//                .isSubscribed(customer.isSubscribed())
-//                .nickName(customer.getNickName())
-//                .build();
-//    }
 
     @Transactional
     public void deleteCustomer(Customer customer) {
@@ -131,29 +94,9 @@ public class CustomerService implements UserDetailsService {
     }
 
 
-    /**
-     * 관리자
-     */
-    @Transactional
-    public TokenDto loginAdmin(String loginId, String password){
-        UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(loginId, password);
-        Authentication authentication = authenticationManager.getObject().authenticate(upToken);
-
-        if(!authentication.isAuthenticated()) {
-            throw new CustomException(ErrorCode.LOGIN_FAIL);
-        }
-
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        securityContext.setAuthentication(authentication);
-
-        Customer customer = (Customer) authentication.getPrincipal();
-        TokenDto tokenDto = tokenManager.generateToken(customer);
-        return tokenDto;
-    }
 
     @Override
     public Customer loadUserByUsername(String username) throws UsernameNotFoundException {
-        System.out.println("IN LOAD BY USERNAME!!!!!!!!!!!!! +++++++++++++++");
         return customerRepository.findByNickName(username).orElseThrow(() -> {
             throw new CustomException(LOGIN_FAIL);
         });

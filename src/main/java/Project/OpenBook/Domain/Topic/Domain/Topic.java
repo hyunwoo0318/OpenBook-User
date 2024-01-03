@@ -96,19 +96,7 @@ public class Topic extends BaseEntity implements Serializable {
         this.title = title;
     }
 
-    public Topic updateTopic(Integer number, String title, String dateComment, String detail, Chapter chapter, QuestionCategory questionCategory) {
-        this.number = number;
-        this.title = title;
-        this.dateComment = dateComment;
-        this.detail = detail;
-        this.chapter = chapter;
-        this.questionCategory = questionCategory;
-        return this;
-    }
 
-    public void updateTopicNumber(Integer number) {
-        this.number = number;
-    }
 
 
 }

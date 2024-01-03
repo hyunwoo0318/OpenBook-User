@@ -1,18 +1,14 @@
 package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.KeywordUsageConst;
-import Project.OpenBook.Domain.Category.Repository.CategoryRepository;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Domain.Choice.Repository.ChoiceRepository;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
 import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
-import Project.OpenBook.Domain.Description.Repository.DescriptionRepository;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
-import Project.OpenBook.Domain.Era.EraRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.JJH.JJHContent.JJHContent;
@@ -55,7 +51,6 @@ import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
-import Project.OpenBook.Image.ImageService;
 import com.amazonaws.services.s3.AmazonS3Client;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -64,7 +59,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -94,13 +91,6 @@ public class InitConfig {
     private final JJHContentRepository jjhContentRepository;
 
     private final QuestionCategoryRepository questionCategoryRepository;
-    private final EraRepository eraRepository;
-    private final CategoryRepository categoryRepository;
-
-    private final DescriptionRepository descriptionRepository;
-    private final ChoiceRepository choiceRepository;
-    private final ImageService imageService;
-
     private final JJHListProgressRepository jjhListProgressRepository;
     private final JJHContentProgressRepository jjhContentProgressRepository;
 

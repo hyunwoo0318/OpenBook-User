@@ -179,22 +179,7 @@ public class ExamQuestionService {
         return  examQuestionDtoList;
     }
 
-    @Transactional(readOnly = true)
-    public List<AnswerNotedTopicQueryDto> getAnswerNotedQuestions(Customer customer) {
 
-        List<ExamQuestionLearningRecord> recordList = examQuestionLearningRecordRepository.queryExamQuestionLearningRecords(customer);
-        Map<ExamQuestion, ExamQuestionLearningRecord> answerNoteMap = recordList.stream()
-                .collect(Collectors.toMap(ExamQuestionLearningRecord::getExamQuestion, an -> an));
-        List<ExamQuestion> questionList = recordList.stream()
-                .map(ExamQuestionLearningRecord::getExamQuestion)
-                .collect(Collectors.toList());
-        Map<Description, List<DescriptionKeyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordForExamQuestion(questionList).stream()
-                .collect(Collectors.groupingBy(DescriptionKeyword::getDescription));
-        Map<Choice, List<ChoiceKeyword>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsForExamQuestion(questionList).stream()
-                .collect(Collectors.groupingBy(ChoiceKeyword::getChoice));
-
-        return makeAnswerNotedTopicQueryDtoList(questionList, descriptionKeywordMap, choiceKeywordMap, answerNoteMap);
-    }
 
     public ExamQuestionDto getQuestion(Customer customer, Long examQuestionId) {
         ExamQuestion question = examQuestionRepository.queryExamQuestion(examQuestionId).orElseThrow(() -> {
