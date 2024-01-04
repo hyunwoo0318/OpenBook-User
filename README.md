@@ -40,7 +40,7 @@
 <br>
 
 # 테이블 설계도
-[정주행 ERD (PDF 파일)](../%EB%AC%B8%EC%84%9C/%EC%A0%95%EC%A3%BC%ED%96%89ERD.pdf)
+[정주행 ERD (PDF 파일)](https://www.erdcloud.com/d/PoNYMF2Cx2nvENqqw)
 
 
 
