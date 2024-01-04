@@ -24,6 +24,7 @@ import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
 import Project.OpenBook.WeightedRandomSelection.WeightedRandomService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -53,6 +54,9 @@ public class QuestionService {
     private GetKeywordByTopicQuestion type1 ;
     private GetTopicByKeywordQuestion type2;
 
+    private final Long RANDOM_INDEX = 0L;
+    private final Long TOTAL_INDEX = -1L;
+
     public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository,TimelineRepository timelineRepository,
                            QuestionCategoryRepository questionCategoryRepository, KeywordPrimaryDateRepository keywordPrimaryDateRepository, TopicPrimaryDateRepository topicPrimaryDateRepository,
                            TopicLearningRecordRepository topicLearningRecordRepository, KeywordLearningRecordRepository keywordLearningRecordRepository, WeightedRandomService weightedRandomService
@@ -77,46 +81,27 @@ public class QuestionService {
     public List<TimeFlowQuestionDto> queryTimeFlowQuestion(Long timelineId) {
 
         List<TimeFlowQuestionDto> timeFlowQuestionDtoList = new ArrayList<>();
-        List<TopicPrimaryDate> topicPrimaryDateList = new ArrayList<>();
-        List<KeywordPrimaryDate> keywordPrimaryDateList = new ArrayList<>();
-        if (timelineId == 0) {
-            timelineId = timelineRepository.queryRandomTimeline().orElseThrow(() -> {
-                throw new CustomException(TIMELINE_NOT_FOUND);
-            });
-        }
-        if (timelineId == -1) {
-            topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInTimeline(-1L, 0, 0);
-            keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInTimeline(-1L, 0, 0);
-        } else{
-            Timeline timeline = timelineRepository.queryTimelineWithEra(timelineId).orElseThrow(() -> {
-                throw new CustomException(TIMELINE_NOT_FOUND);
-            });
-            Long eraId = timeline.getEra().getId();
-            Integer startDate = timeline.getStartDate();
-            Integer endDate = timeline.getEndDate();
 
+        // primaryDate 쿼리
+        PrimaryDateQueryResult result = getPrimaryDateQueryResult(timelineId);
 
-            topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInTimeline(eraId, startDate, endDate);
-            keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInTimeline(eraId, startDate, endDate);
-        }
+        //쿼리문 결과를 dto로 변환
+        keywordPrimaryDateToQuestionDto(result, timeFlowQuestionDtoList);
+        topicPrimaryDateToQuestionDto(result, timeFlowQuestionDtoList);
 
-        for (KeywordPrimaryDate kp : keywordPrimaryDateList) {
-            Topic topic = kp.getKeyword().getTopic();
-            String keywordComment = kp.getKeyword().getComment();
-            List<String> commentList = new ArrayList<>();
-            commentList.add(topic.getChapter().getTitle()+ " - " +  topic.getTitle());
-            if (!keywordComment.isBlank()) {
-                List<String> splitCommentList = Arrays.stream(keywordComment.split("[.]")).collect(Collectors.toList());
-                commentList.addAll(splitCommentList);
-            }
-            TimeFlowQuestionDto dto
-                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(),commentList);
+        //정렬
+        Collections.sort(timeFlowQuestionDtoList, Comparator.comparing(TimeFlowQuestionDto::getDate));
 
+        return timeFlowQuestionDtoList;
+    }
 
-            timeFlowQuestionDtoList.add(dto);
-        }
-
-        for (TopicPrimaryDate tp : topicPrimaryDateList) {
+    /**
+     * TopicPrimaryDate를 TimeFlowQuestionDto로 변환해주는 메서드
+     * @param result
+     * @param timeFlowQuestionDtoList
+     */
+    private static void topicPrimaryDateToQuestionDto(PrimaryDateQueryResult result, List<TimeFlowQuestionDto> timeFlowQuestionDtoList) {
+        for (TopicPrimaryDate tp : result.topicPrimaryDateList) {
             Chapter chapter = tp.getTopic().getChapter();
             List<String> keywordWithChapterList = new ArrayList<>();
 
@@ -131,11 +116,71 @@ public class QuestionService {
                     = new TimeFlowQuestionDto(tp.getExtraDate(), tp.getExtraDateComment(), keywordWithChapterList);
             timeFlowQuestionDtoList.add(dto);
         }
+    }
 
-        //연도 순으로 오름차순으로 정렬
-        Collections.sort(timeFlowQuestionDtoList, Comparator.comparing(TimeFlowQuestionDto::getDate));
+    /**
+     * KeywordPrimaryDate를 TimeFlowQuestionDto로 변환해주는 메서드
+     * @param result
+     * @param timeFlowQuestionDtoList
+     */
+    private static void keywordPrimaryDateToQuestionDto(PrimaryDateQueryResult result, List<TimeFlowQuestionDto> timeFlowQuestionDtoList) {
+        for (KeywordPrimaryDate kp : result.keywordPrimaryDateList) {
+            Topic topic = kp.getKeyword().getTopic();
+            String keywordComment = kp.getKeyword().getComment();
+            List<String> commentList = new ArrayList<>();
+            commentList.add(topic.getChapter().getTitle()+ " - " +  topic.getTitle());
+            if (!keywordComment.isBlank()) {
+                List<String> splitCommentList = Arrays.stream(keywordComment.split("[.]")).collect(Collectors.toList());
+                commentList.addAll(splitCommentList);
+            }
+            TimeFlowQuestionDto dto
+                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(),commentList);
 
-        return timeFlowQuestionDtoList;
+
+            timeFlowQuestionDtoList.add(dto);
+        }
+    }
+
+    /**
+     * timelineId에 맞게 primaryDate를 쿼리하는 로직
+     * timelineId == RANDOM_INDEX -> 전체 timeline중 랜덤하게 1개를 선정해 해당 timeline에서 primaryDate 조회
+     * timelineId == TOTAL_INDEX -> 전체 timeline의 모든 primaryDate조회
+     * @param timelineId
+     * @return
+     */
+    private PrimaryDateQueryResult getPrimaryDateQueryResult(Long timelineId) {
+        List<KeywordPrimaryDate> keywordPrimaryDateList;
+        List<TopicPrimaryDate> topicPrimaryDateList;
+        if (timelineId == TOTAL_INDEX) {
+            topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInTimeline(TOTAL_INDEX, 0, 0);
+            keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInTimeline(TOTAL_INDEX, 0, 0);
+
+        }
+        else{
+            if(timelineId == RANDOM_INDEX){
+                timelineId = timelineRepository.queryRandomTimeline().orElseThrow(() -> {
+                    throw new CustomException(TIMELINE_NOT_FOUND);
+                });
+            }
+
+            Timeline timeline = timelineRepository.queryTimelineWithEra(timelineId).orElseThrow(() -> {
+                throw new CustomException(TIMELINE_NOT_FOUND);
+            });
+            Long eraId = timeline.getEra().getId();
+            Integer startDate = timeline.getStartDate();
+            Integer endDate = timeline.getEndDate();
+
+
+            topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInTimeline(eraId, startDate, endDate);
+            keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInTimeline(eraId, startDate, endDate);
+        }
+        return new PrimaryDateQueryResult(topicPrimaryDateList, keywordPrimaryDateList);
+    }
+
+    @AllArgsConstructor
+    private static class PrimaryDateQueryResult {
+        public final List<TopicPrimaryDate> topicPrimaryDateList;
+        public final List<KeywordPrimaryDate> keywordPrimaryDateList;
     }
 
 
@@ -156,7 +201,7 @@ public class QuestionService {
 
 
     @Transactional
-    public List<QuestionDto> queryRandomQuestion(Customer customer, Long questionCategoryId, Integer questionCount) {
+    public List<QuestionDto> queryRandomQuestion(Customer customer, Long questionCategoryId) {
         List<QuestionDto> questionList = new ArrayList<>();
         QuestionCategory questionCategory = null;
         if (questionCategoryId == -1L) {
@@ -187,5 +232,7 @@ public class QuestionService {
         Collections.shuffle(questionList);
         return questionList;
     }
+
+
 }
 

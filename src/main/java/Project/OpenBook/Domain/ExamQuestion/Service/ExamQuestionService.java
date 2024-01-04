@@ -86,59 +86,7 @@ public class ExamQuestionService {
         return getExamQuestionDtoList(examQuestionList, descriptionKeywordMap, choiceKeywordMap, answerNoteMap);
     }
 
-    private List<AnswerNotedTopicQueryDto> makeAnswerNotedTopicQueryDtoList(List<ExamQuestion> examQuestionList, Map<Description, List<DescriptionKeyword>> descriptionKeywordMap, Map<Choice, List<ChoiceKeyword>> choiceKeywordMap, Map<ExamQuestion, ExamQuestionLearningRecord> answerNoteMap) {
-        List<AnswerNotedTopicQueryDto> dtoList = new ArrayList<>();
-        Map<Integer, List<AnswerNotedQuestionInfoDto>> questionInfoListMap = new HashMap<>();
 
-        for (ExamQuestion question : examQuestionList) {
-            Integer roundNumber = question.getRound().getNumber();
-            Integer answerNumber = question.getAnswer();
-            //보기 -> 보기 키워드 구성
-            Description description = question.getDescription();
-            List<DescriptionKeyword> descriptionKeywordList = descriptionKeywordMap.get(description);
-            List<ExamQuestionCommentDto> descriptionCommentList = new ArrayList<>();
-            if (descriptionKeywordList != null) {
-                descriptionCommentList = makeDescriptionCommentList(descriptionKeywordList);
-            }
-
-
-            //선지 -> 선지 키워드 구성
-            List<Choice> choiceList = question.getChoiceList();
-            List<ExamQuestionCommentListDto> correctCommentList = new ArrayList<>();
-            List<ExamQuestionCommentListDto> wrongCommentList = new ArrayList<>();
-            for (Choice choice : choiceList) {
-                List<ChoiceKeyword> choiceKeywordList = choiceKeywordMap.get(choice);
-                if (choiceKeywordList != null) {
-                    List<Keyword> keywordList = choiceKeywordList.stream()
-                            .map(ck -> ck.getKeyword())
-                            .collect(Collectors.toList());
-                    List<ExamQuestionCommentDto> commentList = makeCommentList(keywordList);
-                    ExamQuestionCommentListDto commentListDto = new ExamQuestionCommentListDto(commentList);
-                    if (answerNumber == choice.getNumber()) {
-                        correctCommentList.add(commentListDto);
-                    }else{
-                        wrongCommentList.add(commentListDto);
-                    }
-                }
-            }
-
-            //전체 ExamQuestionDto 구성
-            AnswerNotedQuestionInfoDto dto = new AnswerNotedQuestionInfoDto(question, descriptionCommentList, correctCommentList, wrongCommentList);
-            List<AnswerNotedQuestionInfoDto> questionInfoList = questionInfoListMap.get(roundNumber);
-            if (questionInfoList == null) {
-                questionInfoList = new ArrayList<>();
-            }
-
-            questionInfoList.add(dto);
-            questionInfoListMap.put(roundNumber, questionInfoList);
-
-        }
-
-        for (Integer roundNumber : questionInfoListMap.keySet()) {
-            dtoList.add(new AnswerNotedTopicQueryDto(roundNumber, questionInfoListMap.get(roundNumber)));
-        }
-        return  dtoList;
-    }
 
 
     private List<ExamQuestionDto> getExamQuestionDtoList(List<ExamQuestion> examQuestionList, Map<Description, List<DescriptionKeyword>> descriptionKeywordMap, Map<Choice, List<ChoiceKeyword>> choiceKeywordMap, Map<ExamQuestion, ExamQuestionLearningRecord> answerNoteMap) {

@@ -69,8 +69,8 @@ public class QuestionController {
     })
     @GetMapping("/questions/random")
     public ResponseEntity<List<QuestionDto>> queryRandomQuestion(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
-                                                             @RequestParam("id") Long questionCategoryId, @RequestParam("count") Integer questionCount) {
-        List<QuestionDto> questionDtoList = questionService.queryRandomQuestion(customer, questionCategoryId, questionCount);
+                                                             @RequestParam("id") Long questionCategoryId) {
+        List<QuestionDto> questionDtoList = questionService.queryRandomQuestion(customer, questionCategoryId);
         return new ResponseEntity<List<QuestionDto>>(questionDtoList, HttpStatus.OK);
     }
 
