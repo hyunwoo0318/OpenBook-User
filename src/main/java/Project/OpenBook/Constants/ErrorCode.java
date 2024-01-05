@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-@JsonFormat(shape= JsonFormat.Shape.OBJECT)
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
@@ -13,7 +13,7 @@ public enum ErrorCode {
     /**
      * 400 - BAD_REQUEST
      */
-    INVALID_PARAMETER (HttpStatus.BAD_REQUEST, "파라미터 값을 확인해주세요."),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "파라미터 값을 확인해주세요."),
     CHAPTER_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 단원에 토픽이 존재합니다."),
     CATEGORY_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 카테고리에 토픽이 존재합니다"),
     ERA_HAS_TOPIC(HttpStatus.BAD_REQUEST, "해당 시대에 토픽이 존재합니다."),
@@ -56,7 +56,6 @@ public enum ErrorCode {
     TIMELINE_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 timeline입니다."),
     QUESTION_CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 questionCategory입니다."),
 
-
     /**
      * 409 - CONFLICT
      */
@@ -71,7 +70,6 @@ public enum ErrorCode {
     DUP_ROUND_NUMBER(HttpStatus.CONFLICT, "중복된 회차 번호입니다."),
     DUP_QUESTION_NUMBER(HttpStatus.CONFLICT, "중복된 문제 번호입니다."),
     DUP_ERA_NAME(HttpStatus.CONFLICT, "중복된 시대입니다."),
-
 
     /**
      * 503 -  Service Unavailable

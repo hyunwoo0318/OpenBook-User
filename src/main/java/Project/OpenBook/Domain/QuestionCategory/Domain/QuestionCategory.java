@@ -5,20 +5,28 @@ import Project.OpenBook.Domain.Category.Domain.Category;
 import Project.OpenBook.Domain.Era.Era;
 import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Domain.QuestionCategoryLearningRecord;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QuestionCategory extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
@@ -41,6 +49,7 @@ public class QuestionCategory extends BaseEntity {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "questionCategory", cascade = CascadeType.REMOVE)
     private List<QuestionCategoryLearningRecord> questionCategoryLearningRecordList = new ArrayList<>();
+
     public QuestionCategory(String title, Category category, Era era) {
         this.totalQuestionProb = 0;
         this.title = title;
@@ -56,7 +65,7 @@ public class QuestionCategory extends BaseEntity {
     }
 
     public void updateNumber(Integer number) {
-        this.number =number;
+        this.number = number;
     }
 
     public void updateTotalQuestionProb(Integer totalQuestionProb) {

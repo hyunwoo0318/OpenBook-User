@@ -34,47 +34,48 @@ public class SecurityConfig {
     private final CustomerService customerService;
 
     private final String[] permitAllList = {
-            "/","/admin/login", "/oauth2/**", "/login/**","/error/*","login/**","/refresh-token",
-            "/v2/api-docs",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/configuration/ui",
-            "/configuration/security",
-            "/swagger-ui/index.html",
-            "/webjars/**",
-            "/v3/api-docs/**",
-            "/swagger-ui/**",
-            "swagger-ui/**"
+        "/", "/admin/login", "/oauth2/**", "/login/**", "/error/*", "login/**", "/refresh-token",
+        "/v2/api-docs",
+        "/swagger-resources",
+        "/swagger-resources/**",
+        "/configuration/ui",
+        "/configuration/security",
+        "/swagger-ui/index.html",
+        "/webjars/**",
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "swagger-ui/**"
     };
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder(){
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf().disable().cors().and()
-                .formLogin().disable()
-                .userDetailsService(customerService)
-                .authorizeRequests()
-                .antMatchers("**").permitAll()
+            .formLogin().disable()
+            .userDetailsService(customerService)
+            .authorizeRequests()
+            .antMatchers("**").permitAll()
 //                .antMatchers(permitAllList).permitAll()
 //                .antMatchers("/admin/**").hasAnyRole("USER", "ADMIN")
 //                .antMatchers("/**").hasAnyRole("USER", "ADMIN")
-                .anyRequest().authenticated()
-                .and().httpBasic().and().
-                exceptionHandling().authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)).and().
-                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().
-                headers()
-                .frameOptions().sameOrigin().xssProtection().block(false).and().and()
-               .addFilterBefore(jwtCustomFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+            .anyRequest().authenticated()
+            .and().httpBasic().and().
+            exceptionHandling()
+            .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)).and().
+            sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER).and().
+            headers()
+            .frameOptions().sameOrigin().xssProtection().block(false).and().and()
+            .addFilterBefore(jwtCustomFilter, UsernamePasswordAuthenticationFilter.class)
+            .build();
     }
 
 
     @Bean
-    public AuthenticationPrincipalArgumentResolver authenticationPrincipalArgumentResolver(){
+    public AuthenticationPrincipalArgumentResolver authenticationPrincipalArgumentResolver() {
         return new AuthenticationPrincipalArgumentResolver();
     }
 
@@ -83,7 +84,9 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList(HttpMethod.GET.name(),HttpMethod.PATCH.name(),HttpMethod.OPTIONS.name(), HttpMethod.POST.name(),HttpMethod.DELETE.name()));
+        configuration.setAllowedMethods(
+            Arrays.asList(HttpMethod.GET.name(), HttpMethod.PATCH.name(), HttpMethod.OPTIONS.name(),
+                HttpMethod.POST.name(), HttpMethod.DELETE.name()));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
 

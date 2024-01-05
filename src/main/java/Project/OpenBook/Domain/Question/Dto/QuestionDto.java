@@ -1,10 +1,9 @@
 package Project.OpenBook.Domain.Question.Dto;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -19,8 +18,9 @@ public class QuestionDto {
     private List<Long> keywordIdList;
 
     @Builder
-    public QuestionDto(String answer, String questionType, String choiceType, List<String> description, List<String> descriptionFileList,
-                       List<QuizChoiceDto> choiceList, List<Long> keywordIdList) {
+    public QuestionDto(String answer, String questionType, String choiceType,
+        List<String> description, List<String> descriptionFileList,
+        List<QuizChoiceDto> choiceList, List<Long> keywordIdList) {
         this.answer = answer;
         this.questionType = questionType;
         this.choiceType = choiceType;

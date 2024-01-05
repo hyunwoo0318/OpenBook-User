@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExamQuestionCommentDto {
+
     private String topicDateComment;
     private String topicTitle;
     private String keywordDateComment;

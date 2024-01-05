@@ -109,10 +109,8 @@ public class InitConfig {
     private final AmazonS3Client amazonS3;
 
 
-
     /**
-     * ElasticSearch를 위한 init
-     * 각 topic의 title, id를 저장
+     * ElasticSearch를 위한 init 각 topic의 title, id를 저장
      */
     @Bean
     public void initElasticSearchIndex() {
@@ -121,16 +119,17 @@ public class InitConfig {
         keywordSearchRepository.deleteAll();
 
         List<ChapterSearch> chapterSearchList = chapterRepository.findAll().stream()
-                .map(ChapterSearch::new)
-                .collect(Collectors.toList());
+            .map(ChapterSearch::new)
+            .collect(Collectors.toList());
 
         List<TopicSearch> topicSearchList = topicRepository.queryTopicsWithChapter().stream()
-                .map(TopicSearch::new)
-                .collect(Collectors.toList());
+            .map(TopicSearch::new)
+            .collect(Collectors.toList());
 
-        List<KeywordSearch> keywordSearchList = keywordRepository.queryKeywordsWithChapter().stream()
-                .map(KeywordSearch::new)
-                .collect(Collectors.toList());
+        List<KeywordSearch> keywordSearchList = keywordRepository.queryKeywordsWithChapter()
+            .stream()
+            .map(KeywordSearch::new)
+            .collect(Collectors.toList());
 
         chapterSearchRepository.saveAll(chapterSearchList);
         topicSearchRepository.saveAll(topicSearchList);
@@ -148,9 +147,9 @@ public class InitConfig {
         List<TopicPrimaryDate> topicPrimaryDateList = topicPrimaryDateRepository.queryAllForInit();
         for (TopicPrimaryDate date : topicPrimaryDateList) {
             for (Timeline timeline : timelineList) {
-                if(timeline.getEra() == date.getTopic().getQuestionCategory().getEra() &&
+                if (timeline.getEra() == date.getTopic().getQuestionCategory().getEra() &&
                     timeline.getStartDate() <= date.getExtraDate() &&
-                    timeline.getEndDate() >= date.getExtraDate()){
+                    timeline.getEndDate() >= date.getExtraDate()) {
                     timeline.updateCount();
                     break;
                 }
@@ -159,9 +158,10 @@ public class InitConfig {
 
         for (KeywordPrimaryDate date : keywordPrimaryDateList) {
             for (Timeline timeline : timelineList) {
-                if(timeline.getEra() == date.getKeyword().getTopic().getQuestionCategory().getEra() &&
-                        timeline.getStartDate() <= date.getExtraDate() &&
-                        timeline.getEndDate() >= date.getExtraDate()){
+                if (timeline.getEra() == date.getKeyword().getTopic().getQuestionCategory().getEra()
+                    &&
+                    timeline.getStartDate() <= date.getExtraDate() &&
+                    timeline.getEndDate() >= date.getExtraDate()) {
                     timeline.updateCount();
                     break;
                 }
@@ -190,19 +190,21 @@ public class InitConfig {
     @Transactional
     public void initQuestionInfo() {
         //각 문제별 keywordList 생성
-        Map<Long, List<Keyword>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsForInit().stream()
-                .map(ChoiceKeyword::getKeyword)
-                .collect(Collectors.groupingBy(Keyword::getId));
-        Map<Long, List<Keyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordsForInit().stream()
-                .map(DescriptionKeyword::getKeyword)
-                .collect(Collectors.groupingBy(Keyword::getId));
+        Map<Long, List<Keyword>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsForInit()
+            .stream()
+            .map(ChoiceKeyword::getKeyword)
+            .collect(Collectors.groupingBy(Keyword::getId));
+        Map<Long, List<Keyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordsForInit()
+            .stream()
+            .map(DescriptionKeyword::getKeyword)
+            .collect(Collectors.groupingBy(Keyword::getId));
         Map<Long, List<Keyword>> newKeywordMap = new HashMap<>(choiceKeywordMap);
         for (Long key : descriptionKeywordMap.keySet()) {
             List<Keyword> descKeywordList = descriptionKeywordMap.get(key);
             List<Keyword> keywordList = newKeywordMap.get(key);
             if (keywordList == null) {
                 newKeywordMap.put(key, descKeywordList);
-            }else{
+            } else {
                 keywordList.addAll(descKeywordList);
                 newKeywordMap.put(key, keywordList);
             }
@@ -226,7 +228,6 @@ public class InitConfig {
     public void checkRecords() {
         List<Customer> customerList = customerRepository.findAll();
 
-
         List<JJHList> jjhLists = jjhListRepository.findAll();
         List<JJHContent> jjhContents = jjhContentRepository.findAll();
         List<Topic> topicList = topicRepository.findAll();
@@ -236,22 +237,30 @@ public class InitConfig {
         List<ExamQuestion> examQuestionList = examQuestionRepository.findAll();
         List<Timeline> timelineList = timelineRepository.findAll();
 
-        Map<Customer, List<JJHListProgress>> jjhListProgressMap = jjhListProgressRepository.queryAllJJHList().stream()
-                .collect(Collectors.groupingBy(JJHListProgress::getCustomer));
-        Map<Customer, List<JJHContentProgress>> jjhContentProgressMap = jjhContentProgressRepository.findAll().stream()
-                .collect(Collectors.groupingBy(JJHContentProgress::getCustomer));
-        Map<Customer, List<TopicLearningRecord>> topicProgressMap = topicLearningRecordRepository.findAll().stream()
-                .collect(Collectors.groupingBy(TopicLearningRecord::getCustomer));
-        Map<Customer, List<KeywordLearningRecord>> keywordProgressMap = keywordLearningRecordRepository.findAll().stream()
-                .collect(Collectors.groupingBy(KeywordLearningRecord::getCustomer));
-        Map<Customer, List<QuestionCategoryLearningRecord>> qcProgressMap = questionCategoryLearningRecordRepository.findAll().stream()
-                .collect(Collectors.groupingBy(QuestionCategoryLearningRecord::getCustomer));
-        Map<Customer, List<RoundLearningRecord>> roundProgressMap = roundLearningRecordRepository.findAll().stream()
-                .collect(Collectors.groupingBy(RoundLearningRecord::getCustomer));
-        Map<Customer, List<ExamQuestionLearningRecord>> examQuestionProgressMap = examQuestionLearningRecordRepository.findAll().stream()
-                .collect(Collectors.groupingBy(ExamQuestionLearningRecord::getCustomer));
-        Map<Customer, List<TimelineLearningRecord>> timelineProgressMap = timelineLearningRecordRepository.findAll().stream()
-                .collect(Collectors.groupingBy(TimelineLearningRecord::getCustomer));
+        Map<Customer, List<JJHListProgress>> jjhListProgressMap = jjhListProgressRepository.queryAllJJHList()
+            .stream()
+            .collect(Collectors.groupingBy(JJHListProgress::getCustomer));
+        Map<Customer, List<JJHContentProgress>> jjhContentProgressMap = jjhContentProgressRepository.findAll()
+            .stream()
+            .collect(Collectors.groupingBy(JJHContentProgress::getCustomer));
+        Map<Customer, List<TopicLearningRecord>> topicProgressMap = topicLearningRecordRepository.findAll()
+            .stream()
+            .collect(Collectors.groupingBy(TopicLearningRecord::getCustomer));
+        Map<Customer, List<KeywordLearningRecord>> keywordProgressMap = keywordLearningRecordRepository.findAll()
+            .stream()
+            .collect(Collectors.groupingBy(KeywordLearningRecord::getCustomer));
+        Map<Customer, List<QuestionCategoryLearningRecord>> qcProgressMap = questionCategoryLearningRecordRepository.findAll()
+            .stream()
+            .collect(Collectors.groupingBy(QuestionCategoryLearningRecord::getCustomer));
+        Map<Customer, List<RoundLearningRecord>> roundProgressMap = roundLearningRecordRepository.findAll()
+            .stream()
+            .collect(Collectors.groupingBy(RoundLearningRecord::getCustomer));
+        Map<Customer, List<ExamQuestionLearningRecord>> examQuestionProgressMap = examQuestionLearningRecordRepository.findAll()
+            .stream()
+            .collect(Collectors.groupingBy(ExamQuestionLearningRecord::getCustomer));
+        Map<Customer, List<TimelineLearningRecord>> timelineProgressMap = timelineLearningRecordRepository.findAll()
+            .stream()
+            .collect(Collectors.groupingBy(TimelineLearningRecord::getCustomer));
 
         for (Customer customer : customerList) {
             //1. jjhList
@@ -259,9 +268,8 @@ public class InitConfig {
             Map<JJHList, JJHListProgress> jjhListCustomerProgressMap = new HashMap<>();
             if (jjhListProgressList != null) {
                 jjhListCustomerProgressMap = jjhListProgressList.stream()
-                        .collect(Collectors.toMap(JJHListProgress::getJjhList, j -> j));
+                    .collect(Collectors.toMap(JJHListProgress::getJjhList, j -> j));
             }
-
 
             for (JJHList j : jjhLists) {
                 JJHListProgress progress = jjhListCustomerProgressMap.get(j);
@@ -276,9 +284,8 @@ public class InitConfig {
             Map<JJHContent, JJHContentProgress> jjhContentCustomerProgressMap = new HashMap<>();
             if (jjhContentProgressList != null) {
                 jjhContentCustomerProgressMap = jjhContentProgressList.stream()
-                        .collect(Collectors.toMap(JJHContentProgress::getJjhContent, j -> j));
+                    .collect(Collectors.toMap(JJHContentProgress::getJjhContent, j -> j));
             }
-
 
             for (JJHContent j : jjhContents) {
                 JJHContentProgress progress = jjhContentCustomerProgressMap.get(j);
@@ -293,7 +300,7 @@ public class InitConfig {
             Map<Topic, TopicLearningRecord> topicCustomerRecordMap = new HashMap<>();
             if (topicRecordList != null) {
                 topicCustomerRecordMap = topicRecordList.stream()
-                        .collect(Collectors.toMap(TopicLearningRecord::getTopic, t -> t));
+                    .collect(Collectors.toMap(TopicLearningRecord::getTopic, t -> t));
             }
 
             for (Topic t : topicList) {
@@ -309,7 +316,7 @@ public class InitConfig {
             Map<Keyword, KeywordLearningRecord> keywordLearningRecordMap = new HashMap<>();
             if (keywordRecordList != null) {
                 keywordLearningRecordMap = keywordRecordList.stream()
-                        .collect(Collectors.toMap(KeywordLearningRecord::getKeyword, k -> k));
+                    .collect(Collectors.toMap(KeywordLearningRecord::getKeyword, k -> k));
             }
 
             for (Keyword k : keywordList) {
@@ -325,7 +332,7 @@ public class InitConfig {
             Map<Timeline, TimelineLearningRecord> timelineLearningRecordMap = new HashMap<>();
             if (timelineRecordList != null) {
                 timelineLearningRecordMap = timelineRecordList.stream()
-                        .collect(Collectors.toMap(TimelineLearningRecord::getTimeline, t -> t));
+                    .collect(Collectors.toMap(TimelineLearningRecord::getTimeline, t -> t));
             }
 
             for (Timeline t : timelineList) {
@@ -341,13 +348,17 @@ public class InitConfig {
             Map<QuestionCategory, QuestionCategoryLearningRecord> qcLearningRecordMap = new HashMap<>();
             if (qcLearningRecordList != null) {
                 qcLearningRecordMap = qcLearningRecordList.stream()
-                        .collect(Collectors.toMap(QuestionCategoryLearningRecord::getQuestionCategory, qc -> qc));
+                    .collect(
+                        Collectors.toMap(QuestionCategoryLearningRecord::getQuestionCategory,
+                            qc -> qc));
             }
 
             for (QuestionCategory qc : questionCategoryList) {
                 QuestionCategoryLearningRecord record = qcLearningRecordMap.get(qc);
                 if (record == null) {
-                    QuestionCategoryLearningRecord newRecord = new QuestionCategoryLearningRecord(qc, customer);
+                    QuestionCategoryLearningRecord newRecord = new QuestionCategoryLearningRecord(
+                        qc,
+                        customer);
                     questionCategoryLearningRecordRepository.save(newRecord);
                 }
             }
@@ -357,7 +368,7 @@ public class InitConfig {
             Map<Round, RoundLearningRecord> roundLearningRecordMap = new HashMap<>();
             if (roundRecordList != null) {
                 roundLearningRecordMap = roundRecordList.stream()
-                        .collect(Collectors.toMap(RoundLearningRecord::getRound, r -> r));
+                    .collect(Collectors.toMap(RoundLearningRecord::getRound, r -> r));
             }
 
             for (Round r : roundList) {
@@ -369,17 +380,19 @@ public class InitConfig {
             }
 
             //8. ExamQuestion
-            List<ExamQuestionLearningRecord> examQuestionRecordList = examQuestionProgressMap.get(customer);
+            List<ExamQuestionLearningRecord> examQuestionRecordList = examQuestionProgressMap.get(
+                customer);
             Map<ExamQuestion, ExamQuestionLearningRecord> examQuestionLearningRecordMap = new HashMap<>();
-            if (examQuestionList != null) {
+            if (examQuestionRecordList != null) {
                 examQuestionLearningRecordMap = examQuestionRecordList.stream()
-                        .collect(Collectors.toMap(ExamQuestionLearningRecord::getExamQuestion, e -> e));
+                    .collect(Collectors.toMap(ExamQuestionLearningRecord::getExamQuestion, e -> e));
             }
 
             for (ExamQuestion ex : examQuestionList) {
                 ExamQuestionLearningRecord record = examQuestionLearningRecordMap.get(ex);
                 if (record == null) {
-                    ExamQuestionLearningRecord newRecord = new ExamQuestionLearningRecord(customer, ex);
+                    ExamQuestionLearningRecord newRecord = new ExamQuestionLearningRecord(customer,
+                        ex);
                     examQuestionLearningRecordRepository.save(newRecord);
                 }
             }
@@ -396,7 +409,7 @@ public class InitConfig {
                 Integer count = keywordCountMap.get(keyword);
                 if (count == null) {
                     keywordCountMap.put(keyword, 1);
-                }else{
+                } else {
                     keywordCountMap.put(keyword, count + 1);
                 }
             }
@@ -412,8 +425,9 @@ public class InitConfig {
     private void initScore() {
 //        Map<Customer, List<KeywordLearningRecord>> customerKeywordRecordMap = keywordLearningRecordRepository.queryAllForInit().stream()
 //                .collect(Collectors.groupingBy(record -> record.getCustomer()));
-        Map<QuestionCategory, List<Keyword>> qcKeywordMap = keywordRepository.queryKeywordsForInit().stream()
-                .collect(Collectors.groupingBy(k -> k.getTopic().getQuestionCategory()));
+        Map<QuestionCategory, List<Keyword>> qcKeywordMap = keywordRepository.queryKeywordsForInit()
+            .stream()
+            .collect(Collectors.groupingBy(k -> k.getTopic().getQuestionCategory()));
 //        Map<Customer, List<QuestionCategoryLearningRecord>> customerQCRecordMap = questionCategoryLearningRecordRepository.queryQuestionRecordsForInit().stream()
 //                .collect(Collectors.groupingBy(record -> record.getCustomer()));
 
@@ -547,7 +561,6 @@ public class InitConfig {
 //        return combinations;
 //    }
 
-
 //    @Bean
 //    public void initExamQuestionLearningRecord() {
 //        List<Customer> customerList = customerRepository.findAll();
@@ -602,7 +615,6 @@ public class InitConfig {
 //            customerService.initCustomerData(customer);
 //        }
 //    }
-
 
 
 }

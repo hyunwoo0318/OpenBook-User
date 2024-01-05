@@ -37,12 +37,12 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
         List<QuestionDto> questionList = new ArrayList<>();
 
         int count = 0;
-        while(questionList.size() != questionCount && count < 10) {
+        while (questionList.size() != questionCount && count < 10) {
             //1. 정답 키워드 선정
             List<KeywordSelectModel> answerKeywordSelectModelList
                     = makeAnswerKeywordSelectModelList(keywordRecordMap, totalKeywordList);
             Keyword answerKeyword = selectAnswerKeyword(answerKeywordSelectModelList);
-            if(answerKeyword == null) continue;
+            if (answerKeyword == null) continue;
             Topic answerTopic = answerKeyword.getTopic();
 
             //2. 오답 키워드 선정
@@ -54,7 +54,7 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
             List<Keyword> wrongKeywordList = getWrongKeywords(totalWrongKeywordList, WRONG_KEYWORD_NUM);
 
             //Dto 변환
-            if(!wrongKeywordList.isEmpty()){
+            if (!wrongKeywordList.isEmpty()) {
                 QuestionDto question = toQuestionDto(answerTopic.getTitle(), Arrays.asList(answerKeyword), wrongKeywordList);
                 questionList.add(question);
             }
@@ -66,12 +66,12 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
     }
 
 
-
     /**
      * JJH question -> 해당 토픽의 전체 키워드를 가지고 문제를 1개씩 만듬
      * 고려해야할 예외상황
-     *     1. 해당 토픽에 키워드가 하나도 없는 경우 -> 빈 List를 리턴함
-     *     2. 다른 토픽에 키워드가 1개도 존재하지 않는 경우 -> 빈 List를 생성함
+     * 1. 해당 토픽에 키워드가 하나도 없는 경우 -> 빈 List를 리턴함
+     * 2. 다른 토픽에 키워드가 1개도 존재하지 않는 경우 -> 빈 List를 생성함
+     *
      * @param topicTitle
      * @return
      */
@@ -87,7 +87,7 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
                 .collect(Collectors.toList());
 
         //오답 키워드가 가능한 모든 키워드 조회
-        List<Keyword> totalWrongKeywordList = getTotalWrongKeywords(answerKeywordNameList,topicTitle);
+        List<Keyword> totalWrongKeywordList = getTotalWrongKeywords(answerKeywordNameList, topicTitle);
 
         //해당 토픽의 전체 키워드에 대해서 각각 문제 생성
         for (Keyword answerKeyword : answerKeywordList) {
@@ -95,7 +95,7 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
             List<Keyword> wrongKeywordList = getWrongKeywords(totalWrongKeywordList, WRONG_KEYWORD_NUM);
 
             //Dto 변환
-            if(!wrongKeywordList.isEmpty()){
+            if (!wrongKeywordList.isEmpty()) {
                 QuestionDto question = toQuestionDto(topicTitle, Arrays.asList(answerKeyword), wrongKeywordList);
                 questionList.add(question);
             }
@@ -150,14 +150,14 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
 
         for (Keyword keyword : answerKeywordList) {
             if (keyword.getImageUrl() != null) {
-                imageFlag  = true;
+                imageFlag = true;
             }
-            choiceList.add(new QuizChoiceDto(keyword.getName(), keyword.getTopic().getTitle(),keyword.getImageUrl()));
+            choiceList.add(new QuizChoiceDto(keyword.getName(), keyword.getTopic().getTitle(), keyword.getImageUrl()));
             keywordList.add(keyword.getId());
         }
 
-        wrongKeywordList.forEach(k -> choiceList.add(new QuizChoiceDto(k.getName(), k.getTopic().getTitle(),k.getImageUrl())));
-        if(!imageFlag){
+        wrongKeywordList.forEach(k -> choiceList.add(new QuizChoiceDto(k.getName(), k.getTopic().getTitle(), k.getImageUrl())));
+        if (!imageFlag) {
             return QuestionDto.builder()
                     .questionType(GET_KEYWORD_TYPE)
                     .choiceType(ChoiceType.String.name())
@@ -166,7 +166,7 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
                     .choiceList(choiceList)
                     .keywordIdList(keywordList)
                     .build();
-        }else{
+        } else {
             return QuestionDto.builder()
                     .questionType(GET_KEYWORD_TYPE)
                     .choiceType(ChoiceType.Image.name())
@@ -178,7 +178,6 @@ public class GetKeywordByTopicQuestion extends BaseQuestionComponentFactory impl
         }
 
     }
-
 
 
 }

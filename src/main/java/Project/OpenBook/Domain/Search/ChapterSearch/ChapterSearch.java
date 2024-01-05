@@ -1,6 +1,8 @@
 package Project.OpenBook.Domain.Search.ChapterSearch;
 
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
+import javax.persistence.Column;
+import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,14 +11,12 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-
 @Document(indexName = "chapters")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ChapterSearch {
+
     @Column(unique = true)
     @Field(type = FieldType.Text)
     private String title;

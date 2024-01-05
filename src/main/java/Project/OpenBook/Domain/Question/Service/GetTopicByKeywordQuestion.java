@@ -25,7 +25,7 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
 
     @Override
     public List<QuestionDto> getQuestion(Map<Keyword, KeywordLearningRecord> keywordRecordMap,
-                                         List<Keyword> totalKeywordList, Integer questionCount){
+                                         List<Keyword> totalKeywordList, Integer questionCount) {
         List<QuestionDto> questionList = new ArrayList<>();
 
         Set<Topic> totalTopicSet = totalKeywordList.stream()
@@ -33,7 +33,7 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
                 .collect(Collectors.toSet());
 
         int count = 0;
-        while(questionList.size() != questionCount && count < 10){
+        while (questionList.size() != questionCount && count < 10) {
 
             //2. 정답 키워드 선정
             List<KeywordSelectModel> answerKeywordSelectModelList
@@ -50,7 +50,7 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
             QuestionDto questionDto = null;
             if (answerKeyword2 == null) {
                 questionDto = toQuestionDto(answerTopic, Arrays.asList(answerKeyword), wrongTopicList);
-            }else{
+            } else {
                 questionDto = toQuestionDto(answerTopic, Arrays.asList(answerKeyword, answerKeyword2), wrongTopicList);
 
             }
@@ -58,9 +58,8 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
 
             count++;
         }
-        return  questionList;
+        return questionList;
     }
-
 
 
     public List<QuestionDto> getJJHQuestion(List<Topic> topicList) {
@@ -78,11 +77,11 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
             int answerTotalKeywordSize = answerTotalKeywordList.size();
             Collections.shuffle(answerTotalKeywordList);
 
-            for (int i=0;i<answerTotalKeywordSize-1;i+=2) {
+            for (int i = 0; i < answerTotalKeywordSize - 1; i += 2) {
                 //1. 2개의 정답 키워드 선정
                 List<Keyword> answerKeywordList = new ArrayList<>();
                 if (answerTotalKeywordSize != 1) {
-                    answerKeywordList.add(answerTotalKeywordList.get(i+1));
+                    answerKeywordList.add(answerTotalKeywordList.get(i + 1));
                 }
                 answerKeywordList.add(answerTotalKeywordList.get(i));
 
@@ -122,7 +121,7 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
         }
         wrongTopicList.forEach(t -> choiceList.add(new QuizChoiceDto(t.getTitle(), t.getTitle(), null)));
 
-        if(!imageFlag){
+        if (!imageFlag) {
             return QuestionDto.builder()
                     .questionType(GET_TOPIC_BY_KEYWORD_TYPE)
                     .choiceType(ChoiceType.String.name())
@@ -131,7 +130,7 @@ public class GetTopicByKeywordQuestion extends BaseQuestionComponentFactory impl
                     .description(descriptionList)
                     .keywordIdList(keywordList)
                     .build();
-        }else{
+        } else {
             return QuestionDto.builder()
                     .questionType(GET_TOPIC_BY_KEYWORD_TYPE)
                     .choiceType(ChoiceType.Image.name())

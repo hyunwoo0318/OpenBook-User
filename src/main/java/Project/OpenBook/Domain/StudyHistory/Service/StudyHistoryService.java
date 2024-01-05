@@ -1,5 +1,10 @@
 package Project.OpenBook.Domain.StudyHistory.Service;
 
+import static Project.OpenBook.Constants.ErrorCode.KEYWORD_NOT_FOUND;
+import static Project.OpenBook.Constants.ErrorCode.QUESTION_NOT_FOUND;
+import static Project.OpenBook.Constants.ErrorCode.ROUND_NOT_FOUND;
+import static Project.OpenBook.Constants.ErrorCode.TIMELINE_NOT_FOUND;
+
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
@@ -27,21 +32,19 @@ import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Handler.Exception.CustomException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static Project.OpenBook.Constants.ErrorCode.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class StudyHistoryService {
+
     private final KeywordLearningRecordRepository keywordLearningRecordRepository;
     private final TopicLearningRecordRepository topicLearningRecordRepository;
     private final QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository;
@@ -56,14 +59,15 @@ public class StudyHistoryService {
 
 
     @Transactional
-    public List<QuestionCategoryScoreAscentDto> saveKeywordWrongCount(Customer customer, List<WrongCountAddDto> dtoList) {
+    public List<QuestionCategoryScoreAscentDto> saveKeywordWrongCount(Customer customer,
+        List<WrongCountAddDto> dtoList) {
 
         Map<QuestionCategory, Double> prevScoreMap = new HashMap<>();
         List<QuestionCategoryScoreAscentDto> returnDtoList = new ArrayList<>();
 
         List<Long> keywordIdList = dtoList.stream()
-                .map(d -> d.getId())
-                .collect(Collectors.toList());
+            .map(d -> d.getId())
+            .collect(Collectors.toList());
 
         Map<Long, Keyword> keywordMap = new HashMap<>();
 
@@ -82,23 +86,23 @@ public class StudyHistoryService {
             keywordMap.put(keywordId, keyword);
         }
 
-        Map<Keyword, KeywordLearningRecord> keywordRecordMap = keywordLearningRecordRepository.queryKeywordLearningRecordsInKeywords(customer, keywordIdList).stream()
-                .collect(Collectors.toMap(kl -> kl.getKeyword(), kl -> kl));
+        Map<Keyword, KeywordLearningRecord> keywordRecordMap = keywordLearningRecordRepository.queryKeywordLearningRecordsInKeywords(
+                customer, keywordIdList).stream()
+            .collect(Collectors.toMap(kl -> kl.getKeyword(), kl -> kl));
 //        Map<Topic, TopicLearningRecord> topicRecordMap = topicLearningRecordRepository.queryTopicLearningRecordsInKeyword(customer, topicIdList)
 //                .stream().collect(Collectors.toMap(tl -> tl.getTopic(), tl -> tl));
-        Map<QuestionCategory, QuestionCategoryLearningRecord> qcRecordMap = questionCategoryLearningRecordRepository.queryQuestionRecordsInKeywords(customer, questionCategoryIdList).stream()
-                .collect(Collectors.toMap(ql -> ql.getQuestionCategory(), ql -> ql));
+        Map<QuestionCategory, QuestionCategoryLearningRecord> qcRecordMap = questionCategoryLearningRecordRepository.queryQuestionRecordsInKeywords(
+                customer, questionCategoryIdList).stream()
+            .collect(Collectors.toMap(ql -> ql.getQuestionCategory(), ql -> ql));
         for (QuestionCategory questionCategory : qcRecordMap.keySet()) {
             QuestionCategoryLearningRecord record = qcRecordMap.get(questionCategory);
-            prevScoreMap.put(questionCategory, (double)record.getAnswerCount());
+            prevScoreMap.put(questionCategory, (double) record.getAnswerCount());
         }
-
 
         for (WrongCountAddDto dto : dtoList) {
             Long keywordId = dto.getId();
             Integer wrongCount = dto.getWrongCount();
             Integer answerCount = dto.getCorrectCount();
-
 
             Keyword keyword = keywordMap.get(keywordId);
             if (keyword == null) {
@@ -113,12 +117,17 @@ public class StudyHistoryService {
             //1.키워드
             KeywordLearningRecord keywordLearningRecord = keywordRecordMap.get(keyword);
             if (keywordLearningRecord == null) {
-                if(answerCount > keywordQuestionProb) answerCount = keywordQuestionProb;
-                KeywordLearningRecord newRecord = new KeywordLearningRecord(keyword, customer,answerCount, wrongCount);
+                if (answerCount > keywordQuestionProb) {
+                    answerCount = keywordQuestionProb;
+                }
+                KeywordLearningRecord newRecord = new KeywordLearningRecord(keyword, customer,
+                    answerCount, wrongCount);
                 keywordLearningRecordRepository.save(newRecord);
-            }else{
+            } else {
                 Integer prevAnswerCount = keywordLearningRecord.getAnswerCount();
-                if(prevAnswerCount + answerCount > keywordQuestionProb) answerCount = keywordQuestionProb;
+                if (prevAnswerCount + answerCount > keywordQuestionProb) {
+                    answerCount = keywordQuestionProb;
+                }
                 keywordLearningRecord.updateCount(answerCount, wrongCount);
             }
 //
@@ -136,9 +145,10 @@ public class StudyHistoryService {
             QuestionCategory questionCategory = keyword.getTopic().getQuestionCategory();
             QuestionCategoryLearningRecord qcLearningRecord = qcRecordMap.get(questionCategory);
             if (qcLearningRecord == null) {
-                QuestionCategoryLearningRecord newRecord = new QuestionCategoryLearningRecord(questionCategory, customer, answerCount, wrongCount);
+                QuestionCategoryLearningRecord newRecord = new QuestionCategoryLearningRecord(
+                    questionCategory, customer, answerCount, wrongCount);
                 questionCategoryLearningRecordRepository.save(newRecord);
-            }else{
+            } else {
                 qcLearningRecord.updateCount(answerCount, wrongCount);
             }
 
@@ -148,8 +158,9 @@ public class StudyHistoryService {
         for (QuestionCategory questionCategory : qcRecordMap.keySet()) {
             Integer totalQuestionProb = questionCategory.getTotalQuestionProb();
             returnDtoList.add(new QuestionCategoryScoreAscentDto(questionCategory.getTitle(),
-                    prevScoreMap.get(questionCategory) * 100/ (double)totalQuestionProb,
-                    qcRecordMap.get(questionCategory).getAnswerCount() * 100 / (double)totalQuestionProb));
+                prevScoreMap.get(questionCategory) * 100 / (double) totalQuestionProb,
+                qcRecordMap.get(questionCategory).getAnswerCount() * 100
+                    / (double) totalQuestionProb));
         }
         return returnDtoList;
 
@@ -163,7 +174,8 @@ public class StudyHistoryService {
             throw new CustomException(TIMELINE_NOT_FOUND);
         });
 
-        TimelineLearningRecord record = timelineLearningRecordRepository.findByCustomerAndTimeline(customer, timeline).orElseGet(() -> {
+        TimelineLearningRecord record = timelineLearningRecordRepository.findByCustomerAndTimeline(
+            customer, timeline).orElseGet(() -> {
             TimelineLearningRecord newRecord = new TimelineLearningRecord(timeline, customer);
             timelineLearningRecordRepository.save(newRecord);
             return newRecord;
@@ -182,7 +194,8 @@ public class StudyHistoryService {
             throw new CustomException(ROUND_NOT_FOUND);
         });
 
-        RoundLearningRecord record = roundLearningRecordRepository.findByCustomerAndRound(customer, round).orElseGet(() -> {
+        RoundLearningRecord record = roundLearningRecordRepository.findByCustomerAndRound(customer,
+            round).orElseGet(() -> {
             RoundLearningRecord newRecord = new RoundLearningRecord(round, customer);
             roundLearningRecordRepository.save(newRecord);
             return newRecord;
@@ -194,12 +207,15 @@ public class StudyHistoryService {
     @Transactional
     public void saveQuestionWrongCount(Customer customer, List<ExamQuestionRecordDto> dtoList) {
         List<Long> examQuestionIdList = dtoList.stream()
-                .map(dto -> dto.getId())
-                .collect(Collectors.toList());
-        Map<Long, ExamQuestionLearningRecord> questionRecordMap = examQuestionLearningRecordRepository.queryExamQuestionLearningRecords(customer, examQuestionIdList).stream()
-                .collect(Collectors.toMap(record -> record.getExamQuestion().getId(), record -> record));
-        Map<Round, RoundLearningRecord> roundRecordMap = roundLearningRecordRepository.queryRoundLearningRecord(customer).stream()
-                .collect(Collectors.toMap(r -> r.getRound(), r -> r));
+            .map(dto -> dto.getId())
+            .collect(Collectors.toList());
+        Map<Long, ExamQuestionLearningRecord> questionRecordMap = examQuestionLearningRecordRepository.queryExamQuestionLearningRecords(
+                customer, examQuestionIdList).stream()
+            .collect(
+                Collectors.toMap(record -> record.getExamQuestion().getId(), record -> record));
+        Map<Round, RoundLearningRecord> roundRecordMap = roundLearningRecordRepository.queryRoundLearningRecord(
+                customer).stream()
+            .collect(Collectors.toMap(r -> r.getRound(), r -> r));
 
         for (ExamQuestionRecordDto dto : dtoList) {
             Long examQuestionId = dto.getId();
@@ -208,13 +224,16 @@ public class StudyHistoryService {
 
             ExamQuestionLearningRecord findRecord = questionRecordMap.get(examQuestionId);
             if (findRecord == null) {
-                ExamQuestion examQuestion = examQuestionRepository.findById(examQuestionId).orElseThrow(() -> {
-                    throw new CustomException(QUESTION_NOT_FOUND);
-                });
+                ExamQuestion examQuestion = examQuestionRepository.findById(examQuestionId)
+                    .orElseThrow(() -> {
+                        throw new CustomException(QUESTION_NOT_FOUND);
+                    });
                 findRecord = new ExamQuestionLearningRecord(customer, examQuestion);
                 examQuestionLearningRecordRepository.save(findRecord);
             }
-            if(findRecord.getSolved()) continue;
+            if (findRecord.getSolved()) {
+                continue;
+            }
 
             findRecord.updateInfo(checkedChoiceKey, score);
             Round round = findRecord.getExamQuestion().getRound();

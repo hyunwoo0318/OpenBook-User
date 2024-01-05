@@ -6,13 +6,23 @@ import Project.OpenBook.Domain.JJH.JJHContentProgress.JJHContentProgress;
 import Project.OpenBook.Domain.JJH.JJHList.JJHList;
 import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -20,7 +30,8 @@ import java.util.List;
 @Table(name = "jjh_content")
 public class JJHContent {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Enumerated(EnumType.STRING)
@@ -44,7 +55,7 @@ public class JJHContent {
     @JoinColumn(name = "timeline_id")
     public Timeline timeline;
 
-    @OneToMany(mappedBy = "jjhContent",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "jjhContent", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<JJHContentProgress> jjhContentProgressList = new ArrayList<>();
 
     public JJHContent(ContentConst content, Integer number, JJHList jjhList, Chapter chapter) {

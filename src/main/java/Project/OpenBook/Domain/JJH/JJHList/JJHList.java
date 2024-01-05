@@ -4,13 +4,21 @@ import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.JJH.JJHContent.JJHContent;
 import Project.OpenBook.Domain.JJH.JJHListProgress.JJHListProgress;
 import Project.OpenBook.Domain.Timeline.Domain.Timeline;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -35,7 +43,7 @@ public class JJHList {
     @OneToMany(mappedBy = "jjhList", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<JJHContent> jjhContentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "jjhList",fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "jjhList", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<JJHListProgress> jjhListProgressList = new ArrayList<>();
 
 

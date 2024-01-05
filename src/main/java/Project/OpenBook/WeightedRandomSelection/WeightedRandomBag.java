@@ -1,13 +1,15 @@
 package Project.OpenBook.WeightedRandomSelection;
 
+import java.util.HashSet;
+import java.util.Random;
+import java.util.Set;
 import lombok.Getter;
-
-import java.util.*;
 
 @Getter
 public class WeightedRandomBag<T extends Object> {
 
     class Entry {
+
         double accumulatedWeight;
         T object;
     }
@@ -32,7 +34,7 @@ public class WeightedRandomBag<T extends Object> {
     public T getRandom() {
         double r = rand.nextDouble() * accumulatedWeight;
 
-        for (Entry entry: entries) {
+        for (Entry entry : entries) {
             if (entry.accumulatedWeight >= r) {
                 return entry.object;
             }
@@ -43,7 +45,7 @@ public class WeightedRandomBag<T extends Object> {
     public Entry getRandomEntry() {
         double r = rand.nextDouble() * accumulatedWeight;
 
-        for (Entry entry: entries) {
+        for (Entry entry : entries) {
             if (entry.accumulatedWeight >= r) {
                 return entry;
             }

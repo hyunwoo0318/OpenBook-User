@@ -1,14 +1,15 @@
 package Project.OpenBook.Domain;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import javax.persistence.EntityListeners;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import lombok.Getter;
-import net.bytebuddy.asm.Advice;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
@@ -22,12 +23,14 @@ public abstract class BaseEntity {
 
     @PrePersist
     public void prePersist() {
-        this.createdTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss"));
+        this.createdTime = LocalDateTime.now()
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss"));
         this.modifiedTime = this.createdTime;
     }
 
     @PreUpdate
     public void preUpdate() {
-        this.modifiedTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss"));
+        this.modifiedTime = LocalDateTime.now()
+            .format(DateTimeFormatter.ofPattern("yyyy-MM-dd-HH:mm:ss"));
     }
 }

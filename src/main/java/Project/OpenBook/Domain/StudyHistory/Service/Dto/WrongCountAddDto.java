@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class WrongCountAddDto {
+
     private Long id;
     private Integer wrongCount;
     private Integer correctCount;

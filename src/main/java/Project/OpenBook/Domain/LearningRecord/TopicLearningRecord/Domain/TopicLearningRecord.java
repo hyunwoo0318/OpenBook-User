@@ -2,11 +2,17 @@ package Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
 
 @Entity
 @Getter
@@ -14,7 +20,8 @@ import javax.persistence.*;
 @Table(name = "topic_learning_record")
 public class TopicLearningRecord {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,7 +46,8 @@ public class TopicLearningRecord {
         wrongCount = 0;
     }
 
-    public TopicLearningRecord(Topic topic, Customer customer, Integer answerCount, Integer wrongCount) {
+    public TopicLearningRecord(Topic topic, Customer customer, Integer answerCount,
+        Integer wrongCount) {
         this.isBookmarked = false;
         this.topic = topic;
         this.customer = customer;
@@ -57,7 +65,7 @@ public class TopicLearningRecord {
         this.isBookmarked = isBookmarked;
     }
 
-    public void reset(){
+    public void reset() {
         this.isBookmarked = false;
         this.answerCount = 0;
         this.wrongCount = 0;

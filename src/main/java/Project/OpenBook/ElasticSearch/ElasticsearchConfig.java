@@ -16,8 +16,9 @@ import org.springframework.data.elasticsearch.core.convert.ElasticsearchConverte
 import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 
-@EnableElasticsearchRepositories(basePackageClasses = {TopicSearchRepository.class, KeywordSearchRepository.class,
-        ChapterSearchRepository.class})
+@EnableElasticsearchRepositories(basePackageClasses = {TopicSearchRepository.class,
+    KeywordSearchRepository.class,
+    ChapterSearchRepository.class})
 @Configuration
 public class ElasticsearchConfig extends ElasticsearchConfiguration {
 
@@ -28,8 +29,10 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
     }
 
     @Override
-    public ElasticsearchOperations elasticsearchOperations(ElasticsearchConverter elasticsearchConverter, ElasticsearchClient elasticsearchClient) {
-        ElasticsearchTemplate template = new ElasticsearchTemplate(elasticsearchClient, elasticsearchConverter);
+    public ElasticsearchOperations elasticsearchOperations(
+        ElasticsearchConverter elasticsearchConverter, ElasticsearchClient elasticsearchClient) {
+        ElasticsearchTemplate template = new ElasticsearchTemplate(elasticsearchClient,
+            elasticsearchConverter);
         template.setRefreshPolicy(refreshPolicy());
 
         return template;
@@ -38,9 +41,9 @@ public class ElasticsearchConfig extends ElasticsearchConfiguration {
     @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
-                .connectedTo("localhost:9200")
-                .withConnectTimeout(1000000)
-                .withSocketTimeout(500000)
-                .build();
+            .connectedTo("localhost:9200")
+            .withConnectTimeout(1000000)
+            .withSocketTimeout(500000)
+            .build();
     }
 }

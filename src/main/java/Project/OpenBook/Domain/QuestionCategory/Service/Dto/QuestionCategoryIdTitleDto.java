@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestionCategoryIdTitleDto {
+
     private Long id;
     private String title;
 }

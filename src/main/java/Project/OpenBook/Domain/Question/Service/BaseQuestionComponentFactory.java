@@ -24,12 +24,12 @@ public class BaseQuestionComponentFactory {
     private final WeightedRandomService weightedRandomService;
 
 
-
     /**
      * 해당 토픽을 제외한 Q.C가 같은 모든 키워드 리턴
      * 체크해야할 사항
-     *  1. 정답 토픽과 토픽이 달라야함
-     *  2. 정답 토픽에 존재하는 키워드와 내용이 일치하면 안됨
+     * 1. 정답 토픽과 토픽이 달라야함
+     * 2. 정답 토픽에 존재하는 키워드와 내용이 일치하면 안됨
+     *
      * @param topicTitle 정답 주제
      * @return
      */
@@ -75,12 +75,12 @@ public class BaseQuestionComponentFactory {
                     else return false;
                 })
                 .collect(Collectors.toList());
-        if(keywordList.isEmpty()) return anotherAnswerKeyword;
+        if (keywordList.isEmpty()) return anotherAnswerKeyword;
 
         Set<Integer> randomIndexSet = getRandomIndex(1, keywordList.size());
 
         for (Integer i : randomIndexSet) {
-            anotherAnswerKeyword =  keywordList.get(i);
+            anotherAnswerKeyword = keywordList.get(i);
         }
         return anotherAnswerKeyword;
     }
@@ -92,7 +92,8 @@ public class BaseQuestionComponentFactory {
 
     /**
      * 랜덤한 숫자를 고르는 로직
-     * @param count 골라야할 랜덤한 숫자 개수
+     *
+     * @param count  골라야할 랜덤한 숫자 개수
      * @param maxNum 골라야할 랜덤한 숫자의 최대값 + 1
      * @return 랜덤한 숫자를 가지고 있는 집합
      */
@@ -125,7 +126,7 @@ public class BaseQuestionComponentFactory {
         for (Keyword keyword : totalKeywordList) {
             KeywordLearningRecord record = keywordRecordMap.get(keyword);
             Integer questionProb = keyword.getQuestionProb();
-            if(record != null){
+            if (record != null) {
                 if (questionProb - record.getAnswerCount() > 0) questionProb = questionProb - record.getAnswerCount();
                 else questionProb = 0;
             }

@@ -6,7 +6,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class TopicSelectModel{
+public class TopicSelectModel {
+
     private Topic topic;
     private Integer record;
 }

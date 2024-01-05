@@ -8,19 +8,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PrimaryDateUserDto {
+
     private Integer extraDate;
     private String extraDateComment;
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PrimaryDateUserDto)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof PrimaryDateUserDto)) {
+            return false;
+        }
 
         PrimaryDateUserDto that = (PrimaryDateUserDto) o;
 
-        if (extraDate != null ? !extraDate.equals(that.extraDate) : that.extraDate != null) return false;
-        if (extraDateComment != null ? !extraDateComment.equals(that.extraDateComment) : that.extraDateComment != null)
+        if (extraDate != null ? !extraDate.equals(that.extraDate) : that.extraDate != null) {
             return false;
+        }
+        if (extraDateComment != null ? !extraDateComment.equals(that.extraDateComment)
+            : that.extraDateComment != null) {
+            return false;
+        }
 
         return true;
     }

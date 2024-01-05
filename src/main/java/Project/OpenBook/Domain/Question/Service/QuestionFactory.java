@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface QuestionFactory {
-    public abstract  List<QuestionDto> getQuestion(Map<Keyword, KeywordLearningRecord> keywordRecordMap,
-                                                   List<Keyword> totalKeywordList, Integer questionCount);
+    public abstract List<QuestionDto> getQuestion(Map<Keyword, KeywordLearningRecord> keywordRecordMap,
+                                                  List<Keyword> totalKeywordList, Integer questionCount);
 
 }

@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +18,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 public class RoundController {
@@ -26,18 +25,19 @@ public class RoundController {
     private final RoundService roundService;
 
 
-
     @Operation(summary = "사용자 페이지에서 전체 회차 조회")
     @GetMapping("/rounds")
-    public ResponseEntity getRoundsCustomer(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
+    public ResponseEntity getRoundsCustomer(
+        @Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
         List<RoundQueryCustomerDto> dtoList = roundService.queryRoundsCustomer(customer);
         return new ResponseEntity(dtoList, HttpStatus.OK);
     }
 
     @Operation(summary = "사용자 페이지에서 회차별 오답노트 count 조회")
     @GetMapping("/rounds/answer-notes")
-    public ResponseEntity<List<RoundAnswerNotedCountDto>> getRoundsAnswerNotedCount(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer
-                                                    ) {
+    public ResponseEntity<List<RoundAnswerNotedCountDto>> getRoundsAnswerNotedCount(
+        @Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer
+    ) {
         List<RoundAnswerNotedCountDto> dtoList = roundService.queryRoundsAnswerNotedCount(customer);
         return new ResponseEntity<List<RoundAnswerNotedCountDto>>(dtoList, HttpStatus.OK);
     }
@@ -45,7 +45,7 @@ public class RoundController {
 
     @Operation(summary = "특정 회차 조회")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "특정 회차 조회 성공")
+        @ApiResponse(responseCode = "200", description = "특정 회차 조회 성공")
     })
     @GetMapping("/rounds/{number}")
     public ResponseEntity<RoundInfoDto> getRoundQuestion(@PathVariable("number") Integer number) {
@@ -53,14 +53,5 @@ public class RoundController {
         return new ResponseEntity<RoundInfoDto>(dto, HttpStatus.OK);
     }
 
-//    @Operation(summary = "회차 내 전체 문제 번호 조회")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "특정 회차 조회 성공")
-//    })
-//    @GetMapping("/admin/rounds/{number}/questions")
-//    public ResponseEntity<List<Integer>> getRounds(@PathVariable("number") Integer number) {
-//        List<Integer> dtoList = roundService.queryRoundQuestions(number);
-//        return new ResponseEntity<List<Integer>>(dtoList, HttpStatus.OK);
-//    }
 
 }

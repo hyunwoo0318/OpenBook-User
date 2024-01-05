@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuestionCategoryScoreAscentDto {
+
     private String questionCategoryName;
     private Double prevScore;
     private Double nextScore;

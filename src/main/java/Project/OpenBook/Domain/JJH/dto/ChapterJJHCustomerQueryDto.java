@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChapterJJHCustomerQueryDto {
+
     private String title;
     private Integer number;
     private String state;

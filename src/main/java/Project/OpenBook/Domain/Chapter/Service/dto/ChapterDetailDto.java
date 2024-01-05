@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class ChapterDetailDto {
+
     private String title;
     private Integer number;
     private String dateComment;

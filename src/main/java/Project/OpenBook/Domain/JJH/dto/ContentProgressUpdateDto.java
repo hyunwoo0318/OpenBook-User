@@ -8,5 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContentProgressUpdateDto {
+
     private Integer contentNumber;
 }

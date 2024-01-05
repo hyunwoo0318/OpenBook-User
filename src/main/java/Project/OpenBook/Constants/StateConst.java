@@ -10,9 +10,7 @@ public enum StateConst {
     IN_PROGRESS("InProgress"),
     LOCKED("Locked"),
     COMPLETE("Complete"),
-    UPDATED("Updated")
-
-    ;
+    UPDATED("Updated");
     private final String name;
 
 }

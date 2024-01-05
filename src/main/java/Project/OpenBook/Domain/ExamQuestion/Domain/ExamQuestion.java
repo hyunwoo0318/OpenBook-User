@@ -6,13 +6,23 @@ import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Description.Domain.Description;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
 import Project.OpenBook.Domain.Round.Domain.Round;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -32,10 +42,10 @@ public class ExamQuestion extends BaseEntity {
     @JoinColumn(name = "round_id")
     private Round round;
 
-    @OneToMany(mappedBy = "examQuestion",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "examQuestion", fetch = FetchType.LAZY)
     private List<Choice> choiceList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "examQuestion",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "examQuestion", fetch = FetchType.LAZY)
     private List<ExamQuestionLearningRecord> examQuestionLearningRecordList = new ArrayList<>();
 
     @OneToOne(mappedBy = "examQuestion", fetch = FetchType.LAZY)
@@ -44,7 +54,8 @@ public class ExamQuestion extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ChoiceType choiceType;
 
-    public ExamQuestion(Round round, Integer number, Integer score,Integer answer, ChoiceType choiceType) {
+    public ExamQuestion(Round round, Integer number, Integer score, Integer answer,
+        ChoiceType choiceType) {
         this.round = round;
         this.number = number;
         this.score = score;
@@ -52,7 +63,8 @@ public class ExamQuestion extends BaseEntity {
         this.choiceType = choiceType;
     }
 
-    public ExamQuestion updateExamQuestion(Integer number, Integer score,Integer answer, ChoiceType choiceType) {
+    public ExamQuestion updateExamQuestion(Integer number, Integer score, Integer answer,
+        ChoiceType choiceType) {
         this.number = number;
         this.score = score;
         this.answer = answer;

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class KeywordSearchResultDto {
+
     private Integer chapterNumber;
     private String chapterTitle;
     private String topicTitle;

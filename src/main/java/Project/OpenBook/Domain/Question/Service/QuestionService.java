@@ -51,16 +51,16 @@ public class QuestionService {
 
     private WeightedRandomService weightedRandomService;
 
-    private GetKeywordByTopicQuestion type1 ;
+    private GetKeywordByTopicQuestion type1;
     private GetTopicByKeywordQuestion type2;
 
     private final Long RANDOM_INDEX = 0L;
     private final Long TOTAL_INDEX = -1L;
 
-    public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository,TimelineRepository timelineRepository,
+    public QuestionService(TopicRepository topicRepository, ChapterRepository chapterRepository, KeywordRepository keywordRepository, TimelineRepository timelineRepository,
                            QuestionCategoryRepository questionCategoryRepository, KeywordPrimaryDateRepository keywordPrimaryDateRepository, TopicPrimaryDateRepository topicPrimaryDateRepository,
                            TopicLearningRecordRepository topicLearningRecordRepository, KeywordLearningRecordRepository keywordLearningRecordRepository, WeightedRandomService weightedRandomService
-                            ,QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository){
+            , QuestionCategoryLearningRecordRepository questionCategoryLearningRecordRepository) {
         this.topicRepository = topicRepository;
         this.chapterRepository = chapterRepository;
         this.keywordRepository = keywordRepository;
@@ -97,6 +97,7 @@ public class QuestionService {
 
     /**
      * TopicPrimaryDate를 TimeFlowQuestionDto로 변환해주는 메서드
+     *
      * @param result
      * @param timeFlowQuestionDtoList
      */
@@ -120,6 +121,7 @@ public class QuestionService {
 
     /**
      * KeywordPrimaryDate를 TimeFlowQuestionDto로 변환해주는 메서드
+     *
      * @param result
      * @param timeFlowQuestionDtoList
      */
@@ -128,13 +130,13 @@ public class QuestionService {
             Topic topic = kp.getKeyword().getTopic();
             String keywordComment = kp.getKeyword().getComment();
             List<String> commentList = new ArrayList<>();
-            commentList.add(topic.getChapter().getTitle()+ " - " +  topic.getTitle());
+            commentList.add(topic.getChapter().getTitle() + " - " + topic.getTitle());
             if (!keywordComment.isBlank()) {
                 List<String> splitCommentList = Arrays.stream(keywordComment.split("[.]")).collect(Collectors.toList());
                 commentList.addAll(splitCommentList);
             }
             TimeFlowQuestionDto dto
-                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(),commentList);
+                    = new TimeFlowQuestionDto(kp.getExtraDate(), kp.getExtraDateComment(), commentList);
 
 
             timeFlowQuestionDtoList.add(dto);
@@ -145,6 +147,7 @@ public class QuestionService {
      * timelineId에 맞게 primaryDate를 쿼리하는 로직
      * timelineId == RANDOM_INDEX -> 전체 timeline중 랜덤하게 1개를 선정해 해당 timeline에서 primaryDate 조회
      * timelineId == TOTAL_INDEX -> 전체 timeline의 모든 primaryDate조회
+     *
      * @param timelineId
      * @return
      */
@@ -155,9 +158,8 @@ public class QuestionService {
             topicPrimaryDateList = topicPrimaryDateRepository.queryTopicPrimaryDateInTimeline(TOTAL_INDEX, 0, 0);
             keywordPrimaryDateList = keywordPrimaryDateRepository.queryKeywordPrimaryDateInTimeline(TOTAL_INDEX, 0, 0);
 
-        }
-        else{
-            if(timelineId == RANDOM_INDEX){
+        } else {
+            if (timelineId == RANDOM_INDEX) {
                 timelineId = timelineRepository.queryRandomTimeline().orElseThrow(() -> {
                     throw new CustomException(TIMELINE_NOT_FOUND);
                 });
@@ -207,13 +209,12 @@ public class QuestionService {
         if (questionCategoryId == -1L) {
             questionCategory = questionCategoryLearningRecordRepository.queryQuestionCategoryLowScore(customer).getQuestionCategory();
             questionCategoryId = questionCategory.getId();
-        }else{
+        } else {
             questionCategory = questionCategoryRepository.queryQuestionCategoriesWithTopicList(questionCategoryId)
                     .orElseThrow(() -> {
                         throw new CustomException(QUESTION_CATEGORY_NOT_FOUND);
                     });
         }
-
 
 
         Map<Keyword, KeywordLearningRecord> keywordRecordMap = keywordLearningRecordRepository.queryKeywordLearningRecordsInQuestionCategory(customer, questionCategoryId).stream()

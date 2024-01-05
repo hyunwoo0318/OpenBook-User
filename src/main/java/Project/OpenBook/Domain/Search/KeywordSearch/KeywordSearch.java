@@ -3,6 +3,7 @@ package Project.OpenBook.Domain.Search.KeywordSearch;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
+import javax.persistence.Id;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +11,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
-
-import javax.persistence.Id;
 
 @Document(indexName = "keywords")
 @AllArgsConstructor
@@ -43,7 +42,7 @@ public class KeywordSearch {
         Topic topic = keyword.getTopic();
         this.topicTitle = topic.getTitle();
         Chapter chapter = topic.getChapter();
-        this.chapterNumber= chapter.getNumber();
+        this.chapterNumber = chapter.getNumber();
         this.chapterTitle = chapter.getTitle();
     }
 }

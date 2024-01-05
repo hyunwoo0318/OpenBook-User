@@ -11,7 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,12 +26,13 @@ public class BookmarkController {
 
     @Operation(summary = "해당 토픽을 북마크 추가")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "북마크 추가 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
+        @ApiResponse(responseCode = "201", description = "북마크 추가 성공"),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @PatchMapping
-    public ResponseEntity<Void> addBookmark(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
-                                            @RequestBody BookmarkDto dto) {
+    public ResponseEntity<Void> addBookmark(
+        @Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+        @RequestBody BookmarkDto dto) {
         bookmarkService.addBookmark(customer, dto);
 
         return new ResponseEntity<Void>(HttpStatus.CREATED);
@@ -35,12 +40,13 @@ public class BookmarkController {
 
     @Operation(summary = "해당 토픽에 대한 북마크 제거")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "북마크 제거 성공"),
-            @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
+        @ApiResponse(responseCode = "200", description = "북마크 제거 성공"),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 회원정보나 topicTitle 입력")
     })
     @DeleteMapping
-    public ResponseEntity<Void> deleteBookmark(@Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
-                                         @RequestBody BookmarkDto dto) {
+    public ResponseEntity<Void> deleteBookmark(
+        @Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
+        @RequestBody BookmarkDto dto) {
         bookmarkService.deleteBookmark(customer, dto);
 
         return new ResponseEntity<Void>(HttpStatus.OK);

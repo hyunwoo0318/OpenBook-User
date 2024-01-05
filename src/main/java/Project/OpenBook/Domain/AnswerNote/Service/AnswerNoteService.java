@@ -1,5 +1,7 @@
 package Project.OpenBook.Domain.AnswerNote.Service;
 
+import static Project.OpenBook.Constants.ErrorCode.QUESTION_NOT_FOUND;
+
 import Project.OpenBook.Domain.AnswerNote.Service.Dto.AnswerNoteDto;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
@@ -10,8 +12,6 @@ import Project.OpenBook.Handler.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static Project.OpenBook.Constants.ErrorCode.QUESTION_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +28,10 @@ public class AnswerNoteService {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
 
-        ExamQuestionLearningRecord record = examQuestionLearningRecordRepository.findByCustomerAndExamQuestion(customer, examQuestion).orElseGet(() -> {
-            ExamQuestionLearningRecord newRecord = new ExamQuestionLearningRecord(customer, examQuestion);
+        ExamQuestionLearningRecord record = examQuestionLearningRecordRepository.findByCustomerAndExamQuestion(
+            customer, examQuestion).orElseGet(() -> {
+            ExamQuestionLearningRecord newRecord = new ExamQuestionLearningRecord(customer,
+                examQuestion);
             examQuestionLearningRecordRepository.save(newRecord);
             return newRecord;
         });
@@ -45,8 +47,10 @@ public class AnswerNoteService {
             throw new CustomException(QUESTION_NOT_FOUND);
         });
 
-        ExamQuestionLearningRecord record = examQuestionLearningRecordRepository.findByCustomerAndExamQuestion(customer, examQuestion).orElseGet(() -> {
-            ExamQuestionLearningRecord newRecord = new ExamQuestionLearningRecord(customer, examQuestion);
+        ExamQuestionLearningRecord record = examQuestionLearningRecordRepository.findByCustomerAndExamQuestion(
+            customer, examQuestion).orElseGet(() -> {
+            ExamQuestionLearningRecord newRecord = new ExamQuestionLearningRecord(customer,
+                examQuestion);
             examQuestionLearningRecordRepository.save(newRecord);
             return newRecord;
         });

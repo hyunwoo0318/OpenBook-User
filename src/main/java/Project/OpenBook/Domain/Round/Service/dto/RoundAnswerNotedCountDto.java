@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RoundAnswerNotedCountDto {
+
     private Integer roundNumber;
     private Integer questionCount;
 }

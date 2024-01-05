@@ -11,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class KeywordSelectModel {
+
     private Keyword keyword;
     private Integer questionProb;
 }

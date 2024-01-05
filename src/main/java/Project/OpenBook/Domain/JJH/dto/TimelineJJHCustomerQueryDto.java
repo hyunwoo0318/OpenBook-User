@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TimelineJJHCustomerQueryDto {
+
     private String era;
     private Integer startDate;
     private Integer endDate;

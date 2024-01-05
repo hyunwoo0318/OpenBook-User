@@ -1,5 +1,7 @@
 package Project.OpenBook.Domain.Round.Service;
 
+import static Project.OpenBook.Constants.ErrorCode.ROUND_HAS_QUESTION;
+
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.LearningRecord.ExamQuestionLearningRecord.Domain.ExamQuestionLearningRecord;
@@ -14,14 +16,15 @@ import Project.OpenBook.Domain.Round.Service.dto.RoundDto;
 import Project.OpenBook.Domain.Round.Service.dto.RoundInfoDto;
 import Project.OpenBook.Domain.Round.Service.dto.RoundQueryCustomerDto;
 import Project.OpenBook.Handler.Exception.CustomException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static Project.OpenBook.Constants.ErrorCode.ROUND_HAS_QUESTION;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +34,6 @@ public class RoundService {
     private final RoundLearningRecordRepository roundLearningRecordRepository;
     private final ExamQuestionLearningRecordRepository examQuestionLearningRecordRepository;
     private final RoundValidator roundValidator;
-
 
 
     @Transactional
@@ -82,14 +84,14 @@ public class RoundService {
     }
 
 
-
     @Transactional(readOnly = true)
     public List<RoundQueryCustomerDto> queryRoundsCustomer(Customer customer) {
-        List<RoundLearningRecord> recordList = roundLearningRecordRepository.queryRoundLearningRecord(customer);
+        List<RoundLearningRecord> recordList = roundLearningRecordRepository.queryRoundLearningRecord(
+            customer);
         List<RoundQueryCustomerDto> roundList = recordList.stream()
-                .map(RoundQueryCustomerDto::new)
-                .sorted(Comparator.comparing(RoundQueryCustomerDto::getNumber).reversed())
-                .collect(Collectors.toList());
+            .map(RoundQueryCustomerDto::new)
+            .sorted(Comparator.comparing(RoundQueryCustomerDto::getNumber).reversed())
+            .collect(Collectors.toList());
         Collections.reverse(roundList);
         return roundList;
     }
@@ -97,8 +99,9 @@ public class RoundService {
     @Transactional
     public List<RoundAnswerNotedCountDto> queryRoundsAnswerNotedCount(Customer customer) {
         List<RoundAnswerNotedCountDto> dtoList = new ArrayList<>();
-        Map<Round, List<ExamQuestionLearningRecord>> roundRecordMap = examQuestionLearningRecordRepository.queryExamQuestionLearningRecordsAnswerNoted(customer).stream()
-                .collect(Collectors.groupingBy(q -> q.getExamQuestion().getRound()));
+        Map<Round, List<ExamQuestionLearningRecord>> roundRecordMap = examQuestionLearningRecordRepository.queryExamQuestionLearningRecordsAnswerNoted(
+                customer).stream()
+            .collect(Collectors.groupingBy(q -> q.getExamQuestion().getRound()));
 
         for (Round round : roundRecordMap.keySet()) {
             List<ExamQuestionLearningRecord> recordList = roundRecordMap.get(round);

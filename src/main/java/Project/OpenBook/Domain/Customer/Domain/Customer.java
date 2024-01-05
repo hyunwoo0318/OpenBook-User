@@ -9,6 +9,19 @@ import Project.OpenBook.Domain.LearningRecord.QuestionCategoryLearningRecord.Dom
 import Project.OpenBook.Domain.LearningRecord.RoundLearningRecord.RoundLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Domain.TimelineLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,12 +29,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -36,7 +43,7 @@ public class Customer extends BaseEntity implements UserDetails {
     @Column(columnDefinition = "BINARY(16)")
     private String code;
 
-//    @Column(nullable = false, unique = true)
+    //    @Column(nullable = false, unique = true)
     private String nickName;
 
     private Integer solvedNum;
@@ -59,32 +66,33 @@ public class Customer extends BaseEntity implements UserDetails {
 
     private boolean isValidated = false;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<JJHListProgress> jjhListProgressList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<JJHContentProgress> jjhContentProgressList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<KeywordLearningRecord> keywordLearningRecordList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<TopicLearningRecord> topicLearningRecordList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<QuestionCategoryLearningRecord> questionCategoryLearningRecordList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<TimelineLearningRecord> timelineLearningRecordList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<ExamQuestionLearningRecord> examQuestionLearningRecordList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<RoundLearningRecord> roundLearningRecordList = new ArrayList<>();
 
     @Builder
-    public Customer(String nickName, Integer age, Integer expertise, String roles, String provider, String oAuthId, Boolean isNew) {
+    public Customer(String nickName, Integer age, Integer expertise, String roles, String provider,
+        String oAuthId, Boolean isNew) {
         this.nickName = nickName;
         this.solvedNum = 0;
         this.age = age;
@@ -92,7 +100,7 @@ public class Customer extends BaseEntity implements UserDetails {
         this.roles = roles;
         this.provider = provider;
         this.oAuthId = oAuthId;
-        this.code = UUID.randomUUID().toString().substring(0,16);
+        this.code = UUID.randomUUID().toString().substring(0, 16);
         this.isSubscribed = true;
         this.isValidated = true;
         this.isNew = true;
@@ -103,7 +111,7 @@ public class Customer extends BaseEntity implements UserDetails {
         this.isValidated = false;
     }
 
-    public Customer(String nickName,String password, String roles){
+    public Customer(String nickName, String password, String roles) {
         this.nickName = nickName;
         this.password = password;
         this.roles = roles;
@@ -121,7 +129,7 @@ public class Customer extends BaseEntity implements UserDetails {
         this.roles = roles;
         this.provider = provider;
         this.oAuthId = oAuthId;
-        this.code = UUID.randomUUID().toString().substring(0,16);
+        this.code = UUID.randomUUID().toString().substring(0, 16);
         this.isValidated = true;
         return this;
     }

@@ -1,18 +1,16 @@
 package Project.OpenBook.Domain.ExamQuestion.Service.dto;
 
-import Project.OpenBook.Domain.Question.Dto.QuestionChoiceDto;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExamQuestionInfoDto {
+
     @Min(value = 1, message = "1이상의 문제 번호를 입력해주세요.")
     private Integer number;
     @Min(value = 1, message = "1이상의 정답 선지 번호를 입력해주세요.")

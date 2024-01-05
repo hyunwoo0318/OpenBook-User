@@ -9,6 +9,20 @@ import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,15 +30,11 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @NoArgsConstructor
 public class Topic extends BaseEntity implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -62,7 +72,7 @@ public class Topic extends BaseEntity implements Serializable {
     @OneToMany(mappedBy = "topic", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<TopicPrimaryDate> topicPrimaryDateList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "topic",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
     private List<Choice> choiceList = new ArrayList<>();
 
     @OneToMany(mappedBy = "topic", fetch = FetchType.LAZY)
@@ -75,7 +85,8 @@ public class Topic extends BaseEntity implements Serializable {
     private List<JJHContent> jjhContentList = new ArrayList<>();
 
     @Builder
-    public Topic(Integer number, String title, int questionNum, int choiceNum, String dateComment, String detail, Chapter chapter, QuestionCategory questionCategory) {
+    public Topic(Integer number, String title, int questionNum, int choiceNum, String dateComment,
+        String detail, Chapter chapter, QuestionCategory questionCategory) {
         this.number = number;
         this.title = title;
         this.questionNum = questionNum;
@@ -95,8 +106,6 @@ public class Topic extends BaseEntity implements Serializable {
     public Topic(String title) {
         this.title = title;
     }
-
-
 
 
 }

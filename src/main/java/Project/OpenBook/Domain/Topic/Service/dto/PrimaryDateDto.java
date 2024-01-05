@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrimaryDateDto {
+
     private Integer extraDate;
     private String extraDateComment;
 }

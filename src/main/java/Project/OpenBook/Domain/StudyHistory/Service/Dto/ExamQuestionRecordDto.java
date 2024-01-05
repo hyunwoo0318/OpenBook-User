@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ExamQuestionRecordDto {
+
     private Long id;
     private Integer checkedChoiceKey;
     private Integer score;
