@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.Topic.Controller;
 
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordDto;
-import Project.OpenBook.Domain.Topic.Service.TopicSimpleQueryService;
+import Project.OpenBook.Domain.Topic.Service.TopicService;
 import Project.OpenBook.Domain.Topic.Service.dto.BookmarkedTopicQueryDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicListQueryDto;
 import Project.OpenBook.Domain.Topic.Service.dto.TopicWithKeywordDto;
@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TopicController {
 
-    private final TopicSimpleQueryService topicSimpleQueryService;
+    private final TopicService topicService;
 
 
     @Operation(summary = "각 토픽에 대한 상세정보 조회 - 사용자")
@@ -36,7 +36,7 @@ public class TopicController {
     @Transactional
     public ResponseEntity<TopicWithKeywordDto> queryTopicsTitle(
         @PathVariable("topicTitle") String topicTitle) {
-        TopicWithKeywordDto dto = topicSimpleQueryService.queryTopicsCustomer(topicTitle);
+        TopicWithKeywordDto dto = topicService.queryTopicsCustomer(topicTitle);
 
         return new ResponseEntity<TopicWithKeywordDto>(dto, HttpStatus.OK);
     }
@@ -53,9 +53,9 @@ public class TopicController {
         @PathVariable("num") int num) {
         List<TopicListQueryDto> dtoList = new ArrayList<>();
         if (customer == null) {
-            dtoList = topicSimpleQueryService.queryChapterTopicsForFree(num);
+            dtoList = topicService.queryChapterTopicsForFree(num);
         } else {
-            dtoList = topicSimpleQueryService.queryChapterTopicsCustomer(customer, num);
+            dtoList = topicService.queryChapterTopicsCustomer(customer, num);
         }
 
         return new ResponseEntity<List<TopicListQueryDto>>(dtoList, HttpStatus.OK);
@@ -66,7 +66,7 @@ public class TopicController {
     public ResponseEntity<List<BookmarkedTopicQueryDto>> queryTopicsInQuestionCategory(
         @Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer,
         @PathVariable("id") Long id) {
-        List<BookmarkedTopicQueryDto> dtoList = topicSimpleQueryService.queryTopicsInQuestionCategory(
+        List<BookmarkedTopicQueryDto> dtoList = topicService.queryTopicsInQuestionCategory(
             customer, id);
         return new ResponseEntity<List<BookmarkedTopicQueryDto>>(dtoList, HttpStatus.OK);
     }
@@ -79,7 +79,7 @@ public class TopicController {
     @GetMapping("/topics/{topicTitle}/keywords")
     public ResponseEntity<List<KeywordDto>> queryTopicKeywords(
         @PathVariable("topicTitle") String topicTitle) {
-        List<KeywordDto> dtoList = topicSimpleQueryService.queryTopicKeywords(topicTitle);
+        List<KeywordDto> dtoList = topicService.queryTopicKeywords(topicTitle);
 
         return new ResponseEntity<List<KeywordDto>>(dtoList, HttpStatus.OK);
     }
@@ -92,7 +92,7 @@ public class TopicController {
     @GetMapping("/topics/bookmarked")
     public ResponseEntity<List<BookmarkedTopicQueryDto>> queryBookmarkedTopics(
         @Parameter(hidden = true) @AuthenticationPrincipal(errorOnInvalidType = true) Customer customer) {
-        List<BookmarkedTopicQueryDto> dtoList = topicSimpleQueryService.queryBookmarkedTopics(
+        List<BookmarkedTopicQueryDto> dtoList = topicService.queryBookmarkedTopics(
             customer);
 
         return new ResponseEntity<List<BookmarkedTopicQueryDto>>(dtoList, HttpStatus.OK);

@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword;
+package Project.OpenBook.Domain.QuestionComment.DescriptionKeyword;
 
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import org.springframework.data.jpa.repository.JpaRepository;

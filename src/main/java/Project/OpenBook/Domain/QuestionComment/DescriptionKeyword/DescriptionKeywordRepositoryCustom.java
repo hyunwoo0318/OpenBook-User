@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword;
+package Project.OpenBook.Domain.QuestionComment.DescriptionKeyword;
 
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import java.util.List;

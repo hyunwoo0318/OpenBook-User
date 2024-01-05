@@ -2,13 +2,13 @@ package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.KeywordUsageConst;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
-import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
+import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeyword;
+import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeywordRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
-import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
-import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
+import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.JJH.JJHContent.JJHContent;

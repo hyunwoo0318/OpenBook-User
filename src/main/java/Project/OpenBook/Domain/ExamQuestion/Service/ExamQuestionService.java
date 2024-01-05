@@ -5,12 +5,12 @@ import static Project.OpenBook.Constants.ErrorCode.ROUND_NOT_FOUND;
 
 import Project.OpenBook.Constants.ChoiceType;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
-import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
-import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
+import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeyword;
+import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeywordRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Description.Domain.Description;
-import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
-import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
+import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.ExamQuestion.Service.dto.ExamQuestionCommentDto;

@@ -5,11 +5,7 @@ import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
 import Project.OpenBook.Domain.Bookmark.Service.BookmarkService;
 import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Choice.Domain.Choice;
-import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeyword;
-import Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.ChoiceKeywordRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
-import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;
 import Project.OpenBook.Domain.Keyword.Repository.KeywordRepository;
@@ -17,6 +13,10 @@ import Project.OpenBook.Domain.Keyword.Service.Dto.KeywordDto;
 import Project.OpenBook.Domain.Keyword.Service.Dto.QuestionNumberDto;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
+import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeyword;
+import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeywordRepository;
+import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.Service.dto.BookmarkedTopicQueryDto;
@@ -38,7 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class TopicSimpleQueryService {
+public class TopicService {
 
     private final TopicRepository topicRepository;
     private final KeywordRepository keywordRepository;

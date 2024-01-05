@@ -2,7 +2,7 @@ package Project.OpenBook.Domain.Keyword.Domain;
 
 import Project.OpenBook.Constants.KeywordUsageConst;
 import Project.OpenBook.Domain.BaseEntity;
-import Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeyword;
 import Project.OpenBook.Domain.Keyword.KeywordPrimaryDate.Domain.KeywordPrimaryDate;
 import Project.OpenBook.Domain.LearningRecord.KeywordLearningRecord.Domain.KeywordLearningRecord;
 import Project.OpenBook.Domain.Topic.Domain.Topic;

@@ -1,8 +1,8 @@
-package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
+package Project.OpenBook.Domain.QuestionComment.ChoiceKeyword;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Choice.Domain.QChoice.choice;
-import static Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword.QChoiceKeyword.choiceKeyword;
+import static Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.QChoiceKeyword.choiceKeyword;
 import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
 import static Project.OpenBook.Domain.Round.Domain.QRound.round;
@@ -11,7 +11,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
-import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
+import Project.OpenBook.Domain.QuestionComment.Service.Dto.ChoiceCommentInfoDto;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import com.querydsl.core.types.Projections;

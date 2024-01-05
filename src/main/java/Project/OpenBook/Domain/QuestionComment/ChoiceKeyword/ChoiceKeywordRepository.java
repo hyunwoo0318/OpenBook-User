@@ -1,4 +1,4 @@
-package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
+package Project.OpenBook.Domain.QuestionComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
 import Project.OpenBook.Domain.Keyword.Domain.Keyword;

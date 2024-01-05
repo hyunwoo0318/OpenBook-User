@@ -12,15 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class WeightedRandomService {
 
-    private Double DEFAULT_WEIGHT = 500.0;
-    private Double RECORD_WEIGHT_FOR_ANSWER_TOPIC = 0.1;
-    private Double USAGE_WEIGHT_FOR_ANSWER_KEYWORD = 0.5;
-    private Double RECORD_WEIGHT_FOR_ANSWER_KEYWORD = 0.5;
-
-    private Double USAGE_WEIGHT_FOR_WRONG_KEYWORD = 0.4;
-    private Double RECORD_WEIGHT_FOR_WRONG_KEYWORD = 0.3;
-    private Double ASSOCIATION_WEIGHT_FOR_WRONG_KEYWORD = 0.3;
-
 
     public Keyword selectAnswerKeywords(List<KeywordSelectModel> answerKeywordSelectModelList) {
         WeightedRandomBag<Keyword> bag = new WeightedRandomBag<>();

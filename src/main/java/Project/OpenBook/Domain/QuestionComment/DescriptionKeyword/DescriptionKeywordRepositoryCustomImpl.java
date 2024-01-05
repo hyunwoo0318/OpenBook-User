@@ -1,10 +1,10 @@
-package Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword;
+package Project.OpenBook.Domain.QuestionComment.DescriptionKeyword;
 
 import static Project.OpenBook.Domain.Chapter.Domain.QChapter.chapter;
 import static Project.OpenBook.Domain.Description.Domain.QDescription.description;
-import static Project.OpenBook.Domain.DescriptionComment.DescriptionKeyword.QDescriptionKeyword.descriptionKeyword;
 import static Project.OpenBook.Domain.ExamQuestion.Domain.QExamQuestion.examQuestion;
 import static Project.OpenBook.Domain.Keyword.Domain.QKeyword.keyword;
+import static Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.QDescriptionKeyword.descriptionKeyword;
 import static Project.OpenBook.Domain.Round.Domain.QRound.round;
 import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 

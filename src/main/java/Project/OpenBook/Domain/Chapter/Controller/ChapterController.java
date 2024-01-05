@@ -2,6 +2,7 @@ package Project.OpenBook.Domain.Chapter.Controller;
 
 
 import Project.OpenBook.Domain.Chapter.Service.ChapterService;
+import Project.OpenBook.Domain.Chapter.Service.dto.ChapterDateDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterDetailDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterInfoDto;
 import Project.OpenBook.Domain.Chapter.Service.dto.ChapterTitleDto;
@@ -67,16 +68,16 @@ public class ChapterController {
         return new ResponseEntity<ChapterTitleDto>(dto, HttpStatus.OK);
     }
 
-//    @Operation(summary = "단원 dateComment 조회")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "조회 성공"),
-//            @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
-//    })
-//    @GetMapping("/chapters/{num}/date")
-//    public ResponseEntity<ChapterDateDto> queryChapterDate(@PathVariable("num") Integer num) {
-//        ChapterDateDto dto = chapterSimpleQueryService.queryChapterDate(num);
-//        return new ResponseEntity<ChapterDateDto>(dto, HttpStatus.OK);
-//    }
+    @Operation(summary = "단원 dateComment 조회")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "조회 성공"),
+        @ApiResponse(responseCode = "404", description = "존재하지 않는 단원 번호 입력")
+    })
+    @GetMapping("/chapters/{num}/date")
+    public ResponseEntity<ChapterDateDto> queryChapterDate(@PathVariable("num") Integer num) {
+        ChapterDateDto dto = chapterService.queryChapterDate(num);
+        return new ResponseEntity<ChapterDateDto>(dto, HttpStatus.OK);
+    }
 
 
     @Operation(summary = "단원 학습 조회")

@@ -1,7 +1,7 @@
-package Project.OpenBook.Domain.ChoiceComment.ChoiceKeyword;
+package Project.OpenBook.Domain.QuestionComment.ChoiceKeyword;
 
 import Project.OpenBook.Domain.Choice.Domain.Choice;
-import Project.OpenBook.Domain.ChoiceComment.Service.Dto.ChoiceCommentInfoDto;
+import Project.OpenBook.Domain.QuestionComment.Service.Dto.ChoiceCommentInfoDto;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import java.util.List;
