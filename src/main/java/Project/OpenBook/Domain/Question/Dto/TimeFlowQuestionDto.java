@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TimeFlowQuestionDto {
 
-    private Integer date;
-    private String comment;
-    private List<String> keywordList;
+  private Integer date;
+  private String comment;
+  private List<String> keywordList;
+  private String dateComment;
 }
