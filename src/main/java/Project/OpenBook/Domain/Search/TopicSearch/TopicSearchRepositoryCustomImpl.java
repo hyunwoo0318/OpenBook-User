@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
@@ -19,7 +20,7 @@ public class TopicSearchRepositoryCustomImpl implements TopicSearchRepositoryCus
         CriteriaQuery query = new CriteriaQuery(criteria);
         SearchHits<TopicSearch> search = elasticSearchOperations.search(query, TopicSearch.class);
         return search.stream()
-            .map(t -> t.getContent())
+            .map(SearchHit::getContent)
             .collect(Collectors.toList());
     }
 }

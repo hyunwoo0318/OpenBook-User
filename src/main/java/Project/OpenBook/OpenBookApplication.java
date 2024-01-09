@@ -10,13 +10,18 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@EnableJpaRepositories(excludeFilters = @ComponentScan.Filter(
-    type = FilterType.ASSIGNABLE_TYPE,
-    classes = {TopicSearchRepository.class, KeywordSearchRepository.class,
-        ChapterSearchRepository.class}))
+@EnableJpaRepositories(
+    excludeFilters =
+        @ComponentScan.Filter(
+            type = FilterType.ASSIGNABLE_TYPE,
+            classes = {
+              TopicSearchRepository.class,
+              KeywordSearchRepository.class,
+              ChapterSearchRepository.class
+            }))
 public class OpenBookApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(OpenBookApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(OpenBookApplication.class, args);
+  }
 }

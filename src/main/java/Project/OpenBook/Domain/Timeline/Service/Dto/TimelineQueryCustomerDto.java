@@ -39,4 +39,5 @@ public class TimelineQueryCustomerDto {
         this.score = 0;
         this.timelineCount = timeline.getCount();
     }
+
 }

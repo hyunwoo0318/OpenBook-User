@@ -2,16 +2,10 @@ package Project.OpenBook.Domain.Bookmark.Service;
 
 import static Project.OpenBook.Constants.ErrorCode.TOPIC_NOT_FOUND;
 
-import Project.OpenBook.Domain.Bookmark.Domain.Bookmark;
 import Project.OpenBook.Domain.Bookmark.Dto.BookmarkDto;
-import Project.OpenBook.Domain.Bookmark.Repository.BookmarkRepository;
-import Project.OpenBook.Domain.Chapter.Domain.Chapter;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
-import Project.OpenBook.Domain.Keyword.Domain.Keyword;
-import Project.OpenBook.Domain.LearningRecord.TimelineLearningRecord.Repo.TimelineLearningRecordRepository;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLearningRecord;
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
-import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Handler.Exception.CustomException;
@@ -27,76 +21,60 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BookmarkService {
 
-    private final BookmarkRepository bookmarkRepository;
-    private final TopicRepository topicRepository;
-    private final TimelineRepository timelineRepository;
+  private final TopicRepository topicRepository;
 
-    private final TopicLearningRecordRepository topicLearningRecordRepository;
-    private final TimelineLearningRecordRepository timelineLearningRecordRepository;
+  private final TopicLearningRecordRepository topicLearningRecordRepository;
 
+  @Transactional
+  public void addBookmark(Customer customer, BookmarkDto dto) {
 
-    @Transactional
-    public void addBookmark(Customer customer, BookmarkDto dto) {
+    String topicTitle = dto.getTopicTitle();
 
-        String topicTitle = dto.getTopicTitle();
+    TopicLearningRecord record = getTopicLearningRecord(customer, topicTitle);
+    record.updateBookmark(true);
+  }
 
-        TopicLearningRecord record = getTopicLearningRecord(customer, topicTitle);
-        record.updateBookmark(true);
-    }
+  @Transactional
+  public void deleteBookmark(Customer customer, BookmarkDto dto) {
+    String topicTitle = dto.getTopicTitle();
 
-    @Transactional
-    public void deleteBookmark(Customer customer, BookmarkDto dto) {
-        String topicTitle = dto.getTopicTitle();
+    TopicLearningRecord record = getTopicLearningRecord(customer, topicTitle);
+    record.updateBookmark(false);
+  }
 
-        TopicLearningRecord record = getTopicLearningRecord(customer, topicTitle);
-        record.updateBookmark(false);
-    }
+  private TopicLearningRecord getTopicLearningRecord(Customer customer, String topicTitle) {
+    Topic topic =
+        topicRepository
+            .findTopicByTitle(topicTitle)
+            .orElseThrow(() -> new CustomException(TOPIC_NOT_FOUND));
 
+    TopicLearningRecord record =
+        topicLearningRecordRepository
+            .findByCustomerAndTopic(customer, topic)
+            .orElseGet(
+                () -> {
+                  TopicLearningRecord newRecord = new TopicLearningRecord(topic, customer);
+                  topicLearningRecordRepository.save(newRecord);
+                  return newRecord;
+                });
+    return record;
+  }
 
-    private TopicLearningRecord getTopicLearningRecord(Customer customer, String topicTitle) {
-        Topic topic = topicRepository.findTopicByTitle(topicTitle).orElseThrow(() -> {
-            throw new CustomException(TOPIC_NOT_FOUND);
-        });
-
-        TopicLearningRecord record = topicLearningRecordRepository.findByCustomerAndTopic(customer,
-            topic).orElseGet(() -> {
-            TopicLearningRecord newRecord = new TopicLearningRecord(topic, customer);
-            topicLearningRecordRepository.save(newRecord);
-            return newRecord;
-        });
-        return record;
-    }
-
-    public List<String> queryBookmarks(Customer customer) {
-        Map<Chapter, Bookmark> bookmarkMap = bookmarkRepository.queryBookmarks(customer.getId())
+  public Map<Topic, Boolean> queryBookmarks(Customer customer, List<Topic> topicList) {
+    Map<Topic, TopicLearningRecord> recordMap =
+        topicLearningRecordRepository
+            .queryTopicLearningRecordsBookmarked(customer, topicList)
             .stream()
-            .collect(Collectors.toMap(b -> b.getTopic().getChapter(), b -> b));
-
-        for (Chapter chapter : bookmarkMap.keySet()) {
-            Bookmark bookmark = bookmarkMap.get(chapter);
-            Topic topic = bookmark.getTopic();
-            List<Keyword> keywordList = topic.getKeywordList();
-
-
-        }
-
-        return null;
+            .collect(Collectors.toMap(TopicLearningRecord::getTopic, record -> record));
+    Map<Topic, Boolean> bookmarkMap = new HashMap<>();
+    for (Topic topic : topicList) {
+      TopicLearningRecord record = recordMap.get(topic);
+      if (record == null) {
+        record = new TopicLearningRecord(topic, customer);
+        topicLearningRecordRepository.save(record);
+      }
+      bookmarkMap.put(topic, record.getIsBookmarked());
     }
-
-    public Map<Topic, Boolean> queryBookmarks(Customer customer, List<Topic> topicList) {
-        Map<Topic, TopicLearningRecord> recordMap = topicLearningRecordRepository.queryTopicLearningRecordsBookmarked(
-                customer, topicList)
-            .stream()
-            .collect(Collectors.toMap(record -> record.getTopic(), record -> record));
-        Map<Topic, Boolean> bookmarkMap = new HashMap<>();
-        for (Topic topic : topicList) {
-            TopicLearningRecord record = recordMap.get(topic);
-            if (record == null) {
-                record = new TopicLearningRecord(topic, customer);
-                topicLearningRecordRepository.save(record);
-            }
-            bookmarkMap.put(topic, record.getIsBookmarked());
-        }
-        return bookmarkMap;
-    }
+    return bookmarkMap;
+  }
 }

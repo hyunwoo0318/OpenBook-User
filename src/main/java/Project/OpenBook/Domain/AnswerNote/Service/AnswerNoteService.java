@@ -17,45 +17,55 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AnswerNoteService {
 
-    private final ExamQuestionLearningRecordRepository examQuestionLearningRecordRepository;
-    private final ExamQuestionRepository examQuestionRepository;
+  private final ExamQuestionLearningRecordRepository examQuestionLearningRecordRepository;
+  private final ExamQuestionRepository examQuestionRepository;
 
-    @Transactional
-    public void addAnswerNote(Customer customer, AnswerNoteDto answerNoteDto) {
-        Long questionId = answerNoteDto.getQuestionId();
+  @Transactional
+  public void addAnswerNote(Customer customer, AnswerNoteDto answerNoteDto) {
+    Long questionId = answerNoteDto.getQuestionId();
 
-        ExamQuestion examQuestion = examQuestionRepository.findById(questionId).orElseThrow(() -> {
-            throw new CustomException(QUESTION_NOT_FOUND);
-        });
+    ExamQuestion examQuestion =
+        examQuestionRepository
+            .findById(questionId)
+            .orElseThrow(
+                () -> {
+                  throw new CustomException(QUESTION_NOT_FOUND);
+                });
 
-        ExamQuestionLearningRecord record = examQuestionLearningRecordRepository.findByCustomerAndExamQuestion(
-            customer, examQuestion).orElseGet(() -> {
-            ExamQuestionLearningRecord newRecord = new ExamQuestionLearningRecord(customer,
-                examQuestion);
-            examQuestionLearningRecordRepository.save(newRecord);
-            return newRecord;
-        });
+    ExamQuestionLearningRecord record =
+        examQuestionLearningRecordRepository
+            .findByCustomerAndExamQuestion(customer, examQuestion)
+            .orElseGet(
+                () -> {
+                  ExamQuestionLearningRecord newRecord =
+                      new ExamQuestionLearningRecord(customer, examQuestion);
+                  examQuestionLearningRecordRepository.save(newRecord);
+                  return newRecord;
+                });
 
-        record.updateAnswerNoted(true);
-    }
+    record.updateAnswerNoted(true);
+  }
 
-    @Transactional
-    public void deleteAnswerNote(Customer customer, AnswerNoteDto answerNoteDto) {
-        Long questionId = answerNoteDto.getQuestionId();
+  @Transactional
+  public void deleteAnswerNote(Customer customer, AnswerNoteDto answerNoteDto) {
+    Long questionId = answerNoteDto.getQuestionId();
 
-        ExamQuestion examQuestion = examQuestionRepository.findById(questionId).orElseThrow(() -> {
-            throw new CustomException(QUESTION_NOT_FOUND);
-        });
+    ExamQuestion examQuestion =
+        examQuestionRepository
+            .findById(questionId)
+            .orElseThrow(() -> new CustomException(QUESTION_NOT_FOUND));
 
-        ExamQuestionLearningRecord record = examQuestionLearningRecordRepository.findByCustomerAndExamQuestion(
-            customer, examQuestion).orElseGet(() -> {
-            ExamQuestionLearningRecord newRecord = new ExamQuestionLearningRecord(customer,
-                examQuestion);
-            examQuestionLearningRecordRepository.save(newRecord);
-            return newRecord;
-        });
+    ExamQuestionLearningRecord record =
+        examQuestionLearningRecordRepository
+            .findByCustomerAndExamQuestion(customer, examQuestion)
+            .orElseGet(
+                () -> {
+                  ExamQuestionLearningRecord newRecord =
+                      new ExamQuestionLearningRecord(customer, examQuestion);
+                  examQuestionLearningRecordRepository.save(newRecord);
+                  return newRecord;
+                });
 
-        record.updateAnswerNoted(false);
-    }
-
+    record.updateAnswerNoted(false);
+  }
 }

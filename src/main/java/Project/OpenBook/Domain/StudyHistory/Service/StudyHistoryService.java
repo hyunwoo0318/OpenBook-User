@@ -89,8 +89,10 @@ public class StudyHistoryService {
         Map<Keyword, KeywordLearningRecord> keywordRecordMap = keywordLearningRecordRepository.queryKeywordLearningRecordsInKeywords(
                 customer, keywordIdList).stream()
             .collect(Collectors.toMap(kl -> kl.getKeyword(), kl -> kl));
+
 //        Map<Topic, TopicLearningRecord> topicRecordMap = topicLearningRecordRepository.queryTopicLearningRecordsInKeyword(customer, topicIdList)
 //                .stream().collect(Collectors.toMap(tl -> tl.getTopic(), tl -> tl));
+
         Map<QuestionCategory, QuestionCategoryLearningRecord> qcRecordMap = questionCategoryLearningRecordRepository.queryQuestionRecordsInKeywords(
                 customer, questionCategoryIdList).stream()
             .collect(Collectors.toMap(ql -> ql.getQuestionCategory(), ql -> ql));

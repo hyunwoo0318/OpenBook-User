@@ -2,13 +2,9 @@ package Project.OpenBook.Config;
 
 import Project.OpenBook.Constants.KeywordUsageConst;
 import Project.OpenBook.Domain.Chapter.Repo.ChapterRepository;
-import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeyword;
-import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeywordRepository;
 import Project.OpenBook.Domain.Customer.Domain.Customer;
 import Project.OpenBook.Domain.Customer.Repository.CustomerRepository;
 import Project.OpenBook.Domain.Customer.Service.CustomerService;
-import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeyword;
-import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.ExamQuestion.Domain.ExamQuestion;
 import Project.OpenBook.Domain.ExamQuestion.Repo.ExamQuestionRepository;
 import Project.OpenBook.Domain.JJH.JJHContent.JJHContent;
@@ -37,6 +33,10 @@ import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Domain.TopicLe
 import Project.OpenBook.Domain.LearningRecord.TopicLearningRecord.Repo.TopicLearningRecordRepository;
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.QuestionCategory.Repo.QuestionCategoryRepository;
+import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeyword;
+import Project.OpenBook.Domain.QuestionComment.ChoiceKeyword.ChoiceKeywordRepository;
+import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeyword;
+import Project.OpenBook.Domain.QuestionComment.DescriptionKeyword.DescriptionKeywordRepository;
 import Project.OpenBook.Domain.Round.Domain.Round;
 import Project.OpenBook.Domain.Round.Repo.RoundRepository;
 import Project.OpenBook.Domain.Search.ChapterSearch.ChapterSearch;
@@ -52,17 +52,16 @@ import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
 import com.amazonaws.services.s3.AmazonS3Client;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Configuration
 @EnableScheduling
@@ -312,20 +311,20 @@ public class InitConfig {
             }
 
             //4. Keyword
-            List<KeywordLearningRecord> keywordRecordList = keywordProgressMap.get(customer);
-            Map<Keyword, KeywordLearningRecord> keywordLearningRecordMap = new HashMap<>();
-            if (keywordRecordList != null) {
-                keywordLearningRecordMap = keywordRecordList.stream()
-                    .collect(Collectors.toMap(KeywordLearningRecord::getKeyword, k -> k));
-            }
-
-            for (Keyword k : keywordList) {
-                KeywordLearningRecord record = keywordLearningRecordMap.get(k);
-                if (record == null) {
-                    KeywordLearningRecord newRecord = new KeywordLearningRecord(k, customer);
-                    keywordLearningRecordRepository.save(newRecord);
-                }
-            }
+//            List<KeywordLearningRecord> keywordRecordList = keywordProgressMap.get(customer);
+//            Map<Keyword, KeywordLearningRecord> keywordLearningRecordMap = new HashMap<>();
+//            if (keywordRecordList != null) {
+//                keywordLearningRecordMap = keywordRecordList.stream()
+//                    .collect(Collectors.toMap(KeywordLearningRecord::getKeyword, k -> k));
+//            }
+//
+//            for (Keyword k : keywordList) {
+//                KeywordLearningRecord record = keywordLearningRecordMap.get(k);
+//                if (record == null) {
+//                    KeywordLearningRecord newRecord = new KeywordLearningRecord(k, customer);
+//                    keywordLearningRecordRepository.save(newRecord);
+//                }
+//            }
 
             //5. Timeline
             List<TimelineLearningRecord> timelineRecordList = timelineProgressMap.get(customer);

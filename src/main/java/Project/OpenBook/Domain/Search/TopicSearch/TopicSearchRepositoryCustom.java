@@ -1,6 +1,5 @@
 package Project.OpenBook.Domain.Search.TopicSearch;
 
-import Project.OpenBook.Domain.Topic.Domain.Topic;
 
 import java.util.List;
 

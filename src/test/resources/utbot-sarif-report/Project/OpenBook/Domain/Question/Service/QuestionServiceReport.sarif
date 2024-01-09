@@ -1,0 +1,582 @@
+{
+  "$schema" : "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "version" : "2.1.0",
+  "runs" : [ {
+    "tool" : {
+      "driver" : {
+        "name" : "UnitTestBot",
+        "organization" : "utbot.org",
+        "version" : "1.0",
+        "rules" : [ {
+          "id" : "utbot.exception.NullPointerException",
+          "name" : "NullPointerException",
+          "shortDescription" : {
+            "text" : "Unexpected NullPointerException detected."
+          },
+          "fullDescription" : {
+            "text" : "Seems like an exception NullPointerException might be thrown."
+          },
+          "help" : {
+            "text" : "https://docs.oracle.com/javase/8/docs/api/java/lang/NullPointerException.html"
+          }
+        }, {
+          "id" : "utbot.exception.ClassCastException",
+          "name" : "ClassCastException",
+          "shortDescription" : {
+            "text" : "Unexpected ClassCastException detected."
+          },
+          "fullDescription" : {
+            "text" : "Seems like an exception ClassCastException might be thrown."
+          },
+          "help" : {
+            "text" : "https://docs.oracle.com/javase/8/docs/api/java/lang/ClassCastException.html"
+          }
+        } ]
+      }
+    },
+    "results" : [ {
+      "ruleId" : "utbot.exception.NullPointerException",
+      "level" : "error",
+      "message" : {
+        "text" : "Unexpected NullPointerException.\nTest case: `queryTimeFlowQuestion(null)`\n[Generated test for this case](1)"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 166,
+            "startColumn" : 13
+          }
+        }
+      }, {
+        "logicalLocations" : [ {
+          "fullyQualifiedName" : "Project.OpenBook.Domain.Question.Service.QuestionService"
+        } ]
+      } ],
+      "relatedLocations" : [ {
+        "id" : 1,
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 140,
+            "startColumn" : 5
+          }
+        }
+      } ],
+      "codeFlows" : [ {
+        "threadFlows" : [ {
+          "locations" : [ {
+            "location" : {
+              "message" : {
+                "text" : "QuestionServiceTest.testQueryTimeFlowQuestion_ThrowNullPointerException(QuestionServiceTest.java:149)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 149,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.queryTimeFlowQuestion(QuestionService.java:86)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 86,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.getPrimaryDateQueryResult(QuestionService.java:166)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 166,
+                  "startColumn" : 13
+                }
+              }
+            }
+          } ]
+        } ]
+      } ]
+    }, {
+      "ruleId" : "utbot.exception.NullPointerException",
+      "level" : "error",
+      "message" : {
+        "text" : "Unexpected NullPointerException.\nTest case: `queryTimeFlowQuestion(null)`\n[Generated test for this case](1)"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 161,
+            "startColumn" : 17
+          }
+        }
+      }, {
+        "logicalLocations" : [ {
+          "fullyQualifiedName" : "Project.OpenBook.Domain.Question.Service.QuestionService"
+        } ]
+      } ],
+      "relatedLocations" : [ {
+        "id" : 1,
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 163,
+            "startColumn" : 5
+          }
+        }
+      } ],
+      "codeFlows" : [ {
+        "threadFlows" : [ {
+          "locations" : [ {
+            "location" : {
+              "message" : {
+                "text" : "QuestionServiceTest.testQueryTimeFlowQuestion_ThrowNullPointerException_1(QuestionServiceTest.java:172)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 172,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.queryTimeFlowQuestion(QuestionService.java:86)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 86,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.getPrimaryDateQueryResult(QuestionService.java:161)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 161,
+                  "startColumn" : 17
+                }
+              }
+            }
+          } ]
+        } ]
+      } ]
+    }, {
+      "ruleId" : "utbot.exception.ClassCastException",
+      "level" : "error",
+      "message" : {
+        "text" : "Unexpected ClassCastException: class [B cannot be cast to class Project.OpenBook.Domain.Timeline.Domain.Timeline ([B is in module java.base of loader 'bootstrap'; Project.OpenBook.Domain.Timeline.Domain.Timeline is in unnamed module of loader org.utbot.instrumentation.process.HandlerClassesLoader @32285c66).\nTest case: `queryTimeFlowQuestion(null)`\n[Generated test for this case](1)"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 166,
+            "startColumn" : 13
+          }
+        }
+      }, {
+        "logicalLocations" : [ {
+          "fullyQualifiedName" : "Project.OpenBook.Domain.Question.Service.QuestionService"
+        } ]
+      } ],
+      "relatedLocations" : [ {
+        "id" : 1,
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 116,
+            "startColumn" : 5
+          }
+        }
+      } ],
+      "codeFlows" : [ {
+        "threadFlows" : [ {
+          "locations" : [ {
+            "location" : {
+              "message" : {
+                "text" : "QuestionServiceTest.testQueryTimeFlowQuestion_ThrowClassCastException(QuestionServiceTest.java:127)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 127,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.queryTimeFlowQuestion(QuestionService.java:86)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 86,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.getPrimaryDateQueryResult(QuestionService.java:166)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 166,
+                  "startColumn" : 13
+                }
+              }
+            }
+          } ]
+        } ]
+      } ]
+    }, {
+      "ruleId" : "utbot.exception.NullPointerException",
+      "level" : "error",
+      "message" : {
+        "text" : "Unexpected NullPointerException.\nTest case: `queryTimeFlowQuestion(0)`\n[Generated test for this case](1)"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 169,
+            "startColumn" : 13
+          }
+        }
+      }, {
+        "logicalLocations" : [ {
+          "fullyQualifiedName" : "Project.OpenBook.Domain.Question.Service.QuestionService"
+        } ]
+      } ],
+      "relatedLocations" : [ {
+        "id" : 1,
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 238,
+            "startColumn" : 5
+          }
+        }
+      } ],
+      "codeFlows" : [ {
+        "threadFlows" : [ {
+          "locations" : [ {
+            "location" : {
+              "message" : {
+                "text" : "QuestionServiceTest.testQueryTimeFlowQuestionThrowsNPEWithCornerCase(QuestionServiceTest.java:246)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 246,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.queryTimeFlowQuestion(QuestionService.java:86)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 86,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.getPrimaryDateQueryResult(QuestionService.java:169)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 169,
+                  "startColumn" : 13
+                }
+              }
+            }
+          } ]
+        } ]
+      } ]
+    }, {
+      "ruleId" : "utbot.exception.NullPointerException",
+      "level" : "error",
+      "message" : {
+        "text" : "Unexpected NullPointerException.\nTest case: `queryTimeFlowQuestion(-9223372036854775807)`\n[Generated test for this case](1)"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 132,
+            "startColumn" : 13
+          }
+        }
+      }, {
+        "logicalLocations" : [ {
+          "fullyQualifiedName" : "Project.OpenBook.Domain.Question.Service.QuestionService"
+        } ]
+      } ],
+      "relatedLocations" : [ {
+        "id" : 1,
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 255,
+            "startColumn" : 5
+          }
+        }
+      } ],
+      "codeFlows" : [ {
+        "threadFlows" : [ {
+          "locations" : [ {
+            "location" : {
+              "message" : {
+                "text" : "QuestionServiceTest.testQueryTimeFlowQuestionThrowsNPE(QuestionServiceTest.java:246)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 246,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.queryTimeFlowQuestion(QuestionService.java:89)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 89,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.keywordPrimaryDateToQuestionDto(QuestionService.java:132)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 132,
+                  "startColumn" : 13
+                }
+              }
+            }
+          } ]
+        } ]
+      } ]
+    }, {
+      "ruleId" : "utbot.exception.NullPointerException",
+      "level" : "error",
+      "message" : {
+        "text" : "Unexpected NullPointerException.\nTest case: `queryTimeFlowQuestion(9223372036854775807)`\n[Generated test for this case](1)"
+      },
+      "locations" : [ {
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 114,
+            "startColumn" : 13
+          }
+        }
+      }, {
+        "logicalLocations" : [ {
+          "fullyQualifiedName" : "Project.OpenBook.Domain.Question.Service.QuestionService"
+        } ]
+      } ],
+      "relatedLocations" : [ {
+        "id" : 1,
+        "physicalLocation" : {
+          "artifactLocation" : {
+            "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+            "uriBaseId" : "%SRCROOT%"
+          },
+          "region" : {
+            "startLine" : 238,
+            "startColumn" : 5
+          }
+        }
+      } ],
+      "codeFlows" : [ {
+        "threadFlows" : [ {
+          "locations" : [ {
+            "location" : {
+              "message" : {
+                "text" : "QuestionServiceTest.testQueryTimeFlowQuestionThrowsNPEWithCornerCase(QuestionServiceTest.java:246)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/test/java/Project/OpenBook/Domain/Question/Service/QuestionServiceTest.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 246,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.queryTimeFlowQuestion(QuestionService.java:90)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 90,
+                  "startColumn" : 9
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "Project.OpenBook.Domain.Question.Service.QuestionService.topicPrimaryDateToQuestionDto(QuestionService.java:114)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "src/main/java/Project/OpenBook/Domain/Question/Service/QuestionService.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 114,
+                  "startColumn" : 13
+                }
+              }
+            }
+          }, {
+            "location" : {
+              "message" : {
+                "text" : "java.base/java.util.ArrayList.addAll(ArrayList.java:702)"
+              },
+              "physicalLocation" : {
+                "artifactLocation" : {
+                  "uri" : "java/util/ArrayList.java",
+                  "uriBaseId" : "%SRCROOT%"
+                },
+                "region" : {
+                  "startLine" : 702
+                }
+              }
+            }
+          } ]
+        } ]
+      } ]
+    } ]
+  } ]
+}

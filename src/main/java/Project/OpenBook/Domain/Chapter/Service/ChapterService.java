@@ -18,33 +18,30 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ChapterService {
 
-    private final ChapterRepository chapterRepository;
-    private final ChapterValidator chapterValidator;
+  private final ChapterRepository chapterRepository;
+  private final ChapterValidator chapterValidator;
 
-    public List<ChapterDetailDto> queryChaptersTotalInfo() {
-        return chapterRepository.findAll().stream()
-            .map(c -> {
-                return new ChapterDetailDto(c.getTitle(),
-                    c.getNumber(),
-                    c.getDateComment(),
-                    c.getTopicList().size());
+  public List<ChapterDetailDto> queryChaptersTotalInfo() {
+    return chapterRepository.findAll().stream()
+        .map(
+            c -> {
+              return new ChapterDetailDto(
+                  c.getTitle(), c.getNumber(), c.getDateComment(), c.getTopicList().size());
             })
-            .sorted(Comparator.comparing(ChapterDetailDto::getNumber))
-            .collect(Collectors.toList());
-    }
+        .sorted(Comparator.comparing(ChapterDetailDto::getNumber))
+        .collect(Collectors.toList());
+  }
 
-    public ChapterTitleDto queryChapterTitle(Integer num) {
-        return new ChapterTitleDto(chapterValidator.checkChapter(num).getTitle());
-    }
+  public ChapterTitleDto queryChapterTitle(Integer num) {
+    return new ChapterTitleDto(chapterValidator.checkChapter(num).getTitle());
+  }
 
-    public ChapterDateDto queryChapterDate(Integer num) {
-        Chapter chapter = chapterValidator.checkChapter(num);
-        return new ChapterDateDto(chapter.getDateComment());
-    }
+  public ChapterDateDto queryChapterDate(Integer num) {
+    Chapter chapter = chapterValidator.checkChapter(num);
+    return new ChapterDateDto(chapter.getDateComment());
+  }
 
-    public ChapterInfoDto queryChapterInfo(Integer num) {
-        return new ChapterInfoDto(chapterValidator.checkChapter(num).getContent());
-    }
-
-
+  public ChapterInfoDto queryChapterInfo(Integer num) {
+    return new ChapterInfoDto(chapterValidator.checkChapter(num).getContent());
+  }
 }

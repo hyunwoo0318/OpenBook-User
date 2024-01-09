@@ -1,16 +1,16 @@
 buildscript {
-	ext {
-		queryDslVersion = "5.0.0"
-	}
+    ext {
+        queryDslVersion = "5.0.0"
+    }
 }
 
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.12'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
-	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" // querydsl 플러그인 추가
-	id "io.franzbecker.gradle-lombok" version "3.0.0"
-	id 'jacoco'
+    id 'java'
+    id 'org.springframework.boot' version '2.7.12'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    id "com.ewerk.gradle.plugins.querydsl" version "1.0.10" // querydsl 플러그인 추가
+    id "io.franzbecker.gradle-lombok" version "3.0.0"
+    id 'jacoco'
 }
 
 
@@ -19,92 +19,92 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
-	implementation 'org.springframework.data:spring-data-elasticsearch'
-	implementation 'jakarta.json:jakarta.json-api:2.0.1'
-	implementation 'com.github.downgoon:marvin:1.5.5'
-	implementation 'com.github.downgoon:MarvinPlugins:1.5.5'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+    implementation 'org.springframework.data:spring-data-elasticsearch'
+    implementation 'jakarta.json:jakarta.json-api:2.0.1'
+    implementation 'com.github.downgoon:marvin:1.5.5'
+    implementation 'com.github.downgoon:MarvinPlugins:1.5.5'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 //	implementation "io.springfox:springfox-boot-starter:3.0.0"
 //	implementation group: 'io.springfox', name: 'springfox-boot-starter', version: '3.0.0'
 //	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
 //	implementation group: 'io.springfox', name: 'springfox-oas', version: '3.0.0'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.apache.httpcomponents:httpclient'
-	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
-	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.apache.httpcomponents:httpclient'
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
-	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
-	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'com.h2database:h2'
-	testImplementation 'org.mockito:mockito-core:5.3.1'
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'com.h2database:h2'
+    testImplementation 'org.mockito:mockito-core:5.3.1'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
 
-	testImplementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-	testImplementation "com.querydsl:querydsl-core:${queryDslVersion}"
-	testImplementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+    testImplementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    testImplementation "com.querydsl:querydsl-core:${queryDslVersion}"
+    testImplementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 }
 
 test {
-	useJUnitPlatform()
-	finalizedBy 'jacocoTestReport'
+    useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
 }
 
 
 jacoco {
-	toolVersion = '0.8.7'
+    toolVersion = '0.8.7'
 }
 
 jacocoTestReport {
-	reports {
-		html.enabled true
-		xml.enabled false
-		csv.enabled true
-	}
+    reports {
+        html.enabled true
+        xml.enabled false
+        csv.enabled true
+    }
 
-	def Qdomains = []
-	for(qPattern in "**/QA" .. "**/QZ"){
-		Qdomains.add(qPattern+"*")
-	}
+    def Qdomains = []
+    for (qPattern in "**/QA".."**/QZ") {
+        Qdomains.add(qPattern + "*")
+    }
 
-	afterEvaluate {
-		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(dir: it,
-					exclude: [] + Qdomains)
-		}))
-	}
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: [] + Qdomains)
+        }))
+    }
 
-	finalizedBy 'jacocoTestCoverageVerification'
+    finalizedBy 'jacocoTestCoverageVerification'
 }
 
 
@@ -112,20 +112,20 @@ jacocoTestReport {
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
-	jpa = true
-	querydslSourcesDir = querydslDir
+    jpa = true
+    querydslSourcesDir = querydslDir
 }
 sourceSets {
-	main.java.srcDir querydslDir
+    main.java.srcDir querydslDir
 }
-compileQuerydsl{
-	options.annotationProcessorPath = configurations.querydsl
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
 }
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-	querydsl.extendsFrom compileClasspath
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
 }
 //querydsl 추가 끝
