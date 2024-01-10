@@ -131,7 +131,7 @@ public class QuestionService {
               tp.getExtraDate(),
               tp.getExtraDateComment(),
               keywordWithChapterList,
-              tp.getExtraDateComment());
+              tp.getTopic().getDateComment());
       timeFlowQuestionDtoList.add(dto);
     }
   }

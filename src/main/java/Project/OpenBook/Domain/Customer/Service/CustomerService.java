@@ -1,5 +1,6 @@
 package Project.OpenBook.Domain.Customer.Service;
 
+import static Project.OpenBook.Constants.ErrorCode.CUSTOMER_NOT_FOUND;
 import static Project.OpenBook.Constants.ErrorCode.LOGIN_FAIL;
 import static Project.OpenBook.Constants.ErrorCode.WRONG_PROVIDER_NAME;
 
@@ -40,6 +41,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -77,23 +79,14 @@ public class CustomerService implements UserDetailsService {
   @Transactional
   public void deleteCustomer(Customer customer) {
     jjhListProgressRepository.deleteAllInBatchByCustomer(customer);
-    System.out.println("1-------------------------------");
     jjhContentProgressRepository.deleteAllInBatchByCustomer(customer);
-    System.out.println("2-------------------------------");
     keywordLearningRecordRepository.deleteAllInBatchByCustomer(customer);
-    System.out.println("3-------------------------------");
     topicLearningRecordRepository.deleteAllInBatchByCustomer(customer);
-    System.out.println("4-------------------------------");
     timelineLearningRecordRepository.deleteAllInBatchByCustomer(customer);
-    System.out.println("5-------------------------------");
     questionCategoryLearningRecordRepository.deleteAllInBatchByCustomer(customer);
-    System.out.println("6-------------------------------");
     roundLearningRecordRepository.deleteAllInBatchByCustomer(customer);
-    System.out.println("7-------------------------------");
     examQuestionLearningRecordRepository.deleteAllInBatchByCustomer(customer);
-    System.out.println("8-------------------------------");
     customerRepository.deleteById(customer.getId());
-    System.out.println("9-------------------------------");
   }
 
   @Override
@@ -131,7 +124,7 @@ public class CustomerService implements UserDetailsService {
         customerRepository.save(customer);
 
         // 단원전체진도, 단원섹션별 진도, 주제학습 레코드 생성
-        initCustomerData(customer);
+        // initCustomerData(customer);
       } else {
         customer = customerList.get(0);
         customer.setInfo(
@@ -182,6 +175,41 @@ public class CustomerService implements UserDetailsService {
 
     // 8. round 학습정도
     initRoundLearningHistory(customer);
+  }
+
+  @Async
+  public void initCustomerDataAsync(Long customerId) {
+
+    Customer customer =
+        customerRepository
+            .findById(customerId)
+            .orElseThrow(() -> new CustomException(CUSTOMER_NOT_FOUND));
+
+    // 1. 정주행 리스트 progress
+    initJJHListProgress(customer);
+
+    // 2. 정주행 콘텐츠 progress
+    initJJHContentProgress(customer);
+
+    // 3. keyword 학습정도
+    initKeywordLearningHistory(customer);
+
+    // 4. topic 학습정도
+    initTopicLearningHistory(customer);
+
+    // 5. questionCategory 학습정도
+    initQuestionCategoryLearningHistory(customer);
+
+    // 6. timeline 학습정도
+    initTimelineLearningHistory(customer);
+
+    // 7. examQuestion 학습정도
+    initExamQuestionLearningHistory(customer);
+
+    // 8. round 학습정도
+    initRoundLearningHistory(customer);
+
+    System.out.println("NOEWEWEWEWE");
   }
 
   private void initRoundLearningHistory(Customer customer) {

@@ -27,26 +27,27 @@ import org.springframework.util.Base64Utils;
 @Component
 public class TokenManager {
 
-    private Key key;
-    private Date tokenExpire;
+  private Key key;
+  private Date tokenExpire;
 
-    private CustomerRepository customerRepository;
+  private CustomerRepository customerRepository;
 
-    public TokenManager(@Value("${jwt.secret}") String secretKey,
-        CustomerRepository customerRepository) {
-        byte[] bytes = Base64Utils.decodeFromString(secretKey);
-        this.key = Keys.hmacShaKeyFor(bytes);
-        this.customerRepository = customerRepository;
-    }
+  public TokenManager(
+      @Value("${jwt.secret}") String secretKey, CustomerRepository customerRepository) {
+    byte[] bytes = Base64Utils.decodeFromString(secretKey);
+    this.key = Keys.hmacShaKeyFor(bytes);
+    this.customerRepository = customerRepository;
+  }
 
-    public TokenDto generateToken(Customer customer) {
-        Long customerId = customer.getId();
-        String authorities = getAuthorities(customer);
-        long now = new Date().getTime();
-        tokenExpire = new Date(now + JwtConst.TOKEN_EXPIRED_TIME);
-        Date refreshTokenExpire = new Date(now + JwtConst.TOKEN_EXPIRED_TIME * 10000);
+  public TokenDto generateToken(Customer customer) {
+    Long customerId = customer.getId();
+    String authorities = getAuthorities(customer);
+    long now = new Date().getTime();
+    tokenExpire = new Date(now + JwtConst.TOKEN_EXPIRED_TIME);
+    Date refreshTokenExpire = new Date(now + JwtConst.TOKEN_EXPIRED_TIME * 10000);
 
-        String accessToken = Jwts.builder()
+    String accessToken =
+        Jwts.builder()
             .setSubject(String.valueOf(customerId))
             .claim("auth", authorities) // claim -> jwt body custom claim
             .setIssuer(JwtConst.TOKEN_ISSUER)
@@ -54,82 +55,86 @@ public class TokenManager {
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
 
-        String refreshToken = Jwts.builder()
+    String refreshToken =
+        Jwts.builder()
             .setSubject(String.valueOf(customerId))
             .setExpiration(refreshTokenExpire)
             .signWith(key, SignatureAlgorithm.HS256)
             .compact();
 
-        return TokenDto.builder()
-            .type("Bearer")
-            .accessToken(accessToken)
-            .refreshToken(refreshToken)
-            .nickname(customer.getNickName())
-            .isNew(customer.isNew())
-            .build();
+    return TokenDto.builder()
+        .type("Bearer")
+        .customerId(customerId)
+        .accessToken(accessToken)
+        .refreshToken(refreshToken)
+        .nickname(customer.getNickName())
+        .isNew(customer.isNew())
+        .build();
+  }
+
+  private String getAuthorities(Customer customer) {
+    return customer.getAuthorities().stream()
+        .map(GrantedAuthority::getAuthority)
+        .collect(Collectors.joining(","));
+  }
+
+  public TokenDto generateToken(String refreshToken) {
+    Claims claims = parseClaim(refreshToken);
+    long id = Long.parseLong(claims.getSubject());
+
+    Customer customer = checkCustomer(id);
+    return generateToken(customer);
+  }
+
+  public Authentication getAuthorities(String accessToken) {
+    Claims claim =
+        Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+
+    long id = Long.parseLong(claim.getSubject());
+    Customer findCustomer = checkCustomer(id);
+    System.out.println(
+        "findCustomerID ==== " + findCustomer.getId() + " ---------------------------- ");
+    if (claim.get("auth") == null) {
+      throw new CustomException(NOT_AUTHORIZED);
     }
 
-    private String getAuthorities(Customer customer) {
-        return customer.getAuthorities().stream()
-            .map(GrantedAuthority::getAuthority)
-            .collect(Collectors.joining(","));
+    Collection<? extends GrantedAuthority> authorities = findCustomer.getAuthorities();
+    return new UsernamePasswordAuthenticationToken(findCustomer, "", authorities);
+  }
+
+  public void validateToken(String accessToken) {
+    try {
+      Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
+    } catch (Exception e) {
+      throw new CustomException(INVALID_TOKEN);
     }
+  }
 
-    public TokenDto generateToken(String refreshToken) {
-        Claims claims = parseClaim(refreshToken);
-        long id = Long.parseLong(claims.getSubject());
-
-        Customer customer = checkCustomer(id);
-        return generateToken(customer);
+  public Claims parseClaim(String accessToken) {
+    try {
+      return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+    } catch (ExpiredJwtException e) {
+      throw new CustomException(INVALID_TOKEN);
     }
+  }
 
-    public Authentication getAuthorities(String accessToken) {
-        Claims claim = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken)
-            .getBody();
-
-        long id = Long.parseLong(claim.getSubject());
-        Customer findCustomer = checkCustomer(id);
-        System.out.println(
-            "findCustomerID ==== " + findCustomer.getId() + " ---------------------------- ");
-        if (claim.get("auth") == null) {
-            throw new CustomException(NOT_AUTHORIZED);
-        }
-
-        Collection<? extends GrantedAuthority> authorities = findCustomer.getAuthorities();
-        return new UsernamePasswordAuthenticationToken(findCustomer, "", authorities);
+  public String resolveRequest(HttpServletRequest req) {
+    String token = req.getHeader("Authorization");
+    if (token == null) {
+      return null;
     }
-
-    public void validateToken(String accessToken) {
-        try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken);
-        } catch (Exception e) {
-            throw new CustomException(INVALID_TOKEN);
-        }
+    if (!token.startsWith("Bearer")) {
+      return null;
     }
+    return token.substring(7);
+  }
 
-    public Claims parseClaim(String accessToken) {
-        try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken)
-                .getBody();
-        } catch (ExpiredJwtException e) {
-            throw new CustomException(INVALID_TOKEN);
-        }
-    }
-
-    public String resolveRequest(HttpServletRequest req) {
-        String token = req.getHeader("Authorization");
-        if (token == null) {
-            return null;
-        }
-        if (!token.startsWith("Bearer")) {
-            return null;
-        }
-        return token.substring(7);
-    }
-
-    private Customer checkCustomer(Long customerId) {
-        return customerRepository.findById(customerId).orElseThrow(() -> {
-            throw new CustomException(CUSTOMER_NOT_FOUND);
-        });
-    }
+  private Customer checkCustomer(Long customerId) {
+    return customerRepository
+        .findById(customerId)
+        .orElseThrow(
+            () -> {
+              throw new CustomException(CUSTOMER_NOT_FOUND);
+            });
+  }
 }

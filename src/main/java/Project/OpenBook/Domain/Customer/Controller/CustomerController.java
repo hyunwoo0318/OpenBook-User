@@ -36,6 +36,10 @@ public class CustomerController {
       @RequestParam("protocol") String protocol)
       throws Exception {
     TokenDto tokenDto = customerService.loginOauth2(providerName, code, redirectUrl, protocol);
+    if (tokenDto.getIsNew()) {
+      customerService.initCustomerDataAsync(tokenDto.getCustomerId());
+    }
+    System.out.println("NOW!!!");
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", tokenDto.getType() + " " + tokenDto.getAccessToken());
     headers.set("Refresh-Token", tokenDto.getRefreshToken());
