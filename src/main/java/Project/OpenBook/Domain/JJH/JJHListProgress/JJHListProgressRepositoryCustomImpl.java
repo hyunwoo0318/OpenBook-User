@@ -17,24 +17,37 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class JJHListProgressRepositoryCustomImpl implements JJHListProgressRepositoryCustom {
 
-    private final JPAQueryFactory queryFactory;
+  private final JPAQueryFactory queryFactory;
 
-    @Override
-    public List<JJHListProgress> queryJJHListProgressWithJJHList(Customer customer) {
-        return queryFactory.selectFrom(jJHListProgress)
-            .leftJoin(jJHListProgress.jjhList, jJHList).fetchJoin()
-            .leftJoin(jJHList.chapter, chapter).fetchJoin()
-            .leftJoin(jJHList.timeline, timeline).fetchJoin()
-            .leftJoin(timeline.era, era).fetchJoin()
-            .where(jJHListProgress.customer.eq(customer))
-            .fetch();
-    }
+  @Override
+  public List<JJHListProgress> queryJJHListProgressWithJJHList(Customer customer) {
+    return queryFactory
+        .selectFrom(jJHListProgress)
+        .leftJoin(jJHListProgress.jjhList, jJHList)
+        .fetchJoin()
+        .leftJoin(jJHList.chapter, chapter)
+        .fetchJoin()
+        .leftJoin(jJHList.timeline, timeline)
+        .fetchJoin()
+        .leftJoin(timeline.era, era)
+        .fetchJoin()
+        .where(jJHListProgress.customer.eq(customer))
+        .fetch();
+  }
 
-    @Override
-    public List<JJHListProgress> queryAllJJHList() {
-        return queryFactory.selectFrom(jJHListProgress)
-            .leftJoin(jJHListProgress.jjhList, jJHList).fetchJoin()
-            .leftJoin(jJHListProgress.customer, customer).fetchJoin()
-            .fetch();
-    }
+  @Override
+  public List<JJHListProgress> queryAllJJHList() {
+    return queryFactory
+        .selectFrom(jJHListProgress)
+        .leftJoin(jJHListProgress.jjhList, jJHList)
+        .fetchJoin()
+        .leftJoin(jJHListProgress.customer, customer)
+        .fetchJoin()
+        .fetch();
+  }
+
+  @Override
+  public void deleteAllInBatchByCustomer(Customer customer) {
+    queryFactory.delete(jJHListProgress).where(jJHListProgress.customer.eq(customer)).execute();
+  }
 }

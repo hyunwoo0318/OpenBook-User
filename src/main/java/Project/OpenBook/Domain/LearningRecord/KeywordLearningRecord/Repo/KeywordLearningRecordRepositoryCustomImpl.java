@@ -11,34 +11,44 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
 @RequiredArgsConstructor
-public class KeywordLearningRecordRepositoryCustomImpl implements
-    KeywordLearningRecordRepositoryCustom {
+public class KeywordLearningRecordRepositoryCustomImpl
+    implements KeywordLearningRecordRepositoryCustom {
 
-    private final JPAQueryFactory queryFactory;
+  private final JPAQueryFactory queryFactory;
 
-    @Override
-    public List<KeywordLearningRecord> queryKeywordLearningRecordsInKeywords(Customer customer,
-        List<Long> keywordIdList) {
-        return queryFactory.selectFrom(keywordLearningRecord)
-            .leftJoin(keywordLearningRecord.keyword, keyword).fetchJoin()
-            .where(keywordLearningRecord.customer.eq(customer))
-            .where(keywordLearningRecord.keyword.id.in(keywordIdList))
-            .fetch();
-    }
+  @Override
+  public List<KeywordLearningRecord> queryKeywordLearningRecordsInKeywords(
+      Customer customer, List<Long> keywordIdList) {
+    return queryFactory
+        .selectFrom(keywordLearningRecord)
+        .leftJoin(keywordLearningRecord.keyword, keyword)
+        .fetchJoin()
+        .where(keywordLearningRecord.customer.eq(customer))
+        .where(keywordLearningRecord.keyword.id.in(keywordIdList))
+        .fetch();
+  }
 
-    @Override
-    public List<KeywordLearningRecord> queryKeywordLearningRecordsInQuestionCategory(
-        Customer customer, Long questionCategoryId) {
-        return queryFactory.selectFrom(keywordLearningRecord)
-            .leftJoin(keywordLearningRecord.keyword, keyword).fetchJoin()
-            .leftJoin(keyword.topic, topic).fetchJoin()
-            .where(keywordLearningRecord.customer.eq(customer))
-            .where(keyword.topic.questionCategory.id.eq(questionCategoryId))
-            .fetch();
-    }
+  @Override
+  public List<KeywordLearningRecord> queryKeywordLearningRecordsInQuestionCategory(
+      Customer customer, Long questionCategoryId) {
+    return queryFactory
+        .selectFrom(keywordLearningRecord)
+        .leftJoin(keywordLearningRecord.keyword, keyword)
+        .fetchJoin()
+        .leftJoin(keyword.topic, topic)
+        .fetchJoin()
+        .where(keywordLearningRecord.customer.eq(customer))
+        .where(keyword.topic.questionCategory.id.eq(questionCategoryId))
+        .fetch();
+  }
 
-
+  @Override
+  public void deleteAllInBatchByCustomer(Customer customer) {
+    queryFactory
+        .delete(keywordLearningRecord)
+        .where(keywordLearningRecord.customer.eq(customer))
+        .execute();
+  }
 }

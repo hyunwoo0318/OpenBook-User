@@ -14,4 +14,6 @@ public interface JJHContentProgressRepositoryCustom {
         Integer number);
 
     public TotalProgressDto queryTotalProgressDto(Customer customer);
+
+    public void deleteAllInBatchByCustomer(Customer customer);
 }

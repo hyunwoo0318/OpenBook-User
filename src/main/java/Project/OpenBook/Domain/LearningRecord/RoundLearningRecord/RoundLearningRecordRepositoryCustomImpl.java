@@ -10,29 +10,43 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class RoundLearningRecordRepositoryCustomImpl implements
-    RoundLearningRecordRepositoryCustom {
+public class RoundLearningRecordRepositoryCustomImpl
+    implements RoundLearningRecordRepositoryCustom {
 
-    private final JPAQueryFactory queryFactory;
+  private final JPAQueryFactory queryFactory;
 
+  @Override
+  public List<RoundLearningRecord> queryRoundLearningRecord(Customer customer) {
+    return queryFactory
+        .selectFrom(roundLearningRecord)
+        .leftJoin(roundLearningRecord.round, round)
+        .fetchJoin()
+        .where(roundLearningRecord.customer.eq(customer))
+        .fetch();
+  }
 
-    @Override
-    public List<RoundLearningRecord> queryRoundLearningRecord(Customer customer) {
-        return queryFactory.selectFrom(roundLearningRecord)
-            .leftJoin(roundLearningRecord.round, round).fetchJoin()
-            .where(roundLearningRecord.customer.eq(customer))
-            .fetch();
-    }
-
-    @Override
-    public Optional<RoundLearningRecord> queryRoundLearningRecord(Customer customer,
-        Integer roundNumber) {
-        RoundLearningRecord record = queryFactory.selectFrom(roundLearningRecord).distinct()
-            .leftJoin(roundLearningRecord.round, round).fetchJoin()
-            .leftJoin(round.examQuestionList).fetchJoin()
+  @Override
+  public Optional<RoundLearningRecord> queryRoundLearningRecord(
+      Customer customer, Integer roundNumber) {
+    RoundLearningRecord record =
+        queryFactory
+            .selectFrom(roundLearningRecord)
+            .distinct()
+            .leftJoin(roundLearningRecord.round, round)
+            .fetchJoin()
+            .leftJoin(round.examQuestionList)
+            .fetchJoin()
             .where(roundLearningRecord.customer.eq(customer))
             .where(roundLearningRecord.round.number.eq(roundNumber))
             .fetchOne();
-        return Optional.ofNullable(record);
-    }
+    return Optional.ofNullable(record);
+  }
+
+  @Override
+  public void deleteAllInBatchByCustomer(Customer customer) {
+    queryFactory
+        .delete(roundLearningRecord)
+        .where(roundLearningRecord.customer.eq(customer))
+        .execute();
+  }
 }

@@ -6,8 +6,10 @@ import java.util.Optional;
 
 public interface RoundLearningRecordRepositoryCustom {
 
-    public List<RoundLearningRecord> queryRoundLearningRecord(Customer customer);
+  public List<RoundLearningRecord> queryRoundLearningRecord(Customer customer);
 
-    public Optional<RoundLearningRecord> queryRoundLearningRecord(Customer customer,
-        Integer roundNumber);
+  public Optional<RoundLearningRecord> queryRoundLearningRecord(
+      Customer customer, Integer roundNumber);
+
+  public void deleteAllInBatchByCustomer(Customer customer);
 }

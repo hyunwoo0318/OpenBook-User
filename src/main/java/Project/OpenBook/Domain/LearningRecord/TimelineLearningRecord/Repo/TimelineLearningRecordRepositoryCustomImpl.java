@@ -13,28 +13,40 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class TimelineLearningRecordRepositoryCustomImpl implements
-    TimelineLearningRecordRepositoryCustom {
+public class TimelineLearningRecordRepositoryCustomImpl
+    implements TimelineLearningRecordRepositoryCustom {
 
-    private final JPAQueryFactory queryFactory;
+  private final JPAQueryFactory queryFactory;
 
-    @Override
-    public List<TimelineLearningRecord> queryTimelineLearningRecord(Customer customer) {
-        return queryFactory.selectFrom(timelineLearningRecord)
-            .leftJoin(timelineLearningRecord.timeline, timeline).fetchJoin()
-            .leftJoin(timeline.era, era).fetchJoin()
-            .where(timelineLearningRecord.customer.eq(customer))
-            .fetch();
-    }
+  @Override
+  public List<TimelineLearningRecord> queryTimelineLearningRecord(Customer customer) {
+    return queryFactory
+        .selectFrom(timelineLearningRecord)
+        .leftJoin(timelineLearningRecord.timeline, timeline)
+        .fetchJoin()
+        .leftJoin(timeline.era, era)
+        .fetchJoin()
+        .where(timelineLearningRecord.customer.eq(customer))
+        .fetch();
+  }
 
-    @Override
-    public List<TimelineLearningRecord> queryTimelineLearningRecordInKeywords(Customer customer,
-        List<Long> timelineIdList) {
-        return queryFactory.selectFrom(timelineLearningRecord)
-            .leftJoin(timelineLearningRecord.timeline, timeline).fetchJoin()
-            .where(timelineLearningRecord.customer.eq(customer))
-            .where(timelineLearningRecord.timeline.id.in(timelineIdList))
-            .fetch();
-    }
+  @Override
+  public List<TimelineLearningRecord> queryTimelineLearningRecordInKeywords(
+      Customer customer, List<Long> timelineIdList) {
+    return queryFactory
+        .selectFrom(timelineLearningRecord)
+        .leftJoin(timelineLearningRecord.timeline, timeline)
+        .fetchJoin()
+        .where(timelineLearningRecord.customer.eq(customer))
+        .where(timelineLearningRecord.timeline.id.in(timelineIdList))
+        .fetch();
+  }
 
+  @Override
+  public void deleteAllInBatchByCustomer(Customer customer) {
+    queryFactory
+        .delete(timelineLearningRecord)
+        .where(timelineLearningRecord.customer.eq(customer))
+        .execute();
+  }
 }

@@ -23,44 +23,67 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class JJHContentProgressRepositoryCustomImpl implements JJHContentProgressRepositoryCustom {
 
-    private final JPAQueryFactory queryFactory;
+  private final JPAQueryFactory queryFactory;
 
-    @Override
-    public List<JJHContentProgress> queryJJHContentProgressForCustomer(Customer customer,
-        Integer number) {
-        return queryFactory.selectFrom(jJHContentProgress)
-            .leftJoin(jJHContentProgress.jjhContent, jJHContent).fetchJoin()
-            .leftJoin(jJHContent.jjhList, jJHList).fetchJoin()
-            .leftJoin(jJHContent.topic, topic).fetchJoin()
-            .leftJoin(topic.questionCategory, questionCategory).fetchJoin()
-            .leftJoin(questionCategory.category, category).fetchJoin()
-            .leftJoin(jJHContent.chapter, chapter).fetchJoin()
-            .leftJoin(jJHContent.timeline, timeline).fetchJoin()
-            .leftJoin(timeline.era, era).fetchJoin()
-            .where(jJHContentProgress.customer.eq(customer))
-            .where(jJHContent.jjhList.number.eq(number))
-            .fetch();
-    }
+  @Override
+  public List<JJHContentProgress> queryJJHContentProgressForCustomer(
+      Customer customer, Integer number) {
+    return queryFactory
+        .selectFrom(jJHContentProgress)
+        .leftJoin(jJHContentProgress.jjhContent, jJHContent)
+        .fetchJoin()
+        .leftJoin(jJHContent.jjhList, jJHList)
+        .fetchJoin()
+        .leftJoin(jJHContent.topic, topic)
+        .fetchJoin()
+        .leftJoin(topic.questionCategory, questionCategory)
+        .fetchJoin()
+        .leftJoin(questionCategory.category, category)
+        .fetchJoin()
+        .leftJoin(jJHContent.chapter, chapter)
+        .fetchJoin()
+        .leftJoin(jJHContent.timeline, timeline)
+        .fetchJoin()
+        .leftJoin(timeline.era, era)
+        .fetchJoin()
+        .where(jJHContentProgress.customer.eq(customer))
+        .where(jJHContent.jjhList.number.eq(number))
+        .fetch();
+  }
 
-    @Override
-    public Optional<JJHContentProgress> queryJJHContentProgressWithJJHContent(Customer customer,
-        Integer number) {
-        JJHContentProgress findProgress = queryFactory.selectFrom(jJHContentProgress)
-            .leftJoin(jJHContentProgress.jjhContent, jJHContent).fetchJoin()
-            .leftJoin(jJHContent.jjhList, jJHList).fetchJoin()
+  @Override
+  public Optional<JJHContentProgress> queryJJHContentProgressWithJJHContent(
+      Customer customer, Integer number) {
+    JJHContentProgress findProgress =
+        queryFactory
+            .selectFrom(jJHContentProgress)
+            .leftJoin(jJHContentProgress.jjhContent, jJHContent)
+            .fetchJoin()
+            .leftJoin(jJHContent.jjhList, jJHList)
+            .fetchJoin()
             .where(jJHContentProgress.jjhContent.number.eq(number))
             .where(jJHContentProgress.customer.eq(customer))
             .fetchOne();
-        return Optional.ofNullable(findProgress);
-    }
+    return Optional.ofNullable(findProgress);
+  }
 
-    @Override
-    public TotalProgressDto queryTotalProgressDto(Customer customer) {
-        long totalCount = queryFactory.selectFrom(jJHContentProgress)
-            .stream().count();
-        long openCount = queryFactory.selectFrom(jJHContentProgress)
+  @Override
+  public TotalProgressDto queryTotalProgressDto(Customer customer) {
+    long totalCount = queryFactory.selectFrom(jJHContentProgress).stream().count();
+    long openCount =
+        queryFactory
+            .selectFrom(jJHContentProgress)
             .where(jJHContentProgress.state.ne(StateConst.LOCKED))
-            .stream().count();
-        return new TotalProgressDto((openCount * 100) / totalCount);
-    }
+            .stream()
+            .count();
+    return new TotalProgressDto((openCount * 100) / totalCount);
+  }
+
+  @Override
+  public void deleteAllInBatchByCustomer(Customer customer) {
+    queryFactory
+        .delete(jJHContentProgress)
+        .where(jJHContentProgress.customer.eq(customer))
+        .execute();
+  }
 }

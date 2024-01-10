@@ -13,46 +13,67 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 @RequiredArgsConstructor
-public class QuestionCategoryLearningRecordRepositoryCustomImpl implements
-    QuestionCategoryLearningRecordRepositoryCustom {
+public class QuestionCategoryLearningRecordRepositoryCustomImpl
+    implements QuestionCategoryLearningRecordRepositoryCustom {
 
-    private final JPAQueryFactory queryFactory;
+  private final JPAQueryFactory queryFactory;
 
-    @Override
-    public List<QuestionCategoryLearningRecord> queryQuestionRecords(Customer customer) {
-        return queryFactory.selectFrom(questionCategoryLearningRecord).distinct()
-            .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory).fetchJoin()
-            .leftJoin(questionCategory.topicList).fetchJoin()
-            .where(questionCategoryLearningRecord.customer.eq(customer))
-            .fetch();
-    }
+  @Override
+  public List<QuestionCategoryLearningRecord> queryQuestionRecords(Customer customer) {
+    return queryFactory
+        .selectFrom(questionCategoryLearningRecord)
+        .distinct()
+        .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory)
+        .fetchJoin()
+        .leftJoin(questionCategory.topicList)
+        .fetchJoin()
+        .where(questionCategoryLearningRecord.customer.eq(customer))
+        .fetch();
+  }
 
-    @Override
-    public List<QuestionCategoryLearningRecord> queryQuestionRecordsInKeywords(Customer customer,
-        List<Long> questionCategoryIdList) {
-        return queryFactory.selectFrom(questionCategoryLearningRecord)
-            .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory).fetchJoin()
-            .where(questionCategoryLearningRecord.customer.eq(customer))
-            .where(questionCategoryLearningRecord.questionCategory.id.in(questionCategoryIdList))
-            .fetch();
-    }
+  @Override
+  public List<QuestionCategoryLearningRecord> queryQuestionRecordsInKeywords(
+      Customer customer, List<Long> questionCategoryIdList) {
+    return queryFactory
+        .selectFrom(questionCategoryLearningRecord)
+        .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory)
+        .fetchJoin()
+        .where(questionCategoryLearningRecord.customer.eq(customer))
+        .where(questionCategoryLearningRecord.questionCategory.id.in(questionCategoryIdList))
+        .fetch();
+  }
 
-    @Override
-    public QuestionCategoryLearningRecord queryQuestionCategoryLowScore(Customer customer) {
-        return queryFactory.selectFrom(questionCategoryLearningRecord).distinct()
-            .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory).fetchJoin()
-            .leftJoin(questionCategory.topicList).fetchJoin()
-            .where(questionCategoryLearningRecord.customer.eq(customer))
-            .orderBy(questionCategoryLearningRecord.score.asc())
-            .limit(1)
-            .fetchOne();
-    }
+  @Override
+  public QuestionCategoryLearningRecord queryQuestionCategoryLowScore(Customer customer) {
+    return queryFactory
+        .selectFrom(questionCategoryLearningRecord)
+        .distinct()
+        .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory)
+        .fetchJoin()
+        .leftJoin(questionCategory.topicList)
+        .fetchJoin()
+        .where(questionCategoryLearningRecord.customer.eq(customer))
+        .orderBy(questionCategoryLearningRecord.score.asc())
+        .limit(1)
+        .fetchOne();
+  }
 
-    @Override
-    public List<QuestionCategoryLearningRecord> queryQuestionRecordsForInit() {
-        return queryFactory.selectFrom(questionCategoryLearningRecord)
-            .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory).fetchJoin()
-            .leftJoin(questionCategoryLearningRecord.customer, customer).fetchJoin()
-            .fetch();
-    }
+  @Override
+  public List<QuestionCategoryLearningRecord> queryQuestionRecordsForInit() {
+    return queryFactory
+        .selectFrom(questionCategoryLearningRecord)
+        .leftJoin(questionCategoryLearningRecord.questionCategory, questionCategory)
+        .fetchJoin()
+        .leftJoin(questionCategoryLearningRecord.customer, customer)
+        .fetchJoin()
+        .fetch();
+  }
+
+  @Override
+  public void deleteAllInBatchByCustomer(Customer customer) {
+    queryFactory
+        .delete(questionCategoryLearningRecord)
+        .where(questionCategoryLearningRecord.customer.eq(customer))
+        .execute();
+  }
 }

@@ -76,16 +76,24 @@ public class CustomerService implements UserDetailsService {
 
   @Transactional
   public void deleteCustomer(Customer customer) {
-    // TODO : 보다 효과적인 방법 찾기
-    //        jjhListProgressRepository.deleteAllByCustomer(customer);
-    //        jjhContentProgressRepository.deleteAllByCustomer(customer);
-    //        keywordLearningRecordRepository.deleteAllByCustomer(customer);
-    //        topicLearningRecordRepository.deleteAllByCustomer(customer);
-    //        timelineLearningRecordRepository.deleteAllByCustomer(customer);
-    //        questionCategoryLearningRecordRepository.deleteAllByCustomer(customer);
-    //        roundLearningRecordRepository.deleteAllByCustomer(customer);
-    //        examQuestionLearningRecordRepository.deleteAllByCustomer(customer);
-    customerRepository.delete(customer);
+    jjhListProgressRepository.deleteAllInBatchByCustomer(customer);
+    System.out.println("1-------------------------------");
+    jjhContentProgressRepository.deleteAllInBatchByCustomer(customer);
+    System.out.println("2-------------------------------");
+    keywordLearningRecordRepository.deleteAllInBatchByCustomer(customer);
+    System.out.println("3-------------------------------");
+    topicLearningRecordRepository.deleteAllInBatchByCustomer(customer);
+    System.out.println("4-------------------------------");
+    timelineLearningRecordRepository.deleteAllInBatchByCustomer(customer);
+    System.out.println("5-------------------------------");
+    questionCategoryLearningRecordRepository.deleteAllInBatchByCustomer(customer);
+    System.out.println("6-------------------------------");
+    roundLearningRecordRepository.deleteAllInBatchByCustomer(customer);
+    System.out.println("7-------------------------------");
+    examQuestionLearningRecordRepository.deleteAllInBatchByCustomer(customer);
+    System.out.println("8-------------------------------");
+    customerRepository.deleteById(customer.getId());
+    System.out.println("9-------------------------------");
   }
 
   @Override
@@ -198,7 +206,7 @@ public class CustomerService implements UserDetailsService {
     try {
       jjhListProgressRepository.saveAll(jjhListProgressList);
     } catch (Exception e) {
-      jjhListProgressRepository.deleteAllByCustomer(customer);
+      jjhListProgressRepository.deleteAllInBatchByCustomer(customer);
       jjhListProgressRepository.saveAll(jjhListProgressList);
     }
   }

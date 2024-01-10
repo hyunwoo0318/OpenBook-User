@@ -156,7 +156,10 @@ public class QuestionService {
       }
       TimeFlowQuestionDto dto =
           new TimeFlowQuestionDto(
-              kp.getExtraDate(), kp.getExtraDateComment(), commentList, kp.getExtraDateComment());
+              kp.getExtraDate(),
+              kp.getExtraDateComment(),
+              commentList,
+              kp.getKeyword().getDateComment());
 
       timeFlowQuestionDtoList.add(dto);
     }

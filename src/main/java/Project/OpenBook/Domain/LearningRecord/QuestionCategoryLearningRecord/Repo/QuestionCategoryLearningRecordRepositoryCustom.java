@@ -6,12 +6,14 @@ import java.util.List;
 
 public interface QuestionCategoryLearningRecordRepositoryCustom {
 
-    public List<QuestionCategoryLearningRecord> queryQuestionRecords(Customer customer);
+  public List<QuestionCategoryLearningRecord> queryQuestionRecords(Customer customer);
 
-    public List<QuestionCategoryLearningRecord> queryQuestionRecordsInKeywords(Customer customer,
-        List<Long> questionCategoryIdList);
+  public List<QuestionCategoryLearningRecord> queryQuestionRecordsInKeywords(
+      Customer customer, List<Long> questionCategoryIdList);
 
-    public QuestionCategoryLearningRecord queryQuestionCategoryLowScore(Customer customer);
+  public QuestionCategoryLearningRecord queryQuestionCategoryLowScore(Customer customer);
 
-    public List<QuestionCategoryLearningRecord> queryQuestionRecordsForInit();
+  public List<QuestionCategoryLearningRecord> queryQuestionRecordsForInit();
+
+  public void deleteAllInBatchByCustomer(Customer customer);
 }
