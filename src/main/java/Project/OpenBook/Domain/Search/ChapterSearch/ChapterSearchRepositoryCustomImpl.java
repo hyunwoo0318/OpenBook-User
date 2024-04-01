@@ -1,12 +1,15 @@
 package Project.OpenBook.Domain.Search.ChapterSearch;
 
-import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
 import org.springframework.data.elasticsearch.core.query.Criteria;
 import org.springframework.data.elasticsearch.core.query.CriteriaQuery;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class ChapterSearchRepositoryCustomImpl implements ChapterSearchRepositoryCustom {
@@ -20,7 +23,7 @@ public class ChapterSearchRepositoryCustomImpl implements ChapterSearchRepositor
         SearchHits<ChapterSearch> search = elasticsearchOperations.search(query,
             ChapterSearch.class);
         return search.stream()
-            .map(cs -> cs.getContent())
+            .map(SearchHit::getContent)
             .collect(Collectors.toList());
     }
 }

@@ -51,17 +51,21 @@ import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Domain.Topic.Repo.TopicRepository;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Domain.TopicPrimaryDate;
 import Project.OpenBook.Domain.Topic.TopicPrimaryDate.Repository.TopicPrimaryDateRepository;
+
 import com.amazonaws.services.s3.AmazonS3Client;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableScheduling
@@ -189,10 +193,13 @@ public class InitConfig {
     @Transactional
     public void initQuestionInfo() {
         //각 문제별 keywordList 생성
+
+        //1. 선지 체크
         Map<Long, List<Keyword>> choiceKeywordMap = choiceKeywordRepository.queryChoiceKeywordsForInit()
             .stream()
             .map(ChoiceKeyword::getKeyword)
             .collect(Collectors.groupingBy(Keyword::getId));
+        //2. 보기 체크
         Map<Long, List<Keyword>> descriptionKeywordMap = descriptionKeywordRepository.queryDescriptionKeywordsForInit()
             .stream()
             .map(DescriptionKeyword::getKeyword)

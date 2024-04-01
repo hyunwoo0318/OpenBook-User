@@ -8,12 +8,15 @@ import static Project.OpenBook.Domain.Topic.Domain.QTopic.topic;
 
 import Project.OpenBook.Domain.QuestionCategory.Domain.QuestionCategory;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
+
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.List;
-import java.util.Optional;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -31,6 +34,13 @@ public class TopicRepositoryCustomImpl implements TopicRepositoryCustom {
             .fetch();
     }
 
+    @Override
+    public List<Topic> searchTopic(String input) {
+        return queryFactory.selectFrom(topic).distinct()
+            .leftJoin(topic.chapter, chapter).fetchJoin()
+            .where(topic.title.contains(input))
+            .fetch();
+    }
 
     @Override
     public Optional<Topic> queryTopicWithCategory(String topicTitle) {

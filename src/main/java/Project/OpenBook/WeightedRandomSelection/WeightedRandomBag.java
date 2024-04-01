@@ -1,15 +1,15 @@
 package Project.OpenBook.WeightedRandomSelection;
 
+import lombok.Getter;
+
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-import lombok.Getter;
 
 @Getter
 public class WeightedRandomBag<T extends Object> {
 
     class Entry {
-
         double accumulatedWeight;
         T object;
     }
