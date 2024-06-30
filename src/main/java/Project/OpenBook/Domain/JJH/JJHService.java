@@ -28,17 +28,20 @@ import Project.OpenBook.Domain.Timeline.Domain.Timeline;
 import Project.OpenBook.Domain.Timeline.Repo.TimelineRepository;
 import Project.OpenBook.Domain.Topic.Domain.Topic;
 import Project.OpenBook.Handler.Exception.CustomException;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -207,6 +210,8 @@ public class JJHService {
                 progress.getState().getName(), jjhContent.getNumber(), dateComment, category);
             dtoList.add(dto);
         }
+
+        dtoList.stream().sorted(Comparator.comparing(JJHContentsTableQueryDto::getContentNumber));
         return dtoList;
     }
 
