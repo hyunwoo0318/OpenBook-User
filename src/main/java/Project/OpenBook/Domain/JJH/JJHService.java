@@ -144,24 +144,31 @@ public class JJHService {
     }
 
     private List<JJHContentsTableQueryDto> makeContentsTableForTimelineForFree(
-            JJHList jjhList, Timeline timeline) {
+            JJHList jjhList, Timeline timeline2) {
         List<JJHContentsTableQueryDto> dtoList = new ArrayList<>();
-        String title = timeline.getTitle();
-        String category = null;
-        String dateComment = null;
+        List<JJHContent> jjhContentList = jjhList.getJjhContentList();
 
-        JJHContentsTableQueryDto dto1 =
-                new JJHContentsTableQueryDto(
-                        null,
-                        title,
-                        ContentConst.TIMELINE_STUDY.name(),
-                        StateConst.COMPLETE.getName(),
-                        null,
-                        dateComment,
-                        category);
-        dtoList.add(dto1);
+        for (JJHContent jjhContent : jjhContentList) {
+            Timeline timeline = jjhContent.getTimeline();
+            String title = timeline.getTitle();
+            String category = null;
+            String dateComment = null;
 
-        return dtoList;
+            JJHContentsTableQueryDto dto =
+                    new JJHContentsTableQueryDto(
+                            null,
+                            title,
+                            jjhContent.getContent().name(),
+                            null,
+                            jjhContent.getNumber(),
+                            dateComment,
+                            category);
+            dtoList.add(dto);
+        }
+
+        return dtoList.stream()
+                .sorted(Comparator.comparing(JJHContentsTableQueryDto::getContentNumber))
+                .collect(Collectors.toList());
     }
 
     private List<JJHContentsTableQueryDto> makeContentsTableForChapterForFree(
@@ -445,16 +452,11 @@ public class JJHService {
     }
 
     private boolean checkJJHListEnd(ContentConst cur, ContentConst next) {
-        if (cur.equals(ContentConst.CHAPTER_COMPLETE_QUESTION)
-                && (next.equals(ContentConst.TOPIC_STUDY)
-                        || next.equals(ContentConst.CHAPTER_INFO)
-                        || next.equals(ContentConst.TIMELINE_STUDY))) {
+        if (cur.equals(ContentConst.CHAPTER_COMPLETE_QUESTION)) {
             return true;
         }
 
-        if (cur.equals(ContentConst.TIMELINE_STUDY)
-                && (next.equals(ContentConst.TOPIC_STUDY)
-                        || next.equals(ContentConst.CHAPTER_INFO))) {
+        if (cur.equals(ContentConst.TIMELINE_STUDY)) {
             return true;
         }
 
